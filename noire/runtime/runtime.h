@@ -14,9 +14,10 @@ struct Runtime
 	Error        error;
 	LogFunction  log;
 	void*        log_arg;
+	void*        global;
 };
 
 extern __thread Runtime nr_runtime;
 
-void runtime_init(void);
+void runtime_init(void*);
 void runtime_free(void);

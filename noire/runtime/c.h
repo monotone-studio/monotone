@@ -37,4 +37,5 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/mman.h>
+#include <sys/uio.h>
 #include <sys/stat.h>

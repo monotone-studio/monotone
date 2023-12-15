@@ -24,7 +24,7 @@ buf_init(Buf* self)
 }
 
 static inline void
-buf_free_memory(Buf* self)
+buf_free(Buf* self)
 {
 	if (self->start)
 		nr_free(self->start);
