@@ -31,7 +31,7 @@ thread_create(Thread* self, ThreadFunction function, void* arg)
 	self->function = function;
 	self->arg = arg;
 	int rc;
-	rc = pthread_create(&self->id, NULL, function, self);
+	rc = pthread_create(&self->id, NULL, function, self->arg);
 	if (rc != 0)
 		return -1;
 	return 0;
