@@ -33,19 +33,14 @@
 
 // partition
 #include "io/part.h"
-#include "io/part_iterator.h"
-
-#if 0
-#include "io/part_cursor.h"
-
-/* partition mapping */
 #include "io/part_tree.h"
+#include "io/part_iterator.h"
+#include "io/part_cursor.h"
+#include "io/part_writer.h"
 
-/* writer */
-#include "io/writer.h"
-
-/* merger */
-#include "io/merger_req.h"
+// merger
 #include "io/merger.h"
-#include "io/merger_mgr.h"
-#endif
+
+// service
+#include "io/service_req.h"
+#include "io/service.h"
