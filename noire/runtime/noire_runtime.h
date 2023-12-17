@@ -44,3 +44,6 @@
 
 // blob
 #include "runtime/blob.h"
+
+// lock manager
+#include "runtime/lock_mgr.h"
