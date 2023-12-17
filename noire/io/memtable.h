@@ -12,32 +12,32 @@ typedef struct Memtable    Memtable;
 struct MemtableRow
 {
 	RbtreeNode node;
-	Row*       row;
+	Row        row;
 };
 
 struct Memtable
 {
 	uint64_t    count;
 	uint64_t    size;
+	uint64_t    lsn_min;
+	uint64_t    lsn_max;
 	Rbtree      index;
 	Comparator* comparator;
 };
 
 hot static inline MemtableRow*
-memtable_row_allocate(Row* row)
+memtable_row_allocate(uint64_t time, uint8_t* data, int data_size)
 {
 	MemtableRow* ref;
-	ref = nr_malloc(sizeof(MemtableRow));
-	ref->row = row;
+	ref = nr_malloc(sizeof(MemtableRow) + data_size);
+	row_init(&ref->row, time, data, data_size);
 	rbtree_init_node(&ref->node);
 	return ref;
 }
 
-hot static inline void
+always_inline hot static inline void
 memtable_row_free(MemtableRow* self)
 {
-	if (self->row)
-		row_free(self->row);
 	nr_free(self);
 }
 
@@ -45,6 +45,12 @@ always_inline static inline MemtableRow*
 memtable_row_of(RbtreeNode* node)
 {
 	return container_of(node, MemtableRow, node);
+}
+
+always_inline hot static inline int
+memtable_compare(Memtable* self, MemtableRow* a, MemtableRow* b)
+{
+	return compare(self->comparator, &a->row, &b->row);
 }
 
 static inline void
@@ -65,25 +71,20 @@ memtable_free(Memtable* self)
 		memtable_truncate(self->index.root, NULL);
 }
 
-hot static inline
-rbtree_get(memtable_match, compare(arg, memtable_row_of(n)->row, key))
-
-hot static inline bool
-memtable_insert(Memtable* self, MemtableRow* update)
+hot static inline void
+memtable_follow_lsn(Memtable* self, uint64_t lsn)
 {
-	RbtreeNode* node;
-	int rc;
-	rc = memtable_match(&self->index, self->comparator, update->row, &node);
-	if (unlikely(rc == 0 && node))
-		return true;
-	rbtree_set(&self->index, node, rc, &update->node);
-	self->size += row_size(update->row) + sizeof(MemtableRow);
-	self->count++;
-	return false;
+	if (lsn < self->lsn_min)
+		self->lsn_min = lsn;
+	if (lsn > self->lsn_max)
+		self->lsn_max = lsn;
 }
 
+hot static inline
+rbtree_get(memtable_match, memtable_compare(arg, memtable_row_of(n), key))
+
 hot static inline void
-memtable_replace(Memtable* self, Row* row)
+memtable_set(Memtable* self, MemtableRow* row)
 {
 	RbtreeNode* node;
 	int rc;
@@ -92,16 +93,14 @@ memtable_replace(Memtable* self, Row* row)
 	{
 		// replace
 		auto head = memtable_row_of(node);
-		auto update = memtable_row_allocate(row);
-		rbtree_replace(&self->index, &head->node, &update->node);
-		self->size -= row_size(row) + sizeof(MemtableRow);
+		rbtree_replace(&self->index, &head->node, &row->node);
+		self->size -= row_size(&row->row) + sizeof(MemtableRow);
 		self->count--;
 	} else
 	{
 		// insert
-		auto update = memtable_row_allocate(row);
-		rbtree_set(&self->index, node, rc, &update->node);
+		rbtree_set(&self->index, node, rc, &row->node);
 	}
-	self->size += row_size(row) + sizeof(MemtableRow);
+	self->size += row_size(&row->row) + sizeof(MemtableRow);
 	self->count++;
 }
