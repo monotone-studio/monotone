@@ -58,7 +58,7 @@ memtable_iterator_at(MemtableIterator* self)
 {
 	if (unlikely(self->current == NULL))
 		return NULL;
-	return self->current->row;
+	return &self->current->row;
 }
 
 static inline void

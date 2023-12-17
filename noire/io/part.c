@@ -87,6 +87,12 @@ part_create(Part* self)
 }
 
 void
+part_unload(Part* self)
+{
+	blob_free(&self->mmap);
+}
+
+void
 part_sync(Part* self)
 {
 	file_sync(&self->file);

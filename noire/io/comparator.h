@@ -16,6 +16,13 @@ struct Comparator
 	void*   compare_arg;
 };
 
+static inline void
+comparator_init(Comparator* self)
+{
+	self->compare     = NULL;
+	self->compare_arg = NULL;
+}
+
 hot static inline int
 compare(Comparator* self, Row* a, Row* b)
 {

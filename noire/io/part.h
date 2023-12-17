@@ -10,8 +10,7 @@ typedef struct Part Part;
 
 struct Part
 {
-	bool        in_service;
-	bool        in_memory;
+	bool        service;
 	uint64_t    min;
 	uint64_t    max;
 	Memtable*   memtable;
@@ -37,8 +36,7 @@ part_allocate(Comparator* comparator,
 	auto self = (Part*)nr_malloc(sizeof(Part));
 	self->min        = min;
 	self->max        = max;
-	self->in_service = false;
-	self->in_memory  = false;
+	self->service    = false;
 	self->index      = NULL;
 	self->l          = NULL;
 	self->r          = NULL;
@@ -98,15 +96,9 @@ part_memtable_rotate(Part* self)
 	return prev;
 }
 
-hot static inline bool
-part_in(Part* self, Row* row)
-{
-	// check if partition has a max > row
-	return (compare(self->comparator, index_max(self->index), row) == 1);
-}
-
 void part_open(Part*, bool);
 void part_create(Part*);
+void part_unload(Part*);
 void part_sync(Part*);
 void part_delete(Part*, bool);
 void part_complete(Part*);
