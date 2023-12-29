@@ -11,7 +11,10 @@
 #include <noire_engine.h>
 
 void
-engine_init(Engine* self, Comparator* comparator, Service* service)
+engine_init(Engine*     self,
+            Comparator* comparator,
+            Service*    service,
+            StorageMgr* storage_mgr)
 {
 	self->list_count = 0;
 	self->service    = service;
@@ -19,6 +22,7 @@ engine_init(Engine* self, Comparator* comparator, Service* service)
 	mutex_init(&self->lock);
 	list_init(&self->list);
 	part_tree_init(&self->tree, comparator);
+	tier_mgr_init(&self->tier_mgr, storage_mgr);
 	lock_mgr_init(&self->lock_mgr);
 }
 
@@ -28,11 +32,15 @@ engine_free(Engine* self)
 	assert(! self->list_count);
 	lock_mgr_free(&self->lock_mgr);
 	mutex_free(&self->lock);
+	tier_mgr_free(&self->tier_mgr);
 }
 
 void
 engine_open(Engine* self)
 {
+	// prepare tier manager
+	tier_mgr_create(&self->tier_mgr);
+
 	engine_recover(self);
 }
 
@@ -67,6 +75,57 @@ engine_flush(Engine* self)
 	}
 }
 
+static inline Part*
+engine_create(Engine* self, uint64_t time)
+{
+	auto head = part_tree_max(&self->tree);
+
+	// create new partition
+	auto part = part_allocate(self->comparator, NULL,
+	                          time,
+	                          time + config()->interval);
+	self->list_count++;
+	part_tree_add(&self->tree, part);
+
+	// match tier
+	int tier_order = 0;
+	if (self->tier_mgr.tiers_count > 1)
+	{
+		auto ref = part_tree_prev(&self->tree, part);
+		if (ref) {
+			tier_order = ref->storage->order;
+		} else
+		{
+			ref = part_tree_next(&self->tree, part);
+			if (ref)
+				tier_order = ref->storage->order;
+		}
+	}
+	auto tier = tier_of(&self->tier_mgr, tier_order);
+	tier_add(tier, part);
+	part->storage = tier->storage;
+
+	// rebalance partitions
+	if (self->tier_mgr.tiers_count > 1)
+	{
+		auto storage = tier->storage;
+		if (storage->capacity != 0 && tier->list_count >= storage->capacity)
+			service_add(self->service, 0, 0);
+	}
+
+	// schedule former max compaction
+	if (head && head->min < time)
+	{
+		if (! head->service)
+		{
+			head->service = true;
+			service_add(self->service, head->min, head->max);
+		}
+	}
+
+	return part;
+}
+
 hot Lock*
 engine_find(Engine* self, bool create, uint64_t time)
 {
@@ -91,12 +150,7 @@ engine_find(Engine* self, bool create, uint64_t time)
 		return NULL;
 
 	// create new partition
-	part = part_allocate(self->comparator,
-	                     time,
-	                     time + config()->interval);
-	list_append(&self->list, &part->link);
-	self->list_count++;
-	part_tree_add(&self->tree, part);
+	part = engine_create(self, time);
 	lock->arg = part;
 	return lock;
 }

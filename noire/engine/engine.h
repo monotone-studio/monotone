@@ -14,12 +14,13 @@ struct Engine
 	PartTree    tree;
 	List        list;
 	int         list_count;
+	TierMgr     tier_mgr;
 	LockMgr     lock_mgr;
 	Service*    service;
 	Comparator* comparator;
 };
 
-void engine_init(Engine*, Comparator*, Service*);
+void engine_init(Engine*, Comparator*, Service*, StorageMgr*);
 void engine_free(Engine*);
 void engine_open(Engine*);
 void engine_close(Engine*);

@@ -16,3 +16,6 @@
 // compaction
 #include "engine/compaction.h"
 #include "engine/compaction_mgr.h"
+
+// stats
+#include "engine/stats.h"
