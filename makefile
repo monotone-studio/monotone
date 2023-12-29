@@ -1,4 +1,4 @@
 all:
-	@(cd noire; make --no-print-directory)
+	@(cd monotone; make --no-print-directory)
 clean:
-	@(cd noire; make --no-print-directory clean)
+	@(cd monotone; make --no-print-directory clean)
