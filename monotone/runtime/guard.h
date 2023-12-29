@@ -16,7 +16,7 @@ guard_runner(Guard* self)
 	}
 
 	// always last unless explicit call
-	auto exception = nr_runtime.exception_mgr.last;
+	auto exception = mn_runtime.exception_mgr.last;
 	assert(exception->guard_stack == self);
 	exception->guard_stack = self->prev;
 }
@@ -33,7 +33,7 @@ unguard(Guard* self)
 		.function = (GuardFunction)func, \
 		.function_arg = func_arg, \
 		.prev = ({ \
-			auto exception = nr_runtime.exception_mgr.last; \
+			auto exception = mn_runtime.exception_mgr.last; \
 			auto prev = exception->guard_stack; \
 			exception->guard_stack = &self; \
 			prev; \

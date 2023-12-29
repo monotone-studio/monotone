@@ -36,13 +36,13 @@ storage_free(Storage* self)
 {
 	str_free(&self->name);
 	str_free(&self->directory);
-	nr_free(self);
+	mn_free(self);
 }
 
 static inline Storage*
 storage_allocate(Str* name)
 {
-	auto self = (Storage*)nr_malloc(sizeof(Storage));
+	auto self = (Storage*)mn_malloc(sizeof(Storage));
 	str_init(&self->name);
 	str_init(&self->directory);
 	guard(free, storage_free, self);

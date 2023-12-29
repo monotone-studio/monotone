@@ -27,7 +27,7 @@ static inline void
 str_free(Str* self)
 {
 	if (self->allocated)
-		nr_free(self->pos);
+		mn_free(self->pos);
 	str_init(self);
 }
 
@@ -107,7 +107,7 @@ str_compare(Str* self, Str* with)
 static inline void
 str_strndup(Str* str, const void* string, int size)
 {
-	char* pos = nr_malloc(size + 1);
+	char* pos = mn_malloc(size + 1);
 	memcpy(pos, string, size);
 	pos[size] = 0;
 	str_set_allocated(str, pos, size);

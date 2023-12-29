@@ -8,18 +8,18 @@
 
 // try-catch
 #define try(exception) \
-	exception_mgr_try(&nr_runtime.exception_mgr, exception)
+	exception_mgr_try(&mn_runtime.exception_mgr, exception)
 
 #define catch(exception) \
-	exception_mgr_catch(&nr_runtime.exception_mgr, exception)
+	exception_mgr_catch(&mn_runtime.exception_mgr, exception)
 
 // throw
 #define rethrow() \
-	exception_mgr_throw(&nr_runtime.exception_mgr)
+	exception_mgr_throw(&mn_runtime.exception_mgr)
 
 #define throw(fmt, ...) \
-	error_throw(&nr_runtime.error, \
-	            &nr_runtime.exception_mgr, \
+	error_throw(&mn_runtime.error, \
+	            &mn_runtime.exception_mgr, \
 	            source_file, \
 	            source_function, \
 	            source_line, \
@@ -35,8 +35,8 @@
 
 // log
 #define log(fmt, ...) \
-	log_at(nr_runtime.log, \
-	       nr_runtime.log_arg, \
+	log_at(mn_runtime.log, \
+	       mn_runtime.log_arg, \
 	       source_file, \
 	       source_function, \
 	       source_line, "", fmt, ## __VA_ARGS__)

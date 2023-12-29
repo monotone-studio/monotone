@@ -27,7 +27,7 @@ static inline void
 buf_free(Buf* self)
 {
 	if (self->start)
-		nr_free(self->start);
+		mn_free(self->start);
 }
 
 static inline int
@@ -66,7 +66,7 @@ buf_reserve(Buf* self, int size)
 		size_grow = size_actual;
 
 	uint8_t* pointer;
-	pointer = nr_realloc(self->start, size_grow);
+	pointer = mn_realloc(self->start, size_grow);
 
 	self->position = pointer + (self->position - self->start);
 	self->end = pointer + size_grow;

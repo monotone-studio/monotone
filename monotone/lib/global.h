@@ -13,5 +13,5 @@ struct Global
 	Config* config;
 };
 
-#define global() ((Global*)nr_runtime.global)
+#define global() ((Global*)mn_runtime.global)
 #define config()  global()->config

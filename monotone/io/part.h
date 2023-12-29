@@ -33,7 +33,7 @@ part_allocate(Comparator* comparator,
               uint64_t    min,
               uint64_t    max)
 {
-	auto self = (Part*)nr_malloc(sizeof(Part));
+	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->min        = min;
 	self->max        = max;
 	self->service    = false;
@@ -69,7 +69,7 @@ static inline void
 part_free(Part* self)
 {
 	part_free_data(self);
-	nr_free(self);
+	mn_free(self);
 }
 
 static inline Memtable*

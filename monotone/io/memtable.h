@@ -29,7 +29,7 @@ hot static inline MemtableRow*
 memtable_row_allocate(uint64_t time, uint8_t* data, int data_size)
 {
 	MemtableRow* ref;
-	ref = nr_malloc(sizeof(MemtableRow) + data_size);
+	ref = mn_malloc(sizeof(MemtableRow) + data_size);
 	row_init(&ref->row, time, data, data_size);
 	rbtree_init_node(&ref->node);
 	return ref;
@@ -38,7 +38,7 @@ memtable_row_allocate(uint64_t time, uint8_t* data, int data_size)
 always_inline hot static inline void
 memtable_row_free(MemtableRow* self)
 {
-	nr_free(self);
+	mn_free(self);
 }
 
 always_inline static inline MemtableRow*

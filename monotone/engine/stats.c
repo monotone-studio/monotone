@@ -19,7 +19,7 @@ engine_stats(Engine* self)
 	if (self->list_count == 0)
 		return NULL;
 
-	auto stat = (Stat*)nr_malloc(sizeof(Stat) + sizeof(StatPart) * self->tree.tree_count);
+	auto stat = (Stat*)mn_malloc(sizeof(Stat) + sizeof(StatPart) * self->tree.tree_count);
 
 	stat->count       = 0;
 	stat->count_parts = 0;

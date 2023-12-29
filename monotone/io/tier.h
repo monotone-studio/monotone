@@ -80,14 +80,14 @@ static inline void
 tier_mgr_free(TierMgr* self)
 {
 	if (self->tiers)
-		nr_free(self->tiers);
+		mn_free(self->tiers);
 }
 
 static inline void
 tier_mgr_create(TierMgr* self)
 {
 	self->tiers_count = self->storage_mgr->list_count;
-	self->tiers = nr_malloc(sizeof(Tier) * self->tiers_count);
+	self->tiers = mn_malloc(sizeof(Tier) * self->tiers_count);
 	list_foreach(&self->storage_mgr->list)
 	{
 		auto storage = list_at(Storage, link);

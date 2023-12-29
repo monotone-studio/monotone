@@ -33,7 +33,7 @@ struct LockMgr
 static inline Lock*
 lock_allocate(void)
 {
-	auto self = (Lock*)nr_malloc(sizeof(Lock));
+	auto self = (Lock*)mn_malloc(sizeof(Lock));
 	self->locker      = 0;
 	self->locker_refs = 0;
 	self->pending     = 0;
@@ -49,7 +49,7 @@ static inline void
 lock_free(Lock* self)
 {
 	cond_var_free(&self->cond_var);
-	nr_free(self);
+	mn_free(self);
 }
 
 static inline void
@@ -68,7 +68,7 @@ lock_mgr_free(LockMgr* self)
 	list_foreach_safe(&self->list_free)
 	{
 		auto lock = list_at(Lock, link);
-		nr_free(lock);
+		mn_free(lock);
 	}
 	mutex_free(&self->mutex);
 }

@@ -17,7 +17,7 @@ struct Runtime
 	void*        global;
 };
 
-extern __thread Runtime nr_runtime;
+extern __thread Runtime mn_runtime;
 
 void runtime_init(void);
 void runtime_free(void);

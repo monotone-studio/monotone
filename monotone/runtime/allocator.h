@@ -7,7 +7,7 @@
 //
 
 static inline void*
-nr_malloc(size_t size)
+mn_malloc(size_t size)
 {
 	auto ptr = malloc(size);
 	if (unlikely(ptr == NULL))
@@ -16,7 +16,7 @@ nr_malloc(size_t size)
 }
 
 static inline void*
-nr_realloc(void* pointer, size_t size)
+mn_realloc(void* pointer, size_t size)
 {
 	auto ptr = realloc(pointer, size);
 	if (unlikely(ptr == NULL))
@@ -25,7 +25,7 @@ nr_realloc(void* pointer, size_t size)
 }
 
 static inline void
-nr_free(void* pointer)
+mn_free(void* pointer)
 {
 	free(pointer);
 }

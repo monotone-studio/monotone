@@ -225,7 +225,7 @@ compaction_start(Compaction* self, Service* service, Engine* engine)
 {
 	self->service = service;
 	self->engine  = engine;
-	self->global  = nr_runtime.global;
+	self->global  = mn_runtime.global;
 	int rc;
 	rc = thread_create(&self->thread, compaction_main, self);
 	if (unlikely(rc == -1))
