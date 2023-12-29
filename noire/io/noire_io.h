@@ -6,6 +6,9 @@
 // time-series storage
 //
 
+// storage
+#include "io/storage.h"
+
 // row
 #include "io/row.h"
 #include "io/comparator.h"
@@ -40,6 +43,9 @@
 
 // merger
 #include "io/merger.h"
+
+// tiering
+#include "io/tier.h"
 
 // service
 #include "io/service_req.h"

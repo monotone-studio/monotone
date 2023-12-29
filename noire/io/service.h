@@ -44,7 +44,7 @@ service_shutdown(Service* self)
 {
 	mutex_lock(&self->lock);
 	self->shutdown = true;
-	cond_var_signal(&self->cond_var);
+	cond_var_broadcast(&self->cond_var);
 	mutex_unlock(&self->lock);
 }
 
@@ -57,6 +57,12 @@ service_add(Service* self, uint64_t min, uint64_t max)
 	self->list_count++;
 	cond_var_signal(&self->cond_var);
 	mutex_unlock(&self->lock);
+}
+
+static inline void
+service_add_rebalance(Service* self)
+{
+	service_add(self, 0, 0);
 }
 
 static inline ServiceReq*
