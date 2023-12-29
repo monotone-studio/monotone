@@ -32,9 +32,19 @@ part_tree_of(RbtreeNode* node)
 static inline Part*
 part_tree_min(PartTree* self)
 {
-	assert(self->tree_count > 0);
+	if (self->tree_count == 0)
+		return NULL;
 	auto min = rbtree_min(&self->tree);
 	return container_of(min, Part, node);
+}
+
+static inline Part*
+part_tree_max(PartTree* self)
+{
+	if (self->tree_count == 0)
+		return NULL;
+	auto max = rbtree_max(&self->tree);
+	return container_of(max, Part, node);
 }
 
 always_inline static inline int
@@ -94,4 +104,22 @@ part_tree_match(PartTree* self, uint64_t min)
 		return part;
 
 	return NULL;
+}
+
+static inline Part*
+part_tree_next(PartTree* self, Part* part)
+{
+	auto node = rbtree_next(&self->tree, &part->node);
+	if (! node)
+		return NULL;
+	return part_tree_of(node);
+}
+
+static inline Part*
+part_tree_prev(PartTree* self, Part* part)
+{
+	auto node = rbtree_prev(&self->tree, &part->node);
+	if (! node)
+		return NULL;
+	return part_tree_of(node);
 }
