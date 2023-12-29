@@ -12,10 +12,8 @@
 void
 part_writer_init(PartWriter* self)
 {
-	self->part        = NULL;
-	self->compression = 0;
-	self->crc         = 0;
-	self->size_region = 0;
+	self->part = NULL;
+	self->storage = NULL;
 	iov_init(&self->iov);
 	region_writer_init(&self->region_writer);
 	index_writer_init(&self->index_writer);
@@ -34,9 +32,7 @@ part_writer_free(PartWriter* self)
 void
 part_writer_reset(PartWriter* self)
 {
-	self->compression = 0;
-	self->crc         = 0;
-	self->size_region = 0;
+	self->storage = NULL;
 	if (self->part)
 	{
 		part_free(self->part);
@@ -52,14 +48,14 @@ part_writer_is_region_limit(PartWriter* self)
 {
 	if (unlikely(! region_writer_started(&self->region_writer)))
 		return true;
-	return region_writer_size(&self->region_writer) >= (uint32_t)self->size_region;
+	return region_writer_size(&self->region_writer) >= (uint32_t)self->storage->region_size;
 }
 
 static inline void
 part_writer_start_region(PartWriter* self)
 {
 	region_writer_reset(&self->region_writer);
-	region_writer_start(&self->region_writer, self->compression);
+	region_writer_start(&self->region_writer, self->storage->compression);
 }
 
 hot static inline void
@@ -84,22 +80,17 @@ part_writer_stop_region(PartWriter* self)
 void
 part_writer_start(PartWriter* self,
                   Comparator* comparator,
+                  Storage*    storage,
                   uint64_t    min,
-                  uint64_t    max,
-                  int         compression,
-                  bool        crc,
-                  int         size_region)
+                  uint64_t    max)
 {
-	self->compression = compression;
-	self->crc         = crc;
-	self->size_region = size_region;
-
 	// create new partition
-	self->part = part_allocate(comparator, min, max);
+	self->storage = storage;
+	self->part = part_allocate(comparator, storage, min, max);
 
 	// start new index
 	index_writer_reset(&self->index_writer);
-	index_writer_start(&self->index_writer, compression, crc);
+	index_writer_start(&self->index_writer, storage->compression, storage->crc);
 }
 
 void
