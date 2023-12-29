@@ -43,13 +43,9 @@ merger_main(Merger* self, MergerReq* req)
 	auto origin = req->origin;
 	auto memtable = req->memtable;
 
-	part_writer_start(writer,
-	                  origin->comparator,
+	part_writer_start(writer, origin->comparator, req->storage,
 	                  origin->min,
-	                  origin->max,
-	                  req->compression,
-	                  req->crc,
-	                  req->region_size);
+	                  origin->max);
 	for (;;)
 	{
 		auto row = merge_iterator_at(it);

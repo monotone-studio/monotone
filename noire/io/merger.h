@@ -11,12 +11,10 @@ typedef struct Merger    Merger;
 
 struct MergerReq
 {
-	Part*       origin;
-	Memtable*   memtable;
-	const char* directory;
-	int         compression;
-	int         crc;
-	int         region_size;
+	Part*     origin;
+	Memtable* memtable;
+	Storage*  storage;
+
 };
 
 struct Merger
