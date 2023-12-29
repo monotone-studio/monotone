@@ -1,7 +1,7 @@
 #pragma once
 
 //
-// noire
+// monotone
 //
 // time-series storage
 //

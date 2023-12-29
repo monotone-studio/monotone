@@ -1,5 +1,5 @@
 #
-# noire makefile
+# monotone makefile
 #
 CC             = clang
 AR             = ar
@@ -12,7 +12,7 @@ CFLAGS_INCLUDE = -I. \
                  -Iengine \
                  -Iinstance
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
-LIB            = libnoire.a
+LIB            = libmonotone.a
 OBJECTS        = \
                  runtime/runtime.o \
                  runtime/vfs.o \

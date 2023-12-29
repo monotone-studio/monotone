@@ -1,15 +1,15 @@
 
 //
-// noire
+// monotone
 //
 // time-series storage
 //
 
-#include <noire_runtime.h>
-#include <noire_lib.h>
-#include <noire_io.h>
-#include <noire_engine.h>
-#include <noire_instance.h>
+#include <monotone_runtime.h>
+#include <monotone_lib.h>
+#include <monotone_io.h>
+#include <monotone_engine.h>
+#include <monotone_instance.h>
 
 void
 instance_init(Instance* self)

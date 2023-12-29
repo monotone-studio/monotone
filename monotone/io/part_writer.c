@@ -1,13 +1,13 @@
 
 //
-// noire
+// monotone
 //
 // time-series storage
 //
 
-#include <noire_runtime.h>
-#include <noire_lib.h>
-#include <noire_io.h>
+#include <monotone_runtime.h>
+#include <monotone_lib.h>
+#include <monotone_io.h>
 
 void
 part_writer_init(PartWriter* self)

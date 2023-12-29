@@ -1,12 +1,12 @@
 
 //
-// noire
+// monotone
 //
 // time-series storage
 //
 
-#include <noire_runtime.h>
-#include <noire_lib.h>
+#include <monotone_runtime.h>
+#include <monotone_lib.h>
 
 void
 rbtree_init(Rbtree* self)

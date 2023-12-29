@@ -1,11 +1,11 @@
 
 //
-// noire
+// monotone
 //
 // time-series storage
 //
 
-#include <noire_runtime.h>
+#include <monotone_runtime.h>
 
 void
 logger_set_enable(Logger* self, bool enable)

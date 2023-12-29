@@ -1,11 +1,11 @@
 
 //
-// noire
+// monotone
 //
 // time-series storage
 //
 
-#include <noire_runtime.h>
+#include <monotone_runtime.h>
 
 int
 vfs_unlink(const char* path)
