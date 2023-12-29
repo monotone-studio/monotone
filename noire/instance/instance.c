@@ -9,31 +9,44 @@
 #include <noire_lib.h>
 #include <noire_io.h>
 #include <noire_engine.h>
-#include <noire_storage.h>
+#include <noire_instance.h>
 
 void
-storage_init(Storage* self)
+instance_init(Instance* self)
 {
 	self->global.config = &self->config;
 	service_init(&self->service);
 	comparator_init(&self->comparator);
-	engine_init(&self->engine, &self->comparator, &self->service);
+	storage_mgr_init(&self->storage_mgr);
+	engine_init(&self->engine, &self->comparator,
+	            &self->service,
+	            &self->storage_mgr);
 	compaction_mgr_init(&self->compaction_mgr);
 	config_init(&self->config);
 }
 
 void
-storage_free(Storage* self)
+instance_free(Instance* self)
 {
 	engine_free(&self->engine);
 	service_free(&self->service);
+	storage_mgr_free(&self->storage_mgr);
 	config_free(&self->config);
 }
 
 void
-storage_start(Storage* self)
+instance_start(Instance* self)
 {
-	// recover storage engine
+	// create default storage
+	if (self->storage_mgr.list_count == 0)
+	{
+		Str name;
+		str_set_cstr(&name, "default");
+		auto storage = storage_allocate(&name);
+		storage_mgr_add(&self->storage_mgr, storage);
+	}
+
+	// recover instance engine
 	engine_open(&self->engine);
 
 	// start compaction
@@ -41,7 +54,7 @@ storage_start(Storage* self)
 }
 
 void
-storage_stop(Storage* self)
+instance_stop(Instance* self)
 {
 	// shutdown service
 	service_shutdown(&self->service);
@@ -54,7 +67,7 @@ storage_stop(Storage* self)
 }
 
 hot void
-storage_insert(Storage* self, uint64_t time, void* data, int data_size)
+instance_insert(Instance* self, uint64_t time, void* data, int data_size)
 {
 	// get min/max range
 	uint64_t min = time - (time % config()->interval);
@@ -76,12 +89,15 @@ storage_insert(Storage* self, uint64_t time, void* data, int data_size)
 	memtable_follow_lsn(memtable, 0);
 
 	// schedule compaction
-	if (part->memtable->size > config()->compaction_wm)
+	if (part->storage->compaction_wm > 0)
 	{
-		if (! part->service)
+		if (part->memtable->size > (uint32_t)part->storage->compaction_wm)
 		{
-			part->service = true;
-			service_add(&self->service, min, max);
+			if (! part->service)
+			{
+				part->service = true;
+				service_add(&self->service, min, max);
+			}
 		}
 	}
 }

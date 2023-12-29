@@ -10,7 +10,7 @@ CFLAGS_INCLUDE = -I. \
                  -Ilib \
                  -Iio \
                  -Iengine \
-                 -Istorage
+                 -Iinstance
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libnoire.a
 OBJECTS        = \
@@ -27,7 +27,8 @@ OBJECTS        = \
                  engine/engine_recover.o \
                  engine/compaction.o \
                  engine/compaction_mgr.o \
-                 storage/storage.o
+                 engine/stats.o \
+                 instance/instance.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
 	@echo $(AR) $(LIB)

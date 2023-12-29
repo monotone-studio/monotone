@@ -6,4 +6,4 @@
 // time-series storage
 //
 
-#include "storage/storage.h"
+#include "instance/instance.h"
