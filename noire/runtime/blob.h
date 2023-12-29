@@ -51,6 +51,7 @@ blob_free(Blob* self)
 		vfs_munmap(self->start, blob_size_allocated(self));
 		self->start = NULL;
 	}
+	blob_init(self, self->step);
 }
 
 static inline uint8_t**

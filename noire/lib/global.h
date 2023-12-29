@@ -15,9 +15,3 @@ struct Global
 
 #define global() ((Global*)nr_runtime.global)
 #define config()  global()->config
-
-static inline const char*
-config_directory(void)
-{
-	return str_of(&config()->directory);
-}
