@@ -20,16 +20,16 @@ struct Part
 	File        file;
 	Index*      index;
 	Buf         index_buf;
-	Part*       l;
-	Part*       r;
+	Storage*    storage;
 	Comparator* comparator;
 	RbtreeNode  node;
-	List        link_service;
+	List        link_tier;
 	List        link;
 };
 
 static inline Part*
 part_allocate(Comparator* comparator,
+              Storage*    storage,
               uint64_t    min,
               uint64_t    max)
 {
@@ -38,8 +38,7 @@ part_allocate(Comparator* comparator,
 	self->max        = max;
 	self->service    = false;
 	self->index      = NULL;
-	self->l          = NULL;
-	self->r          = NULL;
+	self->storage    = storage;
 	self->comparator = comparator;
 	blob_init(&self->mmap, 1 * 1024 * 1024);
 	file_init(&self->file);
@@ -48,7 +47,7 @@ part_allocate(Comparator* comparator,
 	memtable_init(&self->memtable_b, comparator);
 	buf_init(&self->index_buf);
 	rbtree_init_node(&self->node);
-	list_init(&self->link_service);
+	list_init(&self->link_tier);
 	list_init(&self->link);
 	return self;
 }

@@ -10,18 +10,18 @@
 #include <noire_io.h>
 
 static inline void
-part_path(char* path, uint64_t min, uint64_t max)
+part_path(char* path, Storage* storage, uint64_t min, uint64_t max)
 {
 	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64,
-	         config_directory(),
+	         str_of(&storage->directory),
 	         min, max);
 }
 
 static inline void
-part_path_incomplete(char* path, uint64_t min, uint64_t max)
+part_path_incomplete(char* path, Storage* storage, uint64_t min, uint64_t max)
 {
 	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64 ".incomplete",
-	         config_directory(),
+	         str_of(&storage->directory),
 	         min, max);
 }
 
@@ -30,7 +30,7 @@ part_open(Part* self, bool check_crc)
 {
 	// open data file and read index
 	char path[PATH_MAX];
-	part_path(path, self->min, self->max);
+	part_path(path, self->storage, self->min, self->max);
 	file_open(&self->file, path);
 
 	if (unlikely(self->file.size < (sizeof(Index) + sizeof(IndexEof))))
@@ -79,7 +79,7 @@ void
 part_create(Part* self)
 {
 	char path[PATH_MAX];
-	part_path_incomplete(path, self->min, self->max);
+	part_path_incomplete(path, self->storage, self->min, self->max);
 	file_create(&self->file, path);
 	if (self->mmap.start)
 		file_write(&self->file, self->mmap.start, blob_size(&self->mmap));
@@ -103,10 +103,11 @@ part_delete(Part* self, bool complete)
 {
 	char path[PATH_MAX];
 	if (complete)
-		part_path(path, self->min, self->max);
+		part_path(path, self->storage, self->min, self->max);
 	else
-		part_path_incomplete(path, self->min, self->max);
-	fs_unlink("%s", path);
+		part_path_incomplete(path, self->storage, self->min, self->max);
+	if (fs_exists("%s", path))
+		fs_unlink("%s", path);
 }
 
 void
@@ -114,7 +115,7 @@ part_complete(Part* self)
 {
 	char path[PATH_MAX];
 	char path_to[PATH_MAX];
-	part_path_incomplete(path, self->min, self->max);
-	part_path(path_to, self->min, self->max);
+	part_path_incomplete(path, self->storage, self->min, self->max);
+	part_path(path_to, self->storage, self->min, self->max);
 	fs_rename(path, "%s", path_to);
 }
