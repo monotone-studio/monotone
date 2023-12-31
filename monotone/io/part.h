@@ -43,8 +43,8 @@ part_allocate(Comparator* comparator,
 	blob_init(&self->mmap, 1 * 1024 * 1024);
 	file_init(&self->file);
 	self->memtable = &self->memtable_a;
-	memtable_init(&self->memtable_a, comparator);
-	memtable_init(&self->memtable_b, comparator);
+	memtable_init(&self->memtable_a, 512, 508, comparator);
+	memtable_init(&self->memtable_b, 512, 508, comparator);
 	buf_init(&self->index_buf);
 	rbtree_init_node(&self->node);
 	list_init(&self->link_tier);
@@ -56,9 +56,7 @@ static inline void
 part_free_data(Part* self)
 {
 	memtable_free(&self->memtable_a);
-	memtable_init(&self->memtable_a, NULL);
 	memtable_free(&self->memtable_b);
-	memtable_init(&self->memtable_b, NULL);
 	blob_free(&self->mmap);
 	file_close(&self->file);
 	buf_free(&self->index_buf);
