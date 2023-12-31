@@ -74,7 +74,7 @@ instance_insert(Instance* self, uint64_t time, void* data, int data_size)
 	uint64_t max = min + config()->interval;
 
 	// allocate row
-	auto row = memtable_row_allocate(time, data, data_size);
+	auto row = row_allocate(time, data, data_size);
 
 	// find or create partition
 	auto lock = engine_find(&self->engine, true, min);
@@ -86,7 +86,7 @@ instance_insert(Instance* self, uint64_t time, void* data, int data_size)
 	memtable_set(memtable, row);
 
 	// todo: wal write
-	memtable_follow_lsn(memtable, 0);
+	memtable_follow(memtable, 0);
 
 	// schedule compaction
 	if (part->storage->compaction_wm > 0)
