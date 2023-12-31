@@ -88,7 +88,10 @@ compaction_execute(Compaction* self, ServiceReq* req, Tier* tier)
 
 	// reuse memtable
 	*part->memtable = *origin->memtable;
-	memtable_init(origin->memtable, origin->comparator);
+	memtable_init(origin->memtable,
+	              origin->memtable->size_page,
+	              origin->memtable->size_split,
+	              origin->comparator);
 
 	lock_mgr_unlock(lock);
 
@@ -96,7 +99,6 @@ compaction_execute(Compaction* self, ServiceReq* req, Tier* tier)
 	
 	// free memtable memory
 	memtable_free(memtable);
-	memtable_init(memtable, NULL);
 
 	// create partition file and sync
 	part_create(part);
