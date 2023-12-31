@@ -23,14 +23,23 @@ comparator_init(Comparator* self)
 	self->compare_arg = NULL;
 }
 
-hot static inline int
+hot static inline int64_t
 compare(Comparator* self, Row* a, Row* b)
 {
 	// compare by time first
-	uint64_t diff = a->time - b->time;
-	if (diff < 0)
+	int64_t diff = a->time - b->time;
+	if (likely(diff != 0))
+		return diff;
+	if (! self->compare)
+		return 0;
+	return self->compare(a->data, a->data_size,
+	                     b->data, b->data_size,
+	                     self->compare_arg);
+#if 0
+	// compare by time first
+	if (a->time < b->time)
 		return -1;
-	if (diff > 0)
+	if (a->time > b->time)
 		return 1;
 	// compare data
 	if (! self->compare)
@@ -38,4 +47,5 @@ compare(Comparator* self, Row* a, Row* b)
 	return self->compare(a->data, a->data_size,
 	                     b->data, b->data_size,
 	                     self->compare_arg);
+#endif
 }
