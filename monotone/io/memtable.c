@@ -10,7 +10,10 @@
 #include <monotone_io.h>
 
 void
-memtable_init(Memtable* self, int size_page, int size_split, Comparator* comparator)
+memtable_init(Memtable*   self,
+              int         size_page,
+              int         size_split,
+              Comparator* comparator)
 {
 	self->count       = 0;
 	self->count_pages = 0;
@@ -28,7 +31,7 @@ memtable_page_allocate(Memtable* self)
 {
 	MemtablePage* page;
 	page = mn_malloc(sizeof(MemtablePage) + self->size_page * sizeof(Row*));
-	page->keys_count = 0;
+	page->rows_count = 0;
 	rbtree_init_node(&page->node);
 	return page;
 }
@@ -36,8 +39,8 @@ memtable_page_allocate(Memtable* self)
 static inline void
 memtable_page_free(MemtablePage* page)
 {
-	for (int i = 0; i< page->keys_count; i++)
-		row_free(page->keys[i]);
+	for (int i = 0; i< page->rows_count; i++)
+		row_free(page->rows[i]);
 	mn_free(page);
 }
 
@@ -50,7 +53,7 @@ memtable_page_of(RbtreeNode* node)
 always_inline static inline int
 memtable_compare(Memtable* self, MemtablePage* page, Row* key)
 {
-	return compare(self->comparator, page->keys[0], key);
+	return compare(self->comparator, page->rows[0], key);
 }
 
 rbtree_free(memtable_truncate, memtable_page_free(memtable_page_of(n)))
@@ -98,15 +101,15 @@ memtable_search(Memtable* self, MemtablePage* page, Row* key, bool* match)
 {
 	int min = 0;
 	int mid = 0;
-	int max = page->keys_count - 1;
+	int max = page->rows_count - 1;
 
-	if (compare(self->comparator, page->keys[max], key) < 0)
+	if (compare(self->comparator, page->rows[max], key) < 0)
 		return max + 1;
 
 	while (max >= min)
 	{
 		mid = min + ((max - min) >> 1);
-		int rc = compare(self->comparator, page->keys[mid], key);
+		int rc = compare(self->comparator, page->rows[mid], key);
 		if (rc < 0) {
 			min = mid + 1;
 		} else
@@ -120,15 +123,15 @@ memtable_search(Memtable* self, MemtablePage* page, Row* key, bool* match)
 	}
 	return min;
 }
-#if 0
 
+#if 0
 hot static inline int
 memtable_search(Memtable* self, MemtablePage* page, void* key, bool* match)
 {
-	int pos = page->keys_count - 1;
+	int pos = page->rows_count - 1;
 	while (pos >= 0)
 	{
-		int rc = self->compare(self, page->keys[pos], key);
+		int rc = self->compare(self, page->rows[pos], key);
 		if (rc == 0) {
 			*match = true;
 			break;
@@ -146,7 +149,7 @@ memtable_search(Memtable* self, MemtablePage* page, void* key, bool* match)
 hot static inline int
 range_search(Ref self, RangeTree* tree, Ref key, bool* match)
 {
-	int pos = range_of(self, tree)->keys_count - 1;
+	int pos = range_of(self, tree)->rows_count - 1;
 	while (pos >= 0)
 	{
 		int rc = range_compare(tree, range_key(self, tree, pos), key);
@@ -171,8 +174,8 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 	if (match)
 	{
 		// replace
-		auto prev = page->keys[pos];
-		page->keys[pos] = row;
+		auto prev = page->rows[pos];
+		page->rows[pos] = row;
 		self->size -= row_size(prev);
 		self->size += row_size(row);
 		row_free(prev);
@@ -184,26 +187,26 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 	// split
 	MemtablePage* ref = page;
 	MemtablePage* r = NULL;
-	if (unlikely(page->keys_count == self->size_page))
+	if (unlikely(page->rows_count == self->size_page))
 	{
 		auto l = page;
 		r = memtable_page_allocate(self);
-		l->keys_count = self->size_split;
-		r->keys_count = self->size_page - self->size_split;
-		memmove(&r->keys[0], &l->keys[self->size_split], sizeof(Row*) * r->keys_count);
-		if (pos >= l->keys_count)
+		l->rows_count = self->size_split;
+		r->rows_count = self->size_page - self->size_split;
+		memmove(&r->rows[0], &l->rows[self->size_split], sizeof(Row*) * r->rows_count);
+		if (pos >= l->rows_count)
 		{
 			ref = r;
-			pos = pos - l->keys_count;
+			pos = pos - l->rows_count;
 		}
 	}
 
 	// insert
-	int size = (ref->keys_count - pos) * sizeof(Row*);
+	int size = (ref->rows_count - pos) * sizeof(Row*);
 	if (size > 0)
-		memmove(&ref->keys[pos + 1], &ref->keys[pos], size);
-	ref->keys[pos] = row;
-	ref->keys_count++;
+		memmove(&ref->rows[pos + 1], &ref->rows[pos], size);
+	ref->rows[pos] = row;
+	ref->rows_count++;
 	self->count++;
 	self->size += row_size(row);
 	return r;
@@ -216,8 +219,8 @@ memtable_set(Memtable* self, Row* row)
 	if (self->count_pages == 0)
 	{
 		auto page = memtable_page_allocate(self);
-		page->keys[0] = row;
-		page->keys_count++;
+		page->rows[0] = row;
+		page->rows_count++;
 		rbtree_set(&self->tree, NULL, 0, &page->node);
 		self->count_pages++;
 		self->count++;

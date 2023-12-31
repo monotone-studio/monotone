@@ -12,8 +12,8 @@ typedef struct Memtable     Memtable;
 struct MemtablePage
 {
 	RbtreeNode node;
-	int        keys_count;
-	Row*       keys[];
+	int        rows_count;
+	Row*       rows[];
 };
 
 struct Memtable
