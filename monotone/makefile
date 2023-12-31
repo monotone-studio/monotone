@@ -4,13 +4,14 @@
 CC             = clang
 AR             = ar
 RM             = rm
-CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O2
+CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
 CFLAGS_INCLUDE = -I. \
                  -Iruntime \
                  -Ilib \
                  -Iio \
                  -Iengine \
-                 -Iinstance
+                 -Iinstance \
+                 -Iapi
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone.a
 OBJECTS        = \
@@ -20,6 +21,7 @@ OBJECTS        = \
                  lib/rbtree.o \
                  lib/crc.o \
                  lib/compression.o \
+                 io/memtable.o \
                  io/part.o \
                  io/part_writer.o \
                  io/merger.o \
@@ -28,7 +30,8 @@ OBJECTS        = \
                  engine/compaction.o \
                  engine/compaction_mgr.o \
                  engine/stats.o \
-                 instance/instance.o
+                 instance/instance.o \
+                 api/monotone.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
 	@echo $(AR) $(LIB)
