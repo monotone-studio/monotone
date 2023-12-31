@@ -10,41 +10,27 @@ typedef struct MemtableIterator MemtableIterator;
 
 struct MemtableIterator
 {
-	Iterator     iterator;
-	MemtableRow* current;
-	RbtreeNode*  pos;
-	Memtable*    memtable;
+	Iterator  iterator;
+	Row*      current;
+	MemtablePage*  page;
+	int       page_pos;
+	Memtable* memtable;
 };
 
 static inline bool
 memtable_iterator_open(MemtableIterator* self,
                        Memtable*         memtable,
-                       Row*              row)
+                       Row*              key)
 {
 	self->current  = NULL;
-	self->pos      = NULL;
+	self->page     = NULL;
+	self->page_pos = 0;
 	self->memtable = memtable;
 	if (unlikely(self->memtable->count == 0))
 		return false;
-
-	if (row == NULL)
-	{
-		self->pos = rbtree_min(&memtable->index);
-		self->current = memtable_row_of(self->pos);
-		return false;
-	}
-
-	int rc;
-	rc = memtable_match(&memtable->index, memtable->comparator, row, &self->pos);
-	if (self->pos == NULL)
-		return false;
-	if (rc == -1)
-		self->pos = rbtree_next(&self->memtable->index, self->pos);
-	if (self->pos)
-		self->current = memtable_row_of(self->pos);
-
-	// match
-	return rc == 0 && self->pos;
+	bool match = memtable_seek(memtable, key, &self->page, &self->page_pos);
+	self->current = self->page->keys[self->page_pos];
+	return match;
 }
 
 static inline bool
@@ -56,9 +42,7 @@ memtable_iterator_has(MemtableIterator* self)
 static inline Row*
 memtable_iterator_at(MemtableIterator* self)
 {
-	if (unlikely(self->current == NULL))
-		return NULL;
-	return &self->current->row;
+	return self->current;
 }
 
 static inline void
@@ -66,17 +50,32 @@ memtable_iterator_next(MemtableIterator* self)
 {
 	if (unlikely(self->current == NULL))
 		return;
+
 	self->current = NULL;
-	self->pos = rbtree_next(&self->memtable->index, self->pos);
-	if (self->pos)
-		self->current = memtable_row_of(self->pos);
+	if (likely((self->page_pos + 1) < self->page->keys_count))
+	{
+		self->current = self->page->keys[++self->page_pos];
+		return;
+	}
+
+	auto prev = self->page;
+	self->page_pos = 0;
+	self->page     = NULL;
+
+	auto next = rbtree_next(&self->memtable->tree, &prev->node);
+	if (unlikely(next == NULL))
+		return;
+
+	self->page = container_of(next, MemtablePage, node);
+	self->current = self->page->keys[0];
 }
 
 static inline void
 memtable_iterator_reset(MemtableIterator* self)
 {
 	self->current  = NULL;
-	self->pos      = 0;
+	self->page_pos = 0;
+	self->page     = 0;
 	self->memtable = NULL;
 }
 
@@ -84,7 +83,8 @@ static inline void
 memtable_iterator_init(MemtableIterator* self)
 {
 	self->current  = NULL;
-	self->pos      = 0;
+	self->page_pos = 0;
+	self->page     = 0;
 	self->memtable = NULL;
 	auto it = &self->iterator;
 	it->has   = (IteratorHas)memtable_iterator_has;
