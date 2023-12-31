@@ -29,7 +29,7 @@ memtable_iterator_open(MemtableIterator* self,
 	if (unlikely(self->memtable->count == 0))
 		return false;
 	bool match = memtable_seek(memtable, key, &self->page, &self->page_pos);
-	self->current = self->page->keys[self->page_pos];
+	self->current = self->page->rows[self->page_pos];
 	return match;
 }
 
@@ -52,9 +52,9 @@ memtable_iterator_next(MemtableIterator* self)
 		return;
 
 	self->current = NULL;
-	if (likely((self->page_pos + 1) < self->page->keys_count))
+	if (likely((self->page_pos + 1) < self->page->rows_count))
 	{
-		self->current = self->page->keys[++self->page_pos];
+		self->current = self->page->rows[++self->page_pos];
 		return;
 	}
 
@@ -67,7 +67,7 @@ memtable_iterator_next(MemtableIterator* self)
 		return;
 
 	self->page = container_of(next, MemtablePage, node);
-	self->current = self->page->keys[0];
+	self->current = self->page->rows[0];
 }
 
 static inline void
