@@ -20,10 +20,12 @@ struct Engine
 	Comparator* comparator;
 };
 
-void engine_init(Engine*, Comparator*, Service*, StorageMgr*);
-void engine_free(Engine*);
-void engine_open(Engine*);
-void engine_close(Engine*);
-void engine_flush(Engine*);
-Lock*
-engine_find(Engine*, bool, uint64_t);
+void  engine_init(Engine*, Comparator*, Service*, StorageMgr*);
+void  engine_free(Engine*);
+void  engine_open(Engine*);
+void  engine_close(Engine*);
+void  engine_flush(Engine*);
+
+Lock* engine_find(Engine*, bool, uint64_t);
+Lock* engine_seek(Engine*, uint64_t);
+Lock* engine_seek_next(Engine*, uint64_t);

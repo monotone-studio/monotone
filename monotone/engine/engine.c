@@ -154,3 +154,40 @@ engine_find(Engine* self, bool create, uint64_t time)
 	lock->arg = part;
 	return lock;
 }
+
+hot Lock*
+engine_seek(Engine* self, uint64_t time)
+{
+	// try to find a partition and grab a lock with min time
+	for (;;)
+	{
+		auto lock = lock_mgr_get(&self->lock_mgr, time);
+		mutex_lock(&self->lock);
+
+		if (unlikely(self->list_count == 0))
+		{
+			mutex_unlock(&self->lock);
+			lock_mgr_unlock(lock);
+			break;
+		}
+
+		auto part = part_tree_seek(&self->tree, time);
+		if (part->max <= time)
+		{
+			mutex_unlock(&self->lock);
+			break;
+		}
+
+		if (part->min == time)
+		{
+			lock->arg = part;
+			mutex_unlock(&self->lock);
+			return lock;
+		}
+
+		time = part->min;
+		mutex_unlock(&self->lock);
+		lock_mgr_unlock(lock);
+	}
+	return NULL;
+}
