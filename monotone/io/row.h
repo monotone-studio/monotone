@@ -48,3 +48,9 @@ row_size(Row* self)
 {
 	return sizeof(Row) + self->data_size;
 }
+
+always_inline hot static inline uint64_t
+row_interval_min(Row* self)
+{
+	return self->time - (self->time % config()->interval);
+}
