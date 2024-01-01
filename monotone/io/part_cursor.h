@@ -25,16 +25,22 @@ part_cursor_open(PartCursor* self, Part* part, Row* row)
 	// open memtable iterators
 	Memtable* memtable_prev;
 	auto memtable = part_memtable_of(part, &memtable_prev);
-	memtable_iterator_open(&self->memtable_iterator_a, memtable, row);
-	memtable_iterator_open(&self->memtable_iterator_b, memtable_prev, row);
+	if (memtable->count > 0)
+	{
+		memtable_iterator_open(&self->memtable_iterator_a, memtable, row);
+		merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_a.iterator);
+	}
+	if (memtable_prev->count > 0)
+	{
+		memtable_iterator_open(&self->memtable_iterator_b, memtable_prev, row);
+		merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_b.iterator);
+	}
 
 	// open part iterator
 	part_iterator_open(&self->part_iterator, part, row);
+	merge_iterator_add(&self->merge_iterator, &self->part_iterator.iterator);
 
 	// open merge iterator
-	merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_a.iterator);
-	merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_b.iterator);
-	merge_iterator_add(&self->merge_iterator, &self->part_iterator.iterator);
 	merge_iterator_open(&self->merge_iterator, part->comparator);
 }
 
