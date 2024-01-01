@@ -3,7 +3,7 @@
 # 
 CC             = clang
 RM             = rm
-CFLAGS         = -Wall -pthread -O3 -g -fPIE
+CFLAGS         = -Wall -pthread -O2 -g -fPIE
 CFLAGS_INCLUDE = -I. \
                  -I../monotone \
                  -I../monotone/runtime \

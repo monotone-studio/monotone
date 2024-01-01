@@ -34,16 +34,47 @@ writer_main(void* arg)
 	{
 		while (writer_run)
 		{
-			/*instance_insert(&instance, writer_seq++, "", 0);*/
-			instance_insert(&instance, writer_seq++, data, sizeof(data) );
+			instance_insert(&instance, writer_seq++, "", 0);
+			/*instance_insert(&instance, writer_seq++, data, sizeof(data) );*/
 			atomic_u64_add(&count_wr, 1);
-			atomic_u64_add(&count_wr_data, sizeof(uint64_t) + sizeof(data));
+			atomic_u64_add(&count_wr_data, sizeof(uint64_t) /*+ sizeof(data)*/);
 		}
 	}
 	if (catch(&e))
 	{ }
 
 	return NULL;
+}
+
+
+
+static void
+report_print(void)
+{
+	Exception e;
+	if (try(&e))
+	{
+		auto stat = engine_stats(&instance.engine);
+		for (int i = 0; i < stat->count_parts; i++)
+		{
+			printf("[%020" PRIu64 ", %020" PRIu64 "] size: %" PRIu64 ", count: %" PRIu64 ", cache: %" PRIu64 ", tier: %d\n",
+			       stat->parts[i].min,
+			       stat->parts[i].max,
+			       stat->parts[i].size,
+			       stat->parts[i].count,
+			       stat->parts[i].cache_count,
+			       stat->parts[i].tier);
+		}
+
+		printf("partitions: %" PRIu32 "\n", stat->count_parts);
+		printf("count:      %" PRIu64 "\n", stat->count);
+		printf("size:       %" PRIu64 "\n", stat->size);
+		printf("\n");
+
+		free(stat);
+	}
+	if (catch(&e))
+	{ }
 }
 
 static void*
@@ -60,30 +91,7 @@ report_main(void* arg)
 		sleep(1);
 		printf("\n");
 
-		Exception e;
-		if (try(&e))
-		{
-			auto stat = engine_stats(&instance.engine);
-			for (int i = 0; i < stat->count_parts; i++)
-			{
-				printf("[%020" PRIu64 ", %020" PRIu64 "] size: %" PRIu64 ", count: %" PRIu64 ", cache: %" PRIu64 ", tier: %d\n",
-				       stat->parts[i].min,
-				       stat->parts[i].max,
-				       stat->parts[i].size,
-				       stat->parts[i].count,
-				       stat->parts[i].cache_count,
-				       stat->parts[i].tier);
-			}
-
-			printf("partitions: %" PRIu32 "\n", stat->count_parts);
-			printf("count:      %" PRIu64 "\n", stat->count);
-			printf("size:       %" PRIu64 "\n", stat->size);
-			printf("\n");
-
-			free(stat);
-		}
-		if (catch(&e))
-		{ }
+		report_print();
 
 		uint64_t cwr  = atomic_u64_of(&count_wr);
 		uint64_t cwrd = atomic_u64_of(&count_wr_data);
@@ -108,6 +116,42 @@ gettime(void)
 	struct timespec t;
 	clock_gettime(CLOCK_MONOTONIC, &t);
 	return t.tv_sec*  (uint64_t) 1e9 + t.tv_nsec;
+}
+
+static void
+scan(void)
+{
+	uint64_t start = gettime();
+
+	EngineCursor cursor;
+	engine_cursor_init(&cursor);
+	engine_cursor_open(&cursor, &instance.engine, NULL);
+
+	uint64_t n = 0;
+	for (;;)
+	{
+		if (! engine_cursor_has(&cursor))
+			break;
+
+		n++;
+
+		/*
+		auto row = engine_cursor_at(&cursor);
+		printf("%d ", (int)row->time);
+		*/
+		engine_cursor_next(&cursor);
+	}
+
+	// rps
+	uint64_t diff = (gettime() - start) / 1000;
+	double rps = n / (float)(diff / 1000.0 / 1000.0);
+	printf("%f rps\n", rps);
+
+	printf("rows: %d\n", (int)n);
+	printf("---\n");
+	report_print();
+
+	engine_cursor_close(&cursor);
 }
 
 static void
@@ -205,6 +249,16 @@ cli(void)
 			if (catch(&e))
 			{ }
 		} else 
+		if (! strcmp(command, "/scan\n"))
+		{
+			Exception e;
+			if (try(&e))
+			{
+				scan();
+			}
+			if (catch(&e))
+			{ }
+		} else
 		{
 			printf("error: unknown command\n");
 		}
