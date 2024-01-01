@@ -85,7 +85,7 @@ part_tree_replace(PartTree* self, Part* a, Part* b)
 }
 
 hot static inline Part*
-part_tree_match(PartTree* self, uint64_t min)
+part_tree_seek(PartTree* self, uint64_t min)
 {
 	// part[n].min >= key && key < part[n + 1].min
 	RbtreeNode* part_ptr = NULL;
@@ -98,11 +98,16 @@ part_tree_match(PartTree* self, uint64_t min)
 		if (prev)
 			part_ptr = prev;
 	}
+	return container_of(part_ptr, Part, node);
+}
 
-	auto part = container_of(part_ptr, Part, node);
+hot static inline Part*
+part_tree_match(PartTree* self, uint64_t min)
+{
+	// exact match
+	auto part = part_tree_seek(self, min);
 	if (part->min <= min && min < part->max)
 		return part;
-
 	return NULL;
 }
 
