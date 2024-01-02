@@ -198,7 +198,7 @@ instance_config(Instance* self, const char* options)
 			// interval <u64>
 			instance_config_u64(&lex, &name, &config()->interval);
 		} else
-		if (str_compare_raw(&name.string, "workers", 8))
+		if (str_compare_raw(&name.string, "workers", 7))
 		{
 			// workers <int>
 			instance_config_int(&lex, &name, &config()->workers);
@@ -219,6 +219,8 @@ instance_config(Instance* self, const char* options)
 		// eof
 		if (! lex_if(&lex, TEOF, NULL))
 			error("config: unexpected option");
+
+		break;
 	}
 
 	// todo
