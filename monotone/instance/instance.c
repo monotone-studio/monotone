@@ -35,16 +35,10 @@ instance_free(Instance* self)
 }
 
 void
-instance_start(Instance* self)
+instance_start(Instance* self, const char* options)
 {
-	// create default storage
-	if (self->storage_mgr.list_count == 0)
-	{
-		Str name;
-		str_set_cstr(&name, "default");
-		auto storage = storage_allocate(&name);
-		storage_mgr_add(&self->storage_mgr, storage);
-	}
+	// read configuration
+	instance_config(self, options);
 
 	// recover instance engine
 	engine_open(&self->engine);
