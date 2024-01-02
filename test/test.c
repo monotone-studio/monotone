@@ -45,8 +45,6 @@ writer_main(void* arg)
 	return NULL;
 }
 
-
-
 static void
 report_print(void)
 {
@@ -155,47 +153,12 @@ scan(void)
 static void
 cli(void)
 {
-	instance.config.interval = 3000000;
-	instance.config.workers  = 3;
-
-	/*
-	Str name;
-	str_set_cstr(&name, "test");
-	auto storage = storage_allocate(&name);
-	storage_mgr_add(&instance.storage_mgr, storage);
-	str_strdup(&storage->directory, "./t");
-	*/
-
-	// hot
-	Str name;
-	str_set_cstr(&name, "hot");
-	auto storage = storage_allocate(&name);
-	storage_mgr_add(&instance.storage_mgr, storage);
-	storage->compaction_wm = 0;
-	storage->capacity = 10;
-	storage->sync = false;
-	str_strdup(&storage->directory, "./hot");
-
-	// cold
-	str_set_cstr(&name, "cold");
-	storage = storage_allocate(&name);
-	storage_mgr_add(&instance.storage_mgr, storage);
-	storage->compression = 1;
-	storage->capacity = 0;
-	storage->sync = true;
-	str_strdup(&storage->directory, "./cold");
-
-	/*
-	// drop
-	str_set_cstr(&name, "drop");
-	storage = storage_allocate(&name);
-	storage_mgr_add(&instance.storage_mgr, storage);
-	storage->compression = 0;
-	storage->capacity = 0;
-	storage->drop = true;
-	*/
-
-	instance_start(&instance);
+	char config[] =
+	"interval 3000000,"
+	"workers 3,"
+	"storage hot(compaction_wm 0, capacity 10, sync false, path './hot'),"
+	"storage cold(compression 1, sync, path './cold')";
+	instance_start(&instance, config);
 
 	for (;;)
 	{
