@@ -22,8 +22,7 @@ static atomic_u64   count_wr_data;
 static void*
 writer_main(void* arg)
 {
-	runtime_init();
-	runtime_set_global(&instance.global);
+	runtime_init(&instance.global);
 	(void)arg;
 
 	char data[100];
@@ -80,8 +79,7 @@ report_print(void)
 static void*
 report_main(void* arg)
 {
-	runtime_init();
-	runtime_set_global(&instance.global);
+	runtime_init(&instance.global);
 	(void)arg;
 
 	uint64_t last_wr = atomic_u64_of(&count_wr);
@@ -157,8 +155,6 @@ scan(void)
 static void
 cli(void)
 {
-	runtime_set_global(&instance.global);
-
 	instance.config.interval = 3000000;
 	instance.config.workers  = 3;
 
@@ -270,7 +266,7 @@ cli(void)
 int
 main(int argc, char* argv[])
 {
-	runtime_init();
+	runtime_init(&instance.global);
 	instance_init(&instance);
 
 	Exception e;

@@ -21,6 +21,7 @@ OBJECTS        = \
                  lib/rbtree.o \
                  lib/crc.o \
                  lib/compression.o \
+                 lib/lex.o \
                  io/memtable.o \
                  io/part.o \
                  io/part_writer.o \
@@ -31,6 +32,7 @@ OBJECTS        = \
                  engine/compaction_mgr.o \
                  engine/stats.o \
                  instance/instance.o \
+                 instance/config.o \
                  api/monotone.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
