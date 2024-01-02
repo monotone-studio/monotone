@@ -12,14 +12,14 @@ typedef struct StorageMgr StorageMgr;
 struct Storage
 {
 	Str  name;
-	Str  directory;
+	Str  path;
 	int  capacity;
 	int  compaction_wm;
 	bool memory;
 	bool drop;
 	bool sync;
+	bool crc;
 	int  compression;
-	int  crc;
 	int  region_size;
 	int  order;
 	List link;
@@ -35,7 +35,7 @@ static inline void
 storage_free(Storage* self)
 {
 	str_free(&self->name);
-	str_free(&self->directory);
+	str_free(&self->path);
 	mn_free(self);
 }
 
@@ -44,7 +44,7 @@ storage_allocate(Str* name)
 {
 	auto self = (Storage*)mn_malloc(sizeof(Storage));
 	str_init(&self->name);
-	str_init(&self->directory);
+	str_init(&self->path);
 	guard(free, storage_free, self);
 
 	str_copy(&self->name, name);
@@ -54,8 +54,8 @@ storage_allocate(Str* name)
 	self->memory        = false;
 	self->drop          = false;
 	self->sync          = true;
+	self->crc           = false;
 	self->compression   = COMPRESSION_OFF;
-	self->crc           = 0;
 	self->region_size   = 128 * 1024;
 	unguard(&free);
 	return self;
@@ -86,4 +86,16 @@ storage_mgr_add(StorageMgr* self, Storage* storage)
 	storage->order = self->list_count;
 	list_append(&self->list, &storage->link);
 	self->list_count++;
+}
+
+static inline Storage*
+storage_mgr_find(StorageMgr* self, Str* name)
+{
+	list_foreach(&self->list)
+	{
+		auto storage = list_at(Storage, link);
+		if (str_compare(&storage->name, name))
+			return storage;
+	}
+	return NULL;
 }
