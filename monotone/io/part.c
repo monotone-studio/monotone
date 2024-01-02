@@ -13,7 +13,7 @@ static inline void
 part_path(char* path, Storage* storage, uint64_t min, uint64_t max)
 {
 	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64,
-	         str_of(&storage->directory),
+	         str_of(&storage->path),
 	         min, max);
 }
 
@@ -21,7 +21,7 @@ static inline void
 part_path_incomplete(char* path, Storage* storage, uint64_t min, uint64_t max)
 {
 	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64 ".incomplete",
-	         str_of(&storage->directory),
+	         str_of(&storage->path),
 	         min, max);
 }
 
