@@ -7,3 +7,4 @@
 //
 
 #include "instance/instance.h"
+#include "instance/config.h"
