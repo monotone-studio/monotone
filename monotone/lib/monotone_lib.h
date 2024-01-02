@@ -13,6 +13,9 @@
 #include "lib/crc.h"
 #include "lib/compression.h"
 
+// lex
+#include "lib/lex.h"
+
 // configuration
 #include "lib/config.h"
 
