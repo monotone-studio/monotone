@@ -10,6 +10,7 @@ typedef struct Config Config;
 
 struct Config
 {
+	Str      path;
 	uint64_t interval;
 	int      workers;
 };
@@ -19,10 +20,11 @@ config_init(Config* self)
 {
 	self->interval = 3000000;
 	self->workers  = 1;
+	str_init(&self->path);
 }
 
 static inline void
 config_free(Config* self)
 {
-	unused(self);
+	str_free(&self->path);
 }
