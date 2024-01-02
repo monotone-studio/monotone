@@ -178,8 +178,7 @@ static void*
 compaction_main(void* arg)
 {
 	Compaction* self = arg;
-	runtime_init();
-	runtime_set_global(self->global);
+	runtime_init(self->global);
 
 	thread_set_name(&self->thread, "compaction");
 	for (;;)
