@@ -55,9 +55,9 @@ lex_next(Lex* self, Token* tk)
 	if (*self->pos != '\"' &&
 	    *self->pos != '\'' && *self->pos != '_' && ispunct(*self->pos))
 	{
-		self->pos++;
 		tk->id = *self->pos;
 		tk->integer = 0;
+		self->pos++;
 		return;
 	}
 
@@ -65,6 +65,7 @@ lex_next(Lex* self, Token* tk)
 	if (isdigit(*self->pos))
 	{
 		tk->id = TINT;
+		tk->integer = 0;
 		auto start = self->pos;
 		while (self->pos < self->end)
 		{
