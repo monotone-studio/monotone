@@ -360,9 +360,7 @@ test_suite_cmd_open(TestSuite* self, char* arg)
 	rc = monotone_open(env, prefmt_config);
 	if (rc == -1)
 	{
-		test_log(self, "line %d: monotone_open(): %s\n",
-		         self->current_line,
-		         monotone_error(self->env));
+		test_log(self, "error: %s\n", monotone_error(self->env));
 		monotone_free(env);
 		return 0;
 	}
@@ -375,8 +373,7 @@ test_suite_cmd_close(TestSuite* self, char* arg)
 {
 	if (! self->env)
 	{
-		test_log(self, "line %d: close: env is not openned\n",
-		         self->current_line);
+		test_log(self, "close: env is not openned\n");
 		return 0;
 	}
 	if (self->list_cursor_count > 0) {
