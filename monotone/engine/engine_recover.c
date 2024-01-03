@@ -13,6 +13,9 @@
 static void
 engine_recover_storage(Engine* self, Storage* storage)
 {
+	if (storage->capacity == 0)
+		return;
+
 	// create storage directory, if not exists
 	const char* path = str_of(&storage->path);
 	if (! fs_exists("%s", path))

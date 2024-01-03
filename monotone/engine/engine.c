@@ -109,7 +109,7 @@ engine_create(Engine* self, uint64_t time)
 	if (self->tier_mgr.tiers_count > 1)
 	{
 		auto storage = tier->storage;
-		if (storage->capacity != 0 && tier->list_count >= storage->capacity)
+		if (storage->capacity != INT_MAX && tier->list_count >= storage->capacity)
 			service_add(self->service, 0, 0);
 	}
 

@@ -32,7 +32,8 @@ compaction_execute(Compaction* self, ServiceReq* req, Tier* tier)
 		storage = origin->storage;
 	}
 
-	if (storage->drop)
+	// drop
+	if (storage->capacity == 0)
 	{
 		auto lock = engine_find(engine, false, req->min);
 		assert(lock);
@@ -133,7 +134,8 @@ compaction_rebalance_next(Compaction* self, ServiceReq* req, Tier** req_tier)
 	{
 		auto tier = tier_of(&engine->tier_mgr, order);
 		auto storage = tier->storage;
-		if (! storage->capacity)
+		if (storage->capacity == INT_MAX ||
+		    storage->capacity == 0)
 			break;
 
 		assert(engine->tier_mgr.tiers_count > order + 1);

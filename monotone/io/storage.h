@@ -16,7 +16,6 @@ struct Storage
 	int  capacity;
 	int  compaction_wm;
 	bool memory;
-	bool drop;
 	bool sync;
 	bool crc;
 	int  compression;
@@ -49,10 +48,9 @@ storage_allocate(Str* name)
 
 	str_copy(&self->name, name);
 	self->order         = 0;
-	self->capacity      = 0;
+	self->capacity      = INT_MAX;
 	self->compaction_wm = 40 * 1024 * 1024;
 	self->memory        = false;
-	self->drop          = false;
 	self->sync          = true;
 	self->crc           = false;
 	self->compression   = COMPRESSION_OFF;
