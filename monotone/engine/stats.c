@@ -10,47 +10,95 @@
 #include <monotone_io.h>
 #include <monotone_engine.h>
 
-hot Stat*
-engine_stats(Engine* self)
+StatStorage*
+engine_stats(Engine* self, Stat* stat)
 {
 	mutex_lock(&self->lock);
 	guard(unlock, mutex_unlock, &self->lock);
 
-	if (self->list_count == 0)
-		return NULL;
+	// stat per storage
+	int  size = sizeof(StatStorage) * self->tier_mgr.storage_mgr->list_count;
+	auto storages = (StatStorage*)mn_malloc(size);
+	memset(storages, 0, size);
 
-	auto stat = (Stat*)mn_malloc(sizeof(Stat) + sizeof(StatPart) * self->tree.tree_count);
+	list_foreach(&self->tier_mgr.storage_mgr->list)
+	{
+		auto storage = list_at(Storage, link);
+		auto ref = &storages[storage->order];
+		if (storage->capacity > 0)
+			ref->min  = UINT64_MAX;
+		ref->max  = 0;
+		ref->name = str_of(&storage->name);
+	}
 
-	stat->count       = 0;
-	stat->count_parts = 0;
-	stat->size        = 0;
-
-	auto pos = &stat->parts[0];
-
-	Part* current = part_tree_min(&self->tree);
+	auto current = part_tree_min(&self->tree);
 	while (current)
 	{
-		pos->min         = current->min;
-		pos->max         = current->max;
-		pos->cache_count = current->memtable_a.count +
-		                   current->memtable_b.count;
-		pos->cache_size  = current->memtable_a.size +
-		                   current->memtable_b.size;
-		pos->count       = pos->cache_count;
-		if (current->index)
-			pos->count += current->index->count_total;
-		pos->size        = pos->cache_size;
-		if (current->index)
-			pos->size += current->index->size_total;
-		pos->tier        = current->storage->order;
+		auto storage = current->storage;
+		auto ref = &storages[storage->order];
 
-		stat->count_parts++;
-		stat->count += pos->count;
-		stat->size  += pos->size;
+		// partitions
+		ref->partitions++;
 
-		pos++;
+		if (current->service)
+			ref->pending++;
+
+		if (current->min < ref->min)
+			ref->min = current->min;
+		if (current->max > ref->max)
+			ref->max = current->max;
+
+		// rows
+		if (current->index)
+			ref->rows += current->index->count_total;
+		uint64_t rows_cached = current->memtable_a.count + current->memtable_b.count;
+		ref->rows_cached += rows_cached;
+		ref->rows += rows_cached;
+
+		// size
+		if (current->index)
+		{
+			ref->size += current->index->size_total;
+			ref->size_uncompressed += current->index->size_total_origin;
+		}
+		uint64_t size_cached = current->memtable_a.size + current->memtable_b.size;
+		ref->size_cached += size_cached;
+		ref->size += size_cached;
+
 		current = part_tree_next(&self->tree, current);
 	}
 
-	return stat;
+	// stat
+	memset(stat, 0, sizeof(*stat));
+	stat->storages           = self->tier_mgr.storage_mgr->list_count;
+	stat->lsn                = 0;
+	stat->rows_written       = 0;
+	stat->rows_written_bytes = 0;
+	stat->min                = UINT64_MAX;
+	stat->max                = 0;
+
+	list_foreach(&self->tier_mgr.storage_mgr->list)
+	{
+		auto storage = list_at(Storage, link);
+		auto ref = &storages[storage->order];
+
+		// partitions
+		stat->partitions += ref->partitions;
+		stat->pending    += ref->pending;
+		if (ref->min < stat->min)
+			stat->min = ref->min;
+		if (ref->max > stat->max)
+			stat->max = ref->max;
+
+		// rows
+		stat->rows += ref->rows;
+		stat->rows_cached += ref->rows_cached;
+
+		// size
+		stat->size += ref->size;
+		stat->size_uncompressed += ref->size_uncompressed;
+		stat->size_cached += ref->size_cached;
+	}
+
+	return storages;
 }

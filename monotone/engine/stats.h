@@ -6,26 +6,43 @@
 // time-series storage
 //
 
-typedef struct StatPart StatPart;
-typedef struct Stat     Stat;
+typedef struct StatStorage StatStorage;
+typedef struct Stat        Stat;
 
-struct StatPart
+struct StatStorage
 {
-	uint64_t min;
-	uint64_t max;
-	uint64_t count;
-	uint64_t size;
-	uint64_t cache_count;
-	uint64_t cache_size;
-	uint32_t tier;
+	const char* name;
+	uint64_t    partitions;
+	uint64_t    pending;
+	uint64_t    min;
+	uint64_t    max;
+	uint64_t    rows;
+	uint64_t    rows_cached;
+	uint64_t    size;
+	uint64_t    size_uncompressed;
+	uint64_t    size_cached;
+	uint64_t    reserved[8];
 };
 
 struct Stat
 {
+	// main
+	uint64_t lsn;
+	uint64_t rows_written;
+	uint64_t rows_written_bytes;
+
+	// storages
+	uint32_t storages;
+	uint64_t partitions;
+	uint64_t pending;
+	uint64_t min;
+	uint64_t max;
+	uint64_t rows;
+	uint64_t rows_cached;
 	uint64_t size;
-	uint64_t count;
-	uint32_t count_parts;
-	StatPart parts[];
+	uint64_t size_uncompressed;
+	uint64_t size_cached;
+	uint64_t reserved[8];
 };
 
-Stat* engine_stats(Engine*);
+StatStorage* engine_stats(Engine*, Stat*);
