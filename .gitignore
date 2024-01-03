@@ -3,3 +3,4 @@
 *.so
 prof/test
 test/test
+test/core
