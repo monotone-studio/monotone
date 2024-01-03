@@ -51,24 +51,24 @@ report_print(void)
 	Exception e;
 	if (try(&e))
 	{
-		auto stat = engine_stats(&instance.engine);
-		for (int i = 0; i < stat->count_parts; i++)
+		Stat stat;
+		auto storages = engine_stats(&instance.engine, &stat);
+
+		for (int i = 0; i < stat.storages; i++)
 		{
-			printf("[%020" PRIu64 ", %020" PRIu64 "] size: %" PRIu64 ", count: %" PRIu64 ", cache: %" PRIu64 ", tier: %d\n",
-			       stat->parts[i].min,
-			       stat->parts[i].max,
-			       stat->parts[i].size,
-			       stat->parts[i].count,
-			       stat->parts[i].cache_count,
-			       stat->parts[i].tier);
+			printf("%s\n", storages[i].name);
+			printf("  partitions:       %" PRIu64 "\n", storages[i].partitions);
+			printf("  pending:          %" PRIu64 "\n", storages[i].pending);
+			printf("  min               %" PRIu64 "\n", storages[i].min);
+			printf("  max               %" PRIu64 "\n", storages[i].max);
+			printf("  rows              %" PRIu64 "\n", storages[i].rows);
+			printf("  rows_cached       %" PRIu64 "\n", storages[i].rows_cached);
+			printf("  size              %" PRIu64 "\n", storages[i].size);
+			printf("  size_uncompressed %" PRIu64 "\n", storages[i].size_uncompressed);
+			printf("  size_cached       %" PRIu64 "\n", storages[i].size_cached);
 		}
 
-		printf("partitions: %" PRIu32 "\n", stat->count_parts);
-		printf("count:      %" PRIu64 "\n", stat->count);
-		printf("size:       %" PRIu64 "\n", stat->size);
-		printf("\n");
-
-		free(stat);
+		free(storages);
 	}
 	if (catch(&e))
 	{ }
@@ -85,12 +85,15 @@ report_main(void* arg)
 	while (report_run)
 	{
 		sleep(1);
+
 		printf("\n");
 
 		report_print();
 
 		uint64_t cwr  = atomic_u64_of(&count_wr);
 		uint64_t cwrd = atomic_u64_of(&count_wr_data);
+
+		printf("\n");
 
 		printf("write: %d rps (%.2f Mbs) %d metrics/sec\n", (int)cwr - (int)last_wr,
 		       (cwrd - last_wr_data)  / 1024.0 / 1024.0,
@@ -157,7 +160,8 @@ cli(void)
 	"interval 3000000,"
 	"workers 3,"
 	"storage hot(compaction_wm 0, capacity 10, sync false, path './hot'),"
-	"storage cold(compression 1, sync, path './cold')";
+	"storage cold(capacity 10, compression 1, sync, path './cold'),"
+	"storage drop(capacity 0)";
 	instance_start(&instance, config);
 
 	for (;;)
