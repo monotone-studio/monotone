@@ -649,6 +649,18 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 		self->option_fix = 0;
 	}
 
+	// check env
+	if (self->list_cursor_count > 0)
+	{
+		test_error(self, "%s", "test: cursors left open");
+		return -1;
+	}
+	if (self->env)
+	{
+		test_error(self, "%s", "test: env left open");
+		return -1;
+	}
+
 	// show diff and stop
 	if (test_failed) {
 		test_sh(self, "git diff --no-index %s %s", test_ok_file, test_result_file);
@@ -656,17 +668,6 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 	}
 
 	// cleanup
-	if (self->list_cursor_count > 0)
-	{
-		test_error(self, "%s", "test: cursors left open");
-		return -1;
-	}
-	if (self->list_cursor_count > 0)
-	{
-		test_error(self, "%s", "test: env left open");
-		return -1;
-	}
-	
 	unlink(test_result_file);
 
 	test_suite_cleanup(self);
