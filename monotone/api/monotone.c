@@ -165,7 +165,7 @@ monotone_stats(monotone_t* self, monotone_stats_t* stats)
 	return (monotone_stats_storage_t*)stats_storage;
 }
 
-MONOTONE_API monotone_cursor_t*
+hot MONOTONE_API monotone_cursor_t*
 monotone_cursor(monotone_t* self, monotone_row_t* row)
 {
 	runtime_init(&self->instance.global);
@@ -197,7 +197,7 @@ monotone_cursor(monotone_t* self, monotone_row_t* row)
 	return cursor;
 }
 
-MONOTONE_API int
+hot MONOTONE_API int
 monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 {
 	int rc;
@@ -220,7 +220,7 @@ monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 	return rc;
 }
 
-MONOTONE_API int
+hot MONOTONE_API int
 monotone_next(monotone_cursor_t* self)
 {
 	int rc;
@@ -235,7 +235,7 @@ monotone_next(monotone_cursor_t* self)
 	return rc;
 }
 
-MONOTONE_API int
+hot MONOTONE_API int
 monotone_insert(monotone_t* self, monotone_row_t* row)
 {
 	int rc = 0;
@@ -251,7 +251,7 @@ monotone_insert(monotone_t* self, monotone_row_t* row)
 	return rc;
 }
 
-MONOTONE_API int
+hot MONOTONE_API int
 monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
 {
 	int rc = 0;
@@ -268,7 +268,7 @@ monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row
 	return rc;
 }
 
-MONOTONE_API int
+hot MONOTONE_API int
 monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
 {
 	int rc = 0;
@@ -284,7 +284,7 @@ monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
 	return rc;
 }
 
-MONOTONE_API int
+hot MONOTONE_API int
 monotone_delete_as(monotone_t* self, monotone_row_t* row)
 {
 	int rc = 0;
@@ -293,12 +293,6 @@ monotone_delete_as(monotone_t* self, monotone_row_t* row)
 		(void)self;
 		(void)row;
 		// todo
-
-		/*
-		instance_insert(&self->instance, row->time,
-		                row->data,
-		                row->data_size);
-						*/
 	}
 	if (catch(&e)) {
 		rc = -1;
@@ -315,6 +309,7 @@ monotone_drop(monotone_t* self, uint64_t min, uint64_t max)
 		(void)self;
 		(void)min;
 		(void)max;
+		// todo
 	}
 	if (catch(&e)) {
 		rc = -1;
