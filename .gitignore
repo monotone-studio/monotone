@@ -1,4 +1,5 @@
 *.o
 *.a
 *.so
+prof/test
 test/test
