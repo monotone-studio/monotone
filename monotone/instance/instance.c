@@ -14,7 +14,7 @@
 void
 instance_init(Instance* self)
 {
-	self->global.config = &self->config;
+	self->global.config      = &self->config;
 	service_init(&self->service);
 	comparator_init(&self->comparator);
 	storage_mgr_init(&self->storage_mgr);
@@ -63,6 +63,10 @@ instance_stop(Instance* self)
 hot void
 instance_insert(Instance* self, uint64_t time, void* data, int data_size)
 {
+	// update stats
+	atomic_u64_add(&self->engine.rows_written, 1);
+	atomic_u64_add(&self->engine.rows_written_bytes, sizeof(Row) + data_size);
+
 	// get min/max range
 	uint64_t min = time - (time % config()->interval);
 	uint64_t max = min + config()->interval;
