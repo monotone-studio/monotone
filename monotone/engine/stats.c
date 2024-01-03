@@ -72,8 +72,8 @@ engine_stats(Engine* self, Stat* stat)
 	memset(stat, 0, sizeof(*stat));
 	stat->storages           = self->tier_mgr.storage_mgr->list_count;
 	stat->lsn                = 0;
-	stat->rows_written       = 0;
-	stat->rows_written_bytes = 0;
+	stat->rows_written       = atomic_u64_of(&self->rows_written);
+	stat->rows_written_bytes = atomic_u64_of(&self->rows_written_bytes);
 	stat->min                = UINT64_MAX;
 	stat->max                = 0;
 

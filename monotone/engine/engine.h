@@ -11,11 +11,13 @@ typedef struct Engine Engine;
 struct Engine
 {
 	Mutex       lock;
+	LockMgr     lock_mgr;
 	PartTree    tree;
 	List        list;
 	int         list_count;
 	TierMgr     tier_mgr;
-	LockMgr     lock_mgr;
+	atomic_u64  rows_written;
+	atomic_u64  rows_written_bytes;
 	Service*    service;
 	Comparator* comparator;
 };

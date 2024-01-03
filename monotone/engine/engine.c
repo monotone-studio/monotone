@@ -16,9 +16,11 @@ engine_init(Engine*     self,
             Service*    service,
             StorageMgr* storage_mgr)
 {
-	self->list_count = 0;
-	self->service    = service;
-	self->comparator = comparator;
+	self->list_count         = 0;
+	self->rows_written       = 0;
+	self->rows_written_bytes = 0;
+	self->service            = service;
+	self->comparator         = comparator;
 	mutex_init(&self->lock);
 	list_init(&self->list);
 	part_tree_init(&self->tree, comparator);
