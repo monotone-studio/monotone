@@ -621,6 +621,10 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 				return -1;
 			continue;
 		}
+
+		test_error(self, "line %d: unknown command: %s", query,
+		           self->current_line);
+		return -1;
 	}
 
 	if (self->current_test_started)
