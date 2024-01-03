@@ -331,162 +331,76 @@ error:
 	return -1;
 }
 
-#if 0
 static int
-test_suite_env_open(TestSuite* self, char* arg)
+test_suite_cmd_open(TestSuite* self, char* arg)
 {
-	char* name = test_suite_arg(&arg);
-	char* config = arg;
-
-	auto env = test_env_find(self, name);
-	if (env) {
-		test_error(self, "line %d: env_open: name redefined",
+	char* config = test_suite_arg(&arg);
+	if (self->env)
+	{
+		test_error(self, "line %d: open: env already openned",
 		           self->current_line);
 		return -1;
 	}
 
-	indigo_t* handle = indigo_init();
-	if (handle == NULL) {
-		test_error(self, "line %d: env_open: indigo_init() failed",
+	monotone_t* env = monotone_init(NULL, NULL);
+	if (env == NULL) {
+		test_error(self, "line %d: open: monotone_init() failed",
 		           self->current_line);
 		return -1;
 	}
-
-	char path[PATH_MAX];
-	snprintf(path, sizeof(path), "%s/%s", self->option_result_dir, name);
-
-	char prefmt_config[4096];
+	char prefmt_config[1024];
 	snprintf(prefmt_config, sizeof(prefmt_config),
-	         "{ "
-	         " \"log_enable\": true, "
-	         " \"log_to_stdout\": false, "
-	         " \"wal_sync_on_rotate\": false, "
-	         " \"wal_sync_on_write\": false, "
-	         " \"cluster_shards\": 1, "
-	         " \"cluster_hubs\": 1 "
-			 " %s"
-	         " %s%s "
-	         " %s "
-	         "} ",
-	          (self->current_test_options || config) ? "," : "",
-	          (self->current_test_options) ? self->current_test_options : "",
-	          (self->current_test_options && config) ? ", " : "",
-	          (config) ? config : "");
+	         "path '%s', %s%s %s",
+	         self->option_result_dir,
+	         (self->current_test_options) ? self->current_test_options : "",
+	         (self->current_test_options) ? "," : "",
+	         (config) ? config : "");
+
 	int rc;
-	rc = indigo_open(handle, path, prefmt_config);
-	if (rc == -1) {
-		test_error(self, "line %d: indigo_open() failed",
-		           self->current_line);
-		return -1;
-	}
-	test_env_new(self, name, handle);
-	return 0;
-}
-
-static int
-test_suite_env_close(TestSuite* self, char* arg)
-{
-	char* name = test_suite_arg(&arg);
-	auto  env = test_env_find(self, name);
-	if (! env) {
-		test_error(self, "line %d: env_open: env name not found",
-		           self->current_line);
-		return -1;
-	}
-	if (env->sessions) {
-		test_error(self, "line %d: env_open: has active sessions",
-		           self->current_line);
-		return -1;
-	}
-	test_env_free(self, env);
-	return 0;
-}
-
-static int
-test_suite_connect(TestSuite* self, char* arg)
-{
-	char* env_name = test_suite_arg(&arg);
-	char* name = test_suite_arg(&arg);
-	char* uri = test_suite_arg(&arg);
-
-	auto env = test_env_find(self, env_name);
-	if (! env) {
-		test_error(self, "line %d: env_connect: env name not found",
-		           self->current_line);
-		return -1;
-	}
-
-	auto handle = indigo_connect(env->handle, uri);
-	if (handle == NULL) {
-		test_error(self, "line %d: connect: indigo_connect(): failed",
-		           self->current_line);
-		return -1;
-	}
-
-	auto event = indigo_read(handle, -1, NULL);
-	switch (event) {
-	case INDIGO_CONNECT:
-		test_log(self, "%s", "connect: on_connect\n");
-		break;
-	case INDIGO_DISCONNECT:
-		test_log(self, "%s", "connect: on_disconnect\n");
-		break;
-	case INDIGO_ERROR:
-		test_log(self, "%s", "connect: on_error\n");
+	rc = monotone_open(env, prefmt_config);
+	if (rc == -1)
+	{
+		test_log(self, "line %d: monotone_open(): %s",
+		         self->current_line,
+		         monotone_error(self->env));
+		monotone_free(env);
 		return 0;
-	default:
-		assert(0);
 	}
-
-	auto session = test_session_new(self, env, name, handle);
-	if (session == NULL)
-		abort();
-	self->current_session = session;
+	self->env = env;
 	return 0;
 }
 
 static int
-test_suite_disconnect(TestSuite* self, char* arg)
+test_suite_cmd_close(TestSuite* self, char* arg)
 {
-	char* name = test_suite_arg(&arg);
-	auto session = test_session_find(self, name);
-	if (session == NULL) {
-		test_error(self, "line %d: disconnect: session %s is not found",
-		           self->current_line, name);
+	if (! self->env)
+	{
+		test_error(self, "line %d: close: env is not openned",
+		           self->current_line);
 		return -1;
 	}
-	test_session_free(self, session);
-	if (self->current_session == session)
-		self->current_session = NULL;
-	return 0;
-}
-
-static int
-test_suite_switch(TestSuite* self, char* arg)
-{
-	char* name = test_suite_arg(&arg);
-	auto session = test_session_find(self, name);
-	if (session == NULL) {
-		test_error(self, "line %d: switch: session %s is not found",
-		           self->current_line, name);
+	if (self->list_cursor_count > 0) {
+		test_error(self, "line %d: close: env has openned cursors left",
+		           self->current_line);
 		return -1;
 	}
-	self->current_session = session;
+	monotone_free(self->env);
+	self->env = NULL;
 	return 0;
 }
-#endif
 
 static int
-test_suite_debug(TestSuite* self, char* arg)
+test_suite_cmd_trap(TestSuite* self, char* arg)
 {
 	unused(self);
 	unused(arg);
-	// do nothing, left for breakpoint
+
+	kill(getpid(), SIGTRAP);
 	return 0;
 }
 
 static int
-test_suite_unit(TestSuite* self, char* arg)
+test_suite_cmd_unit(TestSuite* self, char* arg)
 {
 	char* name = test_suite_arg(&arg);
 	void* ptr = dlsym(self->dlhandle, name);
@@ -676,9 +590,9 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 
 		test_log(self, "%s", query);
 
-		// debug
-		if (strncmp(query, "debug", 5) == 0) {
-			rc = test_suite_debug(self, query + 5);
+		// trap
+		if (strncmp(query, "trap", 4) == 0) {
+			rc = test_suite_cmd_trap(self, query + 4);
 			if (rc == -1)
 				return -1;
 			continue;
@@ -686,60 +600,27 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 
 		// unit
 		if (strncmp(query, "unit", 4) == 0) {
-			rc = test_suite_unit(self, query + 4);
+			rc = test_suite_cmd_unit(self, query + 4);
 			if (rc == -1)
 				return -1;
 			continue;
 		}
 
-#if 0
-		// env_open
-		if (strncmp(query, "env_open", 8) == 0) {
-			rc = test_suite_env_open(self, query + 8);
+		// open
+		if (strncmp(query, "open", 4) == 0) {
+			rc = test_suite_cmd_open(self, query + 4);
 			if (rc == -1)
 				return -1;
 			continue;
 		}
 
-		// env_close
-		if (strncmp(query, "env_close", 9) == 0) {
-			rc = test_suite_env_close(self, query + 9);
+		// close
+		if (strncmp(query, "close", 5) == 0) {
+			rc = test_suite_cmd_close(self, query + 5);
 			if (rc == -1)
 				return -1;
 			continue;
 		}
-
-		// connect
-		if (strncmp(query, "connect", 7) == 0) {
-			rc = test_suite_connect(self, query + 7);
-			if (rc == -1)
-				return -1;
-			continue;
-		}
-
-		// disconnect
-		if (strncmp(query, "disconnect", 10) == 0) {
-			rc = test_suite_disconnect(self, query + 10);
-			if (rc == -1)
-				return -1;
-			continue;
-		}
-
-		// switch
-		if (strncmp(query, "switch", 6) == 0) {
-			rc = test_suite_switch(self, query + 6);
-			if (rc == -1)
-				return -1;
-			continue;
-		}
-
-		test_suite_chomp(query);
-
-		// query
-		rc = test_suite_query(self, query);
-		if (rc == -1)
-			return -1;
-#endif
 	}
 
 	if (self->current_test_started)
@@ -776,7 +657,6 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 		test_error(self, "%s", "test: cursors left open");
 		return -1;
 	}
-
 	if (self->list_cursor_count > 0)
 	{
 		test_error(self, "%s", "test: env left open");
