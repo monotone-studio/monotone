@@ -1,4 +1,4 @@
 
 # test: test task
-open
+open interval 10
 close

@@ -334,7 +334,7 @@ error:
 static int
 test_suite_cmd_open(TestSuite* self, char* arg)
 {
-	char* config = test_suite_arg(&arg);
+	char* config = arg;
 	if (self->env)
 	{
 		test_error(self, "line %d: open: env already openned",
@@ -360,7 +360,7 @@ test_suite_cmd_open(TestSuite* self, char* arg)
 	rc = monotone_open(env, prefmt_config);
 	if (rc == -1)
 	{
-		test_log(self, "line %d: monotone_open(): %s",
+		test_log(self, "line %d: monotone_open(): %s\n",
 		         self->current_line,
 		         monotone_error(self->env));
 		monotone_free(env);
@@ -375,9 +375,9 @@ test_suite_cmd_close(TestSuite* self, char* arg)
 {
 	if (! self->env)
 	{
-		test_error(self, "line %d: close: env is not openned",
-		           self->current_line);
-		return -1;
+		test_log(self, "line %d: close: env is not openned\n",
+		         self->current_line);
+		return 0;
 	}
 	if (self->list_cursor_count > 0) {
 		test_error(self, "line %d: close: env has openned cursors left",
