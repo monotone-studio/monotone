@@ -10,15 +10,22 @@
 #include <monotone_io.h>
 #include <monotone_engine.h>
 
-StatStorage*
-engine_stats(Engine* self, Stat* stat)
+StatsStorage*
+engine_stats(Engine* self, Stats* stats)
 {
 	mutex_lock(&self->lock);
 	guard(unlock, mutex_unlock, &self->lock);
 
+	// stat
+	memset(stats, 0, sizeof(*stats));
+	stats->lsn                = 0;
+	stats->rows_written       = atomic_u64_of(&self->rows_written);
+	stats->rows_written_bytes = atomic_u64_of(&self->rows_written_bytes);
+	stats->storages           = self->tier_mgr.storage_mgr->list_count;
+
 	// stat per storage
-	int  size = sizeof(StatStorage) * self->tier_mgr.storage_mgr->list_count;
-	auto storages = (StatStorage*)mn_malloc(size);
+	int  size = sizeof(StatsStorage) * stats->storages;
+	auto storages = (StatsStorage*)mn_malloc(size);
 	memset(storages, 0, size);
 
 	list_foreach(&self->tier_mgr.storage_mgr->list)
@@ -66,38 +73,6 @@ engine_stats(Engine* self, Stat* stat)
 		ref->size += size_cached;
 
 		current = part_tree_next(&self->tree, current);
-	}
-
-	// stat
-	memset(stat, 0, sizeof(*stat));
-	stat->storages           = self->tier_mgr.storage_mgr->list_count;
-	stat->lsn                = 0;
-	stat->rows_written       = atomic_u64_of(&self->rows_written);
-	stat->rows_written_bytes = atomic_u64_of(&self->rows_written_bytes);
-	stat->min                = UINT64_MAX;
-	stat->max                = 0;
-
-	list_foreach(&self->tier_mgr.storage_mgr->list)
-	{
-		auto storage = list_at(Storage, link);
-		auto ref = &storages[storage->order];
-
-		// partitions
-		stat->partitions += ref->partitions;
-		stat->pending    += ref->pending;
-		if (ref->min < stat->min)
-			stat->min = ref->min;
-		if (ref->max > stat->max)
-			stat->max = ref->max;
-
-		// rows
-		stat->rows += ref->rows;
-		stat->rows_cached += ref->rows_cached;
-
-		// size
-		stat->size += ref->size;
-		stat->size_uncompressed += ref->size_uncompressed;
-		stat->size_cached += ref->size_cached;
 	}
 
 	return storages;
