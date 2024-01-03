@@ -8,16 +8,13 @@
 #include <monotone_private.h>
 #include <time.h>
 
+static Instance     instance;
+
 static volatile int writer_run;
 static pthread_t    writer_id;
 static uint64_t     writer_seq;
-
 static volatile int report_run;
 static pthread_t    report_id;
-static Instance     instance;
-
-static atomic_u64   count_wr;
-static atomic_u64   count_wr_data;
 
 static void*
 writer_main(void* arg)
@@ -26,17 +23,15 @@ writer_main(void* arg)
 	(void)arg;
 
 	char data[100];
-	memset(data, 0, sizeof(data));
+	memset(data, 'x', sizeof(data));
 
 	Exception e;
 	if (try(&e))
 	{
 		while (writer_run)
 		{
-			instance_insert(&instance, writer_seq++, "", 0);
-			/*instance_insert(&instance, writer_seq++, data, sizeof(data) );*/
-			atomic_u64_add(&count_wr, 1);
-			atomic_u64_add(&count_wr_data, sizeof(uint64_t) /*+ sizeof(data)*/);
+			/*instance_insert(&instance, writer_seq++, "", 0);*/
+			instance_insert(&instance, writer_seq++, data, sizeof(data) );
 		}
 	}
 	if (catch(&e))
@@ -44,6 +39,9 @@ writer_main(void* arg)
 
 	return NULL;
 }
+
+static atomic_u64 last_written;
+static atomic_u64 last_written_bytes;
 
 static void
 report_print(void)
@@ -63,10 +61,18 @@ report_print(void)
 			printf("  max               %" PRIu64 "\n", storages[i].max);
 			printf("  rows              %" PRIu64 "\n", storages[i].rows);
 			printf("  rows_cached       %" PRIu64 "\n", storages[i].rows_cached);
-			printf("  size              %" PRIu64 "\n", storages[i].size);
-			printf("  size_uncompressed %" PRIu64 "\n", storages[i].size_uncompressed);
-			printf("  size_cached       %" PRIu64 "\n", storages[i].size_cached);
+			printf("  size              %" PRIu64 " Mb\n", storages[i].size / 1024 / 1024);
+			printf("  size_uncompressed %" PRIu64 " Mb\n", storages[i].size_uncompressed / 1024 / 1024);
+			printf("  size_cached       %" PRIu64 " Mb\n", storages[i].size_cached / 1024 / 1024);
 		}
+
+		printf("write: %d rps (%.2f Mbs) %d metrics/sec\n",
+		       (int)(stat.rows_written - last_written),
+		       (stat.rows_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
+		       (int)((stat.rows_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t)));
+
+		last_written = stat.rows_written;
+		last_written_bytes = stat.rows_written_bytes;
 
 		free(storages);
 	}
@@ -80,28 +86,10 @@ report_main(void* arg)
 	runtime_init(&instance.global);
 	(void)arg;
 
-	uint64_t last_wr = atomic_u64_of(&count_wr);
-	uint64_t last_wr_data = atomic_u64_of(&count_wr_data);
 	while (report_run)
 	{
 		sleep(1);
-
-		printf("\n");
-
 		report_print();
-
-		uint64_t cwr  = atomic_u64_of(&count_wr);
-		uint64_t cwrd = atomic_u64_of(&count_wr_data);
-
-		printf("\n");
-
-		printf("write: %d rps (%.2f Mbs) %d metrics/sec\n", (int)cwr - (int)last_wr,
-		       (cwrd - last_wr_data)  / 1024.0 / 1024.0,
-		       (int)((cwrd - last_wr_data - sizeof(uint64_t)) / sizeof(uint32_t)));
-
-		last_wr      = atomic_u64_of(&count_wr);
-		last_wr_data = atomic_u64_of(&count_wr_data);
-
 		printf("\n");
 		fflush(stdout);
 	}
@@ -133,7 +121,6 @@ scan(void)
 			break;
 
 		n++;
-
 		/*
 		auto row = engine_cursor_at(&cursor);
 		printf("%d ", (int)row->time);
@@ -160,8 +147,7 @@ cli(void)
 	"interval 3000000,"
 	"workers 3,"
 	"storage hot(compaction_wm 0, capacity 10, sync false, path './hot'),"
-	"storage cold(capacity 10, compression 1, sync, path './cold'),"
-	"storage drop(capacity 0)";
+	"storage cold(compression 1, sync, path './cold')";
 	instance_start(&instance, config);
 
 	for (;;)
