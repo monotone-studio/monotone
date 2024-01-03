@@ -350,7 +350,7 @@ test_suite_cmd_open(TestSuite* self, char* arg)
 	}
 	char prefmt_config[1024];
 	snprintf(prefmt_config, sizeof(prefmt_config),
-	         "path '%s', %s%s %s",
+	         "path '%s', workers 0, %s%s %s",
 	         self->option_result_dir,
 	         (self->current_test_options) ? self->current_test_options : "",
 	         (self->current_test_options) ? "," : "",
