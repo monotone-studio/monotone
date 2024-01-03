@@ -24,6 +24,13 @@ struct monotone
 	Instance instance;
 };
 
+struct monotone_cursor
+{
+	int          type;
+	EngineCursor cursor;
+	monotone_t*  env;
+};
+
 MONOTONE_API monotone_t*
 monotone_init(monotone_compare_t compare, void* compare_arg)
 {
@@ -57,10 +64,22 @@ monotone_free(void* ptr)
 	}
 	case MONOTONE_OBJ_CURSOR:
 	{
-		// todo
+		monotone_cursor_t* self = ptr;
+		monotone_t* env = self->env;
+		runtime_init(&env->instance.global);
+		Exception e;
+		if (try(&e)) {
+			engine_cursor_close(&self->cursor);
+		}
+		if (catch(&e))
+		{ }
 		break;
 	}
 	case MONOTONE_OBJ_FREED:
+		fprintf(stderr, "\n%s(%p): attempt to use freed object\n",
+		        source_function, ptr);
+		fflush(stderr);
+		abort();
 		break;
 	default:
 		fprintf(stderr, "\n%s(%p): unexpected object type\n",
@@ -84,6 +103,7 @@ monotone_error(monotone_t* self)
 MONOTONE_API int
 monotone_version(void)
 {
+	// todo
 	return 0;
 }
 
@@ -105,8 +125,199 @@ monotone_open(monotone_t* self, const char* options)
 	runtime_init(&self->instance.global);
 	Exception e;
 	if (try(&e))
+	{
 		instance_start(&self->instance, options);
-	if (catch(&e))
+	}
+	if (catch(&e)) {
 		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_checkpoint(monotone_t* self, uint64_t before)
+{
+	int rc = 0;
+	runtime_init(&self->instance.global);
+	Exception e;
+	if (try(&e))
+	{
+		(void)self;
+		(void)before;
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API monotone_stats_storage_t*
+monotone_stats(monotone_t* self, monotone_stats_t* stats)
+{
+	StatsStorage* stats_storage = NULL;
+	runtime_init(&self->instance.global);
+	Exception e;
+	if (try(&e)) {
+		stats_storage = engine_stats(&self->instance.engine, (Stats*)stats);
+	}
+	if (catch(&e))
+	{ }
+	return (monotone_stats_storage_t*)stats_storage;
+}
+
+MONOTONE_API monotone_cursor_t*
+monotone_cursor(monotone_t* self, monotone_row_t* row)
+{
+	runtime_init(&self->instance.global);
+
+	monotone_cursor_t* cursor;
+	cursor = malloc(sizeof(monotone_cursor_t));
+	if (unlikely(cursor == NULL))
+		return NULL;
+	cursor->type = MONOTONE_OBJ_CURSOR;
+	cursor->env  = self;
+	engine_cursor_init(&cursor->cursor);
+
+	Exception e;
+	if (try(&e))
+	{
+		if (row == NULL) {
+			engine_cursor_open(&cursor->cursor, &self->instance.engine, NULL);
+		} else
+		{
+			auto key = row_allocate(row->time, row->data, row->data_size);
+			guard(guard, row_free, key);
+			engine_cursor_open(&cursor->cursor, &self->instance.engine, key);
+		}
+	}
+	if (catch(&e)) {
+		monotone_free(cursor);
+		cursor = NULL;
+	}
+	return cursor;
+}
+
+MONOTONE_API int
+monotone_read(monotone_cursor_t* self, monotone_row_t* row)
+{
+	int rc;
+	Exception e;
+	if (try(&e))
+	{
+		auto at = engine_cursor_at(&self->cursor);
+		if (likely(at)) {
+			row->time      = at->time;
+			row->data_size = at->data_size;
+			row->data      = at->data;
+			rc = 1;
+		} else {
+			rc = 0;
+		}
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_next(monotone_cursor_t* self)
+{
+	int rc;
+	Exception e;
+	if (try(&e)) {
+		engine_cursor_next(&self->cursor);
+		rc = engine_cursor_has(&self->cursor);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_insert(monotone_t* self, monotone_row_t* row)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		instance_insert(&self->instance, row->time,
+		                row->data,
+		                row->data_size);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		(void)self;
+		(void)cursor;
+		(void)row;
+		// todo
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		(void)self;
+		(void)cursor;
+		// todo
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_delete_as(monotone_t* self, monotone_row_t* row)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		(void)self;
+		(void)row;
+		// todo
+
+		/*
+		instance_insert(&self->instance, row->time,
+		                row->data,
+		                row->data_size);
+						*/
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_drop(monotone_t* self, uint64_t min, uint64_t max)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		(void)self;
+		(void)min;
+		(void)max;
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
 	return rc;
 }
