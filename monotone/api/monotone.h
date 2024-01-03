@@ -78,9 +78,6 @@ monotone_now(monotone_t*);
 MONOTONE_API int
 monotone_open(monotone_t*, const char* options);
 
-MONOTONE_API int
-monotone_checkpoint(monotone_t*, uint64_t before);
-
 MONOTONE_API monotone_stats_storage_t*
 monotone_stats(monotone_t*, monotone_stats_t*);
 
@@ -107,7 +104,10 @@ monotone_delete(monotone_t*, monotone_cursor_t*);
 MONOTONE_API int
 monotone_delete_as(monotone_t*, monotone_row_t*);
 
-// partitions
+// data management
+MONOTONE_API int
+monotone_checkpoint(monotone_t*, uint64_t before);
+
 MONOTONE_API int
 monotone_drop(monotone_t*, uint64_t min, uint64_t max);
 

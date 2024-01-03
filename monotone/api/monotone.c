@@ -134,23 +134,6 @@ monotone_open(monotone_t* self, const char* options)
 	return rc;
 }
 
-MONOTONE_API int
-monotone_checkpoint(monotone_t* self, uint64_t before)
-{
-	int rc = 0;
-	runtime_init(&self->instance.global);
-	Exception e;
-	if (try(&e))
-	{
-		(void)self;
-		(void)before;
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
 MONOTONE_API monotone_stats_storage_t*
 monotone_stats(monotone_t* self, monotone_stats_t* stats)
 {
@@ -292,6 +275,24 @@ monotone_delete_as(monotone_t* self, monotone_row_t* row)
 	if (try(&e)) {
 		(void)self;
 		(void)row;
+		// todo
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_checkpoint(monotone_t* self, uint64_t before)
+{
+	int rc = 0;
+	runtime_init(&self->instance.global);
+	Exception e;
+	if (try(&e))
+	{
+		(void)self;
+		(void)before;
 		// todo
 	}
 	if (catch(&e)) {
