@@ -183,6 +183,10 @@ instance_config(Instance* self, const char* options)
 
 	for (;;)
 	{
+		// eof
+		if (lex_if(&lex, TEOF, NULL))
+			break;
+
 		// key [= value]
 		Token name;
 		if (! lex_if(&lex, TNAME, &name))
