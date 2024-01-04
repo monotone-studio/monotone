@@ -482,6 +482,56 @@ test_suite_cmd_stats(TestSuite* self, char* arg)
 }
 
 static int
+test_suite_cmd_insert(TestSuite* self, char* arg)
+{
+	char* arg_time = test_suite_arg(&arg);
+	char* arg_value = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	monotone_row_t row =
+	{
+		.time = strtoull(arg_time, NULL, 10),
+		.data = arg_value,
+		.data_size = arg_value ? strlen(arg_value) : 0
+	};
+	int rc = monotone_insert(self->env, &row);
+	if (rc == -1)
+		test_log_error(self);
+
+	return 0;
+}
+
+static int
+test_suite_cmd_delete(TestSuite* self, char* arg)
+{
+	char* arg_time = test_suite_arg(&arg);
+	char* arg_value = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	monotone_row_t row =
+	{
+		.time = strtoull(arg_time, NULL, 10),
+		.data = arg_value,
+		.data_size = arg_value ? strlen(arg_value) : 0
+	};
+	int rc = monotone_delete(self->env, &row);
+	if (rc == -1)
+		test_log_error(self);
+
+	return 0;
+}
+
+static int
 test_suite_test_check(TestSuite* self)
 {
 	// new test
@@ -664,7 +714,22 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 		}
 
 		// insert
+		if (strncmp(query, "insert", 6) == 0) {
+			rc = test_suite_cmd_insert(self, query + 6);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
 		// delete
+		if (strncmp(query, "delete", 6) == 0) {
+			rc = test_suite_cmd_delete(self, query + 6);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
+
 		// delete_by
 		// update_by
 		//
