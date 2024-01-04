@@ -31,7 +31,7 @@ writer_main(void* arg)
 		while (writer_run)
 		{
 			/*engine_insert(&instance.engine, writer_seq++, "", 0);*/
-			engine_insert(&instance.engine, writer_seq++, data, sizeof(data) );
+			engine_write(&instance.engine, false, writer_seq++, data, sizeof(data) );
 		}
 	}
 	if (catch(&e))
@@ -55,8 +55,8 @@ report_print(void)
 		for (int i = 0; i < stats.storages; i++)
 		{
 			printf("%s\n", storages[i].name);
-			printf("  partitions:       %" PRIu64 "\n", storages[i].partitions);
-			printf("  pending:          %" PRIu64 "\n", storages[i].pending);
+			printf("  partitions        %" PRIu64 "\n", storages[i].partitions);
+			printf("  pending           %" PRIu64 "\n", storages[i].pending);
 			printf("  min               %" PRIu64 "\n", storages[i].min);
 			printf("  max               %" PRIu64 "\n", storages[i].max);
 			printf("  rows              %" PRIu64 "\n", storages[i].rows);
