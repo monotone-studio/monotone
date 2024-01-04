@@ -23,4 +23,3 @@ void instance_init(Instance*);
 void instance_free(Instance*);
 void instance_start(Instance*, const char*);
 void instance_stop(Instance*);
-void instance_insert(Instance*, uint64_t, void*, int);
