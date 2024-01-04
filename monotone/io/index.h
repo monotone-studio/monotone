@@ -8,7 +8,6 @@
 
 typedef struct IndexRegion IndexRegion;
 typedef struct Index       Index;
-typedef struct IndexEof    IndexEof;
 
 #define INDEX_MAGIC 0x20849615
 
@@ -21,7 +20,7 @@ struct IndexRegion
 	uint32_t size_key_max;
 	uint32_t count;
 	uint32_t crc;
-	uint32_t reserve[4];
+	uint32_t reserved[4];
 } packed;
 
 struct Index
@@ -34,16 +33,9 @@ struct Index
 	uint64_t count_total;
 	uint64_t lsn_max;
 	uint8_t  compression;
-	uint32_t reserve[4];
+	uint32_t reserved[4];
 	// u32 offset[]
 	// data
-	// index_eof
-} packed;
-
-struct IndexEof
-{
-	uint32_t magic;
-	uint32_t size;
 } packed;
 
 static inline IndexRegion*
