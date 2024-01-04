@@ -102,10 +102,7 @@ compaction_execute(Compaction* self, ServiceReq* req, Tier* tier)
 	memtable_free(memtable);
 
 	// create partition file and sync
-	part_create(part);
-
-	if (storage->sync)
-		part_sync(part);
+	part_create(part, storage->sync);
 
 	if (! storage->memory)
 		part_unload(part);
@@ -115,9 +112,9 @@ compaction_execute(Compaction* self, ServiceReq* req, Tier* tier)
 	part_free(origin);
 
 	// rename new partition
-	part_complete(part);
+	part_rename(part);
 
-	// make new partition available for service
+	// make new partition available for the service
 	mutex_lock(&engine->lock);
 	part->service = false;
 	mutex_unlock(&engine->lock);
