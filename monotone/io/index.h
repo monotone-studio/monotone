@@ -9,8 +9,6 @@
 typedef struct IndexRegion IndexRegion;
 typedef struct Index       Index;
 
-#define INDEX_MAGIC 0x20849615
-
 struct IndexRegion
 {
 	uint32_t offset;
