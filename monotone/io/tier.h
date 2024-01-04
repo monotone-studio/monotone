@@ -47,6 +47,18 @@ tier_remove(Tier* self, Part* part)
 }
 
 hot static inline Part*
+tier_find(Tier* self, uint64_t min)
+{
+	list_foreach(&self->list)
+	{
+		auto part = list_at(Part, link_tier);
+		if (part->min == min)
+			return part;
+	}
+	return NULL;
+}
+
+hot static inline Part*
 tier_min(Tier* self)
 {
 	Part* min = NULL;
