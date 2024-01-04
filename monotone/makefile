@@ -28,6 +28,7 @@ OBJECTS        = \
                  io/merger.o \
                  engine/engine.o \
                  engine/engine_recover.o \
+                 engine/write.o \
                  engine/compaction.o \
                  engine/compaction_mgr.o \
                  engine/stats.o \
