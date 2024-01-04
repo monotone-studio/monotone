@@ -81,16 +81,6 @@ monotone_open(monotone_t*, const char* options);
 MONOTONE_API monotone_stats_storage_t*
 monotone_stats(monotone_t*, monotone_stats_t*);
 
-// cursor
-MONOTONE_API monotone_cursor_t*
-monotone_cursor(monotone_t*, monotone_row_t*);
-
-MONOTONE_API int
-monotone_read(monotone_cursor_t*, monotone_row_t*);
-
-MONOTONE_API int
-monotone_next(monotone_cursor_t*);
-
 // insert, update, delete
 MONOTONE_API int
 monotone_insert(monotone_t*, monotone_row_t*);
@@ -103,6 +93,16 @@ monotone_delete(monotone_t*, monotone_cursor_t*);
 
 MONOTONE_API int
 monotone_delete_as(monotone_t*, monotone_row_t*);
+
+// cursor
+MONOTONE_API monotone_cursor_t*
+monotone_cursor(monotone_t*, monotone_row_t*);
+
+MONOTONE_API int
+monotone_read(monotone_cursor_t*, monotone_row_t*);
+
+MONOTONE_API int
+monotone_next(monotone_cursor_t*);
 
 // data management
 MONOTONE_API int

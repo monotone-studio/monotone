@@ -148,6 +148,69 @@ monotone_stats(monotone_t* self, monotone_stats_t* stats)
 	return (monotone_stats_storage_t*)stats_storage;
 }
 
+hot MONOTONE_API int
+monotone_insert(monotone_t* self, monotone_row_t* row)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		engine_write(&self->instance.engine, false, row->time,
+		             row->data,
+		             row->data_size);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+hot MONOTONE_API int
+monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		engine_write_by(&self->instance.engine, &cursor->cursor,
+		                false, row->time,
+		                row->data, row->data_size);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+hot MONOTONE_API int
+monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		engine_write_by(&self->instance.engine, &cursor->cursor,
+		                true, 0, NULL, 0);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+hot MONOTONE_API int
+monotone_delete_as(monotone_t* self, monotone_row_t* row)
+{
+	int rc = 0;
+	Exception e;
+	if (try(&e)) {
+		engine_write(&self->instance.engine, true, row->time,
+		             row->data,
+		             row->data_size);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
 hot MONOTONE_API monotone_cursor_t*
 monotone_cursor(monotone_t* self, monotone_row_t* row)
 {
@@ -211,71 +274,6 @@ monotone_next(monotone_cursor_t* self)
 	if (try(&e)) {
 		engine_cursor_next(&self->cursor);
 		rc = engine_cursor_has(&self->cursor);
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-hot MONOTONE_API int
-monotone_insert(monotone_t* self, monotone_row_t* row)
-{
-	int rc = 0;
-	Exception e;
-	if (try(&e)) {
-		instance_insert(&self->instance, row->time,
-		                row->data,
-		                row->data_size);
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-hot MONOTONE_API int
-monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
-{
-	int rc = 0;
-	Exception e;
-	if (try(&e)) {
-		(void)self;
-		(void)cursor;
-		(void)row;
-		// todo
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-hot MONOTONE_API int
-monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
-{
-	int rc = 0;
-	Exception e;
-	if (try(&e)) {
-		(void)self;
-		(void)cursor;
-		// todo
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-hot MONOTONE_API int
-monotone_delete_as(monotone_t* self, monotone_row_t* row)
-{
-	int rc = 0;
-	Exception e;
-	if (try(&e)) {
-		(void)self;
-		(void)row;
-		// todo
 	}
 	if (catch(&e)) {
 		rc = -1;
