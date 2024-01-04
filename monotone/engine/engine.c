@@ -86,7 +86,9 @@ engine_create(Engine* self, uint64_t time)
 	auto part = part_allocate(self->comparator, NULL,
 	                          time,
 	                          time + config()->interval);
+	list_append(&self->list, &part->link);
 	self->list_count++;
+
 	part_tree_add(&self->tree, part);
 
 	// match tier

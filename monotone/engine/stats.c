@@ -33,7 +33,7 @@ engine_stats(Engine* self, Stats* stats)
 		auto storage = list_at(Storage, link);
 		auto ref = &storages[storage->order];
 		if (storage->capacity > 0)
-			ref->min  = UINT64_MAX;
+			ref->min = UINT64_MAX;
 		ref->max  = 0;
 		ref->name = str_of(&storage->name);
 	}
