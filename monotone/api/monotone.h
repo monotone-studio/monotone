@@ -86,13 +86,13 @@ MONOTONE_API int
 monotone_insert(monotone_t*, monotone_row_t*);
 
 MONOTONE_API int
-monotone_update(monotone_t*, monotone_cursor_t*, monotone_row_t*);
+monotone_delete(monotone_t*, monotone_row_t*);
 
 MONOTONE_API int
-monotone_delete(monotone_t*, monotone_cursor_t*);
+monotone_delete_by(monotone_t*, monotone_cursor_t*);
 
 MONOTONE_API int
-monotone_delete_as(monotone_t*, monotone_row_t*);
+monotone_update_by(monotone_t*, monotone_cursor_t*, monotone_row_t*);
 
 // cursor
 MONOTONE_API monotone_cursor_t*

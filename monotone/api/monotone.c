@@ -165,14 +165,14 @@ monotone_insert(monotone_t* self, monotone_row_t* row)
 }
 
 hot MONOTONE_API int
-monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
+monotone_delete(monotone_t* self, monotone_row_t* row)
 {
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
-		engine_write_by(&self->instance.engine, &cursor->cursor,
-		                false, row->time,
-		                row->data, row->data_size);
+		engine_write(&self->instance.engine, true, row->time,
+		             row->data,
+		             row->data_size);
 	}
 	if (catch(&e)) {
 		rc = -1;
@@ -181,7 +181,7 @@ monotone_update(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row
 }
 
 hot MONOTONE_API int
-monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
+monotone_delete_by(monotone_t* self, monotone_cursor_t* cursor)
 {
 	int rc = 0;
 	Exception e;
@@ -196,14 +196,14 @@ monotone_delete(monotone_t* self, monotone_cursor_t* cursor)
 }
 
 hot MONOTONE_API int
-monotone_delete_as(monotone_t* self, monotone_row_t* row)
+monotone_update_by(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
 {
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
-		engine_write(&self->instance.engine, true, row->time,
-		             row->data,
-		             row->data_size);
+		engine_write_by(&self->instance.engine, &cursor->cursor,
+		                false, row->time,
+		                row->data, row->data_size);
 	}
 	if (catch(&e)) {
 		rc = -1;
