@@ -30,8 +30,8 @@ writer_main(void* arg)
 	{
 		while (writer_run)
 		{
-			/*instance_insert(&instance, writer_seq++, "", 0);*/
-			instance_insert(&instance, writer_seq++, data, sizeof(data) );
+			/*engine_insert(&instance.engine, writer_seq++, "", 0);*/
+			engine_insert(&instance.engine, writer_seq++, data, sizeof(data) );
 		}
 	}
 	if (catch(&e))
@@ -49,10 +49,10 @@ report_print(void)
 	Exception e;
 	if (try(&e))
 	{
-		Stat stat;
-		auto storages = engine_stats(&instance.engine, &stat);
+		Stats stats;
+		auto storages = engine_stats(&instance.engine, &stats);
 
-		for (int i = 0; i < stat.storages; i++)
+		for (int i = 0; i < stats.storages; i++)
 		{
 			printf("%s\n", storages[i].name);
 			printf("  partitions:       %" PRIu64 "\n", storages[i].partitions);
@@ -67,12 +67,12 @@ report_print(void)
 		}
 
 		printf("write: %d rps (%.2f Mbs) %d metrics/sec\n",
-		       (int)(stat.rows_written - last_written),
-		       (stat.rows_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
-		       (int)((stat.rows_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t)));
+		       (int)(stats.rows_written - last_written),
+		       (stats.rows_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
+		       (int)((stats.rows_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t)));
 
-		last_written = stat.rows_written;
-		last_written_bytes = stat.rows_written_bytes;
+		last_written = stats.rows_written;
+		last_written_bytes = stats.rows_written_bytes;
 
 		free(storages);
 	}
