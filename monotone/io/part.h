@@ -11,6 +11,7 @@ typedef struct Part Part;
 struct Part
 {
 	bool        service;
+	int         state;
 	uint64_t    min;
 	uint64_t    max;
 	Memtable*   memtable;

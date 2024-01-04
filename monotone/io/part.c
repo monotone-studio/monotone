@@ -16,9 +16,10 @@ part_allocate(Comparator* comparator,
               uint64_t    max)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
+	self->service    = false;
+	self->state      = 0;
 	self->min        = min;
 	self->max        = max;
-	self->service    = false;
 	self->index      = NULL;
 	self->storage    = storage;
 	self->comparator = comparator;
@@ -53,21 +54,17 @@ part_free(Part* self)
 }
 
 static inline void
-part_path(char* path, Storage* storage, uint64_t min, uint64_t max, bool index)
+part_path(char* path, Storage* storage, uint64_t min, bool index)
 {
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64 "%s",
-	         str_of(&storage->path),
-	         min, max,
-	         index ? ".index" : "");
+	snprintf(path, PATH_MAX, "%s/%020" PRIu64 "%s", str_of(&storage->path),
+	         min, index ? ".index" : "");
 }
 
 static inline void
-part_path_incomplete(char* path, Storage* storage, uint64_t min, uint64_t max, bool index)
+part_path_incomplete(char* path, Storage* storage, uint64_t min, bool index)
 {
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64 "%s.incomplete",
-	         str_of(&storage->path),
-	         min, max,
-	         index ? ".index" : "");
+	snprintf(path, PATH_MAX, "%s/%020" PRIu64 "%s.incomplete", str_of(&storage->path),
+	         min, index ? ".index" : "");
 }
 
 void
@@ -75,11 +72,11 @@ part_open(Part* self, bool check_crc)
 {
 	// open data file
 	char path[PATH_MAX];
-	part_path(path, self->storage, self->min, self->max, false);
+	part_path(path, self->storage, self->min, false);
 	file_open(&self->file, path);
 
 	// open index file
-	part_path(path, self->storage, self->min, self->max, true);
+	part_path(path, self->storage, self->min, true);
 
 	File file;
 	file_init(&file);
@@ -123,12 +120,12 @@ part_create(Part* self, bool sync)
 
 	// create min.max.incomplete file
 	char path[PATH_MAX];
-	part_path_incomplete(path, self->storage, self->min, self->max, false);
+	part_path_incomplete(path, self->storage, self->min, false);
 	file_create(&self->file, path);
 	file_write(&self->file, self->mmap.start, blob_size(&self->mmap));
 
 	// create min.max.index.incomplete file
-	part_path_incomplete(path, self->storage, self->min, self->max, true);
+	part_path_incomplete(path, self->storage, self->min, true);
 
 	File file;
 	file_init(&file);
@@ -150,17 +147,17 @@ part_delete(Part* self, bool complete)
 	// delete min.max.index file
 	char path[PATH_MAX];
 	if (complete)
-		part_path(path, self->storage, self->min, self->max, true);
+		part_path(path, self->storage, self->min, true);
 	else
-		part_path_incomplete(path, self->storage, self->min, self->max, true);
+		part_path_incomplete(path, self->storage, self->min, true);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 
 	// delete min.max file
 	if (complete)
-		part_path(path, self->storage, self->min, self->max, false);
+		part_path(path, self->storage, self->min, false);
 	else
-		part_path_incomplete(path, self->storage, self->min, self->max, false);
+		part_path_incomplete(path, self->storage, self->min, false);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
@@ -171,13 +168,13 @@ part_rename(Part* self)
 	// rename to min.max.index file
 	char path[PATH_MAX];
 	char path_to[PATH_MAX];
-	part_path_incomplete(path, self->storage, self->min, self->max, true);
-	part_path(path_to, self->storage, self->min, self->max, true);
+	part_path_incomplete(path, self->storage, self->min, true);
+	part_path(path_to, self->storage, self->min, true);
 	fs_rename(path, "%s", path_to);
 
 	// rename to min.max file
-	part_path_incomplete(path, self->storage, self->min, self->max, false);
-	part_path(path_to, self->storage, self->min, self->max, false);
+	part_path_incomplete(path, self->storage, self->min, false);
+	part_path(path_to, self->storage, self->min, false);
 	fs_rename(path, "%s", path_to);
 }
 
