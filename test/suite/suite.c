@@ -43,6 +43,21 @@ test_log(TestSuite* self, const char* fmt, ...)
 	fflush(self->current_test_result);
 }
 
+static inline void
+test_log_error(TestSuite* self)
+{
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return;
+	}
+	auto error = monotone_error(self->env);
+	if (error)
+		test_log(self, "error: %s\n", error);
+	else
+		test_log(self, "(null)\n");
+}
+
 static Test*
 test_new(TestSuite*  self, TestGroup* group,
          const char* name,
@@ -332,6 +347,38 @@ error:
 }
 
 static int
+test_suite_cmd_trap(TestSuite* self, char* arg)
+{
+	unused(self);
+	unused(arg);
+
+	kill(getpid(), SIGTRAP);
+	return 0;
+}
+
+static int
+test_suite_cmd_unit(TestSuite* self, char* arg)
+{
+	char* name = test_suite_arg(&arg);
+	void* ptr = dlsym(self->dlhandle, name);
+	if (ptr == NULL)
+	{
+		test_error(self, "unit: test '%s' function not found\n", name);
+		return -1;
+	}
+	void (*test_function)(void) = ptr;
+	test_function();
+	return 0;
+}
+
+static int
+test_suite_cmd_version(TestSuite* self, char* arg)
+{
+	test_log(self, "%d\n", monotone_version());
+	return 0;
+}
+
+static int
 test_suite_cmd_open(TestSuite* self, char* arg)
 {
 	char* config = arg;
@@ -387,79 +434,52 @@ test_suite_cmd_close(TestSuite* self, char* arg)
 }
 
 static int
-test_suite_cmd_trap(TestSuite* self, char* arg)
+test_suite_cmd_error(TestSuite* self, char* arg)
 {
-	unused(self);
-	unused(arg);
-
-	kill(getpid(), SIGTRAP);
+	test_log_error(self);
 	return 0;
 }
 
 static int
-test_suite_cmd_unit(TestSuite* self, char* arg)
+test_suite_cmd_stats(TestSuite* self, char* arg)
 {
-	char* name = test_suite_arg(&arg);
-	void* ptr = dlsym(self->dlhandle, name);
-	if (ptr == NULL)
+	if (! self->env)
 	{
-		test_error(self, "unit: test '%s' function not found\n", name);
-		return -1;
+		test_log(self, "error: env is not openned\n");
+		return 0;
 	}
-	void (*test_function)(void) = ptr;
-	test_function();
+
+	monotone_stats_t stats;
+	auto storages = monotone_stats(self->env, &stats);
+	if (unlikely(storages == NULL))
+	{
+		test_log_error(self);
+		return 0;
+	}
+
+	test_log(self, "stats\n");
+	test_log(self, "  lsn                %" PRIu64 "\n", stats.lsn);
+	test_log(self, "  rows_written       %" PRIu64 "\n", stats.rows_written);
+	test_log(self, "  rows_written_bytes %" PRIu64 "\n", stats.rows_written_bytes);
+	test_log(self, "  storages           %" PRIu32 "\n", stats.storages);
+
+	for (int i = 0; i < stats.storages; i++)
+	{
+		test_log(self, "%s\n", storages[i].name);
+		test_log(self, "  partitions         %" PRIu64 "\n", storages[i].partitions);
+		test_log(self, "  pending            %" PRIu64 "\n", storages[i].pending);
+		test_log(self, "  min                %" PRIu64 "\n", storages[i].min);
+		test_log(self, "  max                %" PRIu64 "\n", storages[i].max);
+		test_log(self, "  rows               %" PRIu64 "\n", storages[i].rows);
+		test_log(self, "  rows_cached        %" PRIu64 "\n", storages[i].rows_cached);
+		test_log(self, "  size               %" PRIu64 "\n", storages[i].size);
+		test_log(self, "  size_uncompressed  %" PRIu64 "\n", storages[i].size_uncompressed);
+		test_log(self, "  size_cached        %" PRIu64 "\n", storages[i].size_cached);
+	}
+
+	free(storages);
 	return 0;
 }
-
-#if 0
-static int
-test_suite_query(TestSuite* self, const char* query)
-{
-	if (self->current_session == NULL) {
-		test_error(self, "%d: query: session is not defined",
-		           self->current_line);
-		return -1;
-	}
-
-	int rc;
-	rc = indigo_execute(self->current_session->handle, query, 0, NULL);
-	if (rc == -1) {
-		test_error(self, "%d: indigo_execute(%s, %s) failed",
-		           self->current_line,
-		           self->current_session->name,
-		           query);
-		return -1;
-	}
-
-	int ready = 0;
-	while (! ready)
-	{
-		indigo_object_t* result = NULL;
-		auto event = indigo_read(self->current_session->handle, -1, &result);
-		switch (event) {
-		case INDIGO_DISCONNECT:
-			test_log(self, "%s", "query: on_disconnect\n");
-			return 0;
-		case INDIGO_ERROR:
-			test_log(self, "%s", "query: on_error\n");
-			break;
-		case INDIGO_OBJECT:
-			break;
-		case INDIGO_OK:
-			ready = 1;
-			continue;
-		default:
-			assert(0);
-			break;
-		}
-		test_log_object(self, result, INT_MAX, 0);
-		test_log(self, "\n");
-		indigo_free(result);
-	}
-
-	return 0;
-}
-#endif
 
 static int
 test_suite_test_check(TestSuite* self)
@@ -603,6 +623,14 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 			continue;
 		}
 
+		// version
+		if (strncmp(query, "version", 7) == 0) {
+			rc = test_suite_cmd_version(self, query + 7);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
 		// open
 		if (strncmp(query, "open", 4) == 0) {
 			rc = test_suite_cmd_open(self, query + 4);
@@ -618,6 +646,35 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 				return -1;
 			continue;
 		}
+
+		// error
+		if (strncmp(query, "error", 5) == 0) {
+			rc = test_suite_cmd_error(self, query + 5);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
+		// stats
+		if (strncmp(query, "stats", 5) == 0) {
+			rc = test_suite_cmd_stats(self, query + 5);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
+		// insert
+		// delete
+		// delete_by
+		// update_by
+		//
+		// cursor
+		// read
+		// next
+		// cursor_close
+		//
+		// checkpoint
+		// drop
 
 		test_error(self, "line %d: unknown command: %s", query,
 		           self->current_line);
