@@ -81,7 +81,7 @@ part_open(Part* self, bool check_crc)
 	File file;
 	file_init(&file);
 	guard(guard, file_close, &file);
-	file_open(&self->file, path);
+	file_open(&file, path);
 
 	if (file.size < sizeof(Index))
 		error("partition: index file '%s' has incorrect size",
@@ -108,7 +108,7 @@ part_open(Part* self, bool check_crc)
 	}
 
 	// check data file size
-	if (file.size != self->index->size_total)
+	if (self->file.size != self->index->size_total)
 		error("partition: data file '%s' size mismatch",
 		      str_of(&self->file.path));
 }
@@ -170,12 +170,14 @@ part_rename(Part* self)
 	char path_to[PATH_MAX];
 	part_path_incomplete(path, self->storage, self->min, true);
 	part_path(path_to, self->storage, self->min, true);
-	fs_rename(path, "%s", path_to);
+	if (fs_exists("%s", path))
+		fs_rename(path, "%s", path_to);
 
 	// rename to min.max file
 	part_path_incomplete(path, self->storage, self->min, false);
 	part_path(path_to, self->storage, self->min, false);
-	fs_rename(path, "%s", path_to);
+	if (fs_exists("%s", path))
+		fs_rename(path, "%s", path_to);
 }
 
 void
