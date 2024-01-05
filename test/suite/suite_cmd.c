@@ -544,6 +544,54 @@ test_suite_cmd_drop(TestSuite* self, char* arg)
 	return 0;
 }
 
+static int
+test_suite_cmd_files(TestSuite* self, char* arg)
+{
+	(void)self;
+	(void)arg;
+	return 0;
+}
+
+static int
+test_suite_cmd_partition(TestSuite* self, char* arg)
+{
+	(void)self;
+	(void)arg;
+	return 0;
+}
+
+static int
+test_suite_cmd_memtable(TestSuite* self, char* arg)
+{
+	(void)self;
+	(void)arg;
+	return 0;
+}
+
+static int
+test_suite_cmd_memtable_rotate(TestSuite* self, char* arg)
+{
+	(void)self;
+	(void)arg;
+	return 0;
+}
+
+static int
+test_suite_cmd_region(TestSuite* self, char* arg)
+{
+	(void)self;
+	(void)arg;
+	return 0;
+}
+
+static int
+test_suite_cmd_compact(TestSuite* self, char* arg)
+{
+	(void)self;
+	(void)arg;
+	return 0;
+}
+
 static struct
 {
 	const char* name;
@@ -551,24 +599,35 @@ static struct
 	int        (*function)(TestSuite*, char*);
 } cmds[] =
 {
-	{ "trap",         4,  test_suite_cmd_trap          },
-	{ "unit",         4,  test_suite_cmd_unit          },
-	{ "version",      7,  test_suite_cmd_version       },
-	{ "open",         4,  test_suite_cmd_open          },
-	{ "close",        5,  test_suite_cmd_close         },
-	{ "error",        5,  test_suite_cmd_error         },
-	{ "stats",        5,  test_suite_cmd_stats         },
-	{ "insert",       6,  test_suite_cmd_insert        },
-	{ "delete",       6,  test_suite_cmd_delete        },
-	{ "delete_by",    9,  test_suite_cmd_delete_by     },
-	{ "update_by",    9,  test_suite_cmd_update_by     },
-	{ "cursor_close", 12, test_suite_cmd_cursor_close  },
-	{ "cursor",       6,  test_suite_cmd_cursor        },
-	{ "read",         4,  test_suite_cmd_read          },
-	{ "next",         4,  test_suite_cmd_next          },
-	{ "checkpoint",   10, test_suite_cmd_checkpoint    },
-	{ "drop",         4,  test_suite_cmd_drop          },
-	{  NULL,          0,  NULL                         }
+	// test suite specific
+	{ "trap",            4,  test_suite_cmd_trap            },
+	{ "unit",            4,  test_suite_cmd_unit            },
+
+	// api
+	{ "version",         7,  test_suite_cmd_version         },
+	{ "open",            4,  test_suite_cmd_open            },
+	{ "close",           5,  test_suite_cmd_close           },
+	{ "error",           5,  test_suite_cmd_error           },
+	{ "stats",           5,  test_suite_cmd_stats           },
+	{ "insert",          6,  test_suite_cmd_insert          },
+	{ "delete",          6,  test_suite_cmd_delete          },
+	{ "delete_by",       9,  test_suite_cmd_delete_by       },
+	{ "update_by",       9,  test_suite_cmd_update_by       },
+	{ "cursor_close",    12, test_suite_cmd_cursor_close    },
+	{ "cursor",          6,  test_suite_cmd_cursor          },
+	{ "read",            4,  test_suite_cmd_read            },
+	{ "next",            4,  test_suite_cmd_next            },
+	{ "checkpoint",      10, test_suite_cmd_checkpoint      },
+	{ "drop",            4,  test_suite_cmd_drop            },
+
+	// internal
+	{ "files",           5,  test_suite_cmd_files           },
+	{ "partition",       9,  test_suite_cmd_partition       },
+	{ "memtable",        8,  test_suite_cmd_memtable        },
+	{ "memtable_rotate", 15, test_suite_cmd_memtable_rotate },
+	{ "region",          6,  test_suite_cmd_region          },
+	{ "compact",         7,  test_suite_cmd_compact         },
+	{  NULL,             0,  NULL                           }
 };
 
 int
