@@ -10,26 +10,8 @@
 #include <monotone_io.h>
 #include <monotone_engine.h>
 #include <monotone_instance.h>
+#include <monotone_api.h>
 #include <monotone.h>
-
-enum {
-	MONOTONE_OBJ        = 0x3fb15941,
-	MONOTONE_OBJ_CURSOR = 0x143BAF02,
-	MONOTONE_OBJ_FREED  = 0x28101019
-};
-
-struct monotone
-{
-	int      type;
-	Instance instance;
-};
-
-struct monotone_cursor
-{
-	int          type;
-	EngineCursor cursor;
-	monotone_t*  env;
-};
 
 MONOTONE_API monotone_t*
 monotone_init(monotone_compare_t compare, void* compare_arg)
