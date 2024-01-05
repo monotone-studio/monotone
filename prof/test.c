@@ -114,25 +114,21 @@ gettime(void)
 static void
 scan(void)
 {
-#if 0
+	auto cursor = monotone_cursor(env, NULL);
+
 	uint64_t start = gettime();
 
-	EngineCursor cursor;
-	engine_cursor_init(&cursor);
-	engine_cursor_open(&cursor, &instance.engine, NULL);
-
 	uint64_t n = 0;
-	for (;;)
+	monotone_row_t row;
+	while (monotone_read(cursor, &row))
 	{
-		if (! engine_cursor_has(&cursor))
-			break;
-
 		n++;
-		/*
-		auto row = engine_cursor_at(&cursor);
-		printf("%d ", (int)row->time);
-		*/
-		engine_cursor_next(&cursor);
+		int rc = monotone_next(cursor);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(env));
+			break;
+		}
 	}
 
 	// rps
@@ -141,11 +137,8 @@ scan(void)
 	printf("%f rps\n", rps);
 
 	printf("rows: %d\n", (int)n);
-	printf("---\n");
-	report_print();
 
-	engine_cursor_close(&cursor);
-#endif
+	monotone_free(cursor);
 }
 
 static void
