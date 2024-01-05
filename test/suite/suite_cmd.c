@@ -576,8 +576,14 @@ test_suite_cmd_files(TestSuite* self, char* arg)
 static int
 test_suite_cmd_partitions(TestSuite* self, char* arg)
 {
-	(void)self;
-	(void)arg;
+	auto engine = &self->env->instance.engine;
+	list_foreach(&engine->list)
+	{
+		auto part = list_at(Part, link);
+		test_log(self, "[%" PRIu64 ", %" PRIu64 "] tier: %d\n",
+		         part->min, part->max,
+		         part->storage->order);
+	}
 	return 0;
 }
 
@@ -639,8 +645,8 @@ static struct
 	{ "error",           5,  test_suite_cmd_error           },
 	{ "stats",           5,  test_suite_cmd_stats           },
 	{ "insert",          6,  test_suite_cmd_insert          },
-	{ "delete",          6,  test_suite_cmd_delete          },
 	{ "delete_by",       9,  test_suite_cmd_delete_by       },
+	{ "delete",          6,  test_suite_cmd_delete          },
 	{ "update_by",       9,  test_suite_cmd_update_by       },
 	{ "cursor_close",    12, test_suite_cmd_cursor_close    },
 	{ "cursor",          6,  test_suite_cmd_cursor          },
@@ -651,10 +657,10 @@ static struct
 
 	// internal state
 	{ "files",           5,  test_suite_cmd_files           },
-	{ "partition",       9,  test_suite_cmd_partition       },
 	{ "partitions",      10, test_suite_cmd_partitions      },
-	{ "memtable",        8,  test_suite_cmd_memtable        },
+	{ "partition",       9,  test_suite_cmd_partition       },
 	{ "memtable_rotate", 15, test_suite_cmd_memtable_rotate },
+	{ "memtable",        8,  test_suite_cmd_memtable        },
 	{ "region",          6,  test_suite_cmd_region          },
 	{ "compact",         7,  test_suite_cmd_compact         },
 	{  NULL,             0,  NULL                           }
