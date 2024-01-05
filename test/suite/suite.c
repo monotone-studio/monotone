@@ -534,6 +534,69 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 }
 
 static int
+test_suite_cmd_delete_by(TestSuite* self, char* arg)
+{
+	char* arg_name = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	auto cursor = test_cursor_find(self, arg_name);
+	if (! cursor)
+	{
+		test_error(self, "line %d: plan: cursor not found",
+		           self->current_plan_line);
+		return -1;
+	}
+
+	if (cursor->cursor == NULL)
+		return -1;
+
+	int rc = monotone_delete_by(cursor->cursor);
+	if (rc == -1)
+		test_log_error(self);
+
+	return 0;
+}
+
+static int
+test_suite_cmd_update_by(TestSuite* self, char* arg)
+{
+	char* arg_name  = test_suite_arg(&arg);
+	char* arg_time  = test_suite_arg(&arg);
+	char* arg_value = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	auto cursor = test_cursor_find(self, arg_name);
+	if (! cursor)
+	{
+		test_error(self, "line %d: plan: cursor not found",
+		           self->current_plan_line);
+		return -1;
+	}
+
+	monotone_row_t row =
+	{
+		.time = strtoull(arg_time, NULL, 10),
+		.data = arg_value,
+		.data_size = arg_value ? strlen(arg_value) : 0
+	};
+	int rc = monotone_update_by(cursor->cursor, &row);
+	if (rc == -1)
+		test_log_error(self);
+
+	return 0;
+}
+
+static int
 test_suite_cmd_cursor(TestSuite* self, char* arg)
 {
 	char* arg_name  = test_suite_arg(&arg);
@@ -866,7 +929,20 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 		}
 
 		// delete_by
+		if (strncmp(query, "delete_by", 9) == 0) {
+			rc = test_suite_cmd_delete_by(self, query + 9);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
 		// update_by
+		if (strncmp(query, "update_by", 9) == 0) {
+			rc = test_suite_cmd_update_by(self, query + 9);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
 
 		// cursor_close
 		if (strncmp(query, "cursor_close", 12) == 0) {
