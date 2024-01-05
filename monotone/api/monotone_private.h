@@ -11,3 +11,4 @@
 #include <monotone_io.h>
 #include <monotone_engine.h>
 #include <monotone_instance.h>
+#include <monotone_api.h>
