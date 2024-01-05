@@ -587,11 +587,77 @@ test_suite_cmd_partitions(TestSuite* self, char* arg)
 	return 0;
 }
 
+static inline Part*
+part_find(Engine* self, uint64_t min)
+{
+	list_foreach(&self->list)
+	{
+		auto part = list_at(Part, link);
+		if (part->min == min)
+			return part;
+	}
+	return NULL;
+}
+
 static int
 test_suite_cmd_partition(TestSuite* self, char* arg)
 {
-	(void)self;
-	(void)arg;
+	char* arg_min = test_arg(&arg);
+
+	if (arg_min == NULL)
+	{
+		test_error(self, "line %d: partition <id> expected",
+		           self->current_line);
+		return -1;
+	}
+	uint64_t id = strtoull(arg_min, NULL, 10);
+
+	auto engine = &self->env->instance.engine;
+	auto part = part_find(engine, id);
+	if (part == NULL)
+	{
+		test_log(self, "partition %" PRIu64 " not found\n", id);
+		return 0;
+	}
+
+	test_log(self, "service  %d\n", part->service);
+	test_log(self, "min      %" PRIu64 "\n", part->min);
+	test_log(self, "max      %" PRIu64 "\n", part->max);
+	test_log(self, "storage  %s\n", str_of(&part->storage->name));
+	test_log(self, "memtable_a\n");
+	test_log(self, "  count  %" PRIu64 "\n", part->memtable_a.count);
+	test_log(self, "  size   %" PRIu64 "\n", part->memtable_a.size);
+	test_log(self, "memtable_b\n");
+	test_log(self, "  count  %" PRIu64 "\n", part->memtable_b.count);
+	test_log(self, "  size   %" PRIu64 "\n", part->memtable_b.size);
+	test_log(self, "mmap     %" PRIu64 "\n", blob_size(&part->mmap));
+	test_log(self, "file     %" PRIu64 "\n", part->file.size);
+
+	auto index = part->index;
+	if (index)
+	{
+		test_log(self, "index\n");
+		test_log(self, "  size              %" PRIu64 "\n", index->size);
+		test_log(self, "  size_total        %" PRIu64 "\n", index->size_total);
+		test_log(self, "  size_total_origin %" PRIu64 "\n", index->size_total_origin);
+		test_log(self, "  count             %" PRIu32 "\n", index->count);
+		test_log(self, "  count_total       %" PRIu64 "\n", index->count_total);
+		test_log(self, "  lsn_max           %" PRIu64 "\n", index->lsn_max);
+		test_log(self, "  compression       %" PRIu8  "\n", index->compression);
+		for (int i = 0; i < index->count; i++)
+		{
+			auto region = index_get(index, i);
+			auto min = index_region_min(index, i);
+			auto max = index_region_max(index, i);
+			test_log(self, "  region\n");
+			test_log(self, "    offset            %" PRIu32 "\n", region->offset);
+			test_log(self, "    size              %" PRIu32 "\n", region->size);
+			test_log(self, "    count             %" PRIu32 "\n", region->count);
+			test_log(self, "    min               %" PRIu64 "\n", min->time);
+			test_log(self, "    max               %" PRIu64 "\n", max->time);
+		}
+	}
+
 	return 0;
 }
 
@@ -678,114 +744,7 @@ test_suite_cmd(TestSuite* self, char* query)
 	return -1;
 }
 
-
 #if 0
-in_buf_t*
-in_engine_debug_list_files(in_engine_t *engine, int level, int level_storage)
-{
-	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-
-	if (level < 0 || level >= engine->level_mgr.level_count)
-		in_error("%s", "level is out of bounds");
-
-	in_level_t *ref;
-	ref = in_level_of(&engine->level_mgr, level);
-	if (level_storage < 0 || level_storage >= ref->storage_count)
-		in_error("%s", "level storage is out of bounds");
-
-	in_storage_t *storage;
-	storage = in_level_storage_of(&engine->level_mgr, level, level_storage)->storage;
-
-	/* <storage_path>/<storage_uuid>/<store_uuid> */
-	int   storage_path_size;
-	char *storage_path;
-	if  (storage->path_size == 0)
-	{
-		in_var_t *var = in_global()->config->directory;
-		storage_path_size = var->string_size;
-		storage_path = var->string;
-	} else
-	{
-		storage_path_size = storage->path_size;
-		storage_path = storage->path;
-	}
-
-	char store_sz[37];
-	in_uuid_to_string(engine->uuid, store_sz, sizeof(store_sz));
-
-	char path[PATH_MAX];
-	in_snprintf(path, PATH_MAX, "%.*s/%s/%s", storage_path_size, storage_path,
-	            storage->uuid, store_sz);
-
-	int array_offset = in_buf_size(buf);
-	in_buf_write_array32(buf, 0);
-
-	DIR *dir;
-	dir = opendir(path);
-	if (in_unlikely(dir == NULL))
-		in_error("engine: directory '%s' open error", path);
-
-	int count = 0;
-	in_try
-	{
-		struct dirent *dir_entry;
-		while ((dir_entry = readdir(dir)))
-		{
-			if (in_unlikely(dir_entry->d_name[0] == '.'))
-				continue;
-			in_buf_write_string(buf, dir_entry->d_name, strlen(dir_entry->d_name));
-			count++;
-		}
-
-	} in_catch
-	{
-		closedir(dir);
-		in_rethrow();
-	}
-
-	closedir(dir);
-
-	uint8_t *pos = buf->start + array_offset;
-	in_data_write_array32(&pos, count);
-
-	in_msg_end(buf);
-	return buf;
-}
-
-in_buf_t*
-in_engine_debug_list(in_engine_t *engine)
-{
-	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-
-	/* array */
-	in_buf_write_array(buf, engine->level_mgr.list_count);
-
-	in_list_t *i, *n;
-	in_list_foreach_safe(&engine->level_mgr.list, i, n)
-	{
-		in_part_t *part;
-		part = in_container_of(i, in_part_t, link);
-		in_buf_write_integer(buf, part->id);
-	}
-
-	in_msg_end(buf);
-	return buf;
-}
-
-static inline in_part_t*
-in_engine_find_by_id(in_engine_t *engine, uint64_t id)
-{
-	in_list_t *i;
-	in_list_foreach(&engine->level_mgr.list, i)
-	{
-		in_part_t *part;
-		part = in_container_of(i, in_part_t, link);
-		if (part->id == id)
-			return part;
-	}
-	return NULL;
-}
-
 in_buf_t*
 in_engine_debug_partition(in_engine_t *engine, uint64_t id)
 {
@@ -795,30 +754,6 @@ in_engine_debug_partition(in_engine_t *engine, uint64_t id)
 		in_error("partition %" PRIu64 " is not found", id);
 
 	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-
-	/* map */
-	in_buf_write_map(buf, 9);
-
-	/* id */
-	in_buf_write_string(buf, "id", 2);
-	in_buf_write_integer(buf, part->id);
-
-	/* id_origin */
-	in_buf_write_string(buf, "id_origin", 9);
-	in_buf_write_integer(buf, part->id_origin);
-
-	/* level */
-	in_buf_write_string(buf, "level", 5);
-	in_buf_write_integer(buf, part->level);
-
-	/* in_memory */
-	in_buf_write_string(buf, "in_memory", 9);
-	in_buf_write_bool(buf, part->in_memory);
-
-	/* memtable_a */
-	in_buf_write_string(buf, "memtable_a", 10);
-	in_buf_write_map(buf, 4);
-
 	/* count */
 	in_buf_write_string(buf, "count", 5);
 	in_buf_write_integer(buf, part->memtable_a.count);
