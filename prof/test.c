@@ -6,36 +6,39 @@
 //
 
 #include <monotone_private.h>
+#include <monotone.h>
 #include <time.h>
 
-static Instance     instance;
-
 static volatile int writer_run;
-static pthread_t    writer_id;
 static uint64_t     writer_seq;
+static pthread_t    writer_id;
+
 static volatile int report_run;
 static pthread_t    report_id;
+
+monotone_t*         env;
 
 static void*
 writer_main(void* arg)
 {
-	runtime_init(&instance.global);
-	(void)arg;
-
 	char data[100];
 	memset(data, 'x', sizeof(data));
 
-	Exception e;
-	if (try(&e))
+	while (writer_run)
 	{
-		while (writer_run)
+		monotone_row_t row =
 		{
-			/*engine_insert(&instance.engine, writer_seq++, "", 0);*/
-			engine_write(&instance.engine, false, writer_seq++, data, sizeof(data) );
+			.time = writer_seq++,
+			.data = data,
+			.data_size = sizeof(data)
+		};
+
+		int rc;
+		rc = monotone_insert(env, &row);
+		if (rc == -1) {
+			// todo
 		}
 	}
-	if (catch(&e))
-	{ }
 
 	return NULL;
 }
@@ -46,46 +49,37 @@ static atomic_u64 last_written_bytes;
 static void
 report_print(void)
 {
-	Exception e;
-	if (try(&e))
+	monotone_stats_t stats;
+	auto storages = monotone_stats(env, &stats);
+
+	for (int i = 0; i < stats.storages; i++)
 	{
-		Stats stats;
-		auto storages = engine_stats(&instance.engine, &stats);
-
-		for (int i = 0; i < stats.storages; i++)
-		{
-			printf("%s\n", storages[i].name);
-			printf("  partitions        %" PRIu64 "\n", storages[i].partitions);
-			printf("  pending           %" PRIu64 "\n", storages[i].pending);
-			printf("  min               %" PRIu64 "\n", storages[i].min);
-			printf("  max               %" PRIu64 "\n", storages[i].max);
-			printf("  rows              %" PRIu64 "\n", storages[i].rows);
-			printf("  rows_cached       %" PRIu64 "\n", storages[i].rows_cached);
-			printf("  size              %" PRIu64 " Mb\n", storages[i].size / 1024 / 1024);
-			printf("  size_uncompressed %" PRIu64 " Mb\n", storages[i].size_uncompressed / 1024 / 1024);
-			printf("  size_cached       %" PRIu64 " Mb\n", storages[i].size_cached / 1024 / 1024);
-		}
-
-		printf("write: %d rps (%.2f Mbs) %d metrics/sec\n",
-		       (int)(stats.rows_written - last_written),
-		       (stats.rows_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
-		       (int)((stats.rows_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t)));
-
-		last_written = stats.rows_written;
-		last_written_bytes = stats.rows_written_bytes;
-
-		free(storages);
+		printf("%s\n", storages[i].name);
+		printf("  partitions        %" PRIu64 "\n", storages[i].partitions);
+		printf("  pending           %" PRIu64 "\n", storages[i].pending);
+		printf("  min               %" PRIu64 "\n", storages[i].min);
+		printf("  max               %" PRIu64 "\n", storages[i].max);
+		printf("  rows              %" PRIu64 "\n", storages[i].rows);
+		printf("  rows_cached       %" PRIu64 "\n", storages[i].rows_cached);
+		printf("  size              %" PRIu64 " Mb\n", storages[i].size / 1024 / 1024);
+		printf("  size_uncompressed %" PRIu64 " Mb\n", storages[i].size_uncompressed / 1024 / 1024);
+		printf("  size_cached       %" PRIu64 " Mb\n", storages[i].size_cached / 1024 / 1024);
 	}
-	if (catch(&e))
-	{ }
+
+	printf("write: %d rps (%.2f Mbs) %d metrics/sec\n",
+	       (int)(stats.rows_written - last_written),
+	       (stats.rows_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
+	       (int)((stats.rows_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t)));
+
+	last_written = stats.rows_written;
+	last_written_bytes = stats.rows_written_bytes;
+
+	free(storages);
 }
 
 static void*
 report_main(void* arg)
 {
-	runtime_init(&instance.global);
-	(void)arg;
-
 	while (report_run)
 	{
 		sleep(1);
@@ -108,6 +102,7 @@ gettime(void)
 static void
 scan(void)
 {
+#if 0
 	uint64_t start = gettime();
 
 	EngineCursor cursor;
@@ -138,6 +133,7 @@ scan(void)
 	report_print();
 
 	engine_cursor_close(&cursor);
+#endif
 }
 
 static void
@@ -148,7 +144,16 @@ cli(void)
 	"workers 3,"
 	"storage hot(compaction_wm 0, capacity 10, sync false, path './hot'),"
 	"storage cold(compression 1, sync, path './cold')";
-	instance_start(&instance, config);
+
+	env = monotone_init(NULL, NULL);
+	int rc;
+	rc = monotone_open(env, config);
+	if (rc == -1)
+	{
+		printf("error: %s\n", monotone_error(env));
+		monotone_free(env);
+		return;
+	}
 
 	for (;;)
 	{
@@ -190,44 +195,23 @@ cli(void)
 		} else
 		if (! strcmp(command, "/checkpoint\n"))
 		{
-			Exception e;
-			if (try(&e))
-			{
-				engine_flush(&instance.engine);
-			}
-			if (catch(&e))
-			{ }
+			monotone_checkpoint(env, 0);
 		} else 
 		if (! strcmp(command, "/scan\n"))
 		{
-			Exception e;
-			if (try(&e))
-			{
-				scan();
-			}
-			if (catch(&e))
-			{ }
+			scan();
 		} else
 		{
 			printf("error: unknown command\n");
 		}
 	}
 
-	instance_stop(&instance);
+	monotone_free(env);
 }
 
 int
 main(int argc, char* argv[])
 {
-	runtime_init(&instance.global);
-	instance_init(&instance);
-
-	Exception e;
-	if (try(&e)) {
-		cli();
-	}
-	if (catch(&e))
-	{ }
-
+	cli();
 	return 0;
 }

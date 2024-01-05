@@ -3,14 +3,15 @@
 # 
 CC             = clang
 RM             = rm
-CFLAGS         = -Wall -pthread -O2 -g -fPIE
+CFLAGS         = -Wall -pthread -O0 -g -fPIE
 CFLAGS_INCLUDE = -I. \
                  -I../monotone \
                  -I../monotone/runtime \
                  -I../monotone/lib \
                  -I../monotone/io \
                  -I../monotone/engine \
-                 -I../monotone/instance
+                 -I../monotone/instance \
+                 -I../monotone/api
 LFLAGS         = -rdynamic -pthread -Wl,-whole-archive \
                   ../monotone/libmonotone.a \
                   -Wl,-no-whole-archive -lm -lzstd
