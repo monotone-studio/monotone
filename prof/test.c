@@ -72,10 +72,18 @@ report_print(void)
 		size += storages[i].size;
 	}
 
+	size_t sec = stats.rows_written_bytes - last_written_bytes;
+
 	printf("\n");
 	printf("rows                %" PRIu64 "\n", rows);
 	printf("partitions          %" PRIu64 "\n", partitions);
-	printf("size                %" PRIu64 " Mb\n", size / 1024 / 1024);
+	printf("size                %" PRIu64 " Gb\n", size / 1024 / 1024 / 1024);
+	printf("  min               %" PRIu64 " Gb\n", (size + sec * 60) / 1024 / 1024 / 1024);
+	printf("  hour              %" PRIu64 " Gb\n", (size + sec * 60 * 60) / 1024 / 1024 / 1024);
+	printf("  day               %" PRIu64 " Tb\n", (size + sec * 60 * 60 * 24) / 1024 / 1024 / 1024 / 1024);
+	printf("  week              %" PRIu64 " Tb\n", (size + sec * 60 * 60 * 24 * 7) / 1024 / 1024 / 1024 / 1024);
+	printf("  month             %" PRIu64 " Tb\n", (size + sec * 60 * 60 * 24 * 7 * 31) / 1024 / 1024 / 1024 / 1024);
+
 	printf("\n");
 
 	printf("write: %d rps (%.2f Mbs) %d metrics/sec\n",
@@ -200,7 +208,7 @@ cli(void)
 		} else
 		if (! strcmp(command, "/checkpoint\n"))
 		{
-			monotone_checkpoint(env, 0);
+			monotone_checkpoint(env);
 		} else 
 		if (! strcmp(command, "/scan\n"))
 		{
