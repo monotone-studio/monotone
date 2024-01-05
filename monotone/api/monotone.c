@@ -151,6 +151,7 @@ monotone_stats(monotone_t* self, monotone_stats_t* stats)
 hot MONOTONE_API int
 monotone_insert(monotone_t* self, monotone_row_t* row)
 {
+	runtime_init(&self->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -167,6 +168,7 @@ monotone_insert(monotone_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_delete(monotone_t* self, monotone_row_t* row)
 {
+	runtime_init(&self->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -183,6 +185,7 @@ monotone_delete(monotone_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_delete_by(monotone_t* self, monotone_cursor_t* cursor)
 {
+	runtime_init(&self->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -198,6 +201,7 @@ monotone_delete_by(monotone_t* self, monotone_cursor_t* cursor)
 hot MONOTONE_API int
 monotone_update_by(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
 {
+	runtime_init(&self->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -246,6 +250,7 @@ monotone_cursor(monotone_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 {
+	runtime_init(&self->env->instance.global);
 	int rc;
 	Exception e;
 	if (try(&e))
@@ -269,6 +274,7 @@ monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_next(monotone_cursor_t* self)
 {
+	runtime_init(&self->env->instance.global);
 	int rc;
 	Exception e;
 	if (try(&e)) {
@@ -289,9 +295,8 @@ monotone_checkpoint(monotone_t* self, uint64_t before)
 	Exception e;
 	if (try(&e))
 	{
-		(void)self;
 		(void)before;
-		// todo
+		engine_flush(&self->instance.engine);
 	}
 	if (catch(&e)) {
 		rc = -1;
@@ -302,6 +307,7 @@ monotone_checkpoint(monotone_t* self, uint64_t before)
 MONOTONE_API int
 monotone_drop(monotone_t* self, uint64_t min, uint64_t max)
 {
+	runtime_init(&self->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
