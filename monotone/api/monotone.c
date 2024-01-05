@@ -183,13 +183,13 @@ monotone_delete(monotone_t* self, monotone_row_t* row)
 }
 
 hot MONOTONE_API int
-monotone_delete_by(monotone_t* self, monotone_cursor_t* cursor)
+monotone_delete_by(monotone_cursor_t* self)
 {
-	runtime_init(&self->instance.global);
+	runtime_init(&self->env->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
-		engine_write_by(&self->instance.engine, &cursor->cursor,
+		engine_write_by(&self->env->instance.engine, &self->cursor,
 		                true, 0, NULL, 0);
 	}
 	if (catch(&e)) {
@@ -199,13 +199,13 @@ monotone_delete_by(monotone_t* self, monotone_cursor_t* cursor)
 }
 
 hot MONOTONE_API int
-monotone_update_by(monotone_t* self, monotone_cursor_t* cursor, monotone_row_t* row)
+monotone_update_by(monotone_cursor_t* self, monotone_row_t* row)
 {
-	runtime_init(&self->instance.global);
+	runtime_init(&self->env->instance.global);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
-		engine_write_by(&self->instance.engine, &cursor->cursor,
+		engine_write_by(&self->env->instance.engine, &self->cursor,
 		                false, row->time,
 		                row->data, row->data_size);
 	}
