@@ -722,7 +722,7 @@ test_suite_cmd_read(TestSuite* self, char* arg)
 
 	if (arg_name == NULL)
 	{
-		test_error(self, "line %d: read <cursor expected",
+		test_error(self, "line %d: read <cursor> expected",
 		           self->current_line);
 		return -1;
 	}
@@ -766,7 +766,7 @@ test_suite_cmd_next(TestSuite* self, char* arg)
 
 	if (arg_name == NULL)
 	{
-		test_error(self, "line %d: next <cursor expected",
+		test_error(self, "line %d: next <cursor> expected",
 		           self->current_line);
 		return -1;
 	}
@@ -797,6 +797,48 @@ test_suite_cmd_next(TestSuite* self, char* arg)
 	{
 		test_log(self, "(eof)\n");
 	}
+	return 0;
+}
+
+static int
+test_suite_cmd_checkpoint(TestSuite* self, char* arg)
+{
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	int rc = monotone_checkpoint(self->env);
+	if (rc == -1)
+		test_log_error(self);
+	return 0;
+}
+
+static int
+test_suite_cmd_drop(TestSuite* self, char* arg)
+{
+	char* arg_min = test_suite_arg(&arg);
+	char* arg_max = test_suite_arg(&arg);
+
+	if (arg_min == NULL || arg_max == NULL)
+	{
+		test_error(self, "line %d: drop <min> <max> expected",
+		           self->current_line);
+		return -1;
+	}
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	int rc = monotone_drop(self->env, strtoull(arg_min, NULL, 10),
+	                       strtoull(arg_max, NULL, 10));
+	if (rc == -1)
+		test_log_error(self);
+
 	return 0;
 }
 
@@ -1046,9 +1088,21 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 			continue;
 		}
 
-		//
 		// checkpoint
+		if (strncmp(query, "checkpoint", 10) == 0) {
+			rc = test_suite_cmd_checkpoint(self, query + 10);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
 		// drop
+		if (strncmp(query, "drop", 4) == 0) {
+			rc = test_suite_cmd_drop(self, query + 4);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
 
 		test_error(self, "line %d: unknown command: %s", query,
 		           self->current_line);
