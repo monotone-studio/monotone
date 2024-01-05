@@ -52,6 +52,9 @@ report_print(void)
 	monotone_stats_t stats;
 	auto storages = monotone_stats(env, &stats);
 
+	uint64_t rows = 0;
+	uint64_t partitions = 0;
+	uint64_t size = 0;
 	for (int i = 0; i < stats.storages; i++)
 	{
 		printf("%s\n", storages[i].name);
@@ -64,7 +67,16 @@ report_print(void)
 		printf("  size              %" PRIu64 " Mb\n", storages[i].size / 1024 / 1024);
 		printf("  size_uncompressed %" PRIu64 " Mb\n", storages[i].size_uncompressed / 1024 / 1024);
 		printf("  size_cached       %" PRIu64 " Mb\n", storages[i].size_cached / 1024 / 1024);
+		rows += storages[i].rows;
+		partitions += storages[i].partitions;
+		size += storages[i].size;
 	}
+
+	printf("\n");
+	printf("rows                %" PRIu64 "\n", rows);
+	printf("partitions          %" PRIu64 "\n", partitions);
+	printf("size                %" PRIu64 " Mb\n", size / 1024 / 1024);
+	printf("\n");
 
 	printf("write: %d rps (%.2f Mbs) %d metrics/sec\n",
 	       (int)(stats.rows_written - last_written),
