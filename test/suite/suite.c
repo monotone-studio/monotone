@@ -868,17 +868,17 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 		// delete_by
 		// update_by
 
-		// cursor
-		if (strncmp(query, "cursor", 6) == 0) {
-			rc = test_suite_cmd_cursor(self, query + 6);
+		// cursor_close
+		if (strncmp(query, "cursor_close", 12) == 0) {
+			rc = test_suite_cmd_cursor_close(self, query + 12);
 			if (rc == -1)
 				return -1;
 			continue;
 		}
 
-		// cursor_close
-		if (strncmp(query, "cursor_close", 12) == 0) {
-			rc = test_suite_cmd_cursor_close(self, query + 12);
+		// cursor
+		if (strncmp(query, "cursor", 6) == 0) {
+			rc = test_suite_cmd_cursor(self, query + 6);
 			if (rc == -1)
 				return -1;
 			continue;
