@@ -75,7 +75,7 @@ test_log_error(TestSuite* self)
 })
 
 static inline char*
-test_suite_chomp(char* start)
+test_chomp(char* start)
 {
 	if (start == NULL)
 		return NULL;
@@ -87,7 +87,7 @@ test_suite_chomp(char* start)
 }
 
 static inline char*
-test_suite_arg(char** start)
+test_arg(char** start)
 {
 	if (*start == NULL)
 		return NULL;

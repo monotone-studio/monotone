@@ -114,7 +114,7 @@ test_group_find(TestSuite* self, const char* name)
 static int
 test_suite_plan_group(TestSuite* self, char* arg, char* directory)
 {
-	char* name = test_suite_arg(&arg);
+	char* name = test_arg(&arg);
 	if (name == NULL || !strlen(name)) {
 		test_error(self, "line %d: plan: bad group name",
 		           self->current_plan_line);
@@ -135,8 +135,8 @@ test_suite_plan_group(TestSuite* self, char* arg, char* directory)
 static int
 test_suite_plan_test(TestSuite* self, char* arg)
 {
-	char* name = test_suite_arg(&arg);
-	char* description = test_suite_chomp(arg);
+	char* name = test_arg(&arg);
+	char* description = test_chomp(arg);
 
 	if (!strlen(name)) {
 		test_error(self, "line %d: plan: bad test definition",
@@ -190,7 +190,7 @@ test_suite_plan(TestSuite* self)
 		{
 			// directory <name>
 			char* arg = query + 9;
-			char* name = test_suite_arg(&arg);
+			char* name = test_arg(&arg);
 			snprintf(directory, sizeof(directory), "%s", name);
 		} else
 		if (strncmp(query, "group", 5) == 0)
@@ -271,7 +271,7 @@ test_suite_test(TestSuite* self, char* description)
 		self->current_test_started = 1;
 
 	// start new test
-	test_suite_chomp(description);
+	test_chomp(description);
 	/*test_info(self, "  \033[1;30m⚫\033[0m %s ", description);*/
 	test_info(self, "    - %s ", description);
 	return rc;
