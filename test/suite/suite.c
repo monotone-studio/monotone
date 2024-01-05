@@ -362,6 +362,13 @@ static int
 test_suite_cmd_unit(TestSuite* self, char* arg)
 {
 	char* name = test_suite_arg(&arg);
+	if (name == NULL)
+	{
+		test_error(self, "line %d: unit <name> expected",
+		           self->current_line);
+		return -1;
+	}
+
 	void* ptr = dlsym(self->dlhandle, name);
 	if (ptr == NULL)
 	{
@@ -489,6 +496,13 @@ test_suite_cmd_insert(TestSuite* self, char* arg)
 	char* arg_time = test_suite_arg(&arg);
 	char* arg_value = test_suite_arg(&arg);
 
+	if (arg_time == NULL)
+	{
+		test_error(self, "line %d: insert <time> [value] expected",
+		           self->current_line);
+		return -1;
+	}
+
 	if (! self->env)
 	{
 		test_log(self, "error: env is not openned\n");
@@ -514,6 +528,13 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 	char* arg_time = test_suite_arg(&arg);
 	char* arg_value = test_suite_arg(&arg);
 
+	if (arg_time == NULL)
+	{
+		test_error(self, "line %d: insert <time> [value] expected",
+		           self->current_line);
+		return -1;
+	}
+
 	if (! self->env)
 	{
 		test_log(self, "error: env is not openned\n");
@@ -537,6 +558,13 @@ static int
 test_suite_cmd_delete_by(TestSuite* self, char* arg)
 {
 	char* arg_name = test_suite_arg(&arg);
+
+	if (arg_name == NULL)
+	{
+		test_error(self, "line %d: delete_by <cursor> expected",
+		           self->current_line);
+		return -1;
+	}
 
 	if (! self->env)
 	{
@@ -568,6 +596,20 @@ test_suite_cmd_update_by(TestSuite* self, char* arg)
 	char* arg_name  = test_suite_arg(&arg);
 	char* arg_time  = test_suite_arg(&arg);
 	char* arg_value = test_suite_arg(&arg);
+
+	if (arg_name == NULL)
+	{
+		test_error(self, "line %d: delete_by <cursor> <time> [value] expected",
+		           self->current_line);
+		return -1;
+	}
+
+	if (arg_time == NULL)
+	{
+		test_error(self, "line %d: delete_by <cursor> <time> [value] expected",
+		           self->current_line);
+		return -1;
+	}
 
 	if (! self->env)
 	{
@@ -602,6 +644,13 @@ test_suite_cmd_cursor(TestSuite* self, char* arg)
 	char* arg_name  = test_suite_arg(&arg);
 	char* arg_time  = test_suite_arg(&arg);
 	char* arg_value = test_suite_arg(&arg);
+
+	if (arg_name == NULL)
+	{
+		test_error(self, "line %d: cursor <name> time> [value] expected",
+		           self->current_line);
+		return -1;
+	}
 
 	if (! self->env)
 	{
@@ -641,6 +690,13 @@ test_suite_cmd_cursor_close(TestSuite* self, char* arg)
 {
 	char* arg_name = test_suite_arg(&arg);
 
+	if (arg_name == NULL)
+	{
+		test_error(self, "line %d: cursor_close <name> expected",
+		           self->current_line);
+		return -1;
+	}
+
 	if (! self->env)
 	{
 		test_log(self, "error: env is not openned\n");
@@ -663,6 +719,13 @@ static int
 test_suite_cmd_read(TestSuite* self, char* arg)
 {
 	char* arg_name = test_suite_arg(&arg);
+
+	if (arg_name == NULL)
+	{
+		test_error(self, "line %d: read <cursor expected",
+		           self->current_line);
+		return -1;
+	}
 
 	if (! self->env)
 	{
@@ -700,6 +763,13 @@ static int
 test_suite_cmd_next(TestSuite* self, char* arg)
 {
 	char* arg_name = test_suite_arg(&arg);
+
+	if (arg_name == NULL)
+	{
+		test_error(self, "line %d: next <cursor expected",
+		           self->current_line);
+		return -1;
+	}
 
 	if (! self->env)
 	{
