@@ -544,76 +544,39 @@ test_suite_cmd_drop(TestSuite* self, char* arg)
 	return 0;
 }
 
+static struct
+{
+	const char* name;
+	int         name_size;
+	int        (*function)(TestSuite*, char*);
+} cmds[] =
+{
+	{ "trap",         4,  test_suite_cmd_trap          },
+	{ "unit",         4,  test_suite_cmd_unit          },
+	{ "version",      7,  test_suite_cmd_version       },
+	{ "open",         4,  test_suite_cmd_open          },
+	{ "close",        5,  test_suite_cmd_close         },
+	{ "error",        5,  test_suite_cmd_error         },
+	{ "stats",        5,  test_suite_cmd_stats         },
+	{ "insert",       6,  test_suite_cmd_insert        },
+	{ "delete",       6,  test_suite_cmd_delete        },
+	{ "delete_by",    9,  test_suite_cmd_delete_by     },
+	{ "update_by",    9,  test_suite_cmd_update_by     },
+	{ "cursor_close", 12, test_suite_cmd_cursor_close  },
+	{ "cursor",       6,  test_suite_cmd_cursor        },
+	{ "read",         4,  test_suite_cmd_read          },
+	{ "next",         4,  test_suite_cmd_next          },
+	{ "checkpoint",   10, test_suite_cmd_checkpoint    },
+	{ "drop",         4,  test_suite_cmd_drop          },
+	{  NULL,          0,  NULL                         }
+};
+
 int
 test_suite_cmd(TestSuite* self, char* query)
 {
-	// trap
-	if (strncmp(query, "trap", 4) == 0)
-		return test_suite_cmd_trap(self, query + 4);
-
-	// unit
-	if (strncmp(query, "unit", 4) == 0)
-		return test_suite_cmd_unit(self, query + 4);
-
-	// version
-	if (strncmp(query, "version", 7) == 0)
-		return test_suite_cmd_version(self, query + 7);
-
-	// open
-	if (strncmp(query, "open", 4) == 0)
-		return test_suite_cmd_open(self, query + 4);
-
-	// close
-	if (strncmp(query, "close", 5) == 0)
-		return test_suite_cmd_close(self, query + 5);
-
-	// error
-	if (strncmp(query, "error", 5) == 0)
-		return test_suite_cmd_error(self, query + 5);
-
-	// stats
-	if (strncmp(query, "stats", 5) == 0)
-		return test_suite_cmd_stats(self, query + 5);
-
-	// insert
-	if (strncmp(query, "insert", 6) == 0)
-		return test_suite_cmd_insert(self, query + 6);
-
-	// delete
-	if (strncmp(query, "delete", 6) == 0)
-		return test_suite_cmd_delete(self, query + 6);
-
-	// delete_by
-	if (strncmp(query, "delete_by", 9) == 0)
-		return test_suite_cmd_delete_by(self, query + 9);
-
-	// update_by
-	if (strncmp(query, "update_by", 9) == 0)
-		return test_suite_cmd_update_by(self, query + 9);
-
-	// cursor_close
-	if (strncmp(query, "cursor_close", 12) == 0)
-		return test_suite_cmd_cursor_close(self, query + 12);
-
-	// cursor
-	if (strncmp(query, "cursor", 6) == 0)
-		return test_suite_cmd_cursor(self, query + 6);
-
-	// read
-	if (strncmp(query, "read", 4) == 0)
-		return test_suite_cmd_read(self, query + 4);
-
-	// next
-	if (strncmp(query, "next", 4) == 0)
-		return test_suite_cmd_next(self, query + 4);
-
-	// checkpoint
-	if (strncmp(query, "checkpoint", 10) == 0)
-		return test_suite_cmd_checkpoint(self, query + 10);
-
-	// drop
-	if (strncmp(query, "drop", 4) == 0)
-		return test_suite_cmd_drop(self, query + 4);
+	for (int i = 0; cmds[i].name; i++)
+		if (! strncmp(query, cmds[i].name, cmds[i].name_size))
+			return cmds[i].function(self, query + cmds[i].name_size);
 
 	test_error(self, "line %d: unknown command: %s", query,
 			   self->current_line);
