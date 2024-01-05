@@ -288,14 +288,13 @@ monotone_next(monotone_cursor_t* self)
 }
 
 MONOTONE_API int
-monotone_checkpoint(monotone_t* self, uint64_t before)
+monotone_checkpoint(monotone_t* self)
 {
 	int rc = 0;
 	runtime_init(&self->instance.global);
 	Exception e;
 	if (try(&e))
 	{
-		(void)before;
 		engine_flush(&self->instance.engine);
 	}
 	if (catch(&e)) {

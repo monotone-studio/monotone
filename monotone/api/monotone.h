@@ -106,7 +106,7 @@ monotone_next(monotone_cursor_t*);
 
 // data management
 MONOTONE_API int
-monotone_checkpoint(monotone_t*, uint64_t before);
+monotone_checkpoint(monotone_t*);
 
 MONOTONE_API int
 monotone_drop(monotone_t*, uint64_t min, uint64_t max);
