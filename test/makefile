@@ -20,6 +20,7 @@ LFLAGS          = -rdynamic -pthread -Wl,-whole-archive \
 TARGET          = test
 OBJECTS_RUNTIME =
 OBJECTS         = suite/suite.o \
+                  suite/suite_cmd.o \
                   test.o
 $(TARGET): clean $(OBJECTS_RUNTIME) $(OBJECTS)
 	@$(CC) $(OBJECTS_RUNTIME) $(OBJECTS) $(CFLAGS_INCLUDE) $(CFLAGS) $(LFLAGS) -o $(TARGET)
