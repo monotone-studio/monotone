@@ -190,12 +190,14 @@ test_cursor_find(TestSuite* self, const char* name)
 }
 
 static void
-test_cursor_free(TestCursor* self)
+test_cursor_free(TestSuite* self, TestCursor* cursor)
 {
-	if (self->cursor)
-		monotone_free(self->cursor);
-	free(self->name);
-	free(self);
+	list_unlink(&cursor->link);
+	self->list_cursor_count--;
+	if (cursor->cursor)
+		monotone_free(cursor->cursor);
+	free(cursor->name);
+	free(cursor);
 }
 
 static char*
@@ -532,6 +534,140 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 }
 
 static int
+test_suite_cmd_cursor(TestSuite* self, char* arg)
+{
+	char* arg_name  = test_suite_arg(&arg);
+	char* arg_time  = test_suite_arg(&arg);
+	char* arg_value = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	auto cursor = test_cursor_find(self, arg_name);
+	if (cursor)
+	{
+		test_error(self, "line %d: plan: cursor redefined",
+		           self->current_plan_line);
+		return -1;
+	}
+
+	cursor = test_cursor_new(self, arg_name);
+
+	monotone_row_t* key = NULL;
+	monotone_row_t  row;
+	if (arg_time)
+	{
+		row.time = strtoull(arg_time, NULL, 10);
+		row.data = arg_value;
+		row.data_size = arg_value ? strlen(arg_value) : 0;
+		key = &row;
+	}
+
+	cursor->cursor = monotone_cursor(self->env, key);
+	if (cursor->cursor == NULL)
+		test_log_error(self);
+
+	return 0;
+}
+
+static int
+test_suite_cmd_cursor_close(TestSuite* self, char* arg)
+{
+	char* arg_name = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	auto cursor = test_cursor_find(self, arg_name);
+	if (! cursor)
+	{
+		test_error(self, "line %d: plan: cursor not found",
+		           self->current_plan_line);
+		return -1;
+	}
+
+	test_cursor_free(self, cursor);
+	return 0;
+}
+
+static int
+test_suite_cmd_read(TestSuite* self, char* arg)
+{
+	char* arg_name = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	auto cursor = test_cursor_find(self, arg_name);
+	if (! cursor)
+	{
+		test_error(self, "line %d: plan: cursor not found",
+		           self->current_plan_line);
+		return -1;
+	}
+
+	if (cursor->cursor == NULL)
+		return -1;
+
+	monotone_row_t row;
+	int rc = monotone_read(cursor->cursor, &row);
+	if (rc == 0)
+	{
+		test_log(self, "(eof)\n");
+	} else
+	{
+		if (row.data_size > 0)
+			test_log(self, "[%" PRIu64 ", %.*s]\n", row.time, row.data_size, row.data);
+		else
+			test_log(self, "[%" PRIu64 "]\n", row.time);
+	}
+	return 0;
+}
+
+static int
+test_suite_cmd_next(TestSuite* self, char* arg)
+{
+	char* arg_name = test_suite_arg(&arg);
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	auto cursor = test_cursor_find(self, arg_name);
+	if (! cursor)
+	{
+		test_error(self, "line %d: plan: cursor not found",
+		           self->current_plan_line);
+		return -1;
+	}
+
+	if (cursor->cursor == NULL)
+		return -1;
+
+	int rc = monotone_next(cursor->cursor);
+	if (rc == -1)
+	{
+		test_log_error(self);
+	} else
+	if (rc == 0)
+	{
+		test_log(self, "(eof)\n");
+	}
+	return 0;
+}
+
+static int
 test_suite_test_check(TestSuite* self)
 {
 	// new test
@@ -729,14 +865,41 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 			continue;
 		}
 
-
 		// delete_by
 		// update_by
-		//
+
 		// cursor
-		// read
-		// next
+		if (strncmp(query, "cursor", 6) == 0) {
+			rc = test_suite_cmd_cursor(self, query + 6);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
 		// cursor_close
+		if (strncmp(query, "cursor_close", 12) == 0) {
+			rc = test_suite_cmd_cursor_close(self, query + 12);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
+		// read
+		if (strncmp(query, "read", 4) == 0) {
+			rc = test_suite_cmd_read(self, query + 4);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
+		// next
+		if (strncmp(query, "next", 4) == 0) {
+			rc = test_suite_cmd_next(self, query + 4);
+			if (rc == -1)
+				return -1;
+			continue;
+		}
+
 		//
 		// checkpoint
 		// drop
