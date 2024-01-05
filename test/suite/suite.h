@@ -66,23 +66,3 @@ void test_suite_init(TestSuite*);
 void test_suite_free(TestSuite*);
 void test_suite_cleanup(TestSuite*);
 int  test_suite_run(TestSuite*);
-
-static inline int
-test_sh(TestSuite* self, const char* fmt, ...)
-{
-	va_list args;
-	va_start(args, fmt);
-	char cmd[PATH_MAX];
-	vsnprintf(cmd, sizeof(cmd), fmt, args);
-	int rc = system(cmd);
-	va_end(args);
-	return rc;
-}
-
-#define test(expr) ({ \
-	if (! (expr)) { \
-		fprintf(stdout, "fail (%s:%d) %s\n", __FILE__, __LINE__, #expr); \
-		fflush(stdout); \
-		abort(); \
-	} \
-})
