@@ -706,22 +706,144 @@ test_suite_cmd_region(TestSuite* self, char* arg)
 	test_log(self, "  count  %" PRIu32 "\n", region->count);
 	test_log(self, "  min    %" PRIu64 "\n", min->time);
 	test_log(self, "  max    %" PRIu64 "\n", max->time);
+
+#if 0
+	in_part_t *part;
+	part = in_engine_find_by_id(engine, id);
+	if (in_unlikely(part == NULL))
+		in_error("partition %" PRIu64 " is not found", id);
+
+	if (order >= (int)part->range->count)
+		in_error("partition %" PRIu64 " range %d is out of bounds", id, order);
+
+	in_range_region_t *range_region;
+	range_region = in_range_get(part->range, order);
+
+	in_reader_req_t req;
+	in_reader_req_init(&req);
+
+	in_buf_t read_buf;
+	in_buf_t read_buf_uncompressed;
+
+	in_buf_init(&read_buf);
+	in_buf_init(&read_buf_uncompressed);
+
+	req.in_memory             = in_memory;
+	req.range                 = part->range;
+	req.range_region          = range_region;
+	req.region                = NULL;
+	req.read_buf              = &read_buf;
+	req.read_buf_uncompressed = &read_buf_uncompressed;
+	req.mmap                  = &part->mmap;
+	req.file                  = &part->file;
+	in_reader_req_execute(&req);
+
+	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
+	in_buf_write_array(buf, req.region->count);
+
+	in_region_iterator_t region_iterator;
+	in_region_iterator_init(&region_iterator);
+	in_region_iterator_open(&region_iterator, req.region, part->schema, NULL);
+	for (;;)
+	{
+		if (! in_region_iterator_has(&region_iterator))
+			break;
+		in_row_t *row;
+		row = in_region_iterator_read(&region_iterator);
+		in_buf_write(buf, in_row_of(row, part->schema), in_row_data_size(row));
+		in_region_iterator_next(&region_iterator);
+	}
+	in_region_iterator_free(&region_iterator);
+
+	in_buf_unref(&read_buf);
+	in_buf_unref(&read_buf_uncompressed);
+
+	in_msg_end(buf);
+	return buf;
+#endif
 	return 0;
 }
 
 static int
 test_suite_cmd_memtable(TestSuite* self, char* arg)
 {
-	(void)self;
-	(void)arg;
+	char* arg_min = test_arg(&arg);
+
+	if (arg_min == NULL)
+	{
+		test_error(self, "line %d: memtable <id> expected",
+		           self->current_line);
+		return -1;
+	}
+
+	uint64_t id = strtoull(arg_min, NULL, 10);
+
+	auto engine = &self->env->instance.engine;
+	auto part = part_find(engine, id);
+	if (part == NULL)
+	{
+		test_log(self, "partition %" PRIu64 " not found\n", id);
+		return 0;
+	}
+
+	test_log(self, "memtable_a (%" PRIu64 ")\n", part->memtable_a.count);
+
+	bool first = true;
+	MemtableIterator it;
+	memtable_iterator_init(&it);
+	memtable_iterator_open(&it, &part->memtable_a, NULL);
+	while (memtable_iterator_has(&it))
+	{
+		auto row = memtable_iterator_at(&it);
+		if (! first)
+			test_log(self, ", ");
+		test_log(self, "%" PRIu64, row->time);
+		memtable_iterator_next(&it);
+		first = false;
+	}
+	test_log(self, "\n");
+
+	test_log(self, "memtable_b (%" PRIu64 ")\n", part->memtable_b.count);
+
+	first = true;
+	memtable_iterator_init(&it);
+	memtable_iterator_open(&it, &part->memtable_b, NULL);
+	while (memtable_iterator_has(&it))
+	{
+		auto row = memtable_iterator_at(&it);
+		if (! first)
+			test_log(self, ", ");
+		test_log(self, "%" PRIu64, row->time);
+		memtable_iterator_next(&it);
+		first = false;
+	}
+	test_log(self, "\n");
 	return 0;
 }
 
 static int
 test_suite_cmd_memtable_rotate(TestSuite* self, char* arg)
 {
-	(void)self;
-	(void)arg;
+	char* arg_min = test_arg(&arg);
+
+	if (arg_min == NULL)
+	{
+		test_error(self, "line %d: memtable_rotate <id> expected",
+		           self->current_line);
+		return -1;
+	}
+
+	uint64_t id = strtoull(arg_min, NULL, 10);
+
+	auto engine = &self->env->instance.engine;
+	auto part = part_find(engine, id);
+	if (part == NULL)
+	{
+		test_log(self, "partition %" PRIu64 " not found\n", id);
+		return 0;
+	}
+
+	part_memtable_rotate(part);
 	return 0;
 }
 
@@ -785,143 +907,6 @@ test_suite_cmd(TestSuite* self, char* query)
 }
 
 #if 0
-in_buf_t*
-in_engine_debug_partition(in_engine_t *engine, uint64_t id)
-{
-	in_part_t *part;
-	part = in_engine_find_by_id(engine, id);
-	if (in_unlikely(part == NULL))
-		in_error("partition %" PRIu64 " is not found", id);
-
-	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-	/* count */
-	in_buf_write_string(buf, "count", 5);
-	in_buf_write_integer(buf, part->memtable_a.count);
-
-	/* size */
-	in_buf_write_string(buf, "size", 4);
-	in_buf_write_integer(buf, part->memtable_a.size);
-
-	/* lsn_min */
-	in_buf_write_string(buf, "lsn_min", 7);
-	in_buf_write_integer(buf, part->memtable_a.lsn_min);
-
-	/* lsn_max */
-	in_buf_write_string(buf, "lsn_max", 8);
-	in_buf_write_integer(buf, part->memtable_a.lsn_max);
-
-	/* memtable_b */
-	in_buf_write_string(buf, "memtable_b", 10);
-	in_buf_write_map(buf, 4);
-
-	/* count */
-	in_buf_write_string(buf, "count", 5);
-	in_buf_write_integer(buf, part->memtable_b.count);
-
-	/* size */
-	in_buf_write_string(buf, "size", 4);
-	in_buf_write_integer(buf, part->memtable_b.size);
-
-	/* lsn_min */
-	in_buf_write_string(buf, "lsn_min", 7);
-	in_buf_write_integer(buf, part->memtable_b.lsn_min);
-
-	/* lsn_max */
-	in_buf_write_string(buf, "lsn_max", 8);
-	in_buf_write_integer(buf, part->memtable_b.lsn_max);
-
-	/* mmap */
-	in_buf_write_string(buf, "mmap", 4);
-	in_buf_write_integer(buf, in_mmap_size(&part->mmap));
-
-	/* file */
-	in_buf_write_string(buf, "file", 4);
-	in_buf_write_integer(buf, part->file.size);
-
-	/* range */
-	in_buf_write_string(buf, "range", 5);
-	if (part->range)
-	{
-		/* map */
-		in_buf_write_map(buf, 8);
-
-		/* size */
-		in_buf_write_string(buf, "size", 4);
-		in_buf_write_integer(buf, part->range->size);
-
-		/* size_total */
-		in_buf_write_string(buf, "size_total", 10);
-		in_buf_write_integer(buf, part->range->size_total);
-
-		/* size_total_origin */
-		in_buf_write_string(buf, "size_total_origin", 17);
-		in_buf_write_integer(buf, part->range->size_total_origin);
-
-		/* count */
-		in_buf_write_string(buf, "count", 5);
-		in_buf_write_integer(buf, part->range->count);
-
-		/* count_total */
-		in_buf_write_string(buf, "count_total", 11);
-		in_buf_write_integer(buf, part->range->count_total);
-
-		/* lsn_max */
-		in_buf_write_string(buf, "lsn_max", 7);
-		in_buf_write_integer(buf, part->range->lsn_max);
-
-		/* compression */
-		in_buf_write_string(buf, "compression", 11);
-		in_buf_write_integer(buf, part->range->compression);
-
-		/* regions */
-		in_buf_write_string(buf, "regions", 7);
-		in_buf_write_array(buf, part->range->count);
-
-		uint32_t i = 0;
-		while (i < part->range->count)
-		{
-			in_range_region_t *region;
-			region = in_range_get(part->range, i);
-
-			/* map */
-			in_buf_write_map(buf, 5);
-
-			/* size */
-			in_buf_write_string(buf, "size", 4);
-			in_buf_write_integer(buf, region->size);
-
-			/* size_origin */
-			in_buf_write_string(buf, "size_origin", 11);
-			in_buf_write_integer(buf, region->size_origin);
-
-			/* count */
-			in_buf_write_string(buf, "count", 5);
-			in_buf_write_integer(buf, region->count);
-
-			/* min */
-			in_buf_write_string(buf, "min", 3);
-			in_row_t *min;
-			min = in_range_region_min(part->range, i);
-			in_buf_write(buf, in_row_of(min, part->schema), in_row_data_size(min));
-
-			/* max */
-			in_buf_write_string(buf, "max", 3);
-			in_row_t *max;
-			max = in_range_region_max(part->range, i);
-			in_buf_write(buf, in_row_of(max, part->schema), in_row_data_size(max));
-
-			i++;
-		}
-
-	} else
-	{
-		in_buf_write_null(buf);
-	}
-
-	in_msg_end(buf);
-	return buf;
-}
-
 in_buf_t*
 in_engine_debug_memtable(in_engine_t *engine, uint64_t id)
 {
@@ -1014,76 +999,8 @@ in_engine_debug_memtable(in_engine_t *engine, uint64_t id)
 }
 
 in_buf_t*
-in_engine_debug_memtable_rotate(in_engine_t *engine, uint64_t id)
-{
-	in_part_t *part;
-	part = in_engine_find_by_id(engine, id);
-	if (in_unlikely(part == NULL))
-		in_error("partition %" PRIu64 " is not found", id);
-
-	in_part_memtable_rotate(part);
-
-	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-	in_buf_write_bool(buf, true);
-	in_msg_end(buf);
-	return buf;
-}
-
-in_buf_t*
 in_engine_debug_region(in_engine_t *engine, uint64_t id, int order, bool in_memory)
 {
-	in_part_t *part;
-	part = in_engine_find_by_id(engine, id);
-	if (in_unlikely(part == NULL))
-		in_error("partition %" PRIu64 " is not found", id);
-
-	if (order >= (int)part->range->count)
-		in_error("partition %" PRIu64 " range %d is out of bounds", id, order);
-
-	in_range_region_t *range_region;
-	range_region = in_range_get(part->range, order);
-
-	in_reader_req_t req;
-	in_reader_req_init(&req);
-
-	in_buf_t read_buf;
-	in_buf_t read_buf_uncompressed;
-
-	in_buf_init(&read_buf);
-	in_buf_init(&read_buf_uncompressed);
-
-	req.in_memory             = in_memory;
-	req.range                 = part->range;
-	req.range_region          = range_region;
-	req.region                = NULL;
-	req.read_buf              = &read_buf;
-	req.read_buf_uncompressed = &read_buf_uncompressed;
-	req.mmap                  = &part->mmap;
-	req.file                  = &part->file;
-	in_reader_req_execute(&req);
-
-	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-	in_buf_write_array(buf, req.region->count);
-
-	in_region_iterator_t region_iterator;
-	in_region_iterator_init(&region_iterator);
-	in_region_iterator_open(&region_iterator, req.region, part->schema, NULL);
-	for (;;)
-	{
-		if (! in_region_iterator_has(&region_iterator))
-			break;
-		in_row_t *row;
-		row = in_region_iterator_read(&region_iterator);
-		in_buf_write(buf, in_row_of(row, part->schema), in_row_data_size(row));
-		in_region_iterator_next(&region_iterator);
-	}
-	in_region_iterator_free(&region_iterator);
-
-	in_buf_unref(&read_buf);
-	in_buf_unref(&read_buf_uncompressed);
-
-	in_msg_end(buf);
-	return buf;
 }
 
 in_buf_t*
