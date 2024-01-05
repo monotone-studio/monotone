@@ -700,67 +700,52 @@ test_suite_cmd_region(TestSuite* self, char* arg)
 	auto region = index_get(index, id_region);
 	auto min = index_region_min(index, id_region);
 	auto max = index_region_max(index, id_region);
-	test_log(self, "region\n");
+	test_log(self, "region (index)\n");
 	test_log(self, "  offset %" PRIu32 "\n", region->offset);
 	test_log(self, "  size   %" PRIu32 "\n", region->size);
 	test_log(self, "  count  %" PRIu32 "\n", region->count);
 	test_log(self, "  min    %" PRIu64 "\n", min->time);
 	test_log(self, "  max    %" PRIu64 "\n", max->time);
 
-#if 0
-	in_part_t *part;
-	part = in_engine_find_by_id(engine, id);
-	if (in_unlikely(part == NULL))
-		in_error("partition %" PRIu64 " is not found", id);
-
-	if (order >= (int)part->range->count)
-		in_error("partition %" PRIu64 " range %d is out of bounds", id, order);
-
-	in_range_region_t *range_region;
-	range_region = in_range_get(part->range, order);
-
-	in_reader_req_t req;
-	in_reader_req_init(&req);
-
-	in_buf_t read_buf;
-	in_buf_t read_buf_uncompressed;
-
-	in_buf_init(&read_buf);
-	in_buf_init(&read_buf_uncompressed);
-
-	req.in_memory             = in_memory;
-	req.range                 = part->range;
-	req.range_region          = range_region;
-	req.region                = NULL;
-	req.read_buf              = &read_buf;
-	req.read_buf_uncompressed = &read_buf_uncompressed;
-	req.mmap                  = &part->mmap;
-	req.file                  = &part->file;
-	in_reader_req_execute(&req);
-
-	in_buf_t *buf = in_msg_begin(IN_MSG_OBJECT);
-	in_buf_write_array(buf, req.region->count);
-
-	in_region_iterator_t region_iterator;
-	in_region_iterator_init(&region_iterator);
-	in_region_iterator_open(&region_iterator, req.region, part->schema, NULL);
-	for (;;)
+	Exception e;
+	if (try(&e))
 	{
-		if (! in_region_iterator_has(&region_iterator))
-			break;
-		in_row_t *row;
-		row = in_region_iterator_read(&region_iterator);
-		in_buf_write(buf, in_row_of(row, part->schema), in_row_data_size(row));
-		in_region_iterator_next(&region_iterator);
+		Buf read_buf;
+		Buf read_buf_uc;
+
+		buf_init(&read_buf);
+		buf_init(&read_buf_uc);
+
+		Reader reader;
+		reader_init(&reader);
+		reader.index = index;
+		reader.index_region = region;
+		reader.read_buf = &read_buf;
+		reader.read_buf_uncompressed = &read_buf_uc;
+		reader.mmap = &part->mmap;
+		reader.file = &part->file;
+		reader_execute(&reader);
+
+		bool first = true;
+		RegionIterator it;
+		region_iterator_init(&it);
+		region_iterator_open(&it, reader.region, part->comparator, NULL);
+		while (region_iterator_has(&it))
+		{
+			auto row = region_iterator_at(&it);
+			if (! first)
+				test_log(self, ", ");
+			test_log(self, "%" PRIu64, row->time);
+			region_iterator_next(&it);
+			first = false;
+		}
+
+		buf_free(&read_buf);
+		buf_free(&read_buf_uc);
 	}
-	in_region_iterator_free(&region_iterator);
+	if (catch(&e))
+	{ }
 
-	in_buf_unref(&read_buf);
-	in_buf_unref(&read_buf_uncompressed);
-
-	in_msg_end(buf);
-	return buf;
-#endif
 	return 0;
 }
 
@@ -804,7 +789,6 @@ test_suite_cmd_memtable(TestSuite* self, char* arg)
 	test_log(self, "\n");
 
 	test_log(self, "memtable_b (%" PRIu64 ")\n", part->memtable_b.count);
-
 	first = true;
 	memtable_iterator_init(&it);
 	memtable_iterator_open(&it, &part->memtable_b, NULL);
