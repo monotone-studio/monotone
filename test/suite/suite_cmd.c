@@ -662,6 +662,54 @@ test_suite_cmd_partition(TestSuite* self, char* arg)
 }
 
 static int
+test_suite_cmd_region(TestSuite* self, char* arg)
+{
+	char* arg_min = test_arg(&arg);
+	char* arg_region = test_arg(&arg);
+
+	if (arg_min == NULL || arg_region == NULL)
+	{
+		test_error(self, "line %d: region <id> <id> expected",
+		           self->current_line);
+		return -1;
+	}
+	uint64_t id = strtoull(arg_min, NULL, 10);
+	uint64_t id_region = strtoull(arg_region, NULL, 10);
+
+	auto engine = &self->env->instance.engine;
+	auto part = part_find(engine, id);
+	if (part == NULL)
+	{
+		test_log(self, "partition %" PRIu64 " not found\n", id);
+		return 0;
+	}
+
+	auto index = part->index;
+	if (index == NULL)
+	{
+		test_log(self, "partition %" PRIu64 " has no index\n", id);
+		return 0;
+	}
+
+	if (id_region >= index->count)
+	{
+		test_log(self, "partition %" PRIu64 " region not found\n", id);
+		return 0;
+	}
+
+	auto region = index_get(index, id_region);
+	auto min = index_region_min(index, id_region);
+	auto max = index_region_max(index, id_region);
+	test_log(self, "region\n");
+	test_log(self, "  offset %" PRIu32 "\n", region->offset);
+	test_log(self, "  size   %" PRIu32 "\n", region->size);
+	test_log(self, "  count  %" PRIu32 "\n", region->count);
+	test_log(self, "  min    %" PRIu64 "\n", min->time);
+	test_log(self, "  max    %" PRIu64 "\n", max->time);
+	return 0;
+}
+
+static int
 test_suite_cmd_memtable(TestSuite* self, char* arg)
 {
 	(void)self;
@@ -671,14 +719,6 @@ test_suite_cmd_memtable(TestSuite* self, char* arg)
 
 static int
 test_suite_cmd_memtable_rotate(TestSuite* self, char* arg)
-{
-	(void)self;
-	(void)arg;
-	return 0;
-}
-
-static int
-test_suite_cmd_region(TestSuite* self, char* arg)
 {
 	(void)self;
 	(void)arg;
@@ -725,9 +765,9 @@ static struct
 	{ "files",           5,  test_suite_cmd_files           },
 	{ "partitions",      10, test_suite_cmd_partitions      },
 	{ "partition",       9,  test_suite_cmd_partition       },
+	{ "region",          6,  test_suite_cmd_region          },
 	{ "memtable_rotate", 15, test_suite_cmd_memtable_rotate },
 	{ "memtable",        8,  test_suite_cmd_memtable        },
-	{ "region",          6,  test_suite_cmd_region          },
 	{ "compact",         7,  test_suite_cmd_compact         },
 	{  NULL,             0,  NULL                           }
 };
