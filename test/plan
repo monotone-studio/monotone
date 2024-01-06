@@ -4,3 +4,4 @@
 directory engine
 group engine
 test memtable
+test region
