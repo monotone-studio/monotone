@@ -10,7 +10,7 @@
 #include <monotone_io.h>
 #include <monotone_engine.h>
 
-hot static inline void
+hot void
 compaction_execute(Compaction* self, ServiceReq* req, Tier* tier)
 {
 	auto engine = self->engine;
@@ -156,7 +156,7 @@ compaction_rebalance_next(Compaction* self, ServiceReq* req, Tier** req_tier)
 	return match;
 }
 
-hot static inline void
+hot void
 compaction_rebalance(Compaction* self)
 {
 	if (self->engine->tier_mgr.tiers_count == 1)
