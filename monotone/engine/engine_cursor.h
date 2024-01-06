@@ -96,6 +96,18 @@ engine_cursor_next(EngineCursor* self)
 }
 
 hot static inline void
+engine_cursor_skip_deletes(EngineCursor* self)
+{
+	for (;;)
+	{
+		auto at = engine_cursor_at(self);
+		if (!at || !at->is_delete)
+			break;
+		engine_cursor_next(self);
+	}
+}
+
+hot static inline void
 engine_cursor_init(EngineCursor* self)
 {
 	self->lock    = NULL;
