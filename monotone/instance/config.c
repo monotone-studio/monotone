@@ -169,6 +169,15 @@ instance_config_storage(Instance* self, Lex* lex)
 
 		break;
 	}
+
+	if (str_empty(&storage->path))
+	{
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/%.*s", config_path(),
+		         str_size(&name_storage.string),
+		         str_of(&name_storage.string));
+		str_strdup(&storage->path, path);
+	}
 }
 
 void
@@ -236,5 +245,9 @@ instance_config(Instance* self, const char* options)
 		str_set_cstr(&name, "default");
 		auto storage = storage_allocate(&name);
 		storage_mgr_add(&self->storage_mgr, storage);
+
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/default", config_path());
+		str_strdup(&storage->path, path);
 	}
 }
