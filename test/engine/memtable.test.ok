@@ -1,0 +1,80 @@
+open interval 10
+# test: insert
+stats
+stats
+  lsn                0
+  rows_written       0
+  rows_written_bytes 0
+  storages           1
+default
+  partitions         0
+  pending            0
+  min                18446744073709551615
+  max                0
+  rows               0
+  rows_cached        0
+  size               0
+  size_uncompressed  0
+  size_cached        0
+insert 1
+stats
+stats
+  lsn                0
+  rows_written       1
+  rows_written_bytes 13
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               1
+  rows_cached        1
+  size               13
+  size_uncompressed  0
+  size_cached        13
+# test: cursor (no key)
+cursor c
+read c
+[1]
+next c
+(eof)
+read c
+(eof)
+cursor_close c
+# test: cursor
+cursor c 0
+read c
+[1]
+next c
+(eof)
+read c
+(eof)
+cursor_close c
+# test: cursor (point-lookup)
+cursor c 1
+read c
+[1]
+next c
+(eof)
+read c
+(eof)
+cursor_close c
+# test: cursor (out-of-range)
+cursor c 2
+read c
+(eof)
+next c
+(eof)
+read c
+(eof)
+cursor_close c
+cursor c 12
+read c
+(eof)
+next c
+(eof)
+read c
+(eof)
+cursor_close c
+close
