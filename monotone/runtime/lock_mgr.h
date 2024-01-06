@@ -65,10 +65,11 @@ lock_mgr_init(LockMgr* self)
 static inline void
 lock_mgr_free(LockMgr* self)
 {
+	assert(! self->list_count);
 	list_foreach_safe(&self->list_free)
 	{
 		auto lock = list_at(Lock, link);
-		mn_free(lock);
+		lock_free(lock);
 	}
 	mutex_free(&self->mutex);
 }
