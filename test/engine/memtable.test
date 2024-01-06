@@ -14,7 +14,7 @@ next c
 read c
 cursor_close c
 
-# test: cursor
+# test: cursor (min)
 cursor c 0
 read c
 next c
@@ -40,5 +40,106 @@ read c
 next c
 read c
 cursor_close c
+
+# test: insert #2
+stats
+
+insert 0
+insert 2
+insert 3
+insert 5
+stats
+
+# test: select (no key)
+select
+
+# test: select (min)
+select 0
+
+# test: select (point-lookup)
+select 2
+
+# test: select (next after)
+select 4
+
+# test: select (out-of-range)
+select 6
+select 12
+
+# test: insert #3 (replace by key)
+insert 0 x
+insert 3 x
+
+# test: select
+select
+select 0
+select 2
+select 3
+
+# test: update by cursor
+stats
+cursor c 2
+update_by c 2 y
+cursor_close c
+stats
+
+# test: select
+select
+select 0
+select 2
+select 3
+
+# test: update by cursor (key mismatch)
+cursor c 2
+update_by c 3
+cursor_close c
+
+# test: delete by key (open case)
+delete 0
+stats
+
+# test: select
+select
+
+# test: delete by key
+delete 3
+stats
+
+# test: select
+select
+
+# test: delete by cursor
+cursor c 2
+delete_by c
+read c
+next c
+read c
+next c
+cursor_close c
+
+# test: select
+select
+
+# test: delete all
+cursor c
+read c
+delete_by c
+read c
+
+next c
+read c
+delete_by c
+read c
+
+next c
+cursor_close c
+
+# test: select
+select
+select 0
+select 2
+select 3
+select 5
+select 8
 
 close

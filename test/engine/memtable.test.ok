@@ -42,7 +42,7 @@ next c
 read c
 (eof)
 cursor_close c
-# test: cursor
+# test: cursor (min)
 cursor c 0
 read c
 [1]
@@ -77,4 +77,258 @@ next c
 read c
 (eof)
 cursor_close c
+# test: insert #2
+stats
+stats
+  lsn                0
+  rows_written       1
+  rows_written_bytes 13
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               1
+  rows_cached        1
+  size               13
+  size_uncompressed  0
+  size_cached        13
+insert 0
+insert 2
+insert 3
+insert 5
+stats
+stats
+  lsn                0
+  rows_written       5
+  rows_written_bytes 65
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               5
+  rows_cached        5
+  size               65
+  size_uncompressed  0
+  size_cached        65
+# test: select (no key)
+select
+[0]
+[1]
+[2]
+[3]
+[5]
+(eof)
+# test: select (min)
+select 0
+[0]
+[1]
+[2]
+[3]
+[5]
+(eof)
+# test: select (point-lookup)
+select 2
+[2]
+[3]
+[5]
+(eof)
+# test: select (next after)
+select 4
+[5]
+(eof)
+# test: select (out-of-range)
+select 6
+(eof)
+select 12
+(eof)
+# test: insert #3 (replace by key)
+insert 0 x
+insert 3 x
+# test: select
+select
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 2
+[2]
+[3, x]
+[5]
+(eof)
+select 3
+[3, x]
+[5]
+(eof)
+# test: update by cursor
+stats
+stats
+  lsn                0
+  rows_written       7
+  rows_written_bytes 93
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               5
+  rows_cached        5
+  size               67
+  size_uncompressed  0
+  size_cached        67
+cursor c 2
+update_by c 2 y
+cursor_close c
+stats
+stats
+  lsn                0
+  rows_written       8
+  rows_written_bytes 107
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               5
+  rows_cached        5
+  size               68
+  size_uncompressed  0
+  size_cached        68
+# test: select
+select
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 3
+[3, x]
+[5]
+(eof)
+# test: update by cursor (key mismatch)
+cursor c 2
+update_by c 3
+error: key does not match cursor row
+cursor_close c
+# test: delete by key (open case)
+delete 0
+stats
+stats
+  lsn                0
+  rows_written       9
+  rows_written_bytes 120
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               5
+  rows_cached        5
+  size               67
+  size_uncompressed  0
+  size_cached        67
+# test: select
+select
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+# test: delete by key
+delete 3
+stats
+stats
+  lsn                0
+  rows_written       10
+  rows_written_bytes 133
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               5
+  rows_cached        5
+  size               66
+  size_uncompressed  0
+  size_cached        66
+# test: select
+select
+[1]
+[2, y]
+[5]
+(eof)
+# test: delete by cursor
+cursor c 2
+delete_by c
+read c
+(eof)
+next c
+read c
+[5]
+next c
+(eof)
+cursor_close c
+# test: select
+select
+[1]
+[5]
+(eof)
+# test: delete all
+cursor c
+read c
+[1]
+delete_by c
+read c
+(eof)
+next c
+read c
+[5]
+delete_by c
+read c
+(eof)
+next c
+(eof)
+cursor_close c
+# test: select
+select
+(eof)
+select 0
+(eof)
+select 2
+(eof)
+select 3
+(eof)
+select 5
+(eof)
+select 8
+(eof)
 close
