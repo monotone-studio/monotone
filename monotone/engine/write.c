@@ -96,5 +96,8 @@ engine_write_by(Engine*       self,
 	engine_write_to(self, cursor->lock, row);
 
 	// update cursor
-	cursor->current = row;
+	if (delete)
+		cursor->current = NULL;
+	else
+		cursor->current = row;
 }
