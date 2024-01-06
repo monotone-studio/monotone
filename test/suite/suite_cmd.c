@@ -891,8 +891,49 @@ test_suite_cmd_memtable_rotate(TestSuite* self, char* arg)
 static int
 test_suite_cmd_compact(TestSuite* self, char* arg)
 {
-	(void)self;
-	(void)arg;
+	char* arg_min = test_arg(&arg);
+
+	if (arg_min == NULL)
+	{
+		test_error(self, "line %d: memtable_rotate <id> expected",
+		           self->current_line);
+		return -1;
+	}
+
+	uint64_t id = strtoull(arg_min, NULL, 10);
+
+	auto engine = &self->env->instance.engine;
+	auto part = part_find(engine, id);
+	if (part == NULL)
+	{
+		test_log(self, "partition %" PRIu64 " not found\n", id);
+		return 0;
+	}
+
+	runtime_init(&self->env->instance.global);
+
+	Exception e;
+	if (try(&e))
+	{
+		Compaction compaction;
+		compaction_init(&compaction);
+		compaction.service = engine->service;
+		compaction.engine  = engine;
+		compaction.global  = mn_runtime.global;
+
+		part->service = true;
+
+		ServiceReq req;
+		service_req_init(&req);
+		req.min = part->min;
+		req.max = part->max;
+		compaction_execute(&compaction, &req, NULL);
+	}
+	if (catch(&e))
+	{
+		test_log_error(self);
+	}
+
 	return 0;
 }
 
