@@ -707,11 +707,11 @@ test_suite_cmd_partition(TestSuite* self, char* arg)
 			auto min = index_region_min(index, i);
 			auto max = index_region_max(index, i);
 			test_log(self, "  region\n");
-			test_log(self, "    offset            %" PRIu32 "\n", region->offset);
-			test_log(self, "    size              %" PRIu32 "\n", region->size);
-			test_log(self, "    count             %" PRIu32 "\n", region->count);
-			test_log(self, "    min               %" PRIu64 "\n", min->time);
-			test_log(self, "    max               %" PRIu64 "\n", max->time);
+			test_log(self, "    offset          %" PRIu32 "\n", region->offset);
+			test_log(self, "    size            %" PRIu32 "\n", region->size);
+			test_log(self, "    count           %" PRIu32 "\n", region->count);
+			test_log(self, "    min             %" PRIu64 "\n", min->time);
+			test_log(self, "    max             %" PRIu64 "\n", max->time);
 		}
 	}
 
@@ -796,6 +796,7 @@ test_suite_cmd_region(TestSuite* self, char* arg)
 			region_iterator_next(&it);
 			first = false;
 		}
+		test_log(self, "\n");
 
 		buf_free(&read_buf);
 		buf_free(&read_buf_uc);
@@ -912,11 +913,12 @@ test_suite_cmd_compact(TestSuite* self, char* arg)
 
 	runtime_init(&self->env->instance.global);
 
+	Compaction compaction;
+	compaction_init(&compaction);
+
 	Exception e;
 	if (try(&e))
 	{
-		Compaction compaction;
-		compaction_init(&compaction);
 		compaction.service = engine->service;
 		compaction.engine  = engine;
 		compaction.global  = mn_runtime.global;
@@ -928,10 +930,13 @@ test_suite_cmd_compact(TestSuite* self, char* arg)
 		req.min = part->min;
 		req.max = part->max;
 		compaction_execute(&compaction, &req, NULL);
+
+		compaction_free(&compaction);
 	}
 	if (catch(&e))
 	{
 		test_log_error(self);
+		compaction_free(&compaction);
 	}
 
 	return 0;
