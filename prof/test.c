@@ -219,6 +219,14 @@ cli(void)
 		}
 	}
 
+	if (writer_run)
+	{
+		report_run = 0;
+		writer_run = 0;
+		pthread_join(writer_id, NULL);
+		pthread_join(report_id, NULL);
+	}
+
 	monotone_free(env);
 }
 

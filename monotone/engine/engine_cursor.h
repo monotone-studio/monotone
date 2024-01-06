@@ -87,7 +87,7 @@ engine_cursor_next(EngineCursor* self)
 
 	// open next partition
 	self->lock = engine_seek(self->engine, next_interval);
-	if (unlikely(self->lock== NULL))
+	if (unlikely(self->lock == NULL))
 		return;
 
 	part = self->lock->arg;
