@@ -1,0 +1,61 @@
+
+open interval 10
+
+# test: merge memtable
+insert 1
+insert 2
+insert 3
+insert 5
+partition 0
+compact 0
+
+# test: validate
+partition 0
+files default
+region 0 0
+
+# test: select (no key)
+select
+
+# test: select (min)
+select 0
+
+# test: select (point-lookup)
+select 2
+
+# test: select (next after)
+select 4
+
+# test: select (out-of-range)
+select 6
+select 12
+
+# test: replace by key
+insert 0 x
+insert 3 x
+
+memtable 0
+
+# test: select
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: merge
+partition 0
+compact 0
+partition 0
+region 0 0
+
+# test: select
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+close

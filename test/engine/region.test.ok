@@ -1,0 +1,215 @@
+open interval 10
+# test: merge memtable
+insert 1
+insert 2
+insert 3
+insert 5
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  4
+  size   52
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     0
+compact 0
+# test: validate
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     92
+index
+  size              135
+  size_total        92
+  size_total_origin 92
+  count             1
+  count_total       4
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            92
+    count           4
+    min             1
+    max             5
+files default
+00000000000000000000
+00000000000000000000.index
+region 0 0
+region (index)
+  offset 0
+  size   92
+  count  4
+  min    1
+  max    5
+1, 2, 3, 5
+# test: select (no key)
+select
+[1]
+[2]
+[3]
+[5]
+(eof)
+# test: select (min)
+select 0
+[1]
+[2]
+[3]
+[5]
+(eof)
+# test: select (point-lookup)
+select 2
+[2]
+[3]
+[5]
+(eof)
+# test: select (next after)
+select 4
+[5]
+(eof)
+# test: select (out-of-range)
+select 6
+(eof)
+select 12
+(eof)
+# test: replace by key
+insert 0 x
+insert 3 x
+memtable 0
+memtable_a (2)
+0, 3
+memtable_b (0)
+
+# test: select
+select
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 2
+[2]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: merge
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  2
+  size   28
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     92
+index
+  size              135
+  size_total        92
+  size_total_origin 92
+  count             1
+  count_total       4
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            92
+    count           4
+    min             1
+    max             5
+compact 0
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     111
+index
+  size              136
+  size_total        111
+  size_total_origin 111
+  count             1
+  count_total       5
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            111
+    count           5
+    min             0
+    max             5
+region 0 0
+region (index)
+  offset 0
+  size   111
+  count  5
+  min    0
+  max    5
+0, 1, 2, 3, 5
+# test: select
+select
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 2
+[2]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+close
