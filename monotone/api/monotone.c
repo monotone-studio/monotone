@@ -221,11 +221,14 @@ monotone_cursor(monotone_t* self, monotone_row_t* row)
 			guard(guard, row_free, key);
 			engine_cursor_open(&cursor->cursor, &self->instance.engine, key);
 		}
+		engine_cursor_skip_deletes(&cursor->cursor);
 	}
 	if (catch(&e)) {
 		monotone_free(cursor);
 		cursor = NULL;
 	}
+
+
 	return cursor;
 }
 
@@ -261,6 +264,7 @@ monotone_next(monotone_cursor_t* self)
 	Exception e;
 	if (try(&e)) {
 		engine_cursor_next(&self->cursor);
+		engine_cursor_skip_deletes(&self->cursor);
 		rc = engine_cursor_has(&self->cursor);
 	}
 	if (catch(&e)) {
