@@ -349,7 +349,7 @@ test_suite_cmd_cursor(TestSuite* self, char* arg)
 
 	if (arg_name == NULL)
 	{
-		test_error(self, "line %d: cursor <name> time> [value] expected",
+		test_error(self, "line %d: cursor <name> <time> [value] expected",
 		           self->current_line);
 		return -1;
 	}
@@ -499,6 +499,63 @@ test_suite_cmd_next(TestSuite* self, char* arg)
 	{
 		test_log(self, "(eof)\n");
 	}
+	return 0;
+}
+
+static int
+test_suite_cmd_select(TestSuite* self, char* arg)
+{
+	char* arg_time  = test_arg(&arg);
+	char* arg_value = test_arg(&arg);
+
+	if (arg_time == NULL)
+	{
+		test_error(self, "line %d: select <time> [value] expected",
+		           self->current_line);
+		return -1;
+	}
+
+	if (! self->env)
+	{
+		test_log(self, "error: env is not openned\n");
+		return 0;
+	}
+
+	monotone_row_t* key = NULL;
+	monotone_row_t  row;
+	if (arg_time)
+	{
+		row.time = strtoull(arg_time, NULL, 10);
+		row.data = arg_value;
+		row.data_size = arg_value ? strlen(arg_value) : 0;
+		key = &row;
+	}
+
+	auto cursor = monotone_cursor(self->env, key);
+	if (cursor == NULL)
+	{
+		test_log_error(self);
+		return 0;
+	}
+
+	while (monotone_read(cursor, &row))
+	{
+		if (row.data_size > 0)
+			test_log(self, "[%" PRIu64 ", %.*s]\n", row.time, row.data_size, row.data);
+		else
+			test_log(self, "[%" PRIu64 "]\n", row.time);
+
+		int rc = monotone_next(cursor);
+		if (rc == -1)
+		{
+			test_log_error(self);
+			break;
+		}
+	}
+
+	test_log(self, "(eof)\n");
+
+	monotone_free(cursor);
 	return 0;
 }
 
@@ -864,6 +921,7 @@ static struct
 	{ "cursor",          6,  test_suite_cmd_cursor          },
 	{ "read",            4,  test_suite_cmd_read            },
 	{ "next",            4,  test_suite_cmd_next            },
+	{ "select",          6,  test_suite_cmd_select          },
 	{ "checkpoint",      10, test_suite_cmd_checkpoint      },
 	{ "drop",            4,  test_suite_cmd_drop            },
 
