@@ -64,7 +64,7 @@ index_iterator_open(IndexIterator* self,
 	self->pos = index_iterator_search(self, row);
 	int rc;
 	rc = compare(comparator, index_region_max(index, self->pos), row);
-	if (rc == -1)
+	if (rc < 0)
 		self->pos++;
 	if (unlikely(self->pos >= (int)index->count))
 		return;
