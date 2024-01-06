@@ -6,6 +6,7 @@ stats
 
 insert 1
 stats
+partition 0
 
 # test: cursor (no key)
 cursor c

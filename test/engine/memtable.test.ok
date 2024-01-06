@@ -33,6 +33,19 @@ default
   size               13
   size_uncompressed  0
   size_cached        13
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  1
+  size   13
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     0
 # test: cursor (no key)
 cursor c
 read c
