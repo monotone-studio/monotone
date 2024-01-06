@@ -101,5 +101,7 @@ test_arg(char** start)
 	*pos = 0;
 	pos++;
 	*start = (is_eol) ? NULL : pos;
+	if (*arg == 0)
+		return NULL;
 	return arg;
 }
