@@ -47,15 +47,13 @@ region_iterator_search(RegionIterator* self, Row* row, bool* match)
 	{
 		mid = min + (max - min) / 2;
 		int rc = region_iterator_compare(self, mid, row);
-		switch (rc) {
-		case -1: min = mid + 1;
-			continue;
-		case  1: max = mid - 1;
-			continue;
-		case  0:
+		if (rc < 0) {
+			min = mid + 1;
+		} else
+		if (rc > 0) {
+			max = mid - 1;
+		} else {
 			*match = true;
-			// fallthrough
-		default:
 		    return mid;
 		}
 	}
