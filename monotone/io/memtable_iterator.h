@@ -10,11 +10,11 @@ typedef struct MemtableIterator MemtableIterator;
 
 struct MemtableIterator
 {
-	Iterator  iterator;
-	Row*      current;
-	MemtablePage*  page;
-	int       page_pos;
-	Memtable* memtable;
+	Iterator      iterator;
+	Row*          current;
+	MemtablePage* page;
+	int           page_pos;
+	Memtable*     memtable;
 };
 
 static inline bool
@@ -29,6 +29,12 @@ memtable_iterator_open(MemtableIterator* self,
 	if (unlikely(self->memtable->count == 0))
 		return false;
 	bool match = memtable_seek(memtable, key, &self->page, &self->page_pos);
+	if (self->page_pos >= self->page->rows_count)
+	{
+		self->page     = NULL;
+		self->page_pos = 0;
+		return false;
+	}
 	self->current = self->page->rows[self->page_pos];
 	return match;
 }
