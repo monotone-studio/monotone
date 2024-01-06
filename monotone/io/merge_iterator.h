@@ -83,20 +83,17 @@ merge_iterator_next(MergeIterator* self)
 			min = row;
 			continue;
 		}
-		int rc;
-		rc = compare(self->comparator, min, row);
-		switch (rc) {
-		case 0:
+		auto rc = compare(self->comparator, min, row);
+		if (rc == 0)
+		{
 			current->advance = true;
-			break;
-		case 1:
+		} else
+		if (rc > 0)
 		{
 			for (int i = 0; i < self->list_count; i++)
 				list[i].advance = false;
 			current->advance = true;
 			min = row; 
-			break;
-		}
 		}
 	}
 	self->current = min;
