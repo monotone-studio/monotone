@@ -508,13 +508,6 @@ test_suite_cmd_select(TestSuite* self, char* arg)
 	char* arg_time  = test_arg(&arg);
 	char* arg_value = test_arg(&arg);
 
-	if (arg_time == NULL)
-	{
-		test_error(self, "line %d: select <time> [value] expected",
-		           self->current_line);
-		return -1;
-	}
-
 	if (! self->env)
 	{
 		test_log(self, "error: env is not openned\n");
