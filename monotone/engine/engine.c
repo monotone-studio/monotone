@@ -179,6 +179,7 @@ engine_seek(Engine* self, uint64_t time)
 		if (part->max <= time)
 		{
 			mutex_unlock(&self->lock);
+			lock_mgr_unlock(lock);
 			break;
 		}
 
