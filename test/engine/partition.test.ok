@@ -1,0 +1,553 @@
+open interval 10, storage default(sync false, region_size 60)
+# test: create regions
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+partitions
+[0, 10] tier: 0
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  10
+  size   130
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     0
+compact 0
+# test: validate
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     266
+index
+  size              357
+  size_total        266
+  size_total_origin 266
+  count             4
+  count_total       10
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            75
+    count           3
+    min             0
+    max             2
+  region
+    offset          75
+    size            75
+    count           3
+    min             3
+    max             5
+  region
+    offset          150
+    size            75
+    count           3
+    min             6
+    max             8
+  region
+    offset          225
+    size            41
+    count           1
+    min             9
+    max             9
+# test: select (no key)
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+# test: select (min)
+select 0
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+# test: select (point-lookup)
+select 0
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 1
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 2
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 3
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 4
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 5
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 6
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 7
+[7]
+[8]
+[9]
+(eof)
+select 8
+[8]
+[9]
+(eof)
+select 9
+[9]
+(eof)
+# test: select (out-of-range)
+select 10
+(eof)
+# test: create partitions
+insert 10
+insert 11
+insert 19
+insert 20
+insert 21
+partitions
+[0, 10] tier: 0
+[10, 20] tier: 0
+[20, 30] tier: 0
+# test: select (no key)
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+# test: select (point-lookup)
+select 0
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 1
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 3
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 10
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 11
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 12
+[19]
+[20]
+[21]
+(eof)
+select 20
+[20]
+[21]
+(eof)
+select 21
+[21]
+(eof)
+select 23
+(eof)
+# test: merge
+partitions
+[0, 10] tier: 0
+[10, 20] tier: 0
+[20, 30] tier: 0
+partition 0
+service  1
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     266
+index
+  size              357
+  size_total        266
+  size_total_origin 266
+  count             4
+  count_total       10
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            75
+    count           3
+    min             0
+    max             2
+  region
+    offset          75
+    size            75
+    count           3
+    min             3
+    max             5
+  region
+    offset          150
+    size            75
+    count           3
+    min             6
+    max             8
+  region
+    offset          225
+    size            41
+    count           1
+    min             9
+    max             9
+partition 10
+service  1
+min      10
+max      20
+storage  default
+memtable_a
+  count  3
+  size   39
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     0
+partition 20
+service  0
+min      20
+max      30
+storage  default
+memtable_a
+  count  2
+  size   26
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     0
+compact 0
+compact 10
+compact 20
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     266
+index
+  size              357
+  size_total        266
+  size_total_origin 266
+  count             4
+  count_total       10
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            75
+    count           3
+    min             0
+    max             2
+  region
+    offset          75
+    size            75
+    count           3
+    min             3
+    max             5
+  region
+    offset          150
+    size            75
+    count           3
+    min             6
+    max             8
+  region
+    offset          225
+    size            41
+    count           1
+    min             9
+    max             9
+partition 10
+service  0
+min      10
+max      20
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     75
+index
+  size              135
+  size_total        75
+  size_total_origin 75
+  count             1
+  count_total       3
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            75
+    count           3
+    min             10
+    max             19
+partition 20
+service  0
+min      20
+max      30
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     58
+index
+  size              135
+  size_total        58
+  size_total_origin 58
+  count             1
+  count_total       2
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            58
+    count           2
+    min             20
+    max             21
+# test: select
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 0
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 1
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 3
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 10
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 11
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 12
+[19]
+[20]
+[21]
+(eof)
+select 20
+[20]
+[21]
+(eof)
+select 21
+[21]
+(eof)
+select 23
+(eof)
+close

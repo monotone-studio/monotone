@@ -1,0 +1,98 @@
+
+open interval 10, storage default(sync false, region_size 60)
+
+# test: create regions
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+partitions
+partition 0
+compact 0
+
+# test: validate
+partition 0
+
+# test: select (no key)
+select
+
+# test: select (min)
+select 0
+
+# test: select (point-lookup)
+select 0
+select 1
+select 2
+select 3
+select 4
+select 5
+select 6
+select 7
+select 8
+select 9
+
+# test: select (out-of-range)
+select 10
+
+# test: create partitions
+insert 10
+insert 11
+insert 19
+
+insert 20
+insert 21
+
+partitions
+
+# test: select (no key)
+select
+
+# test: select (point-lookup)
+select 0
+select 1
+select 3
+
+select 10
+select 11
+select 12
+
+select 20
+select 21
+select 23
+
+# test: merge
+partitions
+
+partition 0
+partition 10
+partition 20
+
+compact 0
+compact 10
+compact 20
+
+partition 0
+partition 10
+partition 20
+
+# test: select
+select
+select 0
+select 1
+select 3
+
+select 10
+select 11
+select 12
+
+select 20
+select 21
+select 23
+
+close
