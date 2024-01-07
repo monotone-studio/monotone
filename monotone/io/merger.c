@@ -89,8 +89,6 @@ merger_execute(Merger* self, MergerReq* req)
 
 	// create incomplete partition file
 	auto part = self->writer.part;
-	/*part_create(part);*/
-	/*part_unload(part);*/
 
 	// return partition
 	self->writer.part = NULL;
