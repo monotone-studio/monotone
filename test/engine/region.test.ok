@@ -212,4 +212,492 @@ select 6
 (eof)
 select 12
 (eof)
+# test: update by cursor
+stats
+stats
+  lsn                0
+  rows_written       6
+  rows_written_bytes 80
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               5
+  rows_cached        0
+  size               111
+  size_uncompressed  111
+  size_cached        0
+cursor c 2
+update_by c 2 y
+cursor_close c
+stats
+stats
+  lsn                0
+  rows_written       7
+  rows_written_bytes 94
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               6
+  rows_cached        1
+  size               125
+  size_uncompressed  111
+  size_cached        14
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  1
+  size   14
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     111
+index
+  size              136
+  size_total        111
+  size_total_origin 111
+  count             1
+  count_total       5
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            111
+    count           5
+    min             0
+    max             5
+# test: select
+select
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: merge
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  1
+  size   14
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     111
+index
+  size              136
+  size_total        111
+  size_total_origin 111
+  count             1
+  count_total       5
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            111
+    count           5
+    min             0
+    max             5
+compact 0
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     112
+index
+  size              136
+  size_total        112
+  size_total_origin 112
+  count             1
+  count_total       5
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            112
+    count           5
+    min             0
+    max             5
+region 0 0
+region (index)
+  offset 0
+  size   112
+  count  5
+  min    0
+  max    5
+0, 1, 2, 3, 5
+# test: select
+select
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: delete by key
+delete 0
+delete 1
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  2
+  size   26
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     112
+index
+  size              136
+  size_total        112
+  size_total_origin 112
+  count             1
+  count_total       5
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            112
+    count           5
+    min             0
+    max             5
+# test: select
+select
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: merge
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  2
+  size   26
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     112
+index
+  size              136
+  size_total        112
+  size_total_origin 112
+  count             1
+  count_total       5
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            112
+    count           5
+    min             0
+    max             5
+compact 0
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     77
+index
+  size              136
+  size_total        77
+  size_total_origin 77
+  count             1
+  count_total       3
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            77
+    count           3
+    min             2
+    max             5
+region 0 0
+region (index)
+  offset 0
+  size   77
+  count  3
+  min    2
+  max    5
+2, 3, 5
+# test: select
+select
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: delete by cursor
+stats
+stats
+  lsn                0
+  rows_written       9
+  rows_written_bytes 120
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               3
+  rows_cached        0
+  size               77
+  size_uncompressed  77
+  size_cached        0
+cursor c 2
+delete_by c
+cursor_close c
+stats
+stats
+  lsn                0
+  rows_written       10
+  rows_written_bytes 134
+  storages           1
+default
+  partitions         1
+  pending            0
+  min                0
+  max                10
+  rows               4
+  rows_cached        1
+  size               91
+  size_uncompressed  77
+  size_cached        14
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  1
+  size   14
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     77
+index
+  size              136
+  size_total        77
+  size_total_origin 77
+  count             1
+  count_total       3
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            77
+    count           3
+    min             2
+    max             5
+# test: select
+select
+[3, x]
+[5]
+(eof)
+select 0
+[3, x]
+[5]
+(eof)
+select 2
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: merge
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  1
+  size   14
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     77
+index
+  size              136
+  size_total        77
+  size_total_origin 77
+  count             1
+  count_total       3
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            77
+    count           3
+    min             2
+    max             5
+compact 0
+partition 0
+service  0
+min      0
+max      10
+storage  default
+memtable_a
+  count  0
+  size   0
+memtable_b
+  count  0
+  size   0
+mmap     0
+file     59
+index
+  size              136
+  size_total        59
+  size_total_origin 59
+  count             1
+  count_total       2
+  lsn_max           0
+  compression       0
+  region
+    offset          0
+    size            59
+    count           2
+    min             3
+    max             5
+region 0 0
+region (index)
+  offset 0
+  size   59
+  count  2
+  min    3
+  max    5
+3, 5
+# test: select
+select
+[3, x]
+[5]
+(eof)
+select 0
+[3, x]
+[5]
+(eof)
+select 2
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
 close
