@@ -1,5 +1,5 @@
 
-open interval 10, storage default(compression 1)
+open interval 10, storage default(compression 1, sync false)
 
 # test: merge memtable
 insert 1

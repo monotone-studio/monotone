@@ -1,4 +1,4 @@
-open interval 10
+open interval 10, storage default(sync false)
 # test: merge memtable
 insert 1
 insert 2
