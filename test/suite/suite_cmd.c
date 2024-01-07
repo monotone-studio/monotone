@@ -982,8 +982,8 @@ test_suite_cmd(TestSuite* self, char* query)
 		if (! strncmp(query, cmds[i].name, cmds[i].name_size))
 			return cmds[i].function(self, query + cmds[i].name_size);
 
-	test_error(self, "line %d: unknown command: %s", query,
-			   self->current_line);
+	test_error(self, "line %d: unknown command: %s",
+	           self->current_line, query);
 	return -1;
 }
 
