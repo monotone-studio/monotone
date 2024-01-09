@@ -10,10 +10,11 @@ typedef struct IndexWriter IndexWriter;
 
 struct IndexWriter
 {
-	bool crc;
-	int  compression;
-	Buf  meta;
-	Buf  data;
+	bool     crc;
+	int      compression;
+	Buf      meta;
+	Buf      data;
+	IndexEof eof;
 };
 
 static inline void
@@ -76,6 +77,11 @@ index_writer_stop(IndexWriter* self, uint64_t lsn)
 	header->compression = self->compression;
 	header->crc         = 0;
 	header->lsn_max     = lsn;
+
+	// prepare eof marker
+	auto eof = &self->eof;
+	eof->magic = INDEX_MAGIC;
+	eof->size  = buf_size(&self->meta) + buf_size(&self->data);
 
 	// crc
 	if (self->crc)
@@ -150,6 +156,7 @@ index_writer_copy(IndexWriter* self, Buf* buf)
 {
 	buf_write(buf, self->meta.start, buf_size(&self->meta));
 	buf_write(buf, self->data.start, buf_size(&self->data));
+	buf_write(buf, &self->eof,       sizeof(self->eof));
 }
 
 static inline void
@@ -157,4 +164,5 @@ index_writer_add_to_iov(IndexWriter* self, Iov* iov)
 {
 	iov_add(iov, self->meta.start, buf_size(&self->meta));
 	iov_add(iov, self->data.start, buf_size(&self->data));
+	iov_add(iov, &self->eof,       sizeof(self->eof));
 }
