@@ -12,10 +12,8 @@
 
 enum
 {
-	PART_FILE             = 1,
-	PART_FILE_INCOMPLETE  = 2,
-	PART_INDEX            = 4,
-	PART_INDEX_INCOMPLETE = 8
+	PART_FILE            = 1,
+	PART_FILE_INCOMPLETE = 2
 };
 
 static inline int64_t
@@ -23,8 +21,6 @@ engine_recover_id(const char* path, int* state)
 {
 	// <id>
 	// <id>.incomplete
-	// <id>.index
-	// <id>.index.incomplete
 	int64_t id = 0;
 	while (*path && *path != '.')
 	{
@@ -36,12 +32,6 @@ engine_recover_id(const char* path, int* state)
 
 	if (! *path)
 		*state = PART_FILE;
-	else
-	if (! strcmp(path, ".index"))
-		*state = PART_INDEX;
-	else
-	if (! strcmp(path, ".index.incomplete"))
-		*state = PART_INDEX_INCOMPLETE;
 	else
 	if (! strcmp(path, ".incomplete"))
 		*state = PART_FILE_INCOMPLETE;
@@ -101,44 +91,22 @@ engine_tier_read(Engine* self, Tier* tier)
 	}
 }
 
-static bool
+static void
 engine_tier_resolve(Engine* self, Tier* tier, Part* part)
 {
 	auto next_tier = tier_of(&self->tier_mgr, tier->storage->order + 1);
 	auto next = tier_find(next_tier, part->min);
 	if (next == NULL)
-		return false;
+		return;
 
 	// incomplete partitions should be possible only
 	// on the next tier
+	//
 
 	// remove incomplete partition
-	if (part->state == (PART_FILE|PART_INDEX))
-	{
-		tier_remove(next_tier, next);
-		part_delete(next, false);
-		part_free(next);
-		return true;
-	}
-
-	if ((part->state == (PART_FILE) ||
-	     part->state == (PART_INDEX)) &&
-	     next->state == (PART_FILE_INCOMPLETE|PART_INDEX_INCOMPLETE))
-	{
-		// remove current partition and complete on the next tier
-		tier_remove(tier, part);
-		part_delete(part, true);
-		part_free(part);
-
-		part_rename(next);
-		return true;
-	}
-
-	// corrupted states
-	error("partition: %" PRIu64 " is missing index or data file",
-	      part->min);
-
-	return true;
+	tier_remove(next_tier, next);
+	part_delete(next, false);
+	part_free(next);
 }
 
 static void
@@ -147,43 +115,25 @@ engine_tier_recover(Engine* self, Tier* tier)
 	list_foreach(&tier->list)
 	{
 		auto part = list_at(Part, link_tier);
+
+		// resolve cross tier states
 		if (tier->storage->order < (self->tier_mgr.tiers_count - 1))
-		{
-			if (engine_tier_resolve(self, tier, part))
-				continue;
-		}
+			engine_tier_resolve(self, tier, part);
 
 		switch (part->state) {
-		case PART_FILE|PART_INDEX:
+		case PART_FILE:
 			// normal state
 			break;
 
 		// crash recovery cases
-		case PART_FILE|PART_INDEX|PART_INDEX_INCOMPLETE:
-		case PART_FILE|PART_INDEX|PART_FILE_INCOMPLETE:
-		case PART_FILE|PART_INDEX|PART_FILE_INCOMPLETE|PART_INDEX_INCOMPLETE:
+		case PART_FILE | PART_FILE_INCOMPLETE:
 			// remove incomplete
 			part_delete(part, false);
 			break;
 
-		case PART_FILE|PART_FILE_INCOMPLETE|PART_INDEX_INCOMPLETE:
-		case PART_INDEX|PART_FILE_INCOMPLETE|PART_INDEX_INCOMPLETE:
-			// remove old and rename
-			part_delete(part, true);
-			part_rename(part);
-			break;
-
-		case PART_FILE_INCOMPLETE|PART_INDEX_INCOMPLETE:
-		case PART_INDEX|PART_FILE_INCOMPLETE:
-		case PART_FILE|PART_INDEX_INCOMPLETE:
+		case PART_FILE_INCOMPLETE:
 			// rename
 			part_rename(part);
-			break;
-
-		// corrupted states
-		default:
-			error("partition: %" PRIu64 " is missing index or data file",
-			      part->min);
 			break;
 		}
 
