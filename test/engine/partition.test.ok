@@ -39,7 +39,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     266
+file     631
 index
   size              357
   size_total        266
@@ -297,7 +297,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     266
+file     631
 index
   size              357
   size_total        266
@@ -371,7 +371,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     266
+file     631
 index
   size              357
   size_total        266
@@ -416,7 +416,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     75
+file     218
 index
   size              135
   size_total        75
@@ -443,7 +443,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     58
+file     201
 index
   size              135
   size_total        58

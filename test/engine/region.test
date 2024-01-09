@@ -148,4 +148,16 @@ select 4
 select 6
 select 12
 
+## test: delete all
+#delete 3
+#delete 5
+
+## test: select
+#select
+
+## test: merge
+#partition 0
+#compact 0
+#partition 0
+
 close

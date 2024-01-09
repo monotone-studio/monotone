@@ -31,7 +31,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     92
+file     235
 index
   size              135
   size_total        92
@@ -48,7 +48,6 @@ index
     max             5
 files default
 00000000000000000000
-00000000000000000000.index
 region 0 0
 region (index)
   offset 0
@@ -134,7 +133,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     92
+file     235
 index
   size              135
   size_total        92
@@ -162,7 +161,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     111
+file     255
 index
   size              136
   size_total        111
@@ -260,7 +259,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     111
+file     255
 index
   size              136
   size_total        111
@@ -315,7 +314,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     111
+file     255
 index
   size              136
   size_total        111
@@ -343,7 +342,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     112
+file     256
 index
   size              136
   size_total        112
@@ -408,7 +407,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     112
+file     256
 index
   size              136
   size_total        112
@@ -459,7 +458,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     112
+file     256
 index
   size              136
   size_total        112
@@ -487,7 +486,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     77
+file     221
 index
   size              136
   size_total        77
@@ -581,7 +580,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     77
+file     221
 index
   size              136
   size_total        77
@@ -629,7 +628,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     77
+file     221
 index
   size              136
   size_total        77
@@ -657,7 +656,7 @@ memtable_b
   count  0
   size   0
 mmap     0
-file     59
+file     203
 index
   size              136
   size_total        59
