@@ -9,6 +9,20 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 
+static inline void
+part_path(char* path, Storage* storage, uint64_t min)
+{
+	snprintf(path, PATH_MAX, "%s/%020" PRIu64,
+	         str_of(&storage->path), min);
+}
+
+static inline void
+part_path_incomplete(char* path, Storage* storage, uint64_t min)
+{
+	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".incomplete",
+	         str_of(&storage->path), min);
+}
+
 Part*
 part_allocate(Comparator* comparator,
               Storage*    storage,
@@ -53,48 +67,42 @@ part_free(Part* self)
 	mn_free(self);
 }
 
-static inline void
-part_path(char* path, Storage* storage, uint64_t min, bool index)
-{
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 "%s", str_of(&storage->path),
-	         min, index ? ".index" : "");
-}
-
-static inline void
-part_path_incomplete(char* path, Storage* storage, uint64_t min, bool index)
-{
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 "%s.incomplete", str_of(&storage->path),
-	         min, index ? ".index" : "");
-}
-
 void
 part_open(Part* self, bool check_crc)
 {
-	// open data file
+	// open data file and read index
 	char path[PATH_MAX];
-	part_path(path, self->storage, self->min, false);
+	part_path(path, self->storage, self->min);
 	file_open(&self->file, path);
 
-	// open index file
-	part_path(path, self->storage, self->min, true);
+	if (unlikely(self->file.size < (sizeof(Index) + sizeof(IndexEof))))
+		error("partition: file '%s' has incorrect size",
+		      str_of(&self->file.path));
 
-	File file;
-	file_init(&file);
-	guard(guard, file_close, &file);
-	file_open(&file, path);
+	// [data][index][index_eof]
+	IndexEof eof;
+	file_pread(&self->file, &eof, sizeof(eof),
+	            self->file.size - sizeof(IndexEof));
 
-	if (file.size < sizeof(Index))
-		error("partition: index file '%s' has incorrect size",
-		      str_of(&file.path));
+	// check magic
+	if (unlikely(eof.magic != INDEX_MAGIC))
+		error("partition: file '%s' corrupted", str_of(&self->file.path));
 
-	// read and validate index
-	file_pread_buf(&file, &self->index_buf, file.size, 0);
+	// validate index offset
+	int64_t offset = self->file.size - (sizeof(IndexEof) + eof.size);
+	if (offset < 0)
+		error("partition: file '%s' size mismatch",
+		      str_of(&self->file.path));
 
-	// check index header size
+	// read index
+	file_pread_buf(&self->file, &self->index_buf, eof.size, offset);
+
+	// set and validate index
 	self->index = (Index*)self->index_buf.start;
-	if (file.size != self->index->size)
-		error("partition: index file '%s' size mismatch",
-		      str_of(&file.path));
+
+	if (offset != (int64_t)self->index->size_total)
+		error("partition: file '%s' size mismatch",
+		      str_of(&self->file.path));
 
 	// check crc
 	if (check_crc)
@@ -103,14 +111,9 @@ part_open(Part* self, bool check_crc)
 		crc = crc32(0, self->index_buf.start + sizeof(uint32_t),
 		            buf_size(&self->index_buf) - sizeof(uint32_t));
 		if (crc != self->index->crc)
-			error("partition: index file '%s' crc mismatch",
-			      str_of(&file.path));
+			error("partition: file '%s' crc mismatch",
+			      str_of(&self->file.path));
 	}
-
-	// check data file size
-	if (self->file.size != self->index->size_total)
-		error("partition: data file '%s' size mismatch",
-		      str_of(&self->file.path));
 }
 
 void
@@ -118,46 +121,29 @@ part_create(Part* self, bool sync)
 {
 	assert(self->mmap.start);
 
-	// create min.max.incomplete file
+	// create <id>.incomplete file
 	char path[PATH_MAX];
-	part_path_incomplete(path, self->storage, self->min, false);
+	part_path_incomplete(path, self->storage, self->min);
 	file_create(&self->file, path);
+
 	file_write(&self->file, self->mmap.start, blob_size(&self->mmap));
+	file_write(&self->file, self->index_buf.start, buf_size(&self->index_buf));
 
-	// create min.max.index.incomplete file
-	part_path_incomplete(path, self->storage, self->min, true);
-
-	File file;
-	file_init(&file);
-	guard(guard, file_close, &file);
-	file_create(&file, path);
-	file_write(&file, self->index_buf.start, buf_size(&self->index_buf));
-
-	// sync files
+	// sync
 	if (sync)
-	{
 		file_sync(&self->file);
-		file_sync(&file);
-	}
 }
 
 void
 part_delete(Part* self, bool complete)
 {
-	// delete min.max.index file
+	// <id>
+	// <id>.incomplete
 	char path[PATH_MAX];
 	if (complete)
-		part_path(path, self->storage, self->min, true);
+		part_path(path, self->storage, self->min);
 	else
-		part_path_incomplete(path, self->storage, self->min, true);
-	if (fs_exists("%s", path))
-		fs_unlink("%s", path);
-
-	// delete min.max file
-	if (complete)
-		part_path(path, self->storage, self->min, false);
-	else
-		part_path_incomplete(path, self->storage, self->min, false);
+		part_path_incomplete(path, self->storage, self->min);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
@@ -165,17 +151,11 @@ part_delete(Part* self, bool complete)
 void
 part_rename(Part* self)
 {
-	// rename to min.max.index file
+	// rename <id>.incomplete to <id>
 	char path[PATH_MAX];
 	char path_to[PATH_MAX];
-	part_path_incomplete(path, self->storage, self->min, true);
-	part_path(path_to, self->storage, self->min, true);
-	if (fs_exists("%s", path))
-		fs_rename(path, "%s", path_to);
-
-	// rename to min.max file
-	part_path_incomplete(path, self->storage, self->min, false);
-	part_path(path_to, self->storage, self->min, false);
+	part_path_incomplete(path, self->storage, self->min);
+	part_path(path_to, self->storage, self->min);
 	if (fs_exists("%s", path))
 		fs_rename(path, "%s", path_to);
 }
