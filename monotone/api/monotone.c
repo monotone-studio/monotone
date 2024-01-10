@@ -34,7 +34,7 @@ monotone_init(monotone_compare_t compare, void* compare_arg)
 	self->type = MONOTONE_OBJ;
 	main_init(&self->main);
 
-	runtime_init(&self->main.global);
+	main_set_runtime(&self->main);
 	Exception e;
 	if (try(&e))
 	{
@@ -57,7 +57,7 @@ monotone_free(void* ptr)
 	case MONOTONE_OBJ:
 	{
 		monotone_t* self = ptr;
-		runtime_init(&self->main.global);
+		main_set_runtime(&self->main);
 		Exception e;
 		if (try(&e))
 		{
@@ -123,7 +123,7 @@ MONOTONE_API int
 monotone_execute(monotone_t* self, const char* command, char** result)
 {
 	int rc = 0;
-	runtime_init(&self->main.global);
+	main_set_runtime(&self->main);
 	Exception e;
 	if (try(&e))
 	{
@@ -139,7 +139,7 @@ MONOTONE_API int
 monotone_open(monotone_t* self, const char* directory)
 {
 	int rc = 0;
-	runtime_init(&self->main.global);
+	main_set_runtime(&self->main);
 	Exception e;
 	if (try(&e))
 	{
