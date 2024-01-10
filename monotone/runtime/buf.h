@@ -54,11 +54,11 @@ buf_reset(Buf* self)
 	self->position = self->start;
 }
 
-static inline void
+static inline uint8_t**
 buf_reserve(Buf* self, int size)
 {
 	if (likely(buf_size_unused(self) >= size))
-		return;
+		return &self->position;
 
 	int size_actual = buf_size(self) + size;
 	int size_grow = buf_capacity(self)*  2;
@@ -72,6 +72,7 @@ buf_reserve(Buf* self, int size)
 	self->end = pointer + size_grow;
 	self->start = pointer;
 	assert((self->end - self->position) >= size);
+	return &self->position;
 }
 
 static inline void
