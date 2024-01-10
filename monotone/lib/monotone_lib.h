@@ -6,7 +6,12 @@
 // time-series storage
 //
 
-// rbtree
+// data serialization format
+#include "lib/data.h"
+#include "lib/data_op.h"
+#include "lib/encode.h"
+
+// data structures
 #include "lib/rbtree.h"
 
 // crc and compression
