@@ -19,4 +19,4 @@ struct Runtime
 
 extern __thread Runtime mn_runtime;
 
-void runtime_init(void*);
+void runtime_init(LogFunction, void*, void*);

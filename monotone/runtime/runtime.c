@@ -10,11 +10,11 @@
 __thread Runtime mn_runtime;
 
 void
-runtime_init(void* global)
+runtime_init(LogFunction log, void* log_arg, void* global)
 {
 	exception_mgr_init(&mn_runtime.exception_mgr);
 	error_init(&mn_runtime.error);
-	mn_runtime.log     = NULL;
-	mn_runtime.log_arg = NULL;
+	mn_runtime.log     = log;
+	mn_runtime.log_arg = log_arg;
 	mn_runtime.global  = global;
 }
