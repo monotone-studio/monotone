@@ -7,8 +7,8 @@
 //
 
 // config
-#include "lib/var.h"
-#include "lib/config.h"
+#include "config/var.h"
+#include "config/config.h"
 
 // shared state
-#include "lib/global.h"
+#include "config/global.h"

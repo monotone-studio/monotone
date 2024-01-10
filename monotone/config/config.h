@@ -10,21 +10,35 @@ typedef struct Config Config;
 
 struct Config
 {
-	Str      path;
-	uint64_t interval;
-	int      workers;
+	// main
+	Var  version;
+	Var  uuid;
+	Var  directory;
+	// log
+	Var  log_enable;
+	Var  log_to_file;
+	Var  log_to_stdout;
+	// engine
+	Var  interval;
+	Var  workers;
+	// state
+	Var  storages;
+	// testing
+	Var  test_bool;
+	Var  test_int;
+	Var  test_string;
+	Var  test_data;
+	List list;
+	List list_persistent;
+	int  count;
+	int  count_visible;
+	int  count_config;
+	int  count_persistent;
 };
 
-static inline void
-config_init(Config* self)
-{
-	self->interval = 3000000;
-	self->workers  = 1;
-	str_init(&self->path);
-}
-
-static inline void
-config_free(Config* self)
-{
-	str_free(&self->path);
-}
+void config_init(Config*);
+void config_free(Config*);
+void config_prepare(Config*);
+void config_open(Config*, const char*);
+void config_print(Config*);
+Var* config_find(Config*, Str*);
