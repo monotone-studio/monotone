@@ -8,6 +8,23 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 
+typedef struct
+{
+	int         id;
+	const char* name;
+	int         name_size;
+} Keyword;
+
+static Keyword keywords[] =
+{
+	{ TSET,      "set",      3},
+	{ TTO,       "to",       2},
+	{ TSHOW,     "show",     4},
+	{ TALL,      "all",      3},
+	{ TSTORAGES, "storages", 4},
+	{ 0,          NULL,      0}
+};
+
 void
 lex_init(Lex* self)
 {
@@ -111,6 +128,20 @@ reread_as_float:
 		}
 		str_set(&tk->string, start, self->pos - start);
 		tk->id = TNAME;
+
+		// find keyword
+		auto keyword = &keywords[0];
+		while (keyword->name)
+		{
+			if (keyword->name_size != str_size(&tk->string))
+				continue;
+			if (str_compare_raw(&tk->string, keyword->name, keyword->name_size))
+			{
+				tk->id = keyword->id;
+				break;
+			}
+			keyword++;
+		}
 		return;
 	}
 

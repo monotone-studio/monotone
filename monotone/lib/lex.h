@@ -17,7 +17,13 @@ enum
 	TTRUE,
 	TFALSE,
 	TSTRING,
-	TNAME
+	TNAME,
+	// keywords
+	TSET,
+	TTO,
+	TSHOW,
+	TALL,
+	TSTORAGES
 };
 
 struct Token
