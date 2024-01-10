@@ -1,9 +1,0 @@
-#
-
-# engine
-directory engine
-group engine
-test memtable
-test region
-test region_compression
-test partition
