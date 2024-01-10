@@ -9,8 +9,6 @@ CFLAGS_INCLUDE = -I. \
                  -Iruntime \
                  -Ilib \
                  -Iconfig \
-                 -Iio \
-                 -Iengine \
                  -Imain \
                  -Iapi
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
@@ -26,6 +24,8 @@ OBJECTS        = \
                  lib/compression.o \
                  lib/lex.o \
                  config/config.o \
+                 main/main.o \
+                 main/command.o \
                  api/monotone.o
 #                io/memtable.o \
                  io/part.o \
