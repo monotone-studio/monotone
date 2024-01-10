@@ -11,17 +11,23 @@
 #include "lib/data_op.h"
 #include "lib/encode.h"
 
+// json
+#include "lib/json.h"
+
 // data structures
 #include "lib/rbtree.h"
 
-// crc and compression
+// hashing
 #include "lib/crc.h"
+#include "lib/uuid.h"
+
+// compression
 #include "lib/compression.h"
 
 // lex
 #include "lib/lex.h"
 
-// configuration
+// config
 #include "lib/config.h"
 
 // shared state
