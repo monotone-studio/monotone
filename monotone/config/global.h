@@ -22,3 +22,9 @@ config_directory(void)
 {
 	return var_string_of(&config()->directory);
 }
+
+static inline bool
+config_online(void)
+{
+	return var_int_of(&config()->online);
+}
