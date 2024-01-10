@@ -6,5 +6,4 @@
 // time-series storage
 //
 
-#include "main/main.h"
-#include "main/command.h"
+void main_execute(Main*, const char*, char**);
