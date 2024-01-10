@@ -17,12 +17,12 @@ typedef struct
 
 static Keyword keywords[] =
 {
-	{ KSET,      "set",      3},
-	{ KTO,       "to",       2},
-	{ KSHOW,     "show",     4},
-	{ KALL,      "all",      3},
-	{ KSTORAGES, "storages", 4},
-	{ 0,          NULL,      0}
+	{ KTRUE,  "true",     4},
+	{ KFALSE, "false",    5},
+	{ KSET,   "set",      3},
+	{ KTO,    "to",       2},
+	{ KSHOW,  "show",     4},
+	{ 0,       NULL,      0}
 };
 
 void
@@ -131,7 +131,7 @@ reread_as_float:
 
 		// find keyword
 		auto keyword = &keywords[0];
-		while (keyword->name)
+		for (; keyword->name; keyword++)
 		{
 			if (keyword->name_size != str_size(&tk->string))
 				continue;
@@ -140,7 +140,6 @@ reread_as_float:
 				tk->id = keyword->id;
 				break;
 			}
-			keyword++;
 		}
 		return;
 	}

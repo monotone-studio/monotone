@@ -14,16 +14,14 @@ enum
 	KEOF,
 	KREAL,
 	KINT,
-	KTRUE,
-	KFALSE,
 	KSTRING,
 	KNAME,
 	// keywords
+	KTRUE,
+	KFALSE,
 	KSET,
 	KTO,
-	KSHOW,
-	KALL,
-	KSTORAGES
+	KSHOW
 };
 
 struct Token
