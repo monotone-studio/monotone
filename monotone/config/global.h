@@ -18,7 +18,7 @@ struct Global
 #define config()  global()->config
 
 static inline const char*
-config_path(void)
+config_directory(void)
 {
-	return str_of(&config()->path);
+	return var_string_of(&config()->directory);
 }
