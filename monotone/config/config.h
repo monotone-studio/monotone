@@ -13,6 +13,7 @@ struct Config
 	// main
 	Var  version;
 	Var  uuid;
+	Var  online;
 	Var  directory;
 	// log
 	Var  log_enable;
