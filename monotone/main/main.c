@@ -18,15 +18,19 @@ main_init(Main* self)
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
-
-	// prepare default configuration
-	config_prepare(&self->config);
 }
 
 void
 main_free(Main* self)
 {
 	config_free(&self->config);
+}
+
+void
+main_prepare(Main* self)
+{
+	// set default configuration
+	config_prepare(&self->config);
 }
 
 static void
@@ -43,7 +47,7 @@ main_uuid_set(void)
 }
 
 static void
-main_prepare(Main* self, Str* directory)
+main_deploy(Main* self, Str* directory)
 {
 	// prepare uuid manager
 	uuid_mgr_open(&self->uuid_mgr);
@@ -83,7 +87,7 @@ main_start(Main* self, const char* directory)
 	Str path;
 	str_init(&path);
 	str_set_cstr(&path, directory);
-	main_prepare(self, &path);
+	main_deploy(self, &path);
 
 	// welcome
 	log("");
@@ -93,7 +97,6 @@ main_start(Main* self, const char* directory)
 	log("");
 
 	// recover objects
-
 #if 0
 	// recover engine
 	engine_open(&self->engine);
