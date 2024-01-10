@@ -26,9 +26,3 @@
 
 // lex
 #include "lib/lex.h"
-
-// config
-#include "lib/config.h"
-
-// shared state
-#include "lib/global.h"
