@@ -213,7 +213,26 @@ var_print(Var* self, Buf* buf)
 }
 
 static inline void
-var_write(Var* self, Buf* buf)
+var_print_value(Var* self, Buf* buf)
+{
+	switch (self->type) {
+	case VAR_BOOL:
+		buf_printf(buf, "%s", var_int_of(self) ? "true" : "false");
+		break;
+	case VAR_INT:
+		buf_printf(buf, "%%" PRIu64, var_int_of(self));
+		break;
+	case VAR_STRING:
+		buf_printf(buf, "%.*s", str_size(&self->string),
+		           str_of(&self->string));
+		break;
+	case VAR_DATA:
+		break;
+	}
+}
+
+static inline void
+var_encode(Var* self, Buf* buf)
 {
 	switch (self->type) {
 	case VAR_STRING:
