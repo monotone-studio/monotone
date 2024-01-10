@@ -21,3 +21,4 @@ void json_free(Json*);
 void json_reset(Json*);
 void json_parse(Json*, Str*);
 void json_export(Buf*, uint8_t**);
+void json_export_pretty(Buf*, uint8_t**);
