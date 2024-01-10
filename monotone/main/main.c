@@ -34,8 +34,15 @@ main_prepare(Main* self)
 }
 
 static void
-main_uuid_set(void)
+main_deploy(Main* self, Str* directory)
 {
+	if (config_online())
+		log("already open");
+
+	// prepare uuid manager
+	uuid_mgr_open(&self->uuid_mgr);
+
+	// generate uuid, unless it is set
 	if (! var_string_is_set(&config()->uuid))
 	{
 		Uuid uuid;
@@ -44,19 +51,8 @@ main_uuid_set(void)
 		uuid_to_string(&uuid, uuid_sz, sizeof(uuid_sz));
 		var_string_set_raw(&config()->uuid, uuid_sz, sizeof(uuid_sz) - 1);
 	}
-}
-
-static void
-main_deploy(Main* self, Str* directory)
-{
-	// prepare uuid manager
-	uuid_mgr_open(&self->uuid_mgr);
-
-	// generate uuid, unless it is set
-	main_uuid_set();
 
 	// set directory
-	char path[PATH_MAX];
 	var_string_set(&config()->directory, directory);
 
 	// create directory if not exists
@@ -65,6 +61,7 @@ main_deploy(Main* self, Str* directory)
 		fs_mkdir(0755, "%s", str_of(directory));
 
 	// read or create config file
+	char path[PATH_MAX];
 	snprintf(path, sizeof(path), "%s/config.json",
 	         config_directory());
 	config_open(&self->config, path);
@@ -78,6 +75,9 @@ main_deploy(Main* self, Str* directory)
 		snprintf(path, sizeof(path), "%s/log", config_directory());
 		logger_open(logger, path);
 	}
+
+	mn_runtime.log = (LogFunction)logger_write;
+	mn_runtime.log_arg = &self->logger;
 }
 
 void
@@ -93,21 +93,17 @@ main_start(Main* self, const char* directory)
 	log("");
 	log("monotone.");
 	log("");
-	config_print(config());
+	config_print_log(config());
 	log("");
 
-	// recover objects
-#if 0
-	// recover engine
-	engine_open(&self->engine);
+	// todo: recover
 
-	// start compaction
-	compaction_mgr_start(&self->compaction_mgr, &self->service, &self->engine);
-#endif
+	var_int_set(&config()->online, true);
 }
 
 void
 main_stop(Main* self)
 {
 	(void)self;
+	logger_close(&self->logger);
 }
