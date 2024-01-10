@@ -41,5 +41,7 @@ void config_init(Config*);
 void config_free(Config*);
 void config_prepare(Config*);
 void config_open(Config*, const char*);
-void config_print(Config*);
+void config_save(Config*, const char*);
+void config_print_log(Config*);
+void config_print(Config*, Buf*);
 Var* config_find(Config*, Str*);

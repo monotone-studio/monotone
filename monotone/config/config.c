@@ -76,7 +76,7 @@ config_prepare(Config* self)
 		// main
 		{ "version",                 VAR_STRING, VAR_E,                &self->version,                 "0.0",       0                },
 		{ "uuid",                    VAR_STRING, VAR_C,                &self->uuid,                    NULL,        0                },
-		{ "online",                  VAR_STRING, VAR_E,                &self->online,                  NULL,        false            },
+		{ "online",                  VAR_BOOL,   VAR_E,                &self->online,                  NULL,        false            },
 		{ "directory",               VAR_STRING, VAR_E,                &self->directory,               NULL,        0                },
 		// log
 		{ "log_enable",              VAR_BOOL,   VAR_C,                &self->log_enable,              NULL,        true             },
@@ -182,14 +182,52 @@ config_list_persistent(Config* self, Buf* buf)
 	list_foreach(&self->list)
 	{
 		auto var = list_at(Var, link);
+		if (var_is(var, VAR_E))
+			continue;
 		encode_string(buf, &var->name);
-		var_write(var, buf);
+		var_encode(var, buf);
 	}
 }
 
 void
 config_open(Config* self, const char* path)
 {
+	Buf buf;
+	buf_init(&buf);
+	guard(guard, buf_free, &buf);
+	if (fs_exists("%s", path))
+	{
+		file_import(&buf, "%s", path);
+		Str options;
+		str_init(&options);
+		buf_str(&buf, &options);
+		config_set(self, &options);
+		return;
+	}
+
+	config_list_persistent(self, &buf);
+
+	Buf text;
+	buf_init(&text);
+	guard(guard_text, buf_free, &text);
+	uint8_t* pos = buf.start;
+	json_export_pretty(&text, &pos);
+
+	// create config, if not exists
+	File file;
+	file_init(&file);
+	guard(file_guard, file_close, &file);
+	file_create(&file, path);
+	file_write_buf(&file, &text);
+}
+
+void
+config_save(Config* self, const char* path)
+{
+	(void)self;
+	(void)path;
+
+#if 0
 	Buf buf;
 	buf_init(&buf);
 	guard(guard, buf_free, &buf);
@@ -213,17 +251,30 @@ config_open(Config* self, const char* path)
 	guard(file_guard, file_close, &file);
 	file_create(&file, path);
 	file_write_buf(&file, &buf);
+#endif
 }
 
 void
-config_print(Config* self)
+config_print_log(Config* self)
 {
 	list_foreach(&self->list)
 	{
 		auto var = list_at(Var, link);
 		if (var_is(var, VAR_H) || var_is(var, VAR_S))
 			continue;
-		var_print(var);
+		var_print_log(var);
+	}
+}
+
+void
+config_print(Config* self, Buf* buf)
+{
+	list_foreach(&self->list)
+	{
+		auto var = list_at(Var, link);
+		if (var_is(var, VAR_H) || var_is(var, VAR_S))
+			continue;
+		var_print(var, buf);
 	}
 }
 
