@@ -8,9 +8,10 @@ CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
 CFLAGS_INCLUDE = -I. \
                  -Iruntime \
                  -Ilib \
+                 -Iconfig \
                  -Iio \
                  -Iengine \
-                 -Iinstance \
+                 -Imain \
                  -Iapi
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone.a
@@ -18,11 +19,15 @@ OBJECTS        = \
                  runtime/runtime.o \
                  runtime/vfs.o \
                  runtime/logger.o \
+                 lib/json.o \
                  lib/rbtree.o \
                  lib/crc.o \
+                 lib/uuid.o \
                  lib/compression.o \
                  lib/lex.o \
-                 io/memtable.o \
+                 config/config.o \
+                 api/monotone.o
+#                io/memtable.o \
                  io/part.o \
                  io/part_writer.o \
                  io/merger.o \
