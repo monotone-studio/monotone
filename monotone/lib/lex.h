@@ -11,19 +11,19 @@ typedef struct Lex   Lex;
 
 enum
 {
-	TEOF,
-	TREAL,
-	TINT,
-	TTRUE,
-	TFALSE,
-	TSTRING,
-	TNAME,
+	KEOF,
+	KREAL,
+	KINT,
+	KTRUE,
+	KFALSE,
+	KSTRING,
+	KNAME,
 	// keywords
-	TSET,
-	TTO,
-	TSHOW,
-	TALL,
-	TSTORAGES
+	KSET,
+	KTO,
+	KSHOW,
+	KALL,
+	KSTORAGES
 };
 
 struct Token

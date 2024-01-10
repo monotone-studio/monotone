@@ -17,11 +17,11 @@ typedef struct
 
 static Keyword keywords[] =
 {
-	{ TSET,      "set",      3},
-	{ TTO,       "to",       2},
-	{ TSHOW,     "show",     4},
-	{ TALL,      "all",      3},
-	{ TSTORAGES, "storages", 4},
+	{ KSET,      "set",      3},
+	{ KTO,       "to",       2},
+	{ KSHOW,     "show",     4},
+	{ KALL,      "all",      3},
+	{ KSTORAGES, "storages", 4},
 	{ 0,          NULL,      0}
 };
 
@@ -49,7 +49,7 @@ lex_next(Lex* self, Token* tk)
 		*tk = self->backlog[self->backlog_size];
 		return;
 	}
-	tk->id = TEOF;
+	tk->id = KEOF;
 
 	// skip white spaces and comments
 	for (;;)
@@ -81,7 +81,7 @@ lex_next(Lex* self, Token* tk)
 	// integer or float
 	if (isdigit(*self->pos))
 	{
-		tk->id = TINT;
+		tk->id = KINT;
 		tk->integer = 0;
 		auto start = self->pos;
 		while (self->pos < self->end)
@@ -103,7 +103,7 @@ lex_next(Lex* self, Token* tk)
 
 reread_as_float:
 		errno = 0;
-		tk->id = TREAL;
+		tk->id = KREAL;
 		char* end = NULL;
 		errno = 0;
 		tk->real = strtod(start, &end);
@@ -127,7 +127,7 @@ reread_as_float:
 			self->pos++;
 		}
 		str_set(&tk->string, start, self->pos - start);
-		tk->id = TNAME;
+		tk->id = KNAME;
 
 		// find keyword
 		auto keyword = &keywords[0];
@@ -179,7 +179,7 @@ reread_as_float:
 		if (unlikely(self->pos == self->end))
 			error("config: unterminated string");
 
-		tk->id = TSTRING;
+		tk->id = KSTRING;
 		tk->string_escape = escape;
 		str_set(&tk->string, start, self->pos - start);
 		self->pos++;
