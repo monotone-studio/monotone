@@ -33,6 +33,9 @@
 	throw("%s(): %s (errno: %d)", source_function, \
 	      strerror(errno), errno)
 
+#define error_data() \
+	throw("data read error")
+
 // log
 #define log(fmt, ...) \
 	log_at(mn_runtime.log, \
