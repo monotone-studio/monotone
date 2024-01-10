@@ -42,4 +42,4 @@
 	       mn_runtime.log_arg, \
 	       source_file, \
 	       source_function, \
-	       source_line, "", fmt, ## __VA_ARGS__)
+	       source_line, fmt, ## __VA_ARGS__)
