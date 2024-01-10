@@ -263,3 +263,91 @@ json_parse(Json* self, Str* string)
 		error("%s", "json parse error");
 	assert(self->buf.position <= self->buf.end);
 }
+
+hot void
+json_export(Buf* self, uint8_t** pos)
+{
+	char buf[32];
+	int  buf_len;
+	switch (**pos) {
+	case MN_NULL:
+		data_read_null(pos);
+		buf_write(self, "null", 4);
+		break;
+	case MN_TRUE:
+	case MN_FALSE:
+	{
+		bool value;
+		data_read_bool(pos, &value);
+		if (value)
+			buf_write(self, "true", 4);
+		else
+			buf_write(self, "false", 5);
+		break;
+	}
+	case MN_REAL32:
+	case MN_REAL64:
+	{
+		double value;
+		data_read_real(pos, &value);
+		buf_len = snprintf(buf, sizeof(buf), "%f", value);
+		buf_write(self, buf, buf_len);
+		break;
+	}
+	case MN_INTV0 ... MN_INT64:
+	{
+		int64_t value;
+		data_read_integer(pos, &value);
+		buf_len = snprintf(buf, sizeof(buf), "%" PRIi64, value);
+		buf_write(self,  buf, buf_len);
+		break;
+	}
+	case MN_STRINGV0 ... MN_STRING32:
+	{
+		// todo: quouting
+		char* value;
+		int   size;
+		data_read_raw(pos, &value, &size);
+		buf_write(self, "\"", 1);
+		buf_write(self, value, size);
+		buf_write(self, "\"", 1);
+		break;
+	}
+	case MN_ARRAYV0 ... MN_ARRAY32:
+	{
+		int value;
+		data_read_array(pos, &value);
+		buf_write(self, "[", 1);
+		while (value-- > 0)
+		{
+			json_export(self, pos);
+			if (value > 0)
+				buf_write(self, ", ", 2);
+		}
+		buf_write(self, "]", 1);
+		break;
+	}
+	case MN_MAPV0 ... MN_MAP32:
+	{
+		int value;
+		data_read_map(pos, &value);
+		buf_write(self, "{", 1);
+		while (value-- > 0)
+		{
+			// key
+			json_export(self, pos);
+			buf_write(self, ": ", 2);
+			// value
+			json_export(self, pos);
+			// ,
+			if (value > 0)
+				buf_write(self, ", ", 2);
+		}
+		buf_write(self, "}", 1);
+		break;
+	}
+	default:
+		error_data();
+		break;
+	}
+}
