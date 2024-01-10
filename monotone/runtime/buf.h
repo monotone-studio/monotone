@@ -121,14 +121,32 @@ buf_str(Buf* self, Str* str)
 }
 
 static inline void
-buf_write(Buf* buf, void* data, int size)
+buf_write(Buf* self, void* data, int size)
 {
-	buf_reserve(buf, size);
-	buf_append(buf, data, size);
+	buf_reserve(self, size);
+	buf_append(self, data, size);
 }
 
 always_inline hot static inline void
-buf_write_str(Buf* buf, Str* str)
+buf_write_str(Buf* self, Str* str)
 {
-	buf_write(buf, str_of(str), str_size(str));
+	buf_write(self, str_of(str), str_size(str));
+}
+
+static inline void
+buf_vprintf(Buf* self, const char* fmt, va_list args)
+{
+	char tmp[1024];
+	int  tmp_len;
+	tmp_len = vsnprintf(tmp, sizeof(tmp), fmt, args);
+	buf_write(self, tmp, tmp_len);
+}
+
+static inline void
+buf_printf(Buf* buf, const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	buf_vprintf(buf, fmt, args);
+	va_end(args);
 }
