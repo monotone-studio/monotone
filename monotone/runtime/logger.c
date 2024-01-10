@@ -47,14 +47,14 @@ logger_close(Logger* self)
 	}
 }
 
-static inline void
-logger_writev(Logger*     self,
-              const char* file,
-              const char* function,
-              int         line,
-              const char* prefix,
-              const char* fmt,
-              va_list     args)
+void
+logger_write(Logger*     self,
+             const char* file,
+             const char* function,
+             int         line,
+             const char* prefix,
+             const char* fmt,
+             va_list     args)
 {
 	unused(file);
 	unused(function);
@@ -87,18 +87,4 @@ logger_writev(Logger*     self,
 
 	if (self->to_stdout)
 		vfs_write(STDOUT_FILENO, buffer, len);
-}
-
-void
-logger_write(void*       self,
-             const char* file,
-             const char* function,
-             int         line,
-             const char* prefix,
-             const char* fmt, ...)
-{
-	va_list args;
-	va_start(args, fmt);
-	logger_writev(self, file, function, line, prefix, fmt, args);
-	va_end(args);
 }
