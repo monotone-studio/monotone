@@ -12,6 +12,7 @@ struct Storage
 {
 	List    list;
 	int     list_count;
+	int     refs;
 	Target* target;
 	List    link;
 };
@@ -29,11 +30,25 @@ storage_allocate(Target* target)
 {
 	Storage* self = mn_malloc(sizeof(Storage));
 	self->target     = NULL;
+	self->refs       = 0;
 	self->list_count = 0;
 	list_init(&self->list);
 	guard(self_guard, storage_free, self);
 	self->target     = target_copy(target);
 	return unguard(&self_guard);
+}
+
+static inline void
+storage_ref(Storage* self)
+{
+	self->refs++;
+}
+
+static inline void
+storage_unref(Storage* self)
+{
+	self->refs--;
+	assert(self->refs >= 0);
 }
 
 static inline void
