@@ -19,6 +19,7 @@ struct TierStorage
 struct Tier
 {
 	List        list;
+	int         refs;
 	TierConfig* config;
 	List        link;
 };
@@ -58,6 +59,7 @@ static inline Tier*
 tier_allocate(TierConfig* config)
 {
 	auto self = (Tier*)mn_malloc(sizeof(Tier));
+	self->refs   = 0;
 	self->config = NULL;
 	list_init(&self->list);
 	list_init(&self->link);
@@ -67,7 +69,20 @@ tier_allocate(TierConfig* config)
 }
 
 static inline void
-tier_link(Tier* self, StorageMgr* storage_mgr)
+tier_ref(Tier* self)
+{
+	self->refs++;
+}
+
+static inline void
+tier_unref(Tier* self)
+{
+	self->refs--;
+	assert(self->refs >= 0);
+}
+
+static inline void
+tier_resolve(Tier* self, StorageMgr* storage_mgr)
 {
 	assert(list_empty(&self->list));
 	if (! self->config->list_count)
