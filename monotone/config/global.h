@@ -28,3 +28,12 @@ config_online(void)
 {
 	return var_int_of(&config()->online);
 }
+
+static inline void
+config_update(void)
+{
+	char path[PATH_MAX];
+	snprintf(path, sizeof(path), "%s/config.json",
+	         config_directory());
+	config_save(config(), path);
+}

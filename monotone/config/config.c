@@ -189,50 +189,61 @@ config_list_persistent(Config* self, Buf* buf)
 	}
 }
 
-void
-config_open(Config* self, const char* path)
+static void
+config_save_to(Config* self, const char* path)
 {
+	// get a list of variables
 	Buf buf;
 	buf_init(&buf);
 	guard(guard, buf_free, &buf);
-	if (fs_exists("%s", path))
-	{
-		file_import(&buf, "%s", path);
-		Str options;
-		str_init(&options);
-		buf_str(&buf, &options);
-		config_set(self, &options);
-		return;
-	}
-
 	config_list_persistent(self, &buf);
 
+	// convert to json
 	Buf text;
 	buf_init(&text);
 	guard(guard_text, buf_free, &text);
 	uint8_t* pos = buf.start;
 	json_export_pretty(&text, &pos);
 
-	// create config, if not exists
+	// create config file
 	File file;
 	file_init(&file);
 	guard(file_guard, file_close, &file);
 	file_create(&file, path);
 	file_write_buf(&file, &text);
+
+	// sync
+	file_sync(&file);
 }
 
 void
 config_save(Config* self, const char* path)
 {
-	(void)self;
-	(void)path;
-
-#if 0
+	// remove prevv saved config, if exists
 	Buf buf;
 	buf_init(&buf);
 	guard(guard, buf_free, &buf);
+	if (fs_exists("%s.prev", path))
+		fs_unlink("%s.prev", path);
+
+	// save existing config as a previous
+	fs_rename(path,  "%s.prev", path);
+
+	// create config file
+	config_save_to(self, path);
+
+	// remove prev config file
+	fs_unlink("%s.prev", path);
+}
+
+void
+config_open(Config* self, const char* path)
+{
 	if (fs_exists("%s", path))
 	{
+		Buf buf;
+		buf_init(&buf);
+		guard(guard, buf_free, &buf);
 		file_import(&buf, "%s", path);
 		Str options;
 		str_init(&options);
@@ -241,17 +252,8 @@ config_save(Config* self, const char* path)
 		return;
 	}
 
-	config_list_persistent(self, &buf);
-	uint8_t* pos = buf.start;
-	json_export_pretty(&buf, &pos);
-
-	// create config, if not exists
-	File file;
-	file_init(&file);
-	guard(file_guard, file_close, &file);
-	file_create(&file, path);
-	file_write_buf(&file, &buf);
-#endif
+	// create config file
+	config_save_to(self, path);
 }
 
 void
