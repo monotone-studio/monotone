@@ -70,7 +70,8 @@ tier_mgr_open(TierMgr* self)
 		list_append(&self->list, &tier->link);
 		self->list_count++;
 
-		// todo: set storages
+		// find and link storages
+		tier_resolve(tier, self->storage_mgr);
 	}
 }
 
@@ -86,7 +87,17 @@ tier_mgr_create(TierMgr* self, TierConfig* config, bool if_not_exists)
 		return;
 	}
 	tier = tier_allocate(config);
-	// todo: link storages
+
+	// find and link storages
+	Exception e;
+	if (try(&e)) {
+		tier_resolve(tier, self->storage_mgr);
+	}
+	if (catch(&e))
+	{
+		tier_free(tier);
+		rethrow();
+	}
 
 	list_append(&self->list, &tier->link);
 	self->list_count++;
@@ -104,7 +115,10 @@ tier_mgr_drop(TierMgr* self, Str* name, bool if_exists)
 			error("tier '%.*s': not exists", str_size(name), str_of(name));
 		return;
 	}
-	// todo: unlink storages
+
+	if (tier->refs > 0)
+		error("tier '%.*s': has active dependencies",
+		      str_size(name), str_of(name));
 
 	list_unlink(&tier->link);
 	self->list_count--;
