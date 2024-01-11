@@ -146,6 +146,7 @@ main_execute(Main* self, const char* command, char** result)
 
 	if (result && buf_size(&output) > 0)
 	{
+		buf_write(&output, "\0", 1);
 		unguard(&guard);
 		*result = buf_cstr(&output);
 	}
