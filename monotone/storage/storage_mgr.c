@@ -99,6 +99,14 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 			error("storage '%.*s': not exists", str_size(name), str_of(name));
 		return;
 	}
+
+	if (storage->refs > 0)
+		error("storage '%.*s': has active dependencies",
+		      str_size(name), str_of(name));
+
+	if (storage->list_count > 0)
+		error("storage '%.*s': has data", str_size(name), str_of(name));
+
 	list_unlink(&storage->link);
 	self->list_count--;
 	assert(self->list_count >= 0);
