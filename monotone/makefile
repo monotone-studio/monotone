@@ -8,7 +8,8 @@ CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
 CFLAGS_INCLUDE = -I. \
                  -Iruntime \
                  -Ilib \
-                 -Iconfig \
+                 -Iio \
+                 -Istorage \
                  -Imain \
                  -Iapi
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
@@ -23,13 +24,17 @@ OBJECTS        = \
                  lib/uuid.o \
                  lib/compression.o \
                  lib/lex.o \
-                 config/config.o \
+                 lib/config.o \
                  main/main.o \
                  main/command.o \
-                 api/monotone.o
-#                io/memtable.o \
+                 io/memtable.o \
                  io/part.o \
-                 io/part_writer.o \
+                 io/writer.o \
+                 io/merger.o \
+                 storage/storage_mgr.o \
+                 storage/tier_mgr.o \
+                 api/monotone.o
+#                io/part_writer.o \
                  io/merger.o \
                  engine/engine.o \
                  engine/engine_recover.o \
