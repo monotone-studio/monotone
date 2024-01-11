@@ -7,7 +7,8 @@
 
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
-#include <monotone_config.h>
+#include <monotone_io.h>
+#include <monotone_storage.h>
 #include <monotone_main.h>
 
 static void
@@ -138,6 +139,9 @@ main_execute(Main* self, const char* command, char** result)
 		execute_show(&lex, &output);
 		break;
 	case KEOF:
+		break;
+	case KCREATE:
+		(void)self;
 		break;
 	default:
 		error("unknown command");
