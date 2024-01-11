@@ -21,7 +21,8 @@ enum
 	KFALSE,
 	KSET,
 	KTO,
-	KSHOW
+	KSHOW,
+	KCREATE
 };
 
 struct Token
