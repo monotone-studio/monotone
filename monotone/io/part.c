@@ -115,14 +115,6 @@ part_create(Part* self)
 	char path[PATH_MAX];
 	part_path_incomplete(path, self->target, self->min);
 	file_create(&self->file, path);
-
-#if 0
-	file_write(&self->file, self->mmap.start, blob_size(&self->mmap));
-	file_write(&self->file, self->index_buf.start, buf_size(&self->index_buf));
-	// sync
-	if (sync)
-		file_sync(&self->file);
-#endif
 }
 
 void
