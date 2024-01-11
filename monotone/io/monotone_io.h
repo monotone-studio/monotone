@@ -45,12 +45,3 @@
 
 // merger
 #include "io/merger.h"
-
-#if 0
-// tiering
-#include "io/tier.h"
-
-// service
-#include "io/service_req.h"
-#include "io/service.h"
-#endif
