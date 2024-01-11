@@ -29,6 +29,12 @@ config_online(void)
 	return var_int_of(&config()->online);
 }
 
+static inline uint64_t
+config_interval(void)
+{
+	return var_int_of(&config()->interval);
+}
+
 static inline void
 config_update(void)
 {
