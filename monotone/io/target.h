@@ -86,6 +86,21 @@ target_set_region_size(Target* self, int value)
 }
 
 static inline Target*
+target_copy(Target* self)
+{
+	auto copy = target_allocate();
+	guard(copy_guard, target_free, copy);
+	target_set_name(copy, &self->name);
+	target_set_path(copy, &self->path);
+	target_set_sync(copy, self->sync);
+	target_set_crc(copy, self->crc);
+	target_set_compression(copy, self->compression);
+	target_set_compaction_wm(copy, self->compaction_wm);
+	target_set_region_size(copy, self->region_size);
+	return unguard(&copy_guard);
+}
+
+static inline Target*
 target_read(uint8_t** pos)
 {
 	auto self = target_allocate();
