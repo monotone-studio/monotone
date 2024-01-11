@@ -16,9 +16,12 @@
 #include "storage/tier.h"
 #include "storage/tier_mgr.h"
 
-#if 0
 // pipeline
+#include "storage/pipeline_ref.h"
+#include "storage/pipeline_config.h"
+#include "storage/pipeline.h"
 
+#if 0
 // service
 #include "io/service_req.h"
 #include "io/service.h"

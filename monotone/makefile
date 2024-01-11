@@ -33,6 +33,7 @@ OBJECTS        = \
                  io/merger.o \
                  storage/storage_mgr.o \
                  storage/tier_mgr.o \
+                 storage/pipeline.o \
                  api/monotone.o
 #                io/part_writer.o \
                  io/merger.o \

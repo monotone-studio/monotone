@@ -138,7 +138,7 @@ tier_config_write(TierConfig* self, Buf* buf)
 	encode_integer(buf, self->capacity);
 
 	// list
-	encode_raw(buf, "list", 3);
+	encode_raw(buf, "list", 4);
 	encode_array(buf, self->list_count);
 	list_foreach(&self->list)
 	{

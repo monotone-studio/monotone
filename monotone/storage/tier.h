@@ -84,10 +84,6 @@ tier_unref(Tier* self)
 static inline void
 tier_resolve(Tier* self, StorageMgr* storage_mgr)
 {
-	assert(list_empty(&self->list));
-	if (! self->config->list_count)
-		return;
-
 	list_foreach(&self->config->list)
 	{
 		auto ref = list_at(TierRef, link);
