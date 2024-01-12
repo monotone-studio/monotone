@@ -22,7 +22,13 @@ enum
 	KSET,
 	KTO,
 	KSHOW,
-	KCREATE
+	KCREATE,
+	KSTORAGE,
+	KIF,
+	KNOT,
+	KEXISTS,
+	KDROP,
+	KCONVEYOR
 };
 
 struct Token

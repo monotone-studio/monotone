@@ -17,13 +17,19 @@ typedef struct
 
 static Keyword keywords[] =
 {
-	{ KTRUE,   "true",     4},
-	{ KFALSE,  "false",    5},
-	{ KSET,    "set",      3},
-	{ KTO,     "to",       2},
-	{ KSHOW,   "show",     4},
-	{ KCREATE, "create",   6},
-	{ 0,        NULL,      0}
+	{ KTRUE,     "true",     4},
+	{ KFALSE,    "false",    5},
+	{ KSET,      "set",      3},
+	{ KTO,       "to",       2},
+	{ KSHOW,     "show",     4},
+	{ KCREATE,   "create",   6},
+	{ KSTORAGE,  "storage",  7},
+	{ KIF,       "if",       2},
+	{ KNOT,      "not",      3},
+	{ KEXISTS,   "exists",   6},
+	{ KDROP,     "drop"  ,   4},
+	{ KCONVEYOR, "conveyor", 8},
+	{ 0,          NULL,      0}
 };
 
 void
