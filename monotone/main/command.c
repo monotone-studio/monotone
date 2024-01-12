@@ -88,12 +88,19 @@ execute_set(Lex* lex)
 }
 
 static void
-execute_show(Lex* lex, Buf* output)
+execute_show(Main* self, Lex* lex, Buf* output)
 {
-	// SHOW [ALL | name]
+	// SHOW [STORAGES | ALL | name]
 	Token name;
 	if (! lex_if(lex, KNAME, &name))
 		error("SHOW <name> expected");
+
+	// storages
+	if (str_compare_raw(&name.string, "storages", 8))
+	{
+		storage_mgr_print(&self->storage_mgr, output);
+		return;
+	}
 
 	// all
 	if (str_compare_raw(&name.string, "all", 3))
@@ -110,6 +117,185 @@ execute_show(Lex* lex, Buf* output)
 		error("SHOW name: '%.*s' not found", str_size(&name.string),
 		      str_of(&name.string));
 	var_print_value(var, output);
+}
+
+static inline bool
+parse_if_not_exists(Lex* self)
+{
+	if (! lex_if(self, KIF, NULL))
+		return false;
+	if (! lex_if(self, KNOT, NULL))
+		error("IF <NOT> EXISTS expected");
+	if (! lex_if(self, KEXISTS, NULL))
+		error("IF NOT <EXISTS> expected");
+	return true;
+}
+
+static inline bool
+parse_if_exists(Lex* self)
+{
+	if (! lex_if(self, KIF, NULL))
+		return false;
+	if (! lex_if(self, KEXISTS, NULL))
+		error("IF <EXISTS> expected");
+	return true;
+}
+
+static inline void
+parse_int(Lex* lex, Token* name, int64_t* value)
+{
+	// int
+	Token tk;
+	if (! lex_if(lex, KINT, &tk))
+		error("%.*s <integer> expected", str_size(&name->string),
+		      str_of(&name->string));
+
+	*value = tk.integer;
+}
+
+static inline void
+parse_bool(Lex* lex, Token* name, bool* value)
+{
+	// [true/false]
+	Token tk;
+	if (! lex_if(lex, KNAME, &tk))
+	{
+		*value = true;
+		return;
+	}
+	if (str_compare_raw(&tk.string, "true", 4))
+		*value = true;
+	else
+	if (str_compare_raw(&tk.string, "false", 5))
+		*value = false;
+	else
+		error("%.*s <true/false> expected", str_size(&name->string),
+		      str_of(&name->string));
+}
+
+static inline void
+parse_string(Lex* lex, Token* name, Str* value)
+{
+	// string
+	Token tk;
+	if (! lex_if(lex, KSTRING, &tk))
+		error("%.*s <string> expected", str_size(&name->string),
+		      str_of(&name->string));
+
+	str_free(value);
+	str_copy(value, &tk.string);
+}
+
+static void
+execute_storage_create(Main* self, Lex* lex)
+{
+	// CREATE STORAGE [IF NOT EXISTS] name (options)
+	bool if_not_exists = parse_if_not_exists(lex);
+
+	// name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("CREATE STORAGE <name> expected");
+
+	// create storage target
+	auto target = target_allocate();
+	guard(guard, target_free, target);
+	target_set_name(target, &name.string);
+
+	if (lex_if(lex, KEOF, NULL))
+		goto create;
+
+	// (
+	if (! lex_if(lex, '(', NULL))
+		error("CREATE STORAGE name <(> expected");
+
+	// [)]
+	if (lex_if(lex, ')', NULL))
+		goto create;
+
+	for (;;)
+	{
+		// key
+		if (! lex_if(lex, KNAME, &name))
+			error("config: <name> expected");
+
+		// value
+		if (str_compare_raw(&name.string, "path", 4))
+		{
+			// path <string>
+			parse_string(lex, &name, &target->path);
+		} else
+		if (str_compare_raw(&name.string, "compaction_wm", 13))
+		{
+			// compaction_wm <int>
+			parse_int(lex, &name, &target->compaction_wm);
+		} else
+		if (str_compare_raw(&name.string, "sync", 4))
+		{
+			// sync <bool>
+			parse_bool(lex, &name, &target->sync);
+		} else
+		if (str_compare_raw(&name.string, "crc", 3))
+		{
+			// crc <bool>
+			parse_bool(lex, &name, &target->crc);
+		} else
+		if (str_compare_raw(&name.string, "compression", 11))
+		{
+			// compression <int>
+			parse_int(lex, &name, &target->compression);
+		} else
+		if (str_compare_raw(&name.string, "region_size", 11))
+		{
+			// region_size <int>
+			parse_int(lex, &name, &target->region_size);
+		} else
+		{
+			error("storage: unknown option %.*s", str_size(&name.string),
+			      str_of(&name.string));
+		}
+
+		// ,
+		if (lex_if(lex, ',', NULL))
+			continue;
+
+		// )
+		if (! lex_if(lex, ')', NULL))
+			error("CREATE STORAGE name (...<)> expected");
+	}
+
+create:
+	// create storage
+	storage_mgr_create(&self->storage_mgr, target, if_not_exists);
+
+	// rewrite config file
+	config_update();
+}
+
+static void
+execute_storage_drop(Main* self, Lex* lex)
+{
+	// DROP STORAGE [IF EXISTS] name
+	bool if_exists = parse_if_exists(lex);
+
+	// name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("DROP STORAGE <name> expected");
+
+	// drop storage
+	storage_mgr_drop(&self->storage_mgr, &name.string, if_exists);
+
+	// rewrite config file
+	config_update();
+}
+
+static void
+execute_conveyor_create(Main* self, Lex* lex)
+{
+	// CREATE CONVEYOR [IF NOT EXISTS] name (options), ...
+	(void)self;
+	(void)lex;
 }
 
 void
@@ -136,12 +322,41 @@ main_execute(Main* self, const char* command, char** result)
 		execute_set(&lex);
 		break;
 	case KSHOW:
-		execute_show(&lex, &output);
-		break;
-	case KEOF:
+		execute_show(self, &lex, &output);
 		break;
 	case KCREATE:
-		(void)self;
+	{
+		if (! config_online())
+			error("storage is not online");
+
+		// CREATE STORAGE | CONVEYOR
+		if (lex_if(&lex, KSTORAGE, NULL))
+		{
+			execute_storage_create(self, &lex);
+		} else
+		if (lex_if(&lex, KCONVEYOR, NULL))
+		{
+			execute_conveyor_create(self, &lex);
+		} else {
+			error("CREATE <STORAGE|CONVEYOR> expected");
+		}
+		break;
+	}
+	case KDROP:
+	{
+		if (! config_online())
+			error("storage is not online");
+
+		// DROP STORAGE | CONVEYOR
+		if (lex_if(&lex, KSTORAGE, NULL))
+		{
+			execute_storage_drop(self, &lex);
+		} else {
+			error("DROP <STORAGE|CONVEYOR> expected");
+		}
+		break;
+	}
+	case KEOF:
 		break;
 	default:
 		error("unknown command");
