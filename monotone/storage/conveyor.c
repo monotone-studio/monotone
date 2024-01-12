@@ -133,3 +133,21 @@ conveyor_drop(Conveyor* self, bool if_exists)
 	conveyor_reset(self);
 	conveyor_save(self);
 }
+
+void
+conveyor_print(Conveyor* self, Buf* buf)
+{
+	bool first = true;
+	list_foreach(&self->list)
+	{
+		auto tier = list_at(Tier, link);
+		if (! first)
+			buf_printf(buf, " ⟶ ");
+		buf_printf(buf, "%.*s (", str_size(&tier->config->name),
+		           str_of(&tier->config->name));
+		if (tier->config->capacity != INT64_MAX)
+			buf_printf(buf, "capacity %" PRIu64, tier->config->capacity);
+		buf_printf(buf, ")");
+		first = false;
+	}
+}
