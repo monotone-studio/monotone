@@ -12,6 +12,7 @@ struct TierConfig
 {
 	Str     name;
 	int64_t capacity;
+	List    link;
 };
 
 static inline TierConfig*
@@ -20,6 +21,7 @@ tier_config_allocate(void)
 	auto self = (TierConfig*)mn_malloc(sizeof(TierConfig));
 	self->capacity = 0;
 	str_init(&self->name);
+	list_init(&self->link);
 	return self;
 }
 
