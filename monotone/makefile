@@ -25,14 +25,14 @@ OBJECTS        = \
                  lib/compression.o \
                  lib/lex.o \
                  lib/config.o \
-                 main/main.o \
-                 main/command.o \
                  io/memtable.o \
                  io/part.o \
                  io/writer.o \
                  io/merger.o \
                  storage/storage_mgr.o \
                  storage/conveyor.o \
+                 main/main.o \
+                 main/command.o \
                  api/monotone.o
 #                engine/engine.o \
                  engine/engine_recover.o \
