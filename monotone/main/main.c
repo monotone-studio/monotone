@@ -16,6 +16,9 @@ main_init(Main* self)
 {
 	self->global.config   = &self->config;
 	self->global.uuid_mgr = &self->uuid_mgr;
+
+	storage_mgr_init(&self->storage_mgr);
+	conveyor_init(&self->conveyor, &self->storage_mgr);
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
@@ -24,6 +27,8 @@ main_init(Main* self)
 void
 main_free(Main* self)
 {
+	conveyor_free(&self->conveyor);
+	storage_mgr_free(&self->storage_mgr);
 	config_free(&self->config);
 }
 
@@ -97,7 +102,13 @@ main_start(Main* self, const char* directory)
 	config_print_log(config());
 	log("");
 
-	// todo: recover
+	// recover storages
+	storage_mgr_open(&self->storage_mgr);
+
+	// recover conveyor
+	conveyor_open(&self->conveyor);
+
+	// todo:
 
 	var_int_set(&config()->online, true);
 }

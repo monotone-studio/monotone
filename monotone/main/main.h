@@ -10,10 +10,12 @@ typedef struct Main Main;
 
 struct Main
 {
-	Logger  logger;
-	UuidMgr uuid_mgr;
-	Config  config;
-	Global  global;
+	StorageMgr storage_mgr;
+	Conveyor   conveyor;
+	Logger     logger;
+	UuidMgr    uuid_mgr;
+	Config     config;
+	Global     global;
 };
 
 void main_init(Main*);
