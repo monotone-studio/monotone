@@ -24,7 +24,7 @@ struct Config
 	Var  workers;
 	// state
 	Var  storages;
-	Var  tiers;
+	Var  conveyor;
 	// testing
 	Var  test_bool;
 	Var  test_int;

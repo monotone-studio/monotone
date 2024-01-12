@@ -86,7 +86,7 @@ config_prepare(Config* self)
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
 		// state
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
-		{ "tiers",                   VAR_DATA,   VAR_C|VAR_H,          &self->tiers,                   NULL,        0                },
+		{ "conveyor",                VAR_DATA,   VAR_C|VAR_H,          &self->conveyor,                NULL,        0                },
 		// testing
 		{ "test_bool",               VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->test_bool,               NULL,        false            },
 		{ "test_int",                VAR_INT,    VAR_H|VAR_R|VAR_E,    &self->test_int,                NULL,        0                },
