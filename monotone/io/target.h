@@ -116,7 +116,7 @@ target_read(uint8_t** pos)
 
 	// path
 	data_skip(pos);
-	data_read_string_copy(pos, &self->name);
+	data_read_string_copy(pos, &self->path);
 
 	// sync
 	data_skip(pos);
