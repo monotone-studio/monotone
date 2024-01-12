@@ -19,7 +19,7 @@ static inline TierConfig*
 tier_config_allocate(void)
 {
 	auto self = (TierConfig*)mn_malloc(sizeof(TierConfig));
-	self->capacity = 0;
+	self->capacity = INT64_MAX;
 	str_init(&self->name);
 	list_init(&self->link);
 	return self;
