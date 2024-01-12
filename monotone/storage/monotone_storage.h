@@ -11,15 +11,11 @@
 #include "storage/storage_mgr.h"
 
 // tier
-#include "storage/tier_ref.h"
 #include "storage/tier_config.h"
 #include "storage/tier.h"
-#include "storage/tier_mgr.h"
 
-// pipeline
-#include "storage/pipeline_ref.h"
-#include "storage/pipeline_config.h"
-#include "storage/pipeline.h"
+// conveyor
+#include "storage/conveyor.h"
 
 #if 0
 // service
