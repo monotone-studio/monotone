@@ -32,12 +32,9 @@ OBJECTS        = \
                  io/writer.o \
                  io/merger.o \
                  storage/storage_mgr.o \
-                 storage/tier_mgr.o \
-                 storage/pipeline.o \
+                 storage/conveyor.o \
                  api/monotone.o
-#                io/part_writer.o \
-                 io/merger.o \
-                 engine/engine.o \
+#                engine/engine.o \
                  engine/engine_recover.o \
                  engine/write.o \
                  engine/compaction.o \
