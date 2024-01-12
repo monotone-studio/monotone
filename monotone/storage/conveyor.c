@@ -10,27 +10,34 @@
 #include <monotone_io.h>
 #include <monotone_storage.h>
 
-#if 0
 void
-tier_mgr_init(TierMgr* self, StorageMgr* storage_mgr)
+conveyor_init(Conveyor* self, StorageMgr* storage_mgr)
 {
 	self->storage_mgr = storage_mgr;
 	self->list_count  = 0;
 	list_init(&self->list);
 }
 
-void
-tier_mgr_free(TierMgr* self)
+static inline void
+conveyor_reset(Conveyor* self)
 {
 	list_foreach_safe(&self->list)
 	{
 		auto tier = list_at(Tier, link);
 		tier_free(tier);
 	}
+	list_init(&self->list);
+	self->list_count = 0;
+}
+
+void
+conveyor_free(Conveyor* self)
+{
+	conveyor_reset(self);
 }
 
 static inline void
-tier_mgr_save(TierMgr* self)
+conveyor_save(Conveyor* self)
 {
 	Buf buf;
 	buf_init(&buf);
@@ -45,16 +52,16 @@ tier_mgr_save(TierMgr* self)
 	}
 
 	// update state
-	var_data_set_buf(&config()->tiers, &buf);
+	var_data_set_buf(&config()->conveyor, &buf);
 }
 
 void
-tier_mgr_open(TierMgr* self)
+conveyor_open(Conveyor* self)
 {
-	auto tiers = &config()->tiers;
-	if (! var_data_is_set(tiers))
+	auto var = &config()->conveyor;
+	if (! var_data_is_set(var))
 		return;
-	auto pos = var_data_of(tiers);
+	auto pos = var_data_of(var);
 	if (data_is_null(pos))
 		return;
 
@@ -71,73 +78,58 @@ tier_mgr_open(TierMgr* self)
 		list_append(&self->list, &tier->link);
 		self->list_count++;
 
-		// find and link storages
+		// find and link storage
 		tier_resolve(tier, self->storage_mgr);
 	}
 }
 
-void
-tier_mgr_create(TierMgr* self, TierConfig* config, bool if_not_exists)
+bool
+conveyor_exists(Conveyor* self)
 {
-	auto tier = tier_mgr_find(self, &config->name);
-	if (tier)
+	return self->list_count > 0;
+}
+
+void
+conveyor_create(Conveyor* self, List* configs, bool if_not_exists)
+{
+	if (conveyor_exists(self))
 	{
 		if (! if_not_exists)
-			error("tier '%.*s': already exists", str_size(&config->name),
-			      str_of(&config->name));
+			error("conveyor: already exists");
 		return;
 	}
-	tier = tier_allocate(config);
 
-	// find and link storages
 	Exception e;
-	if (try(&e)) {
-		tier_resolve(tier, self->storage_mgr);
+	if (try(&e))
+	{
+		list_foreach(configs)
+		{
+			auto config = list_at(TierConfig, link);
+			auto tier = tier_allocate(config);
+			list_append(&self->list, &tier->link);
+			self->list_count++;
+			tier_resolve(tier, self->storage_mgr);
+		}
 	}
 	if (catch(&e))
 	{
-		tier_free(tier);
+		conveyor_reset(self);
 		rethrow();
 	}
 
-	list_append(&self->list, &tier->link);
-	self->list_count++;
-
-	tier_mgr_save(self);
+	conveyor_save(self);
 }
 
 void
-tier_mgr_drop(TierMgr* self, Str* name, bool if_exists)
+conveyor_drop(Conveyor* self, bool if_exists)
 {
-	auto tier = tier_mgr_find(self, name);
-	if (! tier)
+	if (! conveyor_exists(self))
 	{
 		if (! if_exists)
-			error("tier '%.*s': not exists", str_size(name), str_of(name));
+			error("conveyor: not exists");
 		return;
 	}
 
-	if (tier->refs > 0)
-		error("tier '%.*s': has active dependencies",
-		      str_size(name), str_of(name));
-
-	list_unlink(&tier->link);
-	self->list_count--;
-	assert(self->list_count >= 0);
-	tier_free(tier);
-
-	tier_mgr_save(self);
+	conveyor_reset(self);
+	conveyor_save(self);
 }
-
-Tier*
-tier_mgr_find(TierMgr* self, Str* name)
-{
-	list_foreach(&self->list)
-	{
-		auto tier = list_at(Tier, link);
-		if (str_compare(&tier->config->name, name))
-			return tier;
-	}
-	return NULL;
-}
-#endif

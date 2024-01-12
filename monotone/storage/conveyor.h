@@ -18,5 +18,6 @@ struct Conveyor
 void conveyor_init(Conveyor*, StorageMgr*);
 void conveyor_free(Conveyor*);
 void conveyor_open(Conveyor*);
+bool conveyor_exists(Conveyor*);
 void conveyor_create(Conveyor*, List*, bool);
 void conveyor_drop(Conveyor*, bool);
