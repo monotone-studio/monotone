@@ -217,7 +217,7 @@ execute_storage_create(Main* self, Lex* lex)
 	{
 		// key
 		if (! lex_if(lex, KNAME, &name))
-			error("config: <name> expected");
+			error("CREATE STORAGE (<name> expected");
 
 		// value
 		if (str_compare_raw(&name.string, "path", 4))
@@ -251,7 +251,7 @@ execute_storage_create(Main* self, Lex* lex)
 			parse_int(lex, &name, &target->region_size);
 		} else
 		{
-			error("storage: unknown option %.*s", str_size(&name.string),
+			error("CREATE STORAGE: unknown option %.*s", str_size(&name.string),
 			      str_of(&name.string));
 		}
 
@@ -262,6 +262,8 @@ execute_storage_create(Main* self, Lex* lex)
 		// )
 		if (! lex_if(lex, ')', NULL))
 			error("CREATE STORAGE name (...<)> expected");
+
+		break;
 	}
 
 create:
