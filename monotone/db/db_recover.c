@@ -39,7 +39,6 @@ db_recover_id(char*     path,
 	// min
 	if (db_recover_id_read(&path, min) == -1)
 		return -1;
-
 	if (*path != '.')
 		return -1;
 	path++;
@@ -47,13 +46,11 @@ db_recover_id(char*     path,
 	// id
 	if (db_recover_id_read(&path, id) == -1)
 		return -1;
-
 	if (! *path)
 	{
 		*id_parent = *id;
 		return 0;
 	}
-
 	if (*path != '.')
 		return -1;
 	path++;
@@ -97,10 +94,11 @@ db_recover_storage(Db* self, Storage* storage)
 		if (db_recover_id(entry->d_name, &min, &id, &id_parent) == -1)
 			continue;
 
-		auto part = part_allocate(self->comparator, storage->target,
-		                          id, id_parent,
-		                          min,
-		                          min + config_interval());
+		Part* part;
+		part = part_allocate(self->comparator, storage->target,
+		                     id, id_parent,
+		                     min,
+		                     min + config_interval());
 		part->target = storage->target;
 		storage_add(storage, part);
 	}
@@ -111,7 +109,7 @@ db_recover_validate(Db* self, Storage* storage)
 {
 	list_foreach_safe(&storage->list)
 	{
-		auto part = list_at(Part, link_storage);
+		auto part = list_at(Part, link);
 
 		// sync psn
 		config_psn_follow(part->id);
@@ -162,7 +160,7 @@ db_recover(Db* self)
 		auto storage = list_at(Storage, link);
 		list_foreach(&storage->list)
 		{
-			auto part = list_at(Part, link_storage);
+			auto part = list_at(Part, link);
 			part_open(part);
 			part_tree_add(&self->tree, part);
 		}
