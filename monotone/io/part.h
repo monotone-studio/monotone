@@ -23,7 +23,6 @@ struct Part
 	Target*     target;
 	Comparator* comparator;
 	RbtreeNode  node;
-	List        link_storage;
 	List        link;
 };
 
