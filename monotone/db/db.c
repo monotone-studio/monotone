@@ -58,124 +58,103 @@ db_close(Db* self)
 	}
 }
 
-#if 0
 static inline Part*
-db_create(Db* self, uint64_t time)
+db_create(Db* self, uint64_t min)
 {
 	auto head = part_tree_max(&self->tree);
 
 	// create new partition
+	auto id = config_psn_next();
 	auto part = part_allocate(self->comparator, NULL,
-	                          time,
-	                          time + config()->interval);
-	list_append(&self->list, &part->link);
-	self->list_count++;
-
+	                          id,
+	                          id,
+	                          min,
+	                          min + config_interval());
 	part_tree_add(&self->tree, part);
 
-	// match tier
-	int tier_order = 0;
-	if (self->tier_mgr.tiers_count > 1)
-	{
-		auto ref = part_tree_prev(&self->tree, part);
-		if (ref) {
-			tier_order = ref->storage->order;
-		} else
-		{
-			ref = part_tree_next(&self->tree, part);
-			if (ref)
-				tier_order = ref->storage->order;
-		}
-	}
-	auto tier = tier_of(&self->tier_mgr, tier_order);
-	tier_add(tier, part);
-	part->storage = tier->storage;
+	// match primary storage
+	Tier* primary = conveyor_primary(&self->conveyor);
+	auto  storage = primary->storage;
+	storage_add(storage, part);
+	part->target = storage->target;
 
 	// rebalance partitions
-	if (self->tier_mgr.tiers_count > 1)
+	if (self->conveyor.list_count > 1)
 	{
-		auto storage = tier->storage;
-		if (storage->capacity != INT_MAX && tier->list_count >= storage->capacity)
-			service_add(self->service, 0, 0);
+		if (storage->list_count >= primary->config->capacity)
+			service_add(&self->service, 0, 0);
 	}
 
 	// schedule former max compaction
-	if (head && head->min < time)
+	if (head && head->min < min)
 	{
-		if (! head->service)
-		{
-			head->service = true;
-			service_add(self->service, head->min, head->max);
-		}
+		// todo: if not exists
+		service_add(&self->service, head->min, head->max);
 	}
 
 	return part;
 }
 
 hot Lock*
-db_find(Db* self, bool create, uint64_t time)
+db_find(Db* self, bool create, uint64_t min)
 {
 	// lock partition by min
-	auto lock = lock_mgr_get(&self->lock_mgr, time);
+	auto lock = lock_mgr_get(&self->lock_mgr, min);
 
 	mutex_lock(&self->lock);
 	guard(unlock, mutex_unlock, &self->lock);
 
 	// find partition by min
-	Part* part = NULL;
-	if (likely(self->list_count > 0))
+	auto part = part_tree_match(&self->tree, min);
+	if (part)
 	{
-		part = part_tree_match(&self->tree, time);
-		if (part)
-		{
-			lock->arg = part;
-			return lock;
-		}
+		lock->arg = part;
+		return lock;
 	}
 	if (! create)
 		return NULL;
 
 	// create new partition
-	part = db_create(self, time);
+	part = db_create(self, min);
 	lock->arg = part;
 	return lock;
 }
 
 hot Lock*
-db_seek(Db* self, uint64_t time)
+db_seek(Db* self, uint64_t min)
 {
 	// try to find a partition and grab a lock with min time
 	for (;;)
 	{
-		auto lock = lock_mgr_get(&self->lock_mgr, time);
+		auto lock = lock_mgr_get(&self->lock_mgr, min);
 		mutex_lock(&self->lock);
 
-		if (unlikely(self->list_count == 0))
+		if (unlikely(self->tree.tree_count == 0))
 		{
 			mutex_unlock(&self->lock);
 			lock_mgr_unlock(lock);
 			break;
 		}
 
-		auto part = part_tree_seek(&self->tree, time);
-		if (part->max <= time)
+		auto part = part_tree_seek(&self->tree, min);
+		if (part->max <= min)
 		{
 			mutex_unlock(&self->lock);
 			lock_mgr_unlock(lock);
 			break;
 		}
 
-		if (part->min == time)
+		if (part->min == min)
 		{
 			lock->arg = part;
 			mutex_unlock(&self->lock);
 			return lock;
 		}
 
-		time = part->min;
+		min = part->min;
 		mutex_unlock(&self->lock);
 		lock_mgr_unlock(lock);
 	}
+
 	return NULL;
 }
-#endif
