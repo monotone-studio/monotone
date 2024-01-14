@@ -15,7 +15,7 @@ struct Lock
 	int       locker_refs;
 	int       pending;
 	uint64_t  id;
-	void*     arg;
+	Part*     part;
 	CondVar   cond_var;
 	LockMgr*  lock_mgr;
 	List      link;
@@ -23,11 +23,12 @@ struct Lock
 
 struct LockMgr
 {
-	Mutex mutex;
-	int   list_count;
-	List  list;
-	int   list_free_count;
-	List  list_free;
+	Mutex  mutex;
+	Rwlock rwlock;
+	int    list_count;
+	List   list;
+	int    list_free_count;
+	List   list_free;
 };
 
 static inline Lock*
@@ -38,7 +39,7 @@ lock_allocate(void)
 	self->locker_refs = 0;
 	self->pending     = 0;
 	self->id          = 0;
-	self->arg         = NULL;
+	self->part        = NULL;
 	self->lock_mgr    = NULL;
 	cond_var_init(&self->cond_var);
 	list_init(&self->link);
@@ -60,6 +61,7 @@ lock_mgr_init(LockMgr* self)
 	list_init(&self->list);
 	list_init(&self->list_free);
 	mutex_init(&self->mutex);
+	rwlock_init(&self->rwlock);
 }
 
 static inline void
@@ -72,6 +74,31 @@ lock_mgr_free(LockMgr* self)
 		lock_free(lock);
 	}
 	mutex_free(&self->mutex);
+	rwlock_free(&self->rwlock);
+}
+
+static inline void
+lock_mgr_lock_shared(LockMgr* self)
+{
+	rwlock_rdlock(&self->rwlock);
+}
+
+static inline void
+lock_mgr_lock_exclusive(LockMgr* self)
+{
+	rwlock_wrlock(&self->rwlock);
+}
+
+static inline void
+lock_mgr_unlock_shared(LockMgr* self)
+{
+	rwlock_unlock(&self->rwlock);
+}
+
+static inline void
+lock_mgr_unlock_exclusive(LockMgr* self)
+{
+	rwlock_unlock(&self->rwlock);
 }
 
 hot static inline Lock*
@@ -99,7 +126,7 @@ lock_mgr_allocate(LockMgr* self, uint64_t id)
 		lock = lock_allocate();
 	}
 	lock->id          = id;
-	lock->arg         = NULL;
+	lock->part        = NULL;
 	lock->locker_refs = 0;
 	lock->locker      = 0;
 	lock->lock_mgr    = self;
@@ -110,6 +137,10 @@ lock_mgr_allocate(LockMgr* self, uint64_t id)
 hot static inline Lock*
 lock_mgr_get(LockMgr* self, uint64_t id)
 {
+	// take lock manager shared lock
+	lock_mgr_lock_shared(self);
+	guard(unlock_shared, lock_mgr_unlock_shared, self);
+
 	mutex_lock(&self->mutex);
 	guard(unlock, mutex_unlock, &self->mutex);
 
@@ -127,6 +158,7 @@ lock_mgr_get(LockMgr* self, uint64_t id)
 	if (pthread_equal(pthread_id, lock->locker))
 	{
 		lock->locker_refs++;
+		unguard(&unlock_shared);
 		return lock;
 	}
 
@@ -143,6 +175,8 @@ lock_mgr_get(LockMgr* self, uint64_t id)
 		cond_var_wait(&lock->cond_var, &self->mutex);
 		lock->pending--;
 	}
+
+	unguard(&unlock_shared);
 	return lock;
 }
 
@@ -153,6 +187,8 @@ lock_mgr_unlock(Lock* lock)
 
 	mutex_lock(&self->mutex);
 	guard(unlock, mutex_unlock, &self->mutex);
+
+	lock_mgr_unlock_shared(self);
 
 	lock->locker_refs--;
 	if (lock->locker_refs > 0)
