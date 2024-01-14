@@ -13,6 +13,7 @@
 // os
 #include "runtime/atomic.h"
 #include "runtime/spinlock.h"
+#include "runtime/rwlock.h"
 #include "runtime/mutex.h"
 #include "runtime/cond_var.h"
 #include "runtime/thread.h"
