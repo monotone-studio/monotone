@@ -32,8 +32,8 @@ service_free(Service* self)
 {
 	list_foreach_safe(&self->list)
 	{
-		auto req = list_at(ServiceReq, link);
-		service_req_free(req);
+		auto part = list_at(ServicePart, link);
+		service_part_free(part);
 	}
 	mutex_free(&self->lock);
 	cond_var_free(&self->cond_var);
@@ -48,28 +48,47 @@ service_shutdown(Service* self)
 	mutex_unlock(&self->lock);
 }
 
-static inline void
-service_add(Service* self, uint64_t min, uint64_t max)
+static inline ServicePart*
+service_find(Service* self, uint64_t min)
 {
-	auto req = service_req_allocate(min, max);
+	list_foreach(&self->list)
+	{
+		auto part = list_at(ServicePart, link);
+		if (part->min == min)
+			return part;
+	}
+	return NULL;
+}
+
+static inline ServicePart*
+service_find_or_create(Service* self, uint64_t min)
+{
+	auto part = service_find(self, min);
+	if (part == NULL)
+		part = service_part_allocate(min);
+	return part;
+}
+
+static inline void
+service_add(Service* self, ServiceType type, uint64_t min, Str* storage)
+{
+	auto req = service_req_allocate(type, storage);
+
 	mutex_lock(&self->lock);
-	list_append(&self->list, &req->link);
-	self->list_count++;
+	guard(guard, mutex_unlock, &self->lock);
+
+	auto part = service_find_or_create(self, min);
+	list_append(&part->list, &req->link);
+	part->list_count++;
 	cond_var_signal(&self->cond_var);
-	mutex_unlock(&self->lock);
 }
 
-static inline void
-service_add_rebalance(Service* self)
-{
-	service_add(self, 0, 0);
-}
-
-static inline ServiceReq*
+static inline ServicePart*
 service_next(Service* self)
 {
-	ServiceReq* req = NULL;
 	mutex_lock(&self->lock);
+
+	ServicePart* part = NULL;
 	while (! self->shutdown)
 	{
 		if (self->list_count == 0)
@@ -77,10 +96,36 @@ service_next(Service* self)
 			cond_var_wait(&self->cond_var, &self->lock);
 			continue;
 		}
-		req = container_of(list_pop(&self->list), ServiceReq, link);
-		self->list_count--;
-		break;
+		list_foreach(&self->list)
+		{
+			auto part = list_at(ServicePart, link);
+			if (part->list_count > 0 && !part->active)
+			{
+				part->active = true;
+				break;
+			}
+		}
 	}
+
 	mutex_unlock(&self->lock);
-	return req;
+	return part;
+}
+
+static inline void
+service_complete(Service* self, ServicePart* part)
+{
+	mutex_lock(&self->lock);
+
+	service_part_pop(part);
+	part->active = false;
+
+	if (part->list_count == 0)
+	{
+		list_unlink(&part->link);
+		self->list_count--;
+	} else {
+		cond_var_signal(&self->cond_var);
+	}
+
+	mutex_unlock(&self->lock);
 }
