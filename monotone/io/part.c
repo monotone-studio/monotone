@@ -59,7 +59,7 @@ part_free(Part* self)
 }
 
 void
-part_open(Part* self, bool check_crc)
+part_open(Part* self)
 {
 	// open data file and read index
 	char path[PATH_MAX];
@@ -96,7 +96,7 @@ part_open(Part* self, bool check_crc)
 		      str_of(&self->file.path));
 
 	// check crc
-	if (check_crc)
+	if (self->target->crc)
 	{
 		uint32_t crc;
 		crc = crc32(0, self->index_buf.start + sizeof(uint32_t),

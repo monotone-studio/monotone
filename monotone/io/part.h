@@ -30,7 +30,7 @@ struct Part
 Part*
 part_allocate(Comparator*, Target*, uint64_t, uint64_t);
 void part_free(Part*);
-void part_open(Part*, bool);
+void part_open(Part*);
 void part_create(Part*);
 void part_delete(Part*, bool);
 void part_rename(Part*);
