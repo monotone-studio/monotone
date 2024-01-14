@@ -11,39 +11,59 @@
 #include <monotone_storage.h>
 #include <monotone_db.h>
 
-enum
+static inline int
+db_recover_id_read(char** pos, uint64_t* id)
 {
-	PART_FILE            = 1,
-	PART_FILE_INCOMPLETE = 2
-};
-
-static inline int64_t
-db_recover_id(const char* path, int* state)
-{
-	// <id>
-	// <id>.incomplete
-	int64_t id = 0;
+	char* path = *pos;
+	*id = 0;
 	while (*path && *path != '.')
 	{
 		if (unlikely(! isdigit(*path)))
 			return -1;
-		id = (id * 10) + *path - '0';
+		*id = (*id * 10) + *path - '0';
 		path++;
 	}
+	*pos = path;
+	return 0;
+}
 
-	if (! *path)
-		*state = PART_FILE;
-	else
-	if (! strcmp(path, ".incomplete"))
-		*state = PART_FILE_INCOMPLETE;
-	else
+static inline int
+db_recover_id(char*     path,
+              uint64_t* min,
+              uint64_t* id,
+              uint64_t* id_parent)
+{
+	// <min>.<id>
+	// <min>.<id>.<id_parent>
+
+	// min
+	if (db_recover_id_read(&path, min) == -1)
 		return -1;
 
-	return id;
+	if (*path != '.')
+		return -1;
+	path++;
+
+	// id
+	if (db_recover_id_read(&path, id) == -1)
+		return -1;
+
+	if (! *path)
+	{
+		*id_parent = *id;
+		return 0;
+	}
+
+	if (*path != '.')
+		return -1;
+	path++;
+
+	// id_parent
+	return db_recover_id_read(&path, id_parent);
 }
 
 static void
-db_recover_storage_read(Db* self, Storage* storage)
+db_recover_storage(Db* self, Storage* storage)
 {
 	auto target = storage->target;
 
@@ -69,92 +89,82 @@ db_recover_storage_read(Db* self, Storage* storage)
 		if (entry->d_name[0] == '.')
 			continue;
 
-		int state = 0;
-		int64_t id = db_recover_id(entry->d_name, &state);
-		if (id == -1)
+		// <min>.<id>
+		// <min>.<id>.<id_parent>
+		uint64_t min       = 0;
+		uint64_t id        = 0;
+		uint64_t id_parent = 0;
+		if (db_recover_id(entry->d_name, &min, &id, &id_parent) == -1)
 			continue;
 
-		// find or create partition
-		auto part = storage_find(storage, id);
-		if (part) {
-			part->state |= state;
-		} else
-		{
-			part = part_allocate(self->comparator, storage->target,
-			                     id,
-			                     id + config_interval());
-			part->state  = state;
-			part->target = storage->target;
-			storage_add(storage, part);
-		}
+		auto part = part_allocate(self->comparator, storage->target,
+		                          id, id_parent,
+		                          min,
+		                          min + config_interval());
+		part->target = storage->target;
+		storage_add(storage, part);
 	}
 }
 
-/*
 static void
-db_recover_storage_resolve(Db* self, Tier* tier, Part* part)
+db_recover_validate(Db* self, Storage* storage)
 {
-	auto next_tier = tier_of(&self->tier_mgr, tier->storage->order + 1);
-	auto next = tier_find(next_tier, part->min);
-	if (next == NULL)
-		return;
-
-	// incomplete partitions should be possible only
-	// on the next tier
-	//
-
-	// remove incomplete partition
-	tier_remove(next_tier, next);
-	part_delete(next, false);
-	part_free(next);
-}
-*/
-
-static void
-db_recover_storage(Db* self, Storage* storage)
-{
-	list_foreach(&storage->list)
+	list_foreach_safe(&storage->list)
 	{
 		auto part = list_at(Part, link_storage);
 
-		switch (part->state) {
-		case PART_FILE:
-			// normal state
-			break;
+		// sync psn
+		config_psn_follow(part->id);
+		config_psn_follow(part->id_parent);
 
-		// crash recovery cases
-		case PART_FILE | PART_FILE_INCOMPLETE:
-			// remove incomplete
-			part_delete(part, false);
-			break;
+		// <min>.<id>.<id_parent>
+		if (part->id != part->id_parent)
+		{
+			auto parent = storage_mgr_find_part(&self->storage_mgr, part->id_parent);
+			if (parent)
+			{
+				// parent still exists, remove incomplete partition
+				storage_remove(storage, part);
+				part_delete(part, true);
+				part_free(part);
+				continue;
+			}
 
-		case PART_FILE_INCOMPLETE:
-			// rename
+			// parent has been removed after sync during compaction
+
+			// rename to completion
 			part_rename(part);
-			break;
+			part->id_parent = part->id;
 		}
-
-		// open partition
-		part_open(part);
-
-		// add to the partition tree
-		part_tree_add(&self->tree, part);
 	}
 }
 
-#if 0
 void
 db_recover(Db* self)
 {
-	// read partitions per storage
-	for (int order = 0; order < self->tier_mgr.tiers_count; order++)
+	// read partitions
+	list_foreach(&self->storage_mgr.list)
 	{
-		auto tier = tier_of(&self->tier_mgr, order);
-		auto storage = tier->storage;
-		if (str_empty(&storage->path))
-			continue;
-		db_tier_read(self, tier);
-		db_tier_recover(self, tier);
+		auto storage = list_at(Storage, link);
+		db_recover_storage(self, storage);
+	}
+
+	// validate partitions per storage
+	list_foreach(&self->storage_mgr.list)
+	{
+		auto storage = list_at(Storage, link);
+		db_recover_validate(self, storage);
+	}
+
+	// open partitions
+	list_foreach(&self->storage_mgr.list)
+	{
+		auto storage = list_at(Storage, link);
+		list_foreach(&storage->list)
+		{
+			auto part = list_at(Part, link_storage);
+			part_open(part);
+			part_tree_add(&self->tree, part);
+		}
 	}
 }
-#endif
