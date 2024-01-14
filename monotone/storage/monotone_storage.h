@@ -6,6 +6,9 @@
 // time-series storage
 //
 
+// lock manager
+#include "storage/lock_mgr.h"
+
 // storage
 #include "storage/storage.h"
 #include "storage/storage_mgr.h"
@@ -17,8 +20,6 @@
 // conveyor
 #include "storage/conveyor.h"
 
-#if 0
 // service
-#include "io/service_req.h"
-#include "io/service.h"
-#endif
+#include "storage/service_req.h"
+#include "storage/service.h"
