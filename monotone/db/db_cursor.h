@@ -32,7 +32,7 @@ db_cursor_open(DbCursor* self, Db* db, Row* key)
 		return;
 
 	// open partition cursor
-	Part* part = self->lock->arg;
+	auto part = self->lock->part;
 	part_cursor_open(&self->cursor, part, key);
 	self->current = part_cursor_at(&self->cursor);
 }
@@ -77,7 +77,7 @@ db_cursor_next(DbCursor* self)
 		return;
 	}
 
-	Part* part = self->lock->arg;
+	Part* part = self->lock->part;
 	uint64_t next_interval = part->max;
 
 	// close previous partition
@@ -90,7 +90,7 @@ db_cursor_next(DbCursor* self)
 	if (unlikely(self->lock == NULL))
 		return;
 
-	part = self->lock->arg;
+	part = self->lock->part;
 	part_cursor_open(&self->cursor, part, NULL);
 	self->current = part_cursor_at(&self->cursor);
 }

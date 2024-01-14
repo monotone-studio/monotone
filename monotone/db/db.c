@@ -102,18 +102,15 @@ db_find(Db* self, bool create, uint64_t min)
 	guard(unlock, mutex_unlock, &self->lock);
 
 	// find partition by min
-	auto part = part_tree_match(&self->tree, min);
-	if (part)
-	{
-		lock->arg = part;
+	lock->part = part_tree_match(&self->tree, min);
+	if (lock->part)
 		return lock;
-	}
+
 	if (! create)
 		return NULL;
 
 	// create new partition
-	part = db_create(self, min);
-	lock->arg = part;
+	lock->part = db_create(self, min);
 	return lock;
 }
 
@@ -143,7 +140,7 @@ db_seek(Db* self, uint64_t min)
 
 		if (part->min == min)
 		{
-			lock->arg = part;
+			lock->part = part;
 			mutex_unlock(&self->lock);
 			return lock;
 		}

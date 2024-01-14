@@ -14,7 +14,7 @@
 hot static inline void
 db_write_to(Db* self, Lock* lock, Row* row)
 {
-	Part* part = lock->arg;
+	Part* part = lock->part;
 
 	// update stats
 	atomic_u64_add(&self->rows_written, 1);
