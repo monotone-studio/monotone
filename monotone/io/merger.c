@@ -98,10 +98,10 @@ merger_execute(Merger* self, MergerReq* req)
 	// allocate and create incomplete partition file
 	uint64_t id = config_psn_next();
 	self->part = part_allocate(origin->comparator, req->target,
-	                           origin->min,
-	                           origin->max,
 	                           id,
-	                           origin->id);
+	                           origin->id,
+	                           origin->min,
+	                           origin->max);
 	part_create(self->part);
 
 	// write partition file
