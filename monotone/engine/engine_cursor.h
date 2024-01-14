@@ -6,28 +6,28 @@
 // time-series storage
 //
 
-typedef struct DbCursor DbCursor;
+typedef struct EngineCursor EngineCursor;
 
-struct DbCursor
+struct EngineCursor
 {
 	Lock*      lock;
 	PartCursor cursor;
 	Row*       current;
-	Db*        db;
+	Engine*    engine;
 };
 
 hot static inline void
-db_cursor_open(DbCursor* self, Db* db, Row* key)
+engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 {
 	self->lock    = NULL;
 	self->current = NULL;
-	self->db      = db;
+	self->engine  = engine;
 
 	// find partition
 	uint64_t min = 0;
 	if (key)
 		min = row_interval_min(key);
-	self->lock = db_seek(db, min);
+	self->lock = engine_seek(engine, min);
 	if (self->lock == NULL)
 		return;
 
@@ -38,7 +38,7 @@ db_cursor_open(DbCursor* self, Db* db, Row* key)
 }
 
 hot static inline void
-db_cursor_close(DbCursor* self)
+engine_cursor_close(EngineCursor* self)
 {
 	if (self->lock)
 	{
@@ -46,24 +46,24 @@ db_cursor_close(DbCursor* self)
 		self->lock = NULL;
 	}
 	self->current = NULL;
-	self->db = NULL;
+	self->engine  = NULL;
 	part_cursor_free(&self->cursor);
 }
 
 hot static inline Row*
-db_cursor_at(DbCursor* self)
+engine_cursor_at(EngineCursor* self)
 {
 	return self->current;
 }
 
 hot static inline bool
-db_cursor_has(DbCursor* self)
+engine_cursor_has(EngineCursor* self)
 {
 	return self->current != NULL;
 }
 
 hot static inline void
-db_cursor_next(DbCursor* self)
+engine_cursor_next(EngineCursor* self)
 {
 	if (unlikely(self->lock == NULL))
 		return;
@@ -86,7 +86,7 @@ db_cursor_next(DbCursor* self)
 	part_cursor_reset(&self->cursor);
 
 	// open next partition
-	self->lock = db_seek(self->db, next_interval);
+	self->lock = engine_seek(self->engine, next_interval);
 	if (unlikely(self->lock == NULL))
 		return;
 
@@ -96,28 +96,28 @@ db_cursor_next(DbCursor* self)
 }
 
 hot static inline void
-db_cursor_skip_deletes(DbCursor* self)
+engine_cursor_skip_deletes(EngineCursor* self)
 {
 	for (;;)
 	{
-		auto at = db_cursor_at(self);
+		auto at = engine_cursor_at(self);
 		if (!at || !at->is_delete)
 			break;
-		db_cursor_next(self);
+		engine_cursor_next(self);
 	}
 }
 
 hot static inline void
-db_cursor_init(DbCursor* self)
+engine_cursor_init(EngineCursor* self)
 {
 	self->lock    = NULL;
 	self->current = NULL;
-	self->db  = NULL;
+	self->engine  = NULL;
 	part_cursor_init(&self->cursor);
 }
 
 hot static inline void
-db_cursor_reset(DbCursor* self)
+engine_cursor_reset(EngineCursor* self)
 {
 	if (self->lock)
 	{
@@ -125,6 +125,6 @@ db_cursor_reset(DbCursor* self)
 		self->lock = NULL;
 	}
 	self->current = NULL;
-	self->db  = NULL;
+	self->engine  = NULL;
 	part_cursor_reset(&self->cursor);
 }

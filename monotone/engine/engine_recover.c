@@ -9,10 +9,10 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
-#include <monotone_db.h>
+#include <monotone_engine.h>
 
 static inline int
-db_recover_id_read(char** pos, uint64_t* id)
+engine_recover_id_read(char** pos, uint64_t* id)
 {
 	char* path = *pos;
 	*id = 0;
@@ -28,23 +28,23 @@ db_recover_id_read(char** pos, uint64_t* id)
 }
 
 static inline int
-db_recover_id(char*     path,
-              uint64_t* min,
-              uint64_t* id,
-              uint64_t* id_parent)
+engine_recover_id(char*     path,
+                  uint64_t* min,
+                  uint64_t* id,
+                  uint64_t* id_parent)
 {
 	// <min>.<id>
 	// <min>.<id>.<id_parent>
 
 	// min
-	if (db_recover_id_read(&path, min) == -1)
+	if (engine_recover_id_read(&path, min) == -1)
 		return -1;
 	if (*path != '.')
 		return -1;
 	path++;
 
 	// id
-	if (db_recover_id_read(&path, id) == -1)
+	if (engine_recover_id_read(&path, id) == -1)
 		return -1;
 	if (! *path)
 	{
@@ -56,11 +56,11 @@ db_recover_id(char*     path,
 	path++;
 
 	// id_parent
-	return db_recover_id_read(&path, id_parent);
+	return engine_recover_id_read(&path, id_parent);
 }
 
 static void
-db_recover_storage(Db* self, Storage* storage)
+engine_recover_storage(Engine* self, Storage* storage)
 {
 	auto target = storage->target;
 
@@ -91,7 +91,7 @@ db_recover_storage(Db* self, Storage* storage)
 		uint64_t min       = 0;
 		uint64_t id        = 0;
 		uint64_t id_parent = 0;
-		if (db_recover_id(entry->d_name, &min, &id, &id_parent) == -1)
+		if (engine_recover_id(entry->d_name, &min, &id, &id_parent) == -1)
 			continue;
 
 		Part* part;
@@ -105,7 +105,7 @@ db_recover_storage(Db* self, Storage* storage)
 }
 
 static void
-db_recover_validate(Db* self, Storage* storage)
+engine_recover_validate(Engine* self, Storage* storage)
 {
 	list_foreach_safe(&storage->list)
 	{
@@ -138,20 +138,20 @@ db_recover_validate(Db* self, Storage* storage)
 }
 
 void
-db_recover(Db* self)
+engine_recover(Engine* self)
 {
 	// read partitions
 	list_foreach(&self->storage_mgr.list)
 	{
 		auto storage = list_at(Storage, link);
-		db_recover_storage(self, storage);
+		engine_recover_storage(self, storage);
 	}
 
 	// validate partitions per storage
 	list_foreach(&self->storage_mgr.list)
 	{
 		auto storage = list_at(Storage, link);
-		db_recover_validate(self, storage);
+		engine_recover_validate(self, storage);
 	}
 
 	// open partitions

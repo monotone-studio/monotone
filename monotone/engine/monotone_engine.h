@@ -6,17 +6,17 @@
 // time-series storage
 //
 
-// db
-#include "db/db.h"
-#include "db/db_recover.h"
-#include "db/db_cursor.h"
-#include "db/write.h"
+// engine
+#include "engine/engine.h"
+#include "engine/engine_recover.h"
+#include "engine/engine_cursor.h"
+#include "engine/write.h"
 
 #if 0
 // compaction
-#include "db/compaction.h"
-#include "db/compaction_mgr.h"
+#include "engine/compaction.h"
+#include "engine/compaction_mgr.h"
 
 // stats
-#include "db/stats.h"
+#include "engine/stats.h"
 #endif

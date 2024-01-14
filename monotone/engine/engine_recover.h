@@ -6,4 +6,4 @@
 // time-series storage
 //
 
-void db_recover(Db*);
+void engine_recover(Engine*);

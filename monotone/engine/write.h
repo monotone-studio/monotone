@@ -6,5 +6,5 @@
 // time-series storage
 //
 
-void db_write(Db*, bool, uint64_t, void*, int);
-void db_write_by(Db*, DbCursor*, bool, uint64_t, void*, int);
+void engine_write(Engine*, bool, uint64_t, void*, int);
+void engine_write_by(Engine*, EngineCursor*, bool, uint64_t, void*, int);

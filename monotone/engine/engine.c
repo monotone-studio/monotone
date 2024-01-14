@@ -9,10 +9,10 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
-#include <monotone_db.h>
+#include <monotone_engine.h>
 
 void
-db_init(Db* self, Comparator* comparator)
+engine_init(Engine* self, Comparator* comparator)
 {
 	self->rows_written       = 0;
 	self->rows_written_bytes = 0;
@@ -25,7 +25,7 @@ db_init(Db* self, Comparator* comparator)
 }
 
 void
-db_free(Db* self)
+engine_free(Engine* self)
 {
 	mutex_free(&self->lock);
 	lock_mgr_free(&self->lock_mgr);
@@ -34,7 +34,7 @@ db_free(Db* self)
 }
 
 void
-db_open(Db* self)
+engine_open(Engine* self)
 {
 	// recover storages objects
 	storage_mgr_open(&self->storage_mgr);
@@ -43,11 +43,11 @@ db_open(Db* self)
 	conveyor_open(&self->conveyor);
 
 	// recover partitions
-	db_recover(self);
+	engine_recover(self);
 }
 
 void
-db_close(Db* self)
+engine_close(Engine* self)
 {
 	auto part = part_tree_min(&self->tree);
 	while (part)
@@ -59,7 +59,7 @@ db_close(Db* self)
 }
 
 static inline Part*
-db_create(Db* self, uint64_t min)
+engine_create(Engine* self, uint64_t min)
 {
 	auto head = part_tree_max(&self->tree);
 
@@ -93,7 +93,7 @@ db_create(Db* self, uint64_t min)
 }
 
 hot Lock*
-db_find(Db* self, bool create, uint64_t min)
+engine_find(Engine* self, bool create, uint64_t min)
 {
 	// lock partition by min
 	auto lock = lock_mgr_get(&self->lock_mgr, min);
@@ -110,12 +110,12 @@ db_find(Db* self, bool create, uint64_t min)
 		return NULL;
 
 	// create new partition
-	lock->part = db_create(self, min);
+	lock->part = engine_create(self, min);
 	return lock;
 }
 
 hot Lock*
-db_seek(Db* self, uint64_t min)
+engine_seek(Engine* self, uint64_t min)
 {
 	// try to find a partition and grab a lock with min time
 	for (;;)

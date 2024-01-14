@@ -6,9 +6,9 @@
 // time-series storage
 //
 
-typedef struct Db Db;
+typedef struct Engine Engine;
 
-struct Db
+struct Engine
 {
 	Mutex       lock;
 	LockMgr     lock_mgr;
@@ -21,10 +21,10 @@ struct Db
 	Comparator* comparator;
 };
 
-void  db_init(Db*, Comparator*);
-void  db_free(Db*);
-void  db_open(Db*);
-void  db_close(Db*);
-Lock* db_find(Db*, bool, uint64_t);
-Lock* db_seek(Db*, uint64_t);
-Lock* db_seek_next(Db*, uint64_t);
+void  engine_init(Engine*, Comparator*);
+void  engine_free(Engine*);
+void  engine_open(Engine*);
+void  engine_close(Engine*);
+Lock* engine_find(Engine*, bool, uint64_t);
+Lock* engine_seek(Engine*, uint64_t);
+Lock* engine_seek_next(Engine*, uint64_t);

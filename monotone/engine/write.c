@@ -9,10 +9,10 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
-#include <monotone_db.h>
+#include <monotone_engine.h>
 
 hot static inline void
-db_write_to(Db* self, Lock* lock, Row* row)
+engine_write_to(Engine* self, Lock* lock, Row* row)
 {
 	Part* part = lock->part;
 
@@ -36,9 +36,9 @@ db_write_to(Db* self, Lock* lock, Row* row)
 }
 
 hot void
-db_write(Db*   self, bool delete, uint64_t time,
-         void* data,
-         int   data_size)
+engine_write(Engine* self, bool delete, uint64_t time,
+             void*   data,
+             int     data_size)
 {
 	// insert, replace or delete by key
 
@@ -51,23 +51,23 @@ db_write(Db*   self, bool delete, uint64_t time,
 	uint64_t min = row_interval_min(row);
 
 	// find or create partition
-	auto lock = db_find(self, true, min);
+	auto lock = engine_find(self, true, min);
 	guard(unlock, lock_mgr_unlock, lock);
 
 	// write
-	db_write_to(self, lock, row);
+	engine_write_to(self, lock, row);
 }
 
 void
-db_write_by(Db*       self,
-            DbCursor* cursor,
-            bool      delete,
-            uint64_t  time,
-            void*     data,
-            int       data_size)
+engine_write_by(Engine*       self,
+                EngineCursor* cursor,
+                bool          delete,
+                uint64_t      time,
+                void*         data,
+                int           data_size)
 {
 	// update or delete by cursor
-	if (unlikely(! db_cursor_has(cursor)))
+	if (unlikely(! engine_cursor_has(cursor)))
 		error("cursor is not active");
 
 	Row* current = cursor->current;
@@ -87,7 +87,7 @@ db_write_by(Db*       self,
 	}
 
 	// use cursor partition lock
-	db_write_to(self, cursor->lock, row);
+	engine_write_to(self, cursor->lock, row);
 
 	// update cursor
 	if (delete)
