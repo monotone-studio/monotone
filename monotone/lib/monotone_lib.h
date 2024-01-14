@@ -6,7 +6,7 @@
 // time-series storage
 //
 
-// data serialization format
+// data serialization
 #include "lib/data.h"
 #include "lib/data_op.h"
 #include "lib/encode.h"

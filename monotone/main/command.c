@@ -9,8 +9,10 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
+#include <monotone_db.h>
 #include <monotone_main.h>
 
+#if 0
 static void
 execute_set(Lex* lex)
 {
@@ -95,12 +97,14 @@ execute_show(Main* self, Lex* lex, Buf* output)
 	if (! lex_if(lex, KNAME, &name))
 		error("SHOW <name> expected");
 
+	/*
 	// storages
 	if (str_compare_raw(&name.string, "storages", 8))
 	{
 		storage_mgr_print(&self->storage_mgr, output);
 		return;
 	}
+	*/
 
 	// all
 	if (str_compare_raw(&name.string, "all", 3))
@@ -372,3 +376,4 @@ main_execute(Main* self, const char* command, char** result)
 		*result = buf_cstr(&output);
 	}
 }
+#endif
