@@ -96,9 +96,12 @@ merger_execute(Merger* self, MergerReq* req)
 	merge_iterator_open(it, origin->comparator);
 
 	// allocate and create incomplete partition file
+	uint64_t id = config_psn_next();
 	self->part = part_allocate(origin->comparator, req->target,
 	                           origin->min,
-	                           origin->max);
+	                           origin->max,
+	                           id,
+	                           origin->id);
 	part_create(self->part);
 
 	// write partition file
