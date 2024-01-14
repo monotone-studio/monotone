@@ -10,28 +10,34 @@
 #include <monotone_io.h>
 
 static inline void
-part_path(char* path, Target* target, uint64_t min)
+part_path(char* path, Target* target, uint64_t min, uint64_t id)
 {
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64,
-	         str_of(&target->path), min);
+	// <target_path>/<min>.<id>
+	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64,
+	         str_of(&target->path), min, id);
 }
 
 static inline void
-part_path_incomplete(char* path, Target* target, uint64_t min)
+part_path_incomplete(char* path, Target* target, uint64_t min,
+                     uint64_t id,
+                     uint64_t id_parent)
 {
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".incomplete",
-	         str_of(&target->path), min);
+	// <target_path>/<min>.<id>.<id_parent>
+	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64 ".%020" PRIu64,
+	         str_of(&target->path), min, id, id_parent);
 }
 
 Part*
 part_allocate(Comparator* comparator,
               Target*     target,
+              uint64_t    id,
+              uint64_t    id_parent,
               uint64_t    min,
               uint64_t    max)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
-	self->service    = false;
-	self->state      = 0;
+	self->id         = id;
+	self->id_parent  = id_parent;
 	self->min        = min;
 	self->max        = max;
 	self->index      = NULL;
@@ -62,8 +68,10 @@ void
 part_open(Part* self)
 {
 	// open data file and read index
+
+	// <target_path>/<min>.<id>
 	char path[PATH_MAX];
-	part_path(path, self->target, self->min);
+	part_path(path, self->target, self->min, self->id);
 	file_open(&self->file, path);
 
 	if (unlikely(self->file.size < (sizeof(Index) + sizeof(IndexEof))))
@@ -110,22 +118,22 @@ part_open(Part* self)
 void
 part_create(Part* self)
 {
-	// create <id>.incomplete file
+	// <target_path>/<min>.<id>.<id_parent>
 	char path[PATH_MAX];
-	part_path_incomplete(path, self->target, self->min);
+	part_path_incomplete(path, self->target, self->min, self->id, self->id_parent);
 	file_create(&self->file, path);
 }
 
 void
 part_delete(Part* self, bool complete)
 {
-	// <id>
-	// <id>.incomplete
+	// <target_path>/<min>.<psn>
+	// <target_path>/<min>.<psn>.incomplete
 	char path[PATH_MAX];
 	if (complete)
-		part_path(path, self->target, self->min);
+		part_path(path, self->target, self->min, self->id);
 	else
-		part_path_incomplete(path, self->target, self->min);
+		part_path_incomplete(path, self->target, self->min, self->id, self->id_parent);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
@@ -133,11 +141,10 @@ part_delete(Part* self, bool complete)
 void
 part_rename(Part* self)
 {
-	// rename <id>.incomplete to <id>
 	char path[PATH_MAX];
 	char path_to[PATH_MAX];
-	part_path_incomplete(path, self->target, self->min);
-	part_path(path_to, self->target, self->min);
+	part_path_incomplete(path, self->target, self->min, self->id, self->id_parent);
+	part_path(path_to, self->target, self->min, self->id);
 	if (fs_exists("%s", path))
 		fs_rename(path, "%s", path_to);
 }

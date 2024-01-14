@@ -10,8 +10,8 @@ typedef struct Part Part;
 
 struct Part
 {
-	bool        service;
-	int         state;
+	uint64_t    id;
+	uint64_t    id_parent;
 	uint64_t    min;
 	uint64_t    max;
 	Memtable*   memtable;
@@ -28,7 +28,7 @@ struct Part
 };
 
 Part*
-part_allocate(Comparator*, Target*, uint64_t, uint64_t);
+part_allocate(Comparator*, Target*, uint64_t, uint64_t, uint64_t, uint64_t);
 void part_free(Part*);
 void part_open(Part*);
 void part_create(Part*);
