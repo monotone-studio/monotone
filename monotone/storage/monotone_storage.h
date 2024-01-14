@@ -22,4 +22,5 @@
 
 // service
 #include "storage/service_req.h"
+#include "storage/service_part.h"
 #include "storage/service.h"

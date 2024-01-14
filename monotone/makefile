@@ -34,10 +34,10 @@ OBJECTS        = \
                  storage/conveyor.o \
                  db/db.o \
                  db/db_recover.o \
+                 db/write.o \
 #                main/main.o \
                  main/command.o \
                  api/monotone.o \
-#                engine/write.o \
                  engine/compaction.o \
                  engine/compaction_mgr.o \
                  engine/stats.o \

@@ -65,9 +65,7 @@ db_create(Db* self, uint64_t min)
 
 	// create new partition
 	auto id = config_psn_next();
-	auto part = part_allocate(self->comparator, NULL,
-	                          id,
-	                          id,
+	auto part = part_allocate(self->comparator, NULL, id, id,
 	                          min,
 	                          min + config_interval());
 	part_tree_add(&self->tree, part);
@@ -78,19 +76,18 @@ db_create(Db* self, uint64_t min)
 	storage_add(storage, part);
 	part->target = storage->target;
 
+	/*
 	// rebalance partitions
 	if (self->conveyor.list_count > 1)
 	{
 		if (storage->list_count >= primary->config->capacity)
 			service_add(&self->service, 0, 0);
 	}
+	*/
 
 	// schedule former max compaction
 	if (head && head->min < min)
-	{
-		// todo: if not exists
-		service_add(&self->service, head->min, head->max);
-	}
+		service_add(&self->service, SERVICE_MERGE, head->min, NULL);
 
 	return part;
 }
