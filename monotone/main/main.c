@@ -9,6 +9,7 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
+#include <monotone_db.h>
 #include <monotone_main.h>
 
 void
@@ -17,18 +18,17 @@ main_init(Main* self)
 	self->global.config   = &self->config;
 	self->global.uuid_mgr = &self->uuid_mgr;
 
-	storage_mgr_init(&self->storage_mgr);
-	conveyor_init(&self->conveyor, &self->storage_mgr);
+	comparator_init(&self->comparator);
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
+	db_init(&self->db, &self->comparator);
 }
 
 void
 main_free(Main* self)
 {
-	conveyor_free(&self->conveyor);
-	storage_mgr_free(&self->storage_mgr);
+	db_free(&self->db);
 	config_free(&self->config);
 }
 
@@ -102,13 +102,8 @@ main_start(Main* self, const char* directory)
 	config_print_log(config());
 	log("");
 
-	// recover storages
-	storage_mgr_open(&self->storage_mgr);
-
-	// recover conveyor
-	conveyor_open(&self->conveyor);
-
-	// todo:
+	// recover
+	db_open(&self->db);
 
 	var_int_set(&config()->online, true);
 }
@@ -116,6 +111,7 @@ main_start(Main* self, const char* directory)
 void
 main_stop(Main* self)
 {
-	(void)self;
+	db_close(&self->db);
+
 	logger_close(&self->logger);
 }

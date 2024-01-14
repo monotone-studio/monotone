@@ -10,10 +10,10 @@ typedef struct Main Main;
 
 struct Main
 {
-	StorageMgr storage_mgr;
-	Conveyor   conveyor;
+	Db         db;
 	Logger     logger;
 	UuidMgr    uuid_mgr;
+	Comparator comparator;
 	Config     config;
 	Global     global;
 };
