@@ -127,7 +127,7 @@ lock_mgr_get(LockMgr* self, uint64_t id)
 	if (pthread_equal(pthread_id, lock->locker))
 	{
 		lock->locker_refs++;
-		return lock;;
+		return lock;
 	}
 
 	// wait for lock
