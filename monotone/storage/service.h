@@ -101,6 +101,8 @@ service_add_if_not_pending(Service* self, ServiceType type, uint64_t min, Str* s
 
 	auto req = service_req_allocate(type, storage);
 	service_part_add(part, req);
+	list_append(&self->list, &part->link);
+	self->list_count++;
 
 	cond_var_signal(&self->cond_var);
 	unguard(&guard_free);
