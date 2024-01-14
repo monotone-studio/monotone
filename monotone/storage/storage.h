@@ -54,7 +54,7 @@ storage_unref(Storage* self)
 static inline void
 storage_add(Storage* self, Part* part)
 {
-	list_append(&self->list, &part->link_storage);
+	list_append(&self->list, &part->link);
 	self->list_count++;
 }
 
@@ -62,7 +62,7 @@ static inline void
 storage_remove(Storage* self, Part* part)
 {
 	assert(part->target == self->target);
-	list_unlink(&part->link_storage);
+	list_unlink(&part->link);
 	self->list_count--;
 }
 
@@ -71,7 +71,7 @@ storage_find(Storage* self, uint64_t min)
 {
 	list_foreach(&self->list)
 	{
-		auto part = list_at(Part, link_storage);
+		auto part = list_at(Part, link);
 		if (part->min == min)
 			return part;
 	}
@@ -84,7 +84,7 @@ storage_min(Storage* self)
 	Part* min = NULL;
 	list_foreach(&self->list)
 	{
-		auto part = list_at(Part, link_storage);
+		auto part = list_at(Part, link);
 		if (min == NULL)
 			min = part;
 		else
