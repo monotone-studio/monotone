@@ -10,7 +10,7 @@ CFLAGS_INCLUDE = -I. \
                  -Ilib \
                  -Iio \
                  -Istorage \
-                 -Idb \
+                 -Iengine \
                  -Imain \
                  -Iapi
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
@@ -32,18 +32,15 @@ OBJECTS        = \
                  io/merger.o \
                  storage/storage_mgr.o \
                  storage/conveyor.o \
-                 db/db.o \
-                 db/db_recover.o \
-                 db/write.o \
+                 engine/engine.o \
+                 engine/engine_recover.o \
+                 engine/write.o \
 #                main/main.o \
                  main/command.o \
                  api/monotone.o \
                  engine/compaction.o \
                  engine/compaction_mgr.o \
-                 engine/stats.o \
-                 instance/instance.o \
-                 instance/config.o \
-                 api/monotone.o
+                 engine/stats.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
 	@echo $(AR) $(LIB)
