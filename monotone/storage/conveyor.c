@@ -151,3 +151,12 @@ conveyor_print(Conveyor* self, Buf* buf)
 		first = false;
 	}
 }
+
+Tier*
+conveyor_primary(Conveyor* self)
+{
+	if (! conveyor_exists(self))
+		return NULL;
+	auto first = container_of(self->list.next, Tier, link);
+	return first;
+}
