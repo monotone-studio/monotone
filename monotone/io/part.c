@@ -128,7 +128,7 @@ void
 part_delete(Part* self, bool complete)
 {
 	// <target_path>/<min>.<psn>
-	// <target_path>/<min>.<psn>.incomplete
+	// <target_path>/<min>.<psn>.<id_parent>
 	char path[PATH_MAX];
 	if (complete)
 		part_path(path, self->target, self->min, self->id);

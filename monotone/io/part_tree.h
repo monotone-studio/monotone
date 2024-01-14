@@ -104,6 +104,9 @@ part_tree_seek(PartTree* self, uint64_t min)
 hot static inline Part*
 part_tree_match(PartTree* self, uint64_t min)
 {
+	if (self->tree_count == 0)
+		return NULL;
+
 	// exact match
 	auto part = part_tree_seek(self, min);
 	if (part->min <= min && min < part->max)
