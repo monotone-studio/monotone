@@ -48,7 +48,7 @@ service_shutdown(Service* self)
 	mutex_unlock(&self->lock);
 }
 
-static inline ServicePart*
+hot static inline ServicePart*
 service_find(Service* self, uint64_t min)
 {
 	list_foreach(&self->list)
@@ -60,12 +60,16 @@ service_find(Service* self, uint64_t min)
 	return NULL;
 }
 
-static inline ServicePart*
+hot static inline ServicePart*
 service_find_or_create(Service* self, uint64_t min)
 {
 	auto part = service_find(self, min);
 	if (part == NULL)
+	{
 		part = service_part_allocate(min);
+		list_append(&self->list, &part->link);
+		self->list_count++;
+	}
 	return part;
 }
 
@@ -78,9 +82,28 @@ service_add(Service* self, ServiceType type, uint64_t min, Str* storage)
 	guard(guard, mutex_unlock, &self->lock);
 
 	auto part = service_find_or_create(self, min);
-	list_append(&part->list, &req->link);
-	part->list_count++;
+	service_part_add(part, req);
 	cond_var_signal(&self->cond_var);
+}
+
+hot static inline void
+service_add_if_not_pending(Service* self, ServiceType type, uint64_t min, Str* storage)
+{
+	mutex_lock(&self->lock);
+	guard(guard, mutex_unlock, &self->lock);
+
+	auto part = service_find(self, min);
+	if (part)
+		return;
+
+	part = service_part_allocate(min);
+	guard(guard_free, service_part_free, part);
+
+	auto req = service_req_allocate(type, storage);
+	service_part_add(part, req);
+
+	cond_var_signal(&self->cond_var);
+	unguard(&guard_free);
 }
 
 static inline ServicePart*
@@ -114,18 +137,21 @@ service_next(Service* self)
 static inline void
 service_complete(Service* self, ServicePart* part)
 {
+	bool free = false;
 	mutex_lock(&self->lock);
 
 	service_part_pop(part);
 	part->active = false;
-
 	if (part->list_count == 0)
 	{
+		free = true;
 		list_unlink(&part->link);
 		self->list_count--;
 	} else {
 		cond_var_signal(&self->cond_var);
 	}
-
 	mutex_unlock(&self->lock);
+
+	if (free)
+		service_part_free(part);
 }

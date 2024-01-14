@@ -9,8 +9,8 @@
 // db
 #include "db/db.h"
 #include "db/db_recover.h"
-#if 0
 #include "db/db_cursor.h"
+#if 0
 #include "db/write.h"
 
 // compaction

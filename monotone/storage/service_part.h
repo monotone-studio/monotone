@@ -41,9 +41,8 @@ service_part_free(ServicePart* self)
 }
 
 static inline void
-service_part_add(ServicePart* self, ServiceType type, Str* storage)
+service_part_add(ServicePart* self, ServiceReq* req)
 {
-	auto req = service_req_allocate(type, storage);
 	list_append(&self->list, &req->link);
 	self->list_count++;
 }
