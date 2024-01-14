@@ -10,7 +10,7 @@ typedef struct Main Main;
 
 struct Main
 {
-	Db         db;
+	Engine     engine;
 	Logger     logger;
 	UuidMgr    uuid_mgr;
 	Comparator comparator;

@@ -35,10 +35,10 @@ OBJECTS        = \
                  engine/engine.o \
                  engine/engine_recover.o \
                  engine/write.o \
-#                main/main.o \
+                 main/main.o \
                  main/command.o \
                  api/monotone.o \
-                 engine/compaction.o \
+#                engine/compaction.o \
                  engine/compaction_mgr.o \
                  engine/stats.o
 $(LIB): clean $(OBJECTS)

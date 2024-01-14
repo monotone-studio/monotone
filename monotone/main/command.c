@@ -9,7 +9,7 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
-#include <monotone_db.h>
+#include <monotone_engine.h>
 #include <monotone_main.h>
 
 #if 0

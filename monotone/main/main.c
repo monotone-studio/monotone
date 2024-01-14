@@ -9,7 +9,7 @@
 #include <monotone_lib.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
-#include <monotone_db.h>
+#include <monotone_engine.h>
 #include <monotone_main.h>
 
 void
@@ -22,13 +22,13 @@ main_init(Main* self)
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
-	db_init(&self->db, &self->comparator);
+	engine_init(&self->engine, &self->comparator);
 }
 
 void
 main_free(Main* self)
 {
-	db_free(&self->db);
+	engine_free(&self->engine);
 	config_free(&self->config);
 }
 
@@ -103,7 +103,7 @@ main_start(Main* self, const char* directory)
 	log("");
 
 	// recover
-	db_open(&self->db);
+	engine_open(&self->engine);
 
 	var_int_set(&config()->online, true);
 }
@@ -111,7 +111,7 @@ main_start(Main* self, const char* directory)
 void
 main_stop(Main* self)
 {
-	db_close(&self->db);
+	engine_close(&self->engine);
 
 	logger_close(&self->logger);
 }
