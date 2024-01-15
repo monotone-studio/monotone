@@ -125,13 +125,24 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 }
 
 void
-storage_mgr_print(StorageMgr* self, Buf* buf)
+storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
+{
+	auto storage = storage_mgr_find(self, name);
+	if (! storage)
+	{
+		error("storage '%.*s': not exists", str_size(name), str_of(name));
+		return;
+	}
+	storage_stats_print(storage, buf);
+}
+
+void
+storage_mgr_show_all(StorageMgr* self, Buf* buf)
 {
 	list_foreach(&self->list)
 	{
 		auto storage = list_at(Storage, link);
-		buf_printf(buf, "%.*s\n", str_size(&storage->target->name),
-		           str_of(&storage->target->name));
+		storage_stats_print(storage, buf);
 	}
 }
 

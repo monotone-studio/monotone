@@ -19,7 +19,8 @@ void storage_mgr_free(StorageMgr*);
 void storage_mgr_open(StorageMgr*);
 void storage_mgr_create(StorageMgr*, Target*, bool);
 void storage_mgr_drop(StorageMgr*, Str*, bool);
-void storage_mgr_print(StorageMgr*, Buf*);
+void storage_mgr_show(StorageMgr*, Str*, Buf*);
+void storage_mgr_show_all(StorageMgr*, Buf*);
 Storage*
 storage_mgr_find(StorageMgr*, Str*);
 Part*

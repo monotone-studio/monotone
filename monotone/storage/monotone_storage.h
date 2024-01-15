@@ -11,6 +11,7 @@
 
 // storage
 #include "storage/storage.h"
+#include "storage/storage_stats.h"
 #include "storage/storage_mgr.h"
 
 // tier
