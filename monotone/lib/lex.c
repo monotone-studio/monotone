@@ -29,6 +29,7 @@ static Keyword keywords[] =
 	{ KEXISTS,   "exists",   6},
 	{ KDROP,     "drop"  ,   4},
 	{ KCONVEYOR, "conveyor", 8},
+	{ KALTER,    "alter",    5},
 	{ 0,          NULL,      0}
 };
 

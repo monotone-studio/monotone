@@ -28,7 +28,8 @@ enum
 	KNOT,
 	KEXISTS,
 	KDROP,
-	KCONVEYOR
+	KCONVEYOR,
+	KALTER
 };
 
 struct Token
