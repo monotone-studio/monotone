@@ -56,6 +56,47 @@ engine_close(Engine* self)
 	}
 }
 
+static inline Tier*
+engine_rebalance_tier(Engine* self, Tier* tier, int add)
+{
+	if (list_is_last(&self->conveyor.list, &tier->link))
+		return NULL;
+
+	if (tier->config->capacity == 0 ||
+	    tier->config->capacity == INT64_MAX)
+		return NULL;
+
+	if ((tier->storage->list_count + add) < tier->config->capacity)
+		return NULL;
+
+	auto next = container_of(tier->link.next, Tier, link);
+
+	// get oldest partition (by psn)
+	auto part = storage_oldest(tier->storage);
+
+	// schedule partition move to the next tier storage
+	service_add(&self->service, SERVICE_MOVE, part->min,
+	            &next->storage->target->name);
+
+	return next;
+}
+
+static inline void
+engine_rebalance(Engine* self)
+{
+	if (self->conveyor.list_count <= 1)
+		return;
+
+	// do cascade rebalance between storages
+	auto tier = conveyor_primary(&self->conveyor);
+	int  add  = 0;
+	while (tier)
+	{
+		tier = engine_rebalance_tier(self, tier, add);
+		add  = 1;
+	}
+}
+
 static inline Part*
 engine_create(Engine* self, uint64_t min)
 {
@@ -69,19 +110,24 @@ engine_create(Engine* self, uint64_t min)
 	part_tree_add(&self->tree, part);
 
 	// match primary storage
-	Tier* primary = conveyor_primary(&self->conveyor);
-	auto  storage = primary->storage;
+	Storage* storage = NULL;
+	Tier*    primary = conveyor_primary(&self->conveyor);
+	if (primary)
+	{
+		// first storage according to the conveyor order
+		storage = primary->storage;
+	} else
+	{
+		// conveyor is not set, using first storage
+		assert(self->storage_mgr.list_count == 1);
+		storage = storage_mgr_first(&self->storage_mgr);
+	}
 	storage_add(storage, part);
 	part->target = storage->target;
 
-	/*
-	// rebalance partitions
-	if (self->conveyor.list_count > 1)
-	{
-		if (storage->list_count >= primary->config->capacity)
-			service_add(&self->service, 0, 0);
-	}
-	*/
+	// move partitions according to the conveyor
+	if (! conveyor_empty(&self->conveyor))
+		engine_rebalance(self);
 
 	// schedule former max compaction
 	if (head && head->min < min)
