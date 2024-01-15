@@ -84,20 +84,16 @@ conveyor_open(Conveyor* self)
 }
 
 bool
-conveyor_exists(Conveyor* self)
+conveyor_empty(Conveyor* self)
 {
-	return self->list_count > 0;
+	return !self->list_count;
 }
 
 void
-conveyor_create(Conveyor* self, List* configs, bool if_not_exists)
+conveyor_alter(Conveyor* self, List* configs)
 {
-	if (conveyor_exists(self))
-	{
-		if (! if_not_exists)
-			error("conveyor: already exists");
-		return;
-	}
+	List list;
+	list_init(&list);
 
 	Exception e;
 	if (try(&e))
@@ -106,31 +102,30 @@ conveyor_create(Conveyor* self, List* configs, bool if_not_exists)
 		{
 			auto config = list_at(TierConfig, link);
 			auto tier = tier_allocate(config);
-			list_append(&self->list, &tier->link);
-			self->list_count++;
+			list_append(&list, &tier->link);
 			tier_resolve(tier, self->storage_mgr);
 		}
 	}
 	if (catch(&e))
 	{
-		conveyor_reset(self);
+		list_foreach_safe(&list)
+		{
+			auto tier = list_at(Tier, link);
+			tier_free(tier);
+		}
 		rethrow();
 	}
 
-	conveyor_save(self);
-}
+	conveyor_reset(self);
 
-void
-conveyor_drop(Conveyor* self, bool if_exists)
-{
-	if (! conveyor_exists(self))
+	list_foreach_safe(&list)
 	{
-		if (! if_exists)
-			error("conveyor: not exists");
-		return;
+		auto tier = list_at(Tier, link);
+		list_init(&tier->link);
+		list_append(&self->list, &tier->link);
+		self->list_count++;
 	}
 
-	conveyor_reset(self);
 	conveyor_save(self);
 }
 
@@ -155,7 +150,7 @@ conveyor_print(Conveyor* self, Buf* buf)
 Tier*
 conveyor_primary(Conveyor* self)
 {
-	if (! conveyor_exists(self))
+	if (conveyor_empty(self))
 		return NULL;
 	auto first = container_of(self->list.next, Tier, link);
 	return first;
