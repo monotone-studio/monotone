@@ -44,6 +44,12 @@ config_interval(void)
 	return var_int_of(&config()->interval);
 }
 
+static inline int
+config_workers(void)
+{
+	return var_int_of(&config()->workers);
+}
+
 // psn
 static inline uint64_t
 config_psn(void)
