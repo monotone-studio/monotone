@@ -423,7 +423,7 @@ execute_conveyor_alter(Main* self, Lex* lex)
 }
 
 static void
-execute_move_partition(Main* self, Lex* lex)
+execute_partition_move(Main* self, Lex* lex)
 {
 	// MOVE PARTITION <id> INTO <name>
 
@@ -446,9 +446,24 @@ execute_move_partition(Main* self, Lex* lex)
 }
 
 static void
-execute_move_partitions(Main* self, Lex* lex)
+execute_partition_drop(Main* self, Lex* lex)
 {
-	// MOVE PARTITIONS FROM <id> TO <id> INTO <name>
+	// DROP PARTITION <id>
+
+	// id
+	Token id;
+	if (! lex_if(lex, KINT, &id))
+		error("MOVE PARTITION <id> INTO name");
+
+	// drop partition
+	engine_partition_drop(&self->engine, id.integer);
+}
+
+
+static void
+execute_partitions_move(Main* self, Lex* lex)
+{
+	// MOVE PARTITIONS FROM <min> TO <max> INTO <name>
 
 	// from
 	if (! lex_if(lex, KFROM, NULL))
@@ -474,11 +489,37 @@ execute_move_partitions(Main* self, Lex* lex)
 	// storage name
 	Token name;
 	if (! lex_if(lex, KNAME, &name))
-		error("MOVE PARTITIONS FROM min TO max INT> <name>");
+		error("MOVE PARTITIONS FROM min TO max INTO <name>");
 
 	// move partitions
 	engine_partitions_move(&self->engine, min.integer, max.integer,
 	                       &name.string);
+}
+
+static void
+execute_partitions_drop(Main* self, Lex* lex)
+{
+	// DROP PARTITIONS FROM <min> TO <max>
+
+	// from
+	if (! lex_if(lex, KFROM, NULL))
+		error("MOVE PARTITIONS <FROM> min TO max");
+
+	// min
+	Token min;
+	if (! lex_if(lex, KINT, &min))
+		error("MOVE PARTITIONS FROM <min> TO max");
+
+	// to
+	if (! lex_if(lex, KTO, NULL))
+		error("MOVE PARTITIONS FROM min <TO> max");
+
+	Token max;
+	if (! lex_if(lex, KINT, &max))
+		error("MOVE PARTITIONS FROM min TO <max>");
+
+	// drop partitions
+	engine_partitions_drop(&self->engine, min.integer, max.integer);
 }
 
 void
@@ -517,11 +558,9 @@ main_execute(Main* self, const char* command, char** result)
 
 		// CREATE STORAGE
 		if (lex_if(&lex, KSTORAGE, NULL))
-		{
 			execute_storage_create(self, &lex);
-		} else {
+		else
 			error("CREATE <STORAGE> expected");
-		}
 		break;
 	}
 	case KDROP:
@@ -529,13 +568,17 @@ main_execute(Main* self, const char* command, char** result)
 		if (! config_online())
 			error("storage is not online");
 
-		// DROP STORAGE
+		// DROP STORAGE | PARTITION | PARTITIONS
 		if (lex_if(&lex, KSTORAGE, NULL))
-		{
 			execute_storage_drop(self, &lex);
-		} else {
-			error("DROP <STORAGE> expected");
-		}
+		else
+		if (lex_if(&lex, KPARTITION, NULL))
+			execute_partition_drop(self, &lex);
+		else
+		if (lex_if(&lex, KPARTITIONS, NULL))
+			execute_partitions_drop(self, &lex);
+		else
+			error("DROP <STORAGE|PARTITION|PARTITIONS> expected");
 		break;
 	}
 	case KALTER:
@@ -545,15 +588,12 @@ main_execute(Main* self, const char* command, char** result)
 
 		// ALTER STORAGE | CONVEYOR
 		if (lex_if(&lex, KSTORAGE, NULL))
-		{
-			// todo
-		} else
+			; // todo
+		else
 		if (lex_if(&lex, KCONVEYOR, NULL))
-		{
 			execute_conveyor_alter(self, &lex);
-		} else {
+		else
 			error("ALTER <STORAGE|CONVEYOR> expected");
-		}
 		break;
 	}
 	case KMOVE:
@@ -563,15 +603,12 @@ main_execute(Main* self, const char* command, char** result)
 
 		// MOVE PARTITION | PARTITIONS
 		if (lex_if(&lex, KPARTITION, NULL))
-		{
-			execute_move_partition(self, &lex);
-		} else
+			execute_partition_move(self, &lex);
+		else
 		if (lex_if(&lex, KPARTITIONS, NULL))
-		{
-			execute_move_partitions(self, &lex);
-		} else {
+			execute_partitions_move(self, &lex);
+		else
 			error("MOVE <PARTITION|PARTITIONS> expected");
-		}
 		break;
 	}
 	case KEOF:
