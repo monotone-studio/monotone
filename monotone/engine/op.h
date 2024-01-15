@@ -17,7 +17,7 @@ void engine_conveyor_alter(Engine*, List*);
 void engine_conveyor_show(Engine*, Buf*);
 
 // partitions
+void engine_checkpoint(Engine*);
 void engine_partitions_drop(Engine*, uint64_t, uint64_t);
 void engine_partitions_move(Engine*, uint64_t, uint64_t, Str*);
 void engine_partitions_show(Engine*, Buf*, Str*);
-void engine_checkpoint(Engine*);

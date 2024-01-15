@@ -82,3 +82,19 @@ engine_conveyor_show(Engine* self, Buf* buf)
 
 	conveyor_print(&self->conveyor, buf);
 }
+
+void
+engine_checkpoint(Engine* self)
+{
+	// take engine exclusive lock
+	lock_mgr_lock_exclusive(&self->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	auto part = part_tree_min(&self->tree);
+	while (part)
+	{
+		if (part->memtable->size > 0)
+			service_add_if_not_pending(&self->service, SERVICE_MERGE, part->min, NULL);
+		part = part_tree_next(&self->tree, part);
+	}
+}
