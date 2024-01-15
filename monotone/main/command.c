@@ -139,6 +139,14 @@ execute_show(Main* self, Lex* lex, Buf* output)
 	var_print_value(var, output);
 }
 
+static void
+execute_checkpoint(Main* self, Lex* lex)
+{
+	// CHECKPOINT
+	unused(lex);
+	engine_checkpoint(&self->engine);
+}
+
 static inline bool
 parse_if_not_exists(Lex* self)
 {
@@ -442,6 +450,9 @@ main_execute(Main* self, const char* command, char** result)
 		break;
 	case KSHOW:
 		execute_show(self, &lex, &output);
+		break;
+	case KCHECKPOINT:
+		execute_checkpoint(self, &lex);
 		break;
 	case KCREATE:
 	{
