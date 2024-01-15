@@ -18,7 +18,7 @@ compaction_execute(Compaction* self, ServicePart* ref, ServiceReq* req)
 
 	// take engine shared lock to prevent any exclusive ddl
 	lock_mgr_lock_shared(&engine->lock_mgr);
-	guard(lock_shard, lock_mgr_unlock_shared, &engine->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_shared, &engine->lock_mgr);
 
 	// (1) find partition, match storage and rotate memtable
 	auto lock = engine_find(engine, false, ref->min);
