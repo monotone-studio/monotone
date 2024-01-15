@@ -46,8 +46,7 @@ engine_storage_show(Engine* self, Buf* buf)
 	lock_mgr_lock_exclusive(&self->lock_mgr);
 	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
 
-	(void)self;
-	(void)buf;
+	storage_mgr_print(&self->storage_mgr, buf);
 }
 
 void

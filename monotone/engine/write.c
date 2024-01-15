@@ -17,8 +17,8 @@ engine_write_to(Engine* self, Lock* lock, Row* row)
 	Part* part = lock->part;
 
 	// update stats
-	atomic_u64_add(&self->rows_written, 1);
-	atomic_u64_add(&self->rows_written_bytes, row_size(row));
+	var_int_add(&config()->rows_written, 1);
+	var_int_add(&config()->rows_written_bytes, row_size(row));
 
 	// update memtable
 	auto memtable = part->memtable;

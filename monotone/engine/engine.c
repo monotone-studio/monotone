@@ -14,9 +14,7 @@
 void
 engine_init(Engine* self, Comparator* comparator)
 {
-	self->rows_written       = 0;
-	self->rows_written_bytes = 0;
-	self->comparator         = comparator;
+	self->comparator = comparator;
 	mutex_init(&self->lock);
 	part_tree_init(&self->tree, comparator);
 	storage_mgr_init(&self->storage_mgr);

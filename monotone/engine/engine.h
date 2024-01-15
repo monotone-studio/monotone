@@ -13,8 +13,6 @@ struct Engine
 	Mutex       lock;
 	LockMgr     lock_mgr;
 	PartTree    tree;
-	atomic_u64  rows_written;
-	atomic_u64  rows_written_bytes;
 	Service     service;
 	Conveyor    conveyor;
 	StorageMgr  storage_mgr;
