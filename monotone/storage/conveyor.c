@@ -141,10 +141,11 @@ conveyor_print(Conveyor* self, Buf* buf)
 		buf_printf(buf, "%.*s (", str_size(&tier->config->name),
 		           str_of(&tier->config->name));
 		if (tier->config->capacity != INT64_MAX)
-			buf_printf(buf, "capacity %" PRIu64, tier->config->capacity);
+			buf_printf(buf, "capacity %" PRIi64, tier->config->capacity);
 		buf_printf(buf, ")");
 		first = false;
 	}
+	buf_printf(buf, "\n");
 }
 
 Tier*
