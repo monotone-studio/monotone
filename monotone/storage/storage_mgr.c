@@ -82,6 +82,15 @@ storage_mgr_create(StorageMgr* self, Target* target, bool if_not_exists)
 			      str_of(&target->name));
 		return;
 	}
+
+	// create storage directory, if not exists
+	auto path = str_of(&target->path);
+	if (! fs_exists("%s", path))
+	{
+		log("storage: new directory '%s'", path);
+		fs_mkdir(0755, "%s", path);
+	}
+
 	storage = storage_allocate(target);
 	list_append(&self->list, &storage->link);
 	self->list_count++;

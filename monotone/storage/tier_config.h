@@ -40,7 +40,7 @@ tier_config_set_name(TierConfig* self, Str* name)
 }
 
 static inline void
-tier_config_set_capacity(TierConfig* self, int value)
+tier_config_set_capacity(TierConfig* self, int64_t value)
 {
 	self->capacity = value;
 }
