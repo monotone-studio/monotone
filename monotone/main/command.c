@@ -337,9 +337,6 @@ static void
 execute_conveyor_alter(Main* self, Lex* lex)
 {
 	// ALTER CONVEYOR storage_name (tier_options) [, ...]
-	(void)self;
-	(void)lex;
-
 	List configs;
 	list_init(&configs);
 	guard(configs_guard, free_configs, &configs);
@@ -425,6 +422,65 @@ execute_conveyor_alter(Main* self, Lex* lex)
 	engine_conveyor_alter(&self->engine, &configs);
 }
 
+static void
+execute_move_partition(Main* self, Lex* lex)
+{
+	// MOVE PARTITION <id> INTO <name>
+
+	// id
+	Token id;
+	if (! lex_if(lex, KINT, &id))
+		error("MOVE PARTITION <id> INTO name");
+
+	// into
+	if (! lex_if(lex, KINTO, NULL))
+		error("MOVE PARTITION id <INTO> name");
+
+	// storage name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("MOVE PARTITION id INTO <name>");
+
+	// move partition
+	engine_partition_move(&self->engine, id.integer, &name.string);
+}
+
+static void
+execute_move_partitions(Main* self, Lex* lex)
+{
+	// MOVE PARTITIONS FROM <id> TO <id> INTO <name>
+
+	// from
+	if (! lex_if(lex, KFROM, NULL))
+		error("MOVE PARTITIONS <FROM> min TO max INTO name");
+
+	// min
+	Token min;
+	if (! lex_if(lex, KINT, &min))
+		error("MOVE PARTITIONS FROM <min> TO max INTO name");
+
+	// to
+	if (! lex_if(lex, KTO, NULL))
+		error("MOVE PARTITIONS FROM min <TO> max INTO name");
+
+	Token max;
+	if (! lex_if(lex, KINT, &max))
+		error("MOVE PARTITIONS FROM min TO <max> INTO name");
+
+	// into
+	if (! lex_if(lex, KINTO, NULL))
+		error("MOVE PARTITIONS FROM min TO max <INTO> name");
+
+	// storage name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("MOVE PARTITIONS FROM min TO max INT> <name>");
+
+	// move partitions
+	engine_partitions_move(&self->engine, min.integer, max.integer,
+	                       &name.string);
+}
+
 void
 main_execute(Main* self, const char* command, char** result)
 {
@@ -487,7 +543,7 @@ main_execute(Main* self, const char* command, char** result)
 		if (! config_online())
 			error("storage is not online");
 
-		// ALTER STORAGE|CONVEYOR
+		// ALTER STORAGE | CONVEYOR
 		if (lex_if(&lex, KSTORAGE, NULL))
 		{
 			// todo
@@ -496,7 +552,25 @@ main_execute(Main* self, const char* command, char** result)
 		{
 			execute_conveyor_alter(self, &lex);
 		} else {
-			error("DROP <STORAGE|CONVEYOR> expected");
+			error("ALTER <STORAGE|CONVEYOR> expected");
+		}
+		break;
+	}
+	case KMOVE:
+	{
+		if (! config_online())
+			error("storage is not online");
+
+		// MOVE PARTITION | PARTITIONS
+		if (lex_if(&lex, KPARTITION, NULL))
+		{
+			execute_move_partition(self, &lex);
+		} else
+		if (lex_if(&lex, KPARTITIONS, NULL))
+		{
+			execute_move_partitions(self, &lex);
+		} else {
+			error("MOVE <PARTITION|PARTITIONS> expected");
 		}
 		break;
 	}

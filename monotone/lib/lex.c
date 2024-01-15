@@ -27,12 +27,17 @@ static Keyword keywords[] =
 	{ KCREATE,     "create",     6},
 	{ KSTORAGE,    "storage",    7},
 	{ KSTORAGES,   "storages",   8},
+	{ KPARTITION,  "partition",  9},
+	{ KPARTITIONS, "partitions", 10},
 	{ KIF,         "if",         2},
 	{ KNOT,        "not",        3},
 	{ KEXISTS,     "exists",     6},
 	{ KDROP,       "drop"  ,     4},
 	{ KCONVEYOR,   "conveyor",   8},
 	{ KALTER,      "alter",      5},
+	{ KMOVE,       "move",       4},
+	{ KFROM,       "from",       4},
+	{ KINTO,       "into",       4},
 	{ 0,            NULL,        0}
 };
 
