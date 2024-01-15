@@ -12,7 +12,6 @@
 #include <monotone_engine.h>
 #include <monotone_main.h>
 
-#if 0
 static void
 execute_set(Lex* lex)
 {
@@ -97,14 +96,12 @@ execute_show(Main* self, Lex* lex, Buf* output)
 	if (! lex_if(lex, KNAME, &name))
 		error("SHOW <name> expected");
 
-	/*
 	// storages
 	if (str_compare_raw(&name.string, "storages", 8))
 	{
-		storage_mgr_print(&self->storage_mgr, output);
+		engine_storage_show(&self->engine, output);
 		return;
 	}
-	*/
 
 	// all
 	if (str_compare_raw(&name.string, "all", 3))
@@ -271,11 +268,17 @@ execute_storage_create(Main* self, Lex* lex)
 	}
 
 create:
-	// create storage
-	storage_mgr_create(&self->storage_mgr, target, if_not_exists);
+	// set default storage path, if not set
+	if (str_empty(&target->path))
+	{
+		char path[PATH_MAX];
+		snprintf(path, sizeof(path), "%s/%s", config_directory(),
+		         str_of(&target->name));
+		str_strdup(&target->path, path);
+	}
 
-	// rewrite config file
-	config_update();
+	// create storage
+	engine_storage_create(&self->engine, target, if_not_exists);
 }
 
 static void
@@ -290,16 +293,13 @@ execute_storage_drop(Main* self, Lex* lex)
 		error("DROP STORAGE <name> expected");
 
 	// drop storage
-	storage_mgr_drop(&self->storage_mgr, &name.string, if_exists);
-
-	// rewrite config file
-	config_update();
+	engine_storage_drop(&self->engine, &name.string, if_exists);
 }
 
 static void
-execute_conveyor_create(Main* self, Lex* lex)
+execute_conveyor_alter(Main* self, Lex* lex)
 {
-	// CREATE CONVEYOR [IF NOT EXISTS] name (options), ...
+	// ALTER CONVEYOR storage_name (tier_options) [, ...]
 	(void)self;
 	(void)lex;
 }
@@ -335,16 +335,12 @@ main_execute(Main* self, const char* command, char** result)
 		if (! config_online())
 			error("storage is not online");
 
-		// CREATE STORAGE | CONVEYOR
+		// CREATE STORAGE
 		if (lex_if(&lex, KSTORAGE, NULL))
 		{
 			execute_storage_create(self, &lex);
-		} else
-		if (lex_if(&lex, KCONVEYOR, NULL))
-		{
-			execute_conveyor_create(self, &lex);
 		} else {
-			error("CREATE <STORAGE|CONVEYOR> expected");
+			error("CREATE <STORAGE> expected");
 		}
 		break;
 	}
@@ -353,12 +349,12 @@ main_execute(Main* self, const char* command, char** result)
 		if (! config_online())
 			error("storage is not online");
 
-		// DROP STORAGE | CONVEYOR
+		// DROP STORAGE
 		if (lex_if(&lex, KSTORAGE, NULL))
 		{
 			execute_storage_drop(self, &lex);
 		} else {
-			error("DROP <STORAGE|CONVEYOR> expected");
+			error("DROP <STORAGE> expected");
 		}
 		break;
 	}
@@ -376,4 +372,3 @@ main_execute(Main* self, const char* command, char** result)
 		*result = buf_cstr(&output);
 	}
 }
-#endif
