@@ -98,3 +98,47 @@ engine_checkpoint(Engine* self)
 		part = part_tree_next(&self->tree, part);
 	}
 }
+
+void
+engine_partition_move(Engine* self, uint64_t min, Str* name)
+{
+	// take engine exclusive lock
+	lock_mgr_lock_exclusive(&self->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	auto storage = storage_mgr_find(&self->storage_mgr, name);
+	if (! storage)
+		error("storage '%.*s': not exists", str_size(name),
+		      str_of(name));
+
+	auto part = part_tree_match(&self->tree, min);
+	if (! part)
+		error("partition: %" PRIu64 " is not found", min);
+
+	service_add(&self->service, SERVICE_MOVE, min, name);
+}
+
+void
+engine_partitions_move(Engine* self, uint64_t min, uint64_t max, Str* name)
+{
+	// take engine exclusive lock
+	lock_mgr_lock_exclusive(&self->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	auto storage = storage_mgr_find(&self->storage_mgr, name);
+	if (! storage)
+		error("storage '%.*s': not exists", str_size(name),
+		      str_of(name));
+
+	if (self->tree.tree_count == 0)
+		return;
+
+	auto part = part_tree_seek(&self->tree, min);
+	while (part)
+	{
+		if (part->min >= max)
+			return;
+		service_add(&self->service, SERVICE_MOVE, part->min, name);
+		part = part_tree_next(&self->tree, part);
+	}
+}
