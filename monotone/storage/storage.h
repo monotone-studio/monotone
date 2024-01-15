@@ -79,17 +79,17 @@ storage_find(Storage* self, uint64_t min)
 }
 
 hot static inline Part*
-storage_min(Storage* self)
+storage_oldest(Storage* self)
 {
-	Part* min = NULL;
+	Part* ref = NULL;
 	list_foreach(&self->list)
 	{
 		auto part = list_at(Part, link);
-		if (min == NULL)
-			min = part;
+		if (ref == NULL)
+			ref = part;
 		else
-		if (part->min < min->min)
-			min = part;
+		if (ref->id < part->id)
+			ref = part;
 	}
-	return min;
+	return ref;
 }

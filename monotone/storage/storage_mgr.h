@@ -25,3 +25,10 @@ Storage*
 storage_mgr_find(StorageMgr*, Str*);
 Part*
 storage_mgr_find_part(StorageMgr*, uint64_t);
+
+static inline Storage*
+storage_mgr_first(StorageMgr* self)
+{
+	assert(self->list_count > 0);
+	return container_of(self->list.next, Storage, link);
+}
