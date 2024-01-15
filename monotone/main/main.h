@@ -14,6 +14,7 @@ struct Main
 	Logger     logger;
 	UuidMgr    uuid_mgr;
 	Comparator comparator;
+	Context    context;
 	Config     config;
 	Global     global;
 };
@@ -27,6 +28,5 @@ void main_stop(Main*);
 static inline void
 main_set_runtime(Main* self)
 {
-	runtime_init((LogFunction)logger_write, &self->logger,
-	             &self->global);
+	runtime_init(&self->context);
 }

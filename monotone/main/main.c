@@ -18,6 +18,10 @@ main_init(Main* self)
 	self->global.config   = &self->config;
 	self->global.uuid_mgr = &self->uuid_mgr;
 
+	self->context.log     = (LogFunction)logger_write;
+	self->context.log_arg = &self->logger;
+	self->context.global  = &self->global;
+
 	comparator_init(&self->comparator);
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
@@ -81,9 +85,6 @@ main_deploy(Main* self, Str* directory)
 		snprintf(path, sizeof(path), "%s/log", config_directory());
 		logger_open(logger, path);
 	}
-
-	mn_runtime.log = (LogFunction)logger_write;
-	mn_runtime.log_arg = &self->logger;
 }
 
 void

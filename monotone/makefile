@@ -34,6 +34,7 @@ OBJECTS        = \
                  storage/conveyor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
+                 engine/compaction.o \
                  engine/write.o \
                  main/main.o \
                  main/command.o \

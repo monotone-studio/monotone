@@ -12,9 +12,9 @@
 #include "engine/engine_cursor.h"
 #include "engine/write.h"
 
-#if 0
 // compaction
 #include "engine/compaction.h"
+#if 0
 #include "engine/compaction_mgr.h"
 
 // stats

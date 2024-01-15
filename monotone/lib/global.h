@@ -14,7 +14,7 @@ struct Global
 	UuidMgr* uuid_mgr;
 };
 
-#define global() ((Global*)mn_runtime.global)
+#define global() ((Global*)mn_runtime.context->global)
 #define config()  global()->config
 
 static inline const char*
