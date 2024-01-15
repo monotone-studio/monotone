@@ -34,14 +34,13 @@ OBJECTS        = \
                  storage/conveyor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
-                 engine/compaction.o \
                  engine/write.o \
+                 engine/op.o \
+                 engine/compaction.o \
+                 engine/compaction_mgr.o \
                  main/main.o \
                  main/command.o \
-                 api/monotone.o \
-#                engine/compaction.o \
-                 engine/compaction_mgr.o \
-                 engine/stats.o
+                 api/monotone.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
 	@echo $(AR) $(LIB)
