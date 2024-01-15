@@ -97,21 +97,24 @@ engine_find(Engine* self, bool create, uint64_t min)
 {
 	// lock partition by min
 	auto lock = lock_mgr_get(&self->lock_mgr, min);
+	guard(guard, lock_mgr_unlock, lock);
 
 	mutex_lock(&self->lock);
 	guard(unlock, mutex_unlock, &self->lock);
 
+	// validate storage manager and conveyor
+	conveyor_validate(&self->conveyor);
+
 	// find partition by min
 	lock->part = part_tree_match(&self->tree, min);
 	if (lock->part)
-		return lock;
-
+		return unguard(&guard);
 	if (! create)
 		return NULL;
 
 	// create new partition
 	lock->part = engine_create(self, min);
-	return lock;
+	return unguard(&guard);
 }
 
 hot Lock*
