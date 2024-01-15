@@ -40,6 +40,12 @@ service_part_free(ServicePart* self)
 	mn_free(self);
 }
 
+static inline ServiceReq*
+service_part_first(ServicePart* self)
+{
+	return container_of(self->list.next, ServiceReq, link);
+}
+
 static inline void
 service_part_add(ServicePart* self, ServiceReq* req)
 {
@@ -52,8 +58,10 @@ service_part_pop(ServicePart* self)
 {
 	if (self->list_count == 0)
 		return;
-	auto first = list_pop(&self->list);
+
+	auto req = service_part_first(self);
+	list_pop(&self->list);
 	self->list_count--;
-	auto req = container_of(first, ServiceReq, link);
+
 	service_req_free(req);
 }

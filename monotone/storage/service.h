@@ -108,8 +108,8 @@ service_add_if_not_pending(Service* self, ServiceType type, uint64_t min, Str* s
 	unguard(&guard_free);
 }
 
-static inline ServicePart*
-service_next(Service* self)
+static inline ServiceReq*
+service_next(Service* self, ServicePart** next)
 {
 	mutex_lock(&self->lock);
 
@@ -133,7 +133,12 @@ service_next(Service* self)
 	}
 
 	mutex_unlock(&self->lock);
-	return part;
+
+	if (part == NULL)
+		return NULL;
+
+	*next = part;
+	return service_part_first(part);
 }
 
 static inline void
