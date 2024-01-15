@@ -14,7 +14,6 @@ struct MergerReq
 	Part*     origin;
 	Memtable* memtable;
 	Target*   target;
-	bool      sync;
 };
 
 struct Merger

@@ -73,7 +73,7 @@ merger_write(Merger* self, MergerReq* req)
 	if (origin->index && origin->index->lsn_max > lsn_max)
 		lsn_max = origin->index->lsn_max;
 
-	writer_stop(writer, lsn_max, req->sync);
+	writer_stop(writer, lsn_max, req->target->sync);
 }
 
 hot void
