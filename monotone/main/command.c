@@ -543,14 +543,23 @@ main_execute(Main* self, const char* command, char** result)
 	lex_next(&lex, &tk);
 	switch (tk.id) {
 	case KSET:
+	{
 		execute_set(&lex);
 		break;
+	}
 	case KSHOW:
+	{
 		execute_show(self, &lex, &output);
 		break;
+	}
 	case KCHECKPOINT:
+	{
+		if (! config_online())
+			error("storage is not online");
+
 		execute_checkpoint(self, &lex);
 		break;
+	}
 	case KCREATE:
 	{
 		if (! config_online())
