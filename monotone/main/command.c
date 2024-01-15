@@ -297,11 +297,105 @@ execute_storage_drop(Main* self, Lex* lex)
 }
 
 static void
+free_configs(List* list)
+{
+	list_foreach_safe(list)
+	{
+		auto config = list_at(TierConfig, link);
+		tier_config_free(config);
+	}
+}
+
+static void
 execute_conveyor_alter(Main* self, Lex* lex)
 {
 	// ALTER CONVEYOR storage_name (tier_options) [, ...]
 	(void)self;
 	(void)lex;
+
+	List configs;
+	list_init(&configs);
+	guard(configs_guard, free_configs, &configs);
+
+	// reset conveyor (no storage list)
+	if (lex_if(lex, KEOF, NULL))
+	{
+		engine_conveyor_alter(&self->engine, &configs);
+		return;
+	}
+
+	for (;;)
+	{
+		// storage name
+		Token name;
+		if (! lex_if(lex, KNAME, &name))
+			error("ALTER CONVEYOR <storage name> expected");
+
+		// create tier config
+		auto config = tier_config_allocate();
+		guard(config_guard, tier_config_free, config);
+		tier_config_set_name(config, &name.string);
+
+		// ,
+		if (lex_if(lex, ',', NULL))
+		{
+			unguard(&config_guard);
+			list_append(&configs, &config->link);
+			continue;
+		}
+
+		// eof
+		if (lex_if(lex, KEOF, NULL))
+		{
+			unguard(&config_guard);
+			list_append(&configs, &config->link);
+			break;
+		}
+
+		// (
+		if (! lex_if(lex, '(', NULL))
+			error("ALTER CONVEYOR storage_name <(> expected");
+
+		// [)]
+		if (lex_if(lex, ')', NULL))
+		{
+			unguard(&config_guard);
+			list_append(&configs, &config->link);
+			continue;
+		}
+
+		// (tier options)
+		for (;;)
+		{
+			// name
+			if (! lex_if(lex, KNAME, &name))
+				error("ALTER CONVEYOR namme (<name> value) expected");
+
+			// value
+			if (str_compare_raw(&name.string, "capacity", 8))
+			{
+				// capacity <int>
+				parse_int(lex, &name, &config->capacity);
+			} else
+			{
+				error("ALTER CONVEYOR: unknown option %.*s", str_size(&name.string),
+				      str_of(&name.string));
+			}
+
+			// ,
+			if (lex_if(lex, ',', NULL))
+				continue;
+
+			// )
+			if (! lex_if(lex, ')', NULL))
+				error("ALTER CONVEYOR name (...<)> expected");
+
+			break;
+		}
+	}
+
+	// alter conveyor
+	engine_conveyor_alter(&self->engine, &configs);
 }
 
 void
@@ -355,6 +449,24 @@ main_execute(Main* self, const char* command, char** result)
 			execute_storage_drop(self, &lex);
 		} else {
 			error("DROP <STORAGE> expected");
+		}
+		break;
+	}
+	case KALTER:
+	{
+		if (! config_online())
+			error("storage is not online");
+
+		// ALTER STORAGE|CONVEYOR
+		if (lex_if(&lex, KSTORAGE, NULL))
+		{
+			// todo
+		} else
+		if (lex_if(&lex, KCONVEYOR, NULL))
+		{
+			execute_conveyor_alter(self, &lex);
+		} else {
+			error("DROP <STORAGE|CONVEYOR> expected");
 		}
 		break;
 	}
