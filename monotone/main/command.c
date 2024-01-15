@@ -96,7 +96,18 @@ execute_show(Main* self, Lex* lex, Buf* output)
 	// storages
 	if (lex_if(lex, KSTORAGES, NULL))
 	{
-		engine_storage_show(&self->engine, output);
+		engine_storage_show_all(&self->engine, output);
+		return;
+	}
+
+	// storage <name>
+	if (lex_if(lex, KSTORAGE, NULL))
+	{
+		Token name;
+		if (! lex_if(lex, KNAME, &name))
+			error("SHOW STORAGE <name> expected");
+
+		engine_storage_show(&self->engine, &name.string, output);
 		return;
 	}
 

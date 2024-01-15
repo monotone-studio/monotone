@@ -40,13 +40,23 @@ engine_storage_drop(Engine* self, Str* name, bool if_exists)
 }
 
 void
-engine_storage_show(Engine* self, Buf* buf)
+engine_storage_show(Engine* self, Str* name, Buf* buf)
 {
 	// take engine exclusive lock
 	lock_mgr_lock_exclusive(&self->lock_mgr);
 	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
 
-	storage_mgr_print(&self->storage_mgr, buf);
+	storage_mgr_show(&self->storage_mgr, name, buf);
+}
+
+void
+engine_storage_show_all(Engine* self, Buf* buf)
+{
+	// take engine exclusive lock
+	lock_mgr_lock_exclusive(&self->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	storage_mgr_show_all(&self->storage_mgr, buf);
 }
 
 void
