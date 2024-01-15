@@ -91,26 +91,34 @@ execute_set(Lex* lex)
 static void
 execute_show(Main* self, Lex* lex, Buf* output)
 {
-	// SHOW [STORAGES | ALL | name]
-	Token name;
-	if (! lex_if(lex, KNAME, &name))
-		error("SHOW <name> expected");
+	// SHOW [STORAGES | CONVEYOR | ALL | name]
 
 	// storages
-	if (str_compare_raw(&name.string, "storages", 8))
+	if (lex_if(lex, KSTORAGES, NULL))
 	{
 		engine_storage_show(&self->engine, output);
 		return;
 	}
 
+	// conveyor
+	if (lex_if(lex, KCONVEYOR, NULL))
+	{
+		engine_conveyor_show(&self->engine, output);
+		return;
+	}
+
 	// all
-	if (str_compare_raw(&name.string, "all", 3))
+	if (lex_if(lex, KALL, NULL))
 	{
 		config_print(config(), output);
 		return;
 	}
 
 	// SHOW name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("SHOW <name> expected");
+
 	auto var = config_find(config(), &name.string);
 	if (var && var_is(var, VAR_S))
 		var = NULL;
