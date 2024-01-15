@@ -88,6 +88,9 @@ config_prepare(Config* self)
 		{ "psn",                     VAR_INT,    VAR_E,                &self->psn,                     NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
 		{ "conveyor",                VAR_DATA,   VAR_C|VAR_H,          &self->conveyor,                NULL,        0                },
+		// stats
+		{ "rows_written",            VAR_INT,    VAR_E,                &self->rows_written,            NULL,        0                },
+		{ "rows_written_bytes",      VAR_INT,    VAR_E,                &self->rows_written_bytes,      NULL,        0                },
 		// testing
 		{ "test_bool",               VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->test_bool,               NULL,        false            },
 		{ "test_int",                VAR_INT,    VAR_H|VAR_R|VAR_E,    &self->test_int,                NULL,        0                },

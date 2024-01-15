@@ -26,6 +26,9 @@ struct Config
 	Var  psn;
 	Var  storages;
 	Var  conveyor;
+	// stats
+	Var  rows_written;
+	Var  rows_written_bytes;
 	// testing
 	Var  test_bool;
 	Var  test_int;
