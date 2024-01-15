@@ -425,7 +425,10 @@ execute_conveyor_alter(Main* self, Lex* lex)
 static void
 execute_partition_move(Main* self, Lex* lex)
 {
-	// MOVE PARTITION <id> INTO <name>
+	// MOVE PARTITION [IF EXISTS] <id> INTO <name>
+
+	// if exists
+	bool if_exists = parse_if_exists(lex);
 
 	// id
 	Token id;
@@ -442,23 +445,26 @@ execute_partition_move(Main* self, Lex* lex)
 		error("MOVE PARTITION id INTO <name>");
 
 	// move partition
-	engine_partition_move(&self->engine, id.integer, &name.string);
+	engine_partition_move(&self->engine, id.integer, &name.string,
+	                      if_exists);
 }
 
 static void
 execute_partition_drop(Main* self, Lex* lex)
 {
-	// DROP PARTITION <id>
+	// DROP PARTITION [IF EXISTS] <id>
+
+	// if exists
+	bool if_exists = parse_if_exists(lex);
 
 	// id
 	Token id;
 	if (! lex_if(lex, KINT, &id))
-		error("MOVE PARTITION <id> INTO name");
+		error("DROP PARTITION <id>");
 
 	// drop partition
-	engine_partition_drop(&self->engine, id.integer);
+	engine_partition_drop(&self->engine, id.integer, if_exists);
 }
-
 
 static void
 execute_partitions_move(Main* self, Lex* lex)
