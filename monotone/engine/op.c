@@ -100,26 +100,30 @@ engine_checkpoint(Engine* self)
 }
 
 void
-engine_partition_move(Engine* self, uint64_t min, Str* name)
+engine_partition_move(Engine* self, uint64_t min, Str* name, bool if_exists)
 {
 	// take engine exclusive lock
 	lock_mgr_lock_exclusive(&self->lock_mgr);
 	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	auto part = part_tree_match(&self->tree, min);
+	if (! part)
+	{
+		if (! if_exists)
+			error("partition: %" PRIu64 " is not found", min);
+		return;
+	}
 
 	auto storage = storage_mgr_find(&self->storage_mgr, name);
 	if (! storage)
 		error("storage '%.*s': not exists", str_size(name),
 		      str_of(name));
 
-	auto part = part_tree_match(&self->tree, min);
-	if (! part)
-		error("partition: %" PRIu64 " is not found", min);
-
 	service_add(&self->service, SERVICE_MOVE, min, name);
 }
 
 void
-engine_partition_drop(Engine* self, uint64_t min)
+engine_partition_drop(Engine* self, uint64_t min, bool if_exists)
 {
 	// take engine exclusive lock
 	lock_mgr_lock_exclusive(&self->lock_mgr);
@@ -127,7 +131,11 @@ engine_partition_drop(Engine* self, uint64_t min)
 
 	auto part = part_tree_match(&self->tree, min);
 	if (! part)
-		error("partition: %" PRIu64 " is not found", min);
+	{
+		if (! if_exists)
+			error("partition: %" PRIu64 " is not found", min);
+		return;
+	}
 
 	service_add(&self->service, SERVICE_DROP, min, NULL);
 }
