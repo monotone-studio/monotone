@@ -76,6 +76,13 @@ var_int_set(Var* self, uint64_t value)
 	atomic_u64_set(&self->integer, value);
 }
 
+static inline void
+var_int_add(Var* self, uint64_t value)
+{
+	assert(self->type == VAR_INT || self->type == VAR_BOOL);
+	atomic_u64_add(&self->integer, value);
+}
+
 static inline uint64_t
 var_int_set_next(Var* self)
 {
