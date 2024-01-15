@@ -38,8 +38,8 @@
 
 // log
 #define log(fmt, ...) \
-	log_at(mn_runtime.log, \
-	       mn_runtime.log_arg, \
+	log_at(mn_runtime.context->log, \
+	       mn_runtime.context->log_arg, \
 	       source_file, \
 	       source_function, \
 	       source_line, fmt, ## __VA_ARGS__)
