@@ -72,6 +72,22 @@ storage_mgr_open(StorageMgr* self)
 }
 
 void
+storage_mgr_close(StorageMgr* self)
+{
+	list_foreach(&self->list)
+	{
+		auto storage = list_at(Storage, link);
+		list_foreach_safe(&storage->list)
+		{
+			auto part = list_at(Part, link);
+			part_free(part);
+		}
+		list_init(&storage->list);
+		storage->list_count = 0;
+	}
+}
+
+void
 storage_mgr_create(StorageMgr* self, Target* target, bool if_not_exists)
 {
 	auto storage = storage_mgr_find(self, &target->name);
