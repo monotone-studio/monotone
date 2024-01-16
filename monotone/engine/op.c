@@ -50,16 +50,6 @@ engine_storage_show(Engine* self, Str* name, Buf* buf)
 }
 
 void
-engine_storage_show_all(Engine* self, Buf* buf)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	storage_mgr_show_all(&self->storage_mgr, buf);
-}
-
-void
 engine_conveyor_alter(Engine* self, List* configs)
 {
 	// take engine exclusive lock
@@ -183,4 +173,24 @@ engine_partitions_drop(Engine* self, uint64_t min, uint64_t max)
 		service_add(&self->service, SERVICE_DROP, part->min, NULL);
 		part = part_tree_next(&self->tree, part);
 	}
+}
+
+void
+engine_partitions_show(Engine* self, Str* name, Buf* buf)
+{
+	// take engine exclusive lock
+	lock_mgr_lock_exclusive(&self->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	storage_mgr_show_partitions(&self->storage_mgr, name, buf);
+}
+
+void
+engine_service_show(Engine* self, Buf* buf)
+{
+	// take engine exclusive lock
+	lock_mgr_lock_exclusive(&self->lock_mgr);
+	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+
+	service_show(&self->service, buf);
 }
