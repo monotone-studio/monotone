@@ -67,7 +67,7 @@ writer_stop_region(Writer* self)
 	// write region
 	iov_reset(&self->iov);
 	region_writer_add_to_iov(&self->region_writer, &self->iov);
-	file_write(self->file, iov_pointer(&self->iov), self->iov.iov_count);
+	file_writev(self->file, iov_pointer(&self->iov), self->iov.iov_count);
 }
 
 void
@@ -95,7 +95,7 @@ writer_stop(Writer* self, uint64_t lsn, bool sync)
 	// write index
 	iov_reset(&self->iov);
 	index_writer_add_to_iov(&self->index_writer, &self->iov);
-	file_write(self->file, iov_pointer(&self->iov), self->iov.iov_count);
+	file_writev(self->file, iov_pointer(&self->iov), self->iov.iov_count);
 	
 	// sync
 	if (sync)
