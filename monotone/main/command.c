@@ -91,12 +91,12 @@ execute_set(Lex* lex)
 static void
 execute_show(Main* self, Lex* lex, Buf* output)
 {
-	// SHOW [STORAGES | CONVEYOR | ALL | name]
+	// SHOW [STORAGES | STORAGE | PARTITIONS | CONVEYOR | SERVICE | ALL | name]
 
 	// storages
 	if (lex_if(lex, KSTORAGES, NULL))
 	{
-		engine_storage_show_all(&self->engine, output);
+		engine_storage_show(&self->engine, NULL, output);
 		return;
 	}
 
@@ -111,10 +111,34 @@ execute_show(Main* self, Lex* lex, Buf* output)
 		return;
 	}
 
+	// partitions
+	if (lex_if(lex, KPARTITIONS, NULL))
+	{
+		// [storage]
+		Token name;
+		if (lex_if(lex, KNAME, &name))
+		{
+			engine_partitions_show(&self->engine, &name.string, output);
+			return;
+		}
+		if (! lex_if(lex, KEOF, NULL))
+			error("SHOW PARTITIONS <storage name> expected");
+
+		engine_partitions_show(&self->engine, NULL, output);
+		return;
+	}
+
 	// conveyor
 	if (lex_if(lex, KCONVEYOR, NULL))
 	{
 		engine_conveyor_show(&self->engine, output);
+		return;
+	}
+
+	// service
+	if (lex_if(lex, KSERVICE, NULL))
+	{
+		engine_service_show(&self->engine, output);
 		return;
 	}
 
