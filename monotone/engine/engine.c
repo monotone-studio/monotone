@@ -59,25 +59,24 @@ engine_close(Engine* self)
 static inline Tier*
 engine_rebalance_tier(Engine* self, Tier* tier, int add)
 {
-	if (list_is_last(&self->conveyor.list, &tier->link))
-		return NULL;
-
-	if (tier->config->capacity == 0 ||
-	    tier->config->capacity == INT64_MAX)
-		return NULL;
-
 	if ((tier->storage->list_count + add) < tier->config->capacity)
 		return NULL;
 
-	auto next = container_of(tier->link.next, Tier, link);
-
 	// get oldest partition (by psn)
-	auto part = storage_oldest(tier->storage);
+	auto oldest = storage_oldest(tier->storage);
 
-	// schedule partition move to the next tier storage
-	service_add(&self->service, SERVICE_MOVE, part->min,
-	            &next->storage->target->name);
-
+	Tier* next = NULL;
+	if (list_is_last(&self->conveyor.list, &tier->link))
+	{
+		// schedule partition drop
+		service_add(&self->service, SERVICE_DROP, oldest->min, NULL);
+	} else
+	{
+		// schedule partition move to the next tier storage
+		next = container_of(tier->link.next, Tier, link);
+		service_add(&self->service, SERVICE_MOVE, oldest->min,
+		            &next->storage->target->name);
+	}
 	return next;
 }
 
