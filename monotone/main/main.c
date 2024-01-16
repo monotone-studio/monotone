@@ -27,6 +27,7 @@ main_init(Main* self)
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
 	engine_init(&self->engine, &self->comparator);
+	worker_mgr_init(&self->worker_mgr);
 }
 
 void
@@ -106,12 +107,21 @@ main_start(Main* self, const char* directory)
 	// recover
 	engine_open(&self->engine);
 
+	// start compaction workers
+	worker_mgr_start(&self->worker_mgr, &self->engine);
+
 	var_int_set(&config()->online, true);
 }
 
 void
 main_stop(Main* self)
 {
+	// shutdown workers
+	service_shutdown(&self->engine.service);
+
+	worker_mgr_stop(&self->worker_mgr);
+
+	// close partitions
 	engine_close(&self->engine);
 
 	logger_close(&self->logger);

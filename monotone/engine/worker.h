@@ -16,7 +16,7 @@ struct Worker
 	Thread     thread;
 };
 
-void worker_init(Worker*, Engine*, Service*);
+void worker_init(Worker*, Engine*);
 void worker_free(Worker*);
 void worker_start(Worker*);
 void worker_stop(Worker*);

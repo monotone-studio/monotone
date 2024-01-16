@@ -19,6 +19,7 @@ engine_init(Engine* self, Comparator* comparator)
 	part_tree_init(&self->tree, comparator);
 	storage_mgr_init(&self->storage_mgr);
 	conveyor_init(&self->conveyor, &self->storage_mgr);
+	service_init(&self->service);
 	lock_mgr_init(&self->lock_mgr);
 }
 
@@ -28,6 +29,7 @@ engine_free(Engine* self)
 	mutex_free(&self->lock);
 	lock_mgr_free(&self->lock_mgr);
 	conveyor_free(&self->conveyor);
+	service_free(&self->service);
 	storage_mgr_free(&self->storage_mgr);
 }
 

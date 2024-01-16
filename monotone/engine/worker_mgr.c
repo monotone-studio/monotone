@@ -19,12 +19,12 @@ worker_mgr_init(WorkerMgr* self)
 }
 
 void
-worker_mgr_start(WorkerMgr* self, Engine* engine, Service* service)
+worker_mgr_start(WorkerMgr* self, Engine* engine)
 {
 	self->workers_count = config_workers();
 	self->workers = mn_malloc(sizeof(Worker) * self->workers_count);
 	for (int i = 0; i < self->workers_count; i++)
-		worker_init(&self->workers[i], engine, service);
+		worker_init(&self->workers[i], engine);
 	for (int i = 0; i < self->workers_count; i++)
 		worker_start(&self->workers[i]);
 }

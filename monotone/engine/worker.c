@@ -38,9 +38,9 @@ worker_main(void* arg)
 }
 
 void
-worker_init(Worker* self, Engine* engine, Service* service)
+worker_init(Worker* self, Engine* engine)
 {
-	self->service = service;
+	self->service = &engine->service;
 	self->context = NULL;
 	compaction_init(&self->compaction, engine);
 	thread_init(&self->thread);
