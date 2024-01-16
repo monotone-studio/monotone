@@ -109,6 +109,21 @@ service_add_if_not_pending(Service* self, ServiceType type, uint64_t min, Str* s
 }
 
 static inline ServicePart*
+service_next_match(Service* self)
+{
+	list_foreach(&self->list)
+	{
+		auto part = list_at(ServicePart, link);
+		if (part->list_count > 0 && !part->active)
+		{
+			part->active = true;
+			return part;
+		}
+	}
+	return NULL;
+}
+
+static inline ServicePart*
 service_next(Service* self)
 {
 	mutex_lock(&self->lock);
@@ -116,20 +131,10 @@ service_next(Service* self)
 	ServicePart* part = NULL;
 	while (! self->shutdown)
 	{
-		if (self->list_count == 0)
-		{
-			cond_var_wait(&self->cond_var, &self->lock);
-			continue;
-		}
-		list_foreach(&self->list)
-		{
-			auto part = list_at(ServicePart, link);
-			if (part->list_count > 0 && !part->active)
-			{
-				part->active = true;
-				break;
-			}
-		}
+		part = service_next_match(self);
+		if (part)
+			break;
+		cond_var_wait(&self->cond_var, &self->lock);
 	}
 
 	mutex_unlock(&self->lock);
