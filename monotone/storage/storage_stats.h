@@ -62,13 +62,23 @@ storage_stats(Storage* self, StorageStats* stats)
 }
 
 hot static inline void
-storage_stats_print(Storage* self, Buf* buf)
+storage_stats_show(Storage* self, Buf* buf)
 {
+	auto target = self->target;
 	StorageStats stats;
 	storage_stats_init(&stats);
 	storage_stats(self, &stats);
-	buf_printf(buf, "%.*s\n", str_size(&self->target->name),
-	           str_of(&self->target->name));
+	buf_printf(buf, "%.*s\n", str_size(&target->name),
+	           str_of(&target->name));
+	// target
+	buf_printf(buf, "  path              '%.*s'\n", str_size(&target->path),
+	           str_of(&target->path));
+	buf_printf(buf, "  sync              %s\n", target->sync ? "true" : "false");
+	buf_printf(buf, "  crc               %s\n", target->sync ? "true" : "false");
+	buf_printf(buf, "  compression       %" PRIu64 "\n", target->compression);
+	buf_printf(buf, "  compaction_wm     %" PRIu64 "\n", target->compaction_wm);
+	buf_printf(buf, "  region_size       %" PRIu64 "\n", target->region_size);
+	// stats
 	buf_printf(buf, "  partitions        %" PRIu64 "\n", stats.partitions);
 	buf_printf(buf, "  min               %" PRIu64 "\n", stats.min);
 	buf_printf(buf, "  max               %" PRIu64 "\n", stats.max);
