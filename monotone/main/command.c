@@ -185,20 +185,17 @@ static inline void
 parse_bool(Lex* lex, Token* name, bool* value)
 {
 	// [true/false]
-	Token tk;
-	if (! lex_if(lex, KNAME, &tk))
+	if (lex_if(lex, KTRUE, NULL))
 	{
 		*value = true;
-		return;
-	}
-	if (str_compare_raw(&tk.string, "true", 4))
-		*value = true;
-	else
-	if (str_compare_raw(&tk.string, "false", 5))
+	} else
+	if (lex_if(lex, KFALSE, NULL))
+	{
 		*value = false;
-	else
+	} else {
 		error("%.*s <true/false> expected", str_size(&name->string),
 		      str_of(&name->string));
+	}
 }
 
 static inline void
@@ -416,6 +413,19 @@ execute_conveyor_alter(Main* self, Lex* lex)
 
 			break;
 		}
+
+		unguard(&config_guard);
+		list_append(&configs, &config->link);
+
+		// ,
+		if (lex_if(lex, ',', NULL))
+			continue;
+
+		// eof
+		if (lex_if(lex, KEOF, NULL))
+			break;
+
+		error("ALTER CONVEYOR storage_name() <,> expected");
 	}
 
 	// alter conveyor
@@ -509,20 +519,20 @@ execute_partitions_drop(Main* self, Lex* lex)
 
 	// from
 	if (! lex_if(lex, KFROM, NULL))
-		error("MOVE PARTITIONS <FROM> min TO max");
+		error("DROP PARTITIONS <FROM> min TO max");
 
 	// min
 	Token min;
 	if (! lex_if(lex, KINT, &min))
-		error("MOVE PARTITIONS FROM <min> TO max");
+		error("DROP PARTITIONS FROM <min> TO max");
 
 	// to
 	if (! lex_if(lex, KTO, NULL))
-		error("MOVE PARTITIONS FROM min <TO> max");
+		error("DROP PARTITIONS FROM min <TO> max");
 
 	Token max;
 	if (! lex_if(lex, KINT, &max))
-		error("MOVE PARTITIONS FROM min TO <max>");
+		error("DROP PARTITIONS FROM min TO <max>");
 
 	// drop partitions
 	engine_partitions_drop(&self->engine, min.integer, max.integer);
@@ -629,7 +639,7 @@ main_execute(Main* self, const char* command, char** result)
 	case KEOF:
 		break;
 	default:
-		error("unknown command");
+		error("unknown command: %s", command);
 		break;
 	}
 
