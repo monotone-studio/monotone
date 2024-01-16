@@ -49,13 +49,7 @@ engine_open(Engine* self)
 void
 engine_close(Engine* self)
 {
-	auto part = part_tree_min(&self->tree);
-	while (part)
-	{
-		auto next = part_tree_next(&self->tree, part);
-		part_free(part);
-		part = next;
-	}
+	storage_mgr_close(&self->storage_mgr);
 }
 
 static inline Tier*
