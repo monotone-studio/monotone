@@ -15,5 +15,5 @@ struct WorkerMgr
 };
 
 void worker_mgr_init(WorkerMgr*);
-void worker_mgr_start(WorkerMgr*, Service*, Engine*);
+void worker_mgr_start(WorkerMgr*, Engine*, Service*);
 void worker_mgr_stop(WorkerMgr*);
