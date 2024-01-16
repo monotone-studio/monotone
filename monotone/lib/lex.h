@@ -37,7 +37,8 @@ enum
 	KALTER,
 	KMOVE,
 	KFROM,
-	KINTO
+	KINTO,
+	KSERVICE
 };
 
 struct Token
