@@ -162,3 +162,34 @@ service_complete(Service* self, ServicePart* part)
 	if (free)
 		service_part_free(part);
 }
+
+static inline void
+service_show(Service* self, Buf* buf)
+{
+	mutex_lock(&self->lock);
+	guard(guard, mutex_unlock, &self->lock);
+
+	list_foreach(&self->list)
+	{
+		auto part = list_at(ServicePart, link);
+		buf_printf(buf, "partition %" PRIu64 " (queue %d) %s\n", part->min,
+		           part->list_count,
+		           part->active ? " <in progress>" : "");
+		list_foreach(&part->list)
+		{
+			auto req = list_at(ServiceReq, link);
+			switch (req->type) {
+			case SERVICE_MERGE:
+				buf_printf(buf, "  merge\n");
+				break;
+			case SERVICE_MOVE:
+				buf_printf(buf, "  merge (%.*s)\n", str_size(&req->storage),
+				           str_of(&req->storage));
+				break;
+			case SERVICE_DROP:
+				buf_printf(buf, "  drop\n");
+				break;
+			}
+		}
+	}
+}
