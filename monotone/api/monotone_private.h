@@ -9,6 +9,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
+#include <monotone_storage.h>
 #include <monotone_engine.h>
-#include <monotone_instance.h>
+#include <monotone_main.h>
 #include <monotone_api.h>
