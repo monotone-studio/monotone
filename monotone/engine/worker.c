@@ -12,13 +12,25 @@
 #include <monotone_engine.h>
 
 hot void
-compaction_execute(Compaction* self, ServicePart* ref, ServiceReq* req)
+worker_execute(Worker* self, ServicePart* ref, ServiceReq* req)
 {
+	(void)self;
+	(void)ref;
+	(void)req;
+#if 0
 	auto engine = self->engine;
 
 	// take engine shared lock to prevent any exclusive ddl
 	lock_mgr_lock_shared(&engine->lock_mgr);
 	guard(lock_guard, lock_mgr_unlock_shared, &engine->lock_mgr);
+
+	// handle drop request
+	if (req->type == SERVICE_DROP)	
+	{
+		return;
+	}
+
+	// compact/move request
 
 	// (1) find partition, match storage and rotate memtable
 	auto lock = engine_find(engine, false, ref->min);
@@ -51,8 +63,6 @@ compaction_execute(Compaction* self, ServicePart* ref, ServiceReq* req)
 	if (storage == NULL)
 		storage = origin_storage;
 
-	// todo: target drop
-	
 	// (2) create new partition by merging existing partition file
 	//     with the memtable
 	MergerReq merger_req =
@@ -105,12 +115,13 @@ compaction_execute(Compaction* self, ServicePart* ref, ServiceReq* req)
 	// rename new partition
 	//
 	part_rename(part);
+#endif
 }
 
 static void*
-compaction_main(void* arg)
+worker_main(void* arg)
 {
-	Compaction* self = arg;
+	Worker* self = arg;
 	runtime_init(self->context);
 	thread_set_name(&self->thread, "compaction");
 
@@ -124,7 +135,7 @@ compaction_main(void* arg)
 		Exception e;
 		if (try(&e))
 		{
-			compaction_execute(self, part, req);
+			worker_execute(self, part, req);
 		}
 		if (catch(&e))
 		{ }
@@ -136,7 +147,7 @@ compaction_main(void* arg)
 }
 
 void
-compaction_init(Compaction* self)
+worker_init(Worker* self)
 {
 	self->engine  = NULL;
 	self->service = NULL;
@@ -146,25 +157,25 @@ compaction_init(Compaction* self)
 }
 
 void
-compaction_free(Compaction* self)
+worker_free(Worker* self)
 {
 	merger_free(&self->merger);
 }
 
 void
-compaction_start(Compaction* self, Service* service, Engine* engine)
+worker_start(Worker* self, Service* service, Engine* engine)
 {
 	self->service = service;
 	self->engine  = engine;
 	self->context = mn_runtime.context;
 	int rc;
-	rc = thread_create(&self->thread, compaction_main, self);
+	rc = thread_create(&self->thread, worker_main, self);
 	if (unlikely(rc == -1))
 		error_system();
 }
 
 void
-compaction_stop(Compaction* self)
+worker_stop(Worker* self)
 {
 	thread_join(&self->thread);
 }

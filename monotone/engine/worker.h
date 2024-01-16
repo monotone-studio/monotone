@@ -6,9 +6,9 @@
 // time-series storage
 //
 
-typedef struct Compaction Compaction;
+typedef struct Worker Worker;
 
-struct Compaction
+struct Worker
 {
 	Merger   merger;
 	Engine*  engine;
@@ -17,7 +17,7 @@ struct Compaction
 	Thread   thread;
 };
 
-void compaction_init(Compaction*);
-void compaction_free(Compaction*);
-void compaction_start(Compaction*, Service*, Engine*);
-void compaction_stop(Compaction*);
+void worker_init(Worker*);
+void worker_free(Worker*);
+void worker_start(Worker*, Service*, Engine*);
+void worker_stop(Worker*);

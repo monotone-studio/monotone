@@ -6,14 +6,14 @@
 // time-series storage
 //
 
-typedef struct CompactionMgr CompactionMgr;
+typedef struct WorkerMgr WorkerMgr;
 
-struct CompactionMgr
+struct WorkerMgr
 {
-	int         workers_count;
-	Compaction* workers;
+	int     workers_count;
+	Worker* workers;
 };
 
-void compaction_mgr_init(CompactionMgr*);
-void compaction_mgr_start(CompactionMgr*, Service*, Engine*);
-void compaction_mgr_stop(CompactionMgr*);
+void worker_mgr_init(WorkerMgr*);
+void worker_mgr_start(WorkerMgr*, Service*, Engine*);
+void worker_mgr_stop(WorkerMgr*);

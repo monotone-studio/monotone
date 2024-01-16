@@ -12,30 +12,30 @@
 #include <monotone_engine.h>
 
 void
-compaction_mgr_init(CompactionMgr* self)
+worker_mgr_init(WorkerMgr* self)
 {
 	self->workers       = NULL;
 	self->workers_count = 0;
 }
 
 void
-compaction_mgr_start(CompactionMgr* self, Service* service, Engine* engine)
+worker_mgr_start(WorkerMgr* self, Service* service, Engine* engine)
 {
 	self->workers_count = config_workers();
-	self->workers = mn_malloc(sizeof(Compaction) * self->workers_count);
+	self->workers = mn_malloc(sizeof(Worker) * self->workers_count);
 	for (int i = 0; i < self->workers_count; i++)
-		compaction_init(&self->workers[i]);
+		worker_init(&self->workers[i]);
 	for (int i = 0; i < self->workers_count; i++)
-		compaction_start(&self->workers[i], service, engine);
+		worker_start(&self->workers[i], service, engine);
 }
 
 void
-compaction_mgr_stop(CompactionMgr* self)
+worker_mgr_stop(WorkerMgr* self)
 {
 	for (int i = 0; i < self->workers_count; i++)
 	{
-		compaction_stop(&self->workers[i]);
-		compaction_free(&self->workers[i]);
+		worker_stop(&self->workers[i]);
+		worker_free(&self->workers[i]);
 	}
 	mn_free(self->workers);
 	self->workers = NULL;
