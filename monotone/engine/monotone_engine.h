@@ -13,6 +13,7 @@
 #include "engine/write.h"
 #include "engine/op.h"
 
-// worker
+// compaction
+#include "engine/compaction.h"
 #include "engine/worker.h"
 #include "engine/worker_mgr.h"

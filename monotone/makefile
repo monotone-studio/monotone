@@ -36,6 +36,7 @@ OBJECTS        = \
                  engine/engine_recover.o \
                  engine/write.o \
                  engine/op.o \
+                 engine/compaction.o \
                  engine/worker.o \
                  engine/worker_mgr.o \
                  main/main.o \
