@@ -55,7 +55,7 @@ engine_close(Engine* self)
 static inline Tier*
 engine_rebalance_tier(Engine* self, Tier* tier, int add)
 {
-	if ((tier->storage->list_count + add) < tier->config->capacity)
+	if ((tier->storage->list_count + add) <= tier->config->capacity)
 		return NULL;
 
 	// get oldest partition (by psn)
@@ -79,7 +79,7 @@ engine_rebalance_tier(Engine* self, Tier* tier, int add)
 static inline void
 engine_rebalance(Engine* self)
 {
-	if (self->conveyor.list_count <= 1)
+	if (conveyor_empty(&self->conveyor))
 		return;
 
 	// do cascade rebalance between storages
