@@ -22,7 +22,6 @@ struct Part
 	Buf         index_buf;
 	Target*     target;
 	Comparator* comparator;
-	RbtreeNode  node;
 	List        link;
 };
 

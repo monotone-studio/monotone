@@ -48,7 +48,6 @@ part_allocate(Comparator* comparator,
 	memtable_init(&self->memtable_a, 512, 508, comparator);
 	memtable_init(&self->memtable_b, 512, 508, comparator);
 	buf_init(&self->index_buf);
-	rbtree_init_node(&self->node);
 	list_init(&self->link);
 	return self;
 }
