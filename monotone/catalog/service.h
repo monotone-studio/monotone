@@ -8,12 +8,20 @@
 
 typedef struct Service Service;
 
+typedef enum
+{
+	SERVICE_SHUTDOWN,
+	SERVICE_REBALANCE,
+	SERVICE_REFRESH
+} ServiceType;
+
 struct Service
 {
 	Mutex   lock;
 	CondVar cond_var;
 	List    list;
 	int     list_count;
+	bool    rebalance;
 	bool    shutdown;
 };
 
@@ -22,6 +30,7 @@ service_init(Service* self)
 {
 	self->list_count = 0;
 	self->shutdown   = false;
+	self->rebalance  = false;
 	mutex_init(&self->lock);
 	cond_var_init(&self->cond_var);
 	list_init(&self->list);
@@ -32,8 +41,8 @@ service_free(Service* self)
 {
 	list_foreach_safe(&self->list)
 	{
-		auto part = list_at(ServicePart, link);
-		service_part_free(part);
+		auto req = list_at(ServiceReq, link);
+		service_req_free(req);
 	}
 	mutex_free(&self->lock);
 	cond_var_free(&self->cond_var);
@@ -48,148 +57,55 @@ service_shutdown(Service* self)
 	mutex_unlock(&self->lock);
 }
 
-hot static inline ServicePart*
-service_find(Service* self, uint64_t min)
+static inline void
+service_rebalance(Service* self)
 {
-	list_foreach(&self->list)
-	{
-		auto part = list_at(ServicePart, link);
-		if (part->min == min)
-			return part;
-	}
-	return NULL;
-}
-
-hot static inline ServicePart*
-service_find_or_create(Service* self, uint64_t min)
-{
-	auto part = service_find(self, min);
-	if (part == NULL)
-	{
-		part = service_part_allocate(min);
-		list_append(&self->list, &part->link);
-		self->list_count++;
-	}
-	return part;
+	mutex_lock(&self->lock);
+	self->rebalance = true;
+	cond_var_signal(&self->cond_var);
+	mutex_unlock(&self->lock);
 }
 
 static inline void
-service_add(Service* self, ServiceType type, uint64_t min, Str* storage)
+service_refresh(Service* self, uint64_t min)
 {
-	auto req = service_req_allocate(type, storage);
-
+	auto req = service_req_allocate(min);
 	mutex_lock(&self->lock);
-	guard(guard, mutex_unlock, &self->lock);
-
-	auto part = service_find_or_create(self, min);
-	service_part_add(part, req);
-	cond_var_signal(&self->cond_var);
-}
-
-hot static inline void
-service_add_if_not_pending(Service* self, ServiceType type, uint64_t min, Str* storage)
-{
-	mutex_lock(&self->lock);
-	guard(guard, mutex_unlock, &self->lock);
-
-	auto part = service_find(self, min);
-	if (part)
-		return;
-
-	part = service_part_allocate(min);
-	guard(guard_free, service_part_free, part);
-
-	auto req = service_req_allocate(type, storage);
-	service_part_add(part, req);
-	list_append(&self->list, &part->link);
+	list_append(&self->list, &req->link);
 	self->list_count++;
-
 	cond_var_signal(&self->cond_var);
-	unguard(&guard_free);
+	mutex_unlock(&self->lock);
 }
 
-static inline ServicePart*
-service_next_match(Service* self)
-{
-	list_foreach(&self->list)
-	{
-		auto part = list_at(ServicePart, link);
-		if (part->list_count > 0 && !part->active)
-		{
-			part->active = true;
-			return part;
-		}
-	}
-	return NULL;
-}
-
-static inline ServicePart*
-service_next(Service* self)
+static inline ServiceType
+service_next(Service* self, ServiceReq** req)
 {
 	mutex_lock(&self->lock);
 
-	ServicePart* part = NULL;
-	while (! self->shutdown)
+	ServiceType type;
+	for (;;)
 	{
-		part = service_next_match(self);
-		if (part)
+		if (unlikely(self->shutdown))
+		{
+			type = SERVICE_SHUTDOWN;
 			break;
+		}
+		if (self->rebalance)
+		{
+			self->rebalance = false;
+			type = SERVICE_REBALANCE;
+			break;
+		}
+		if (self->list_count > 0)
+		{
+			*req = container_of(list_pop(&self->list), ServiceReq, link);
+			self->list_count--;
+			type = SERVICE_REFRESH;
+			break;
+		}
 		cond_var_wait(&self->cond_var, &self->lock);
 	}
 
 	mutex_unlock(&self->lock);
-	return part;
-}
-
-static inline void
-service_complete(Service* self, ServicePart* part)
-{
-	bool free = false;
-	mutex_lock(&self->lock);
-
-	service_part_pop(part);
-	part->active = false;
-	if (part->list_count == 0)
-	{
-		free = true;
-		list_unlink(&part->link);
-		self->list_count--;
-	} else {
-		cond_var_signal(&self->cond_var);
-	}
-	mutex_unlock(&self->lock);
-
-	if (free)
-		service_part_free(part);
-}
-
-static inline void
-service_show(Service* self, Buf* buf)
-{
-	mutex_lock(&self->lock);
-	guard(guard, mutex_unlock, &self->lock);
-
-	list_foreach(&self->list)
-	{
-		auto part = list_at(ServicePart, link);
-		buf_printf(buf, "partition %" PRIu64 " (queue %d) %s\n", part->min,
-		           part->list_count,
-		           part->active ? " <in progress>" : "");
-		list_foreach(&part->list)
-		{
-			auto req = list_at(ServiceReq, link);
-			switch (req->type) {
-			case SERVICE_MERGE:
-				buf_printf(buf, "  merge\n");
-				break;
-			case SERVICE_MOVE:
-				buf_printf(buf, "  merge (%.*s)\n", str_size(&req->storage),
-				           str_of(&req->storage));
-				break;
-			case SERVICE_DROP:
-				buf_printf(buf, "  drop\n");
-				break;
-			}
-		}
-	}
+	return type;
 }
