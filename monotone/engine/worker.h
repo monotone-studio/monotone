@@ -11,7 +11,7 @@ typedef struct Worker Worker;
 struct Worker
 {
 	Compaction compaction;
-	Service*   service;
+	Engine*    engine;
 	Context*   context;
 	Thread     thread;
 };

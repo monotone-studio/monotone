@@ -8,7 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 
 static void*
@@ -18,20 +18,27 @@ worker_main(void* arg)
 	runtime_init(self->context);
 	thread_set_name(&self->thread, "worker");
 
+	auto service = &self->engine->service;
 	for (;;)
 	{
-		auto ref = service_next(self->service);
-		if (unlikely(ref == NULL))
+		ServiceReq* req = NULL;
+		auto type = service_next(service, &req);
+		if (type == SERVICE_SHUTDOWN)
 			break;
+
+		// always doing rebalance first
+		engine_rebalance(self->engine, &self->compaction);
+		if (type == SERVICE_REBALANCE)
+			continue;
 
 		Exception e;
 		if (try(&e)) {
-			compaction_run(&self->compaction, ref);
+			engine_refresh(self->engine, &self->compaction, req->min, true);
 		}
 		if (catch(&e))
 		{ }
 
-		service_complete(self->service, ref);
+		service_req_free(req);
 	}
 
 	return NULL;
@@ -40,7 +47,7 @@ worker_main(void* arg)
 void
 worker_init(Worker* self, Engine* engine)
 {
-	self->service = &engine->service;
+	self->engine  = engine;
 	self->context = NULL;
 	compaction_init(&self->compaction, engine);
 	thread_init(&self->thread);
