@@ -8,7 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 
 static inline int
@@ -107,6 +107,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 static void
 engine_recover_validate(Engine* self, Storage* storage)
 {
+	auto storage_mgr = &self->catalog.storage_mgr;
 	list_foreach_safe(&storage->list)
 	{
 		auto part = list_at(Part, link);
@@ -118,7 +119,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 		// <min>.<id>.<id_parent>
 		if (part->id != part->id_parent)
 		{
-			auto parent = storage_mgr_find_part(&self->storage_mgr, part->id_parent);
+			auto parent = storage_mgr_find_part(storage_mgr, part->id_parent);
 			if (parent)
 			{
 				// parent still exists, remove incomplete partition
@@ -140,29 +141,35 @@ engine_recover_validate(Engine* self, Storage* storage)
 void
 engine_recover(Engine* self)
 {
+	auto storage_mgr = &self->catalog.storage_mgr;
+
 	// read partitions
-	list_foreach(&self->storage_mgr.list)
+	list_foreach(&storage_mgr->list)
 	{
 		auto storage = list_at(Storage, link);
 		engine_recover_storage(self, storage);
 	}
 
 	// validate partitions per storage
-	list_foreach(&self->storage_mgr.list)
+	list_foreach(&storage_mgr->list)
 	{
 		auto storage = list_at(Storage, link);
 		engine_recover_validate(self, storage);
 	}
 
 	// open partitions
-	list_foreach(&self->storage_mgr.list)
+	list_foreach(&storage_mgr->list)
 	{
 		auto storage = list_at(Storage, link);
 		list_foreach(&storage->list)
 		{
 			auto part = list_at(Part, link);
 			part_open(part);
-			part_tree_add(&self->tree, part);
+
+			auto ref  = ref_allocate(part->min, part->max);
+			ref_prepare(ref, &self->catalog.lock, &self->catalog.cond_var, part);
+
+			mapping_add(&self->catalog.mapping, &ref->slice);
 		}
 	}
 }
