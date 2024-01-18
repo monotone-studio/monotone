@@ -38,6 +38,15 @@ rwlock_wrlock(Rwlock* self)
 }
 
 static inline void
+rwlock_lock(Rwlock* self, bool shared)
+{
+	if (shared)
+		rwlock_rdlock(self);
+	else
+		rwlock_wrlock(self);
+}
+
+static inline void
 rwlock_unlock(Rwlock* self)
 {
 	pthread_rwlock_unlock(&self->lock);
