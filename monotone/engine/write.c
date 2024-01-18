@@ -8,13 +8,13 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 
 hot static inline void
-engine_write_to(Engine* self, Lock* lock, Row* row)
+engine_write_to(Engine* self, Ref* ref, Row* row)
 {
-	Part* part = lock->part;
+	Part* part = ref->part;
 
 	// update stats
 	var_int_add(&config()->rows_written, 1);
@@ -27,11 +27,11 @@ engine_write_to(Engine* self, Lock* lock, Row* row)
 	// todo: wal write
 	memtable_follow(memtable, 0);
 
-	// schedule compaction
-	if (part->target->compaction_wm > 0)
+	// schedule refresh
+	if (!part->refresh && part_refresh_ready(part))
 	{
-		if (part->memtable->size > (uint32_t)part->target->compaction_wm)
-			service_add_if_not_pending(&self->service, SERVICE_MERGE, part->min, NULL);
+		service_refresh(&self->service, part->min);
+		part->refresh = true;
 	}
 }
 
@@ -51,11 +51,16 @@ engine_write(Engine* self, bool delete, uint64_t time,
 	uint64_t min = row_interval_min(row);
 
 	// find or create partition
-	auto lock = engine_find(self, true, min);
-	guard(unlock, lock_mgr_unlock, lock);
+	auto ref = catalog_lock(&self->catalog, min, LOCK_ACCESS, false, true);
 
 	// write
-	engine_write_to(self, lock, row);
+	Exception e;
+	if (try(&e)) {
+		engine_write_to(self, ref, row);
+	}
+	catalog_unlock(&self->catalog, ref, LOCK_ACCESS);
+	if (catch(&e))
+		rethrow();
 }
 
 void
@@ -87,7 +92,7 @@ engine_write_by(Engine*       self,
 	}
 
 	// use cursor partition lock
-	engine_write_to(self, cursor->lock, row);
+	engine_write_to(self, cursor->ref, row);
 
 	// update cursor
 	if (delete)
