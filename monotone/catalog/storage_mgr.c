@@ -8,7 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 
 void
 storage_mgr_init(StorageMgr* self)
