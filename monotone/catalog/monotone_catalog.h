@@ -22,9 +22,7 @@
 #include "catalog/service_req.h"
 #include "catalog/service.h"
 
-#if 0
-/*
-// lock manager
-#include "storage/lock_mgr.h"
-*/
-#endif
+// catalog
+#include "catalog/lock.h"
+#include "catalog/ref.h"
+#include "catalog/catalog.h"
