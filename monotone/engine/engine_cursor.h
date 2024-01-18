@@ -10,7 +10,7 @@ typedef struct EngineCursor EngineCursor;
 
 struct EngineCursor
 {
-	Lock*      lock;
+	Ref*       ref;
 	PartCursor cursor;
 	Row*       current;
 	Engine*    engine;
@@ -19,7 +19,7 @@ struct EngineCursor
 hot static inline void
 engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 {
-	self->lock    = NULL;
+	self->ref     = NULL;
 	self->current = NULL;
 	self->engine  = engine;
 
@@ -27,26 +27,32 @@ engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 	uint64_t min = 0;
 	if (key)
 		min = row_interval_min(key);
-	self->lock = engine_seek(engine, min);
-	if (self->lock == NULL)
+	self->ref = catalog_lock(&engine->catalog, min, LOCK_ACCESS, true, false);
+	if (self->ref == NULL)
 		return;
 
 	// open partition cursor
-	auto part = self->lock->part;
-	part_cursor_open(&self->cursor, part, key);
+	part_cursor_open(&self->cursor, self->ref->part, key);
 	self->current = part_cursor_at(&self->cursor);
+}
+
+hot static inline void
+engine_cursor_reset(EngineCursor* self)
+{
+	if (self->ref)
+	{
+		catalog_unlock(&self->engine->catalog, self->ref, LOCK_ACCESS);
+		self->ref = NULL;
+	}
+	self->current = NULL;
+	self->engine  = NULL;
+	part_cursor_reset(&self->cursor);
 }
 
 hot static inline void
 engine_cursor_close(EngineCursor* self)
 {
-	if (self->lock)
-	{
-		lock_mgr_unlock(self->lock);
-		self->lock = NULL;
-	}
-	self->current = NULL;
-	self->engine  = NULL;
+	engine_cursor_reset(self);
 	part_cursor_free(&self->cursor);
 }
 
@@ -65,7 +71,7 @@ engine_cursor_has(EngineCursor* self)
 hot static inline void
 engine_cursor_next(EngineCursor* self)
 {
-	if (unlikely(self->lock == NULL))
+	if (unlikely(self->ref == NULL))
 		return;
 
 	// iterate current partition
@@ -77,21 +83,20 @@ engine_cursor_next(EngineCursor* self)
 		return;
 	}
 
-	Part* part = self->lock->part;
-	uint64_t next_interval = part->max;
+	uint64_t next_interval = self->ref->slice.max;
 
 	// close previous partition
-	lock_mgr_unlock(self->lock);
-	self->lock = NULL;
+	auto catalog = &self->engine->catalog;
+	catalog_unlock(catalog, self->ref, LOCK_ACCESS);
+	self->ref = NULL;
 	part_cursor_reset(&self->cursor);
 
 	// open next partition
-	self->lock = engine_seek(self->engine, next_interval);
-	if (unlikely(self->lock == NULL))
+	self->ref = catalog_lock(catalog, next_interval, LOCK_ACCESS, true, false);
+	if (unlikely(self->ref == NULL))
 		return;
 
-	part = self->lock->part;
-	part_cursor_open(&self->cursor, part, NULL);
+	part_cursor_open(&self->cursor, self->ref->part, NULL);
 	self->current = part_cursor_at(&self->cursor);
 }
 
@@ -110,21 +115,8 @@ engine_cursor_skip_deletes(EngineCursor* self)
 hot static inline void
 engine_cursor_init(EngineCursor* self)
 {
-	self->lock    = NULL;
+	self->ref     = NULL;
 	self->current = NULL;
 	self->engine  = NULL;
 	part_cursor_init(&self->cursor);
-}
-
-hot static inline void
-engine_cursor_reset(EngineCursor* self)
-{
-	if (self->lock)
-	{
-		lock_mgr_unlock(self->lock);
-		self->lock = NULL;
-	}
-	self->current = NULL;
-	self->engine  = NULL;
-	part_cursor_reset(&self->cursor);
 }
