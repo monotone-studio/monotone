@@ -39,9 +39,11 @@
 
 // partition
 #include "io/part.h"
-#include "io/part_tree.h"
 #include "io/part_iterator.h"
 #include "io/part_cursor.h"
+
+// mapping
+#include "io/mapping.h"
 
 // merger
 #include "io/merger.h"
