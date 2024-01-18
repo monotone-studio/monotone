@@ -8,14 +8,13 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 
 void
 compaction_init(Compaction* self, Engine* engine)
 {
 	self->ref            = NULL;
-	self->req            = NULL;
 	self->origin         = NULL;
 	self->part           = NULL;
 	self->memtable       = NULL;
@@ -35,7 +34,6 @@ void
 compaction_reset(Compaction* self)
 {
 	self->ref            = NULL;
-	self->req            = NULL;
 	self->origin         = NULL;
 	self->part           = NULL;
 	self->memtable       = NULL;
@@ -44,76 +42,63 @@ compaction_reset(Compaction* self)
 	merger_reset(&self->merger);
 }
 
-static void
-compaction_drop(Compaction* self)
+static bool
+compaction_begin(Compaction* self, uint64_t min, Str* storage,
+                 bool if_exists)
 {
-	auto engine = self->engine;
-
-	// find the original partition
-	auto lock = engine_find(engine, false, self->ref->min);
-	if (unlikely(! lock))
-		error("compaction: partition <%" PRIu64 "> is no longer available",
-		      self->ref->min);
-
-	// set origin
-	self->origin = lock->part;
-
-	// get the original partition storage
-	self->storage_origin =
-		storage_mgr_find(&engine->storage_mgr, &self->origin->target->name);
-
-	// remove partition from the partition tree and storage
-	mutex_lock(&engine->lock);
-	part_tree_remove(&engine->tree, self->origin);
-	storage_remove(self->storage_origin, self->origin);
-	mutex_unlock(&engine->lock);
-
-	lock_mgr_unlock(lock);
-
-	// delete partition file and free
-	part_delete(self->origin, true);
-	part_free(self->origin);
-	self->origin = NULL;
-}
-
-static void
-compaction_rotate(Compaction* self)
-{
-	auto engine = self->engine;
-	auto req = self->req;
+	auto catalog = &self->engine->catalog;
 
 	// match storage, if provided by request
-	if (! str_empty(&self->req->storage))
+	if (storage)
 	{
-		self->storage = storage_mgr_find(&self->engine->storage_mgr, &req->storage);
+		self->storage = storage_mgr_find(&catalog->storage_mgr, storage);
 		if (unlikely(! self->storage))
-		{
-			error("compaction: storage <%.*s> is no longer available",
-			      str_size(&req->storage),
-			      str_of(&req->storage));
-		}
+			error("compaction: storage <%.*s> not found",
+			      str_size(storage), str_of(storage));
 	}
 
 	// find the original partition
-	auto lock = engine_find(engine, false, self->ref->min);
-	if (unlikely(! lock))
-		error("compaction: partition <%" PRIu64 "> is no longer available",
-		      self->ref->min);
+	auto ref = catalog_lock(catalog, min, LOCK_ACCESS|LOCK_SERVICE, false, false);
+	if (unlikely(! ref))
+	{
+		if (! if_exists)
+			error("compaction: partition <%" PRIu64 "> not found", min);
+		return false;
+	}
 
 	// set origin
-	self->origin = lock->part;
+	self->ref    = ref;
+	self->origin = ref->part;
 
-	// rotate memtable
-	self->memtable = part_memtable_rotate(self->origin);
-	lock_mgr_unlock(lock);
+	// do nothing if memtable is empty, unless it is a move operation
+	if (self->storage == NULL && self->memtable->size == 0)
+	{
+		catalog_unlock(catalog, ref, LOCK_ACCESS|LOCK_SERVICE);
+		return false;
+	}
 
 	// get the original partition storage
 	self->storage_origin =
-		storage_mgr_find(&engine->storage_mgr, &self->origin->target->name);
+		storage_mgr_find(&catalog->storage_mgr, &self->origin->target->name);
+
+	// if partition has the same storage already, do nothing
+	if (self->storage == self->storage_origin)
+	{
+		catalog_unlock(catalog, ref, LOCK_ACCESS|LOCK_SERVICE);
+		return false;
+	}
+
+	// rotate memtable
+	self->memtable = part_memtable_rotate(self->origin);
+
+	// keeping service lock till the end
+	catalog_unlock(catalog, ref, LOCK_ACCESS);
 
 	// set storage, if not provided by request
 	if (self->storage == NULL)
 		self->storage = self->storage_origin;
+
+	return true;
 }
 
 static void
@@ -133,18 +118,20 @@ compaction_merge(Compaction* self)
 static void
 compaction_apply(Compaction* self)
 {
-	auto engine = self->engine;
-	auto origin = self->origin;
-	auto part = self->part;
+	auto catalog = &self->engine->catalog;
+	auto origin  = self->origin;
+	auto part    = self->part;
 
-	auto lock = engine_find(engine, false, self->ref->min);
-	assert(lock);
-	assert(lock->part == origin);
+	// find the original partition
+	auto ref = catalog_lock(catalog, origin->min, LOCK_ACCESS, false, false);
+	assert(ref);
+	assert(ref == self->ref);
 
-	mutex_lock(&engine->lock);
+	// update catalog
+	mutex_lock(&catalog->lock);
 
-	// update partition tree
-	part_tree_replace(&engine->tree, origin, part);
+	// update partition reference
+	ref->part = self->part;
 
 	// remove old partition from its storage
 	storage_remove(self->storage_origin, origin);
@@ -152,23 +139,23 @@ compaction_apply(Compaction* self)
 	// add new partition to the storage
 	storage_add(self->storage, part);
 
-	mutex_unlock(&engine->lock);
+	mutex_unlock(&catalog->lock);
 
 	// reuse memtable
-	*self->part->memtable = *origin->memtable;
+	*part->memtable = *origin->memtable;
 	memtable_init(origin->memtable,
 	              origin->memtable->size_page,
 	              origin->memtable->size_split,
 	              origin->comparator);
 
-	lock_mgr_unlock(lock);
+	catalog_unlock(catalog, ref, LOCK_ACCESS);
 }
 
 static void
-compaction_finish(Compaction* self)
+compaction_end(Compaction* self)
 {
 	auto origin = self->origin;
-	auto part = self->part;
+	auto part   = self->part;
 
 	// free memtable memory
 	memtable_free(self->memtable);
@@ -185,38 +172,43 @@ compaction_finish(Compaction* self)
 
 	// rename new partition
 	part_rename(part);
+	self->part = NULL;
 }
 
 void
-compaction_run(Compaction* self, ServicePart* ref)
+compaction_run(Compaction* self, uint64_t min, Str* storage,
+               bool if_exists)
 {
-	self->ref = ref;
-	self->req = service_part_req(ref);
-
-	// take engine shared lock to prevent any exclusive ddl
-	// during the process
-	lock_mgr_lock_shared(&self->engine->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_shared, &self->engine->lock_mgr);
-
-	// handle partition drop request
-	if (self->req->type == SERVICE_DROP)
-	{
-		compaction_drop(self);
+	// step 1. find partition and take the service lock
+	//         match storage
+	//         rotate memtable
+	//
+	//         on refresh
+	//           do nothing if memtable is empty
+	//
+	//         on move
+	//           do nothing if partition storage not changed
+	//
+	if (! compaction_begin(self, min, storage, if_exists))
 		return;
+
+	Exception e;
+	if (try(&e))
+	{
+		// step 2. create new partition by merging existing partition
+		// file with the memtable
+		compaction_merge(self);
+
+		// step 3. replace existing partition with the new one
+		compaction_apply(self);
+
+		// step 4. finilize and cleanup
+		compaction_end(self);
 	}
 
-	// handle partition merge/move request
+	// complete
+	catalog_unlock(&self->engine->catalog, self->ref, LOCK_SERVICE);
 
-	// step 1. find partition, match storage and rotate memtable
-	compaction_rotate(self);
-
-	// step 2. create new partition by merging existing partition
-	// file with the memtable
-	compaction_merge(self);
-
-	// step 3. replace existing partition with the new one
-	compaction_apply(self);
-
-	// step 4. finilize and cleanup
-	compaction_finish(self);
+	if (catch(&e))
+		rethrow();
 }
