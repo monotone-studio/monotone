@@ -109,11 +109,12 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	if (head && head->min < min)
 		service_refresh(self->service, head->min);
 
-	return unguard(&guard);
+	unguard(&guard);
+	return &ref->slice;
 }
 
 hot Ref*
-engine_lock(Engine* self, uint64_t min, int lock,
+engine_lock(Engine* self, uint64_t min, RefLock lock,
             bool gte,
             bool create_if_not_exists)
 {
@@ -159,7 +160,7 @@ engine_lock(Engine* self, uint64_t min, int lock,
 }
 
 void
-engine_unlock(Engine* self, Ref* ref, int lock)
+engine_unlock(Engine* self, Ref* ref, RefLock lock)
 {
 	ref_unlock(ref, lock);
 
