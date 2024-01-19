@@ -8,11 +8,11 @@
 
 typedef struct Ref Ref;
 
-enum
+typedef enum
 {
-	LOCK_SERVICE = 1,
-	LOCK_ACCESS  = 2
-};
+	LOCK_SERVICE,
+	LOCK_ACCESS
+} RefLock;
 
 struct Ref
 {
@@ -57,22 +57,31 @@ ref_of(Slice* slice)
 	return container_of(slice, Ref, slice);
 }
 
-static inline void
-ref_lock(Ref* self, int lock)
+static inline Lock*
+ref_lockof(Ref* self, RefLock lock)
 {
-	if ((lock & LOCK_SERVICE) > 0)
-		lock_lock(&self->lock_service);
-
-	if ((lock & LOCK_ACCESS) > 0)
-		lock_lock(&self->lock_access);
+	Lock* ptr;
+	switch (lock) {
+	case LOCK_SERVICE:
+		ptr = &self->lock_service;
+		break;
+	case LOCK_ACCESS:
+		ptr = &self->lock_access;
+		break;
+	}
+	return ptr;
 }
 
 static inline void
-ref_unlock(Ref* self, int lock)
+ref_lock(Ref* self, RefLock type)
 {
-	if ((lock & LOCK_SERVICE) > 0)
-		lock_unlock(&self->lock_service);
+	auto lock = ref_lockof(self, type);
+	lock_lock(lock);
+}
 
-	if ((lock & LOCK_ACCESS) > 0)
-		lock_unlock(&self->lock_access);
+static inline void
+ref_unlock(Ref* self, RefLock type)
+{
+	auto lock = ref_lockof(self, type);
+	lock_unlock(lock);
 }
