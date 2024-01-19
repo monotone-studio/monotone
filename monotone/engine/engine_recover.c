@@ -107,7 +107,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 static void
 engine_recover_validate(Engine* self, Storage* storage)
 {
-	auto storage_mgr = &self->catalog.storage_mgr;
+	auto storage_mgr = &self->storage_mgr;
 	list_foreach_safe(&storage->list)
 	{
 		auto part = list_at(Part, link);
@@ -141,7 +141,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 void
 engine_recover(Engine* self)
 {
-	auto storage_mgr = &self->catalog.storage_mgr;
+	auto storage_mgr = &self->storage_mgr;
 
 	// read partitions
 	list_foreach(&storage_mgr->list)
@@ -167,9 +167,9 @@ engine_recover(Engine* self)
 			part_open(part);
 
 			auto ref  = ref_allocate(part->min, part->max);
-			ref_prepare(ref, &self->catalog.lock, &self->catalog.cond_var, part);
+			ref_prepare(ref, &self->lock, &self->cond_var, part);
 
-			mapping_add(&self->catalog.mapping, &ref->slice);
+			mapping_add(&self->mapping, &ref->slice);
 		}
 	}
 }

@@ -27,7 +27,7 @@ engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 	uint64_t min = 0;
 	if (key)
 		min = row_interval_min(key);
-	self->ref = catalog_lock(&engine->catalog, min, LOCK_ACCESS, true, false);
+	self->ref = engine_lock(engine, min, LOCK_ACCESS, true, false);
 	if (self->ref == NULL)
 		return;
 
@@ -41,7 +41,7 @@ engine_cursor_reset(EngineCursor* self)
 {
 	if (self->ref)
 	{
-		catalog_unlock(&self->engine->catalog, self->ref, LOCK_ACCESS);
+		engine_unlock(self->engine, self->ref, LOCK_ACCESS);
 		self->ref = NULL;
 	}
 	self->current = NULL;
@@ -86,13 +86,12 @@ engine_cursor_next(EngineCursor* self)
 	uint64_t next_interval = self->ref->slice.max;
 
 	// close previous partition
-	auto catalog = &self->engine->catalog;
-	catalog_unlock(catalog, self->ref, LOCK_ACCESS);
+	engine_unlock(self->engine, self->ref, LOCK_ACCESS);
 	self->ref = NULL;
 	part_cursor_reset(&self->cursor);
 
 	// open next partition
-	self->ref = catalog_lock(catalog, next_interval, LOCK_ACCESS, true, false);
+	self->ref = engine_lock(self->engine, next_interval, LOCK_ACCESS, true, false);
 	if (unlikely(self->ref == NULL))
 		return;
 

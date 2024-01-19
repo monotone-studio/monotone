@@ -46,19 +46,19 @@ static bool
 compaction_begin(Compaction* self, uint64_t min, Str* storage,
                  bool if_exists)
 {
-	auto catalog = &self->engine->catalog;
+	auto engine = self->engine;
 
 	// match storage, if provided by request
 	if (storage)
 	{
-		self->storage = storage_mgr_find(&catalog->storage_mgr, storage);
+		self->storage = storage_mgr_find(&engine->storage_mgr, storage);
 		if (unlikely(! self->storage))
 			error("compaction: storage <%.*s> not found",
 			      str_size(storage), str_of(storage));
 	}
 
 	// find the original partition
-	auto ref = catalog_lock(catalog, min, LOCK_ACCESS|LOCK_SERVICE, false, false);
+	auto ref = engine_lock(engine, min, LOCK_ACCESS|LOCK_SERVICE, false, false);
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
@@ -73,18 +73,18 @@ compaction_begin(Compaction* self, uint64_t min, Str* storage,
 	// do nothing if memtable is empty, unless it is a move operation
 	if (self->storage == NULL && self->memtable->size == 0)
 	{
-		catalog_unlock(catalog, ref, LOCK_ACCESS|LOCK_SERVICE);
+		engine_unlock(engine, ref, LOCK_ACCESS|LOCK_SERVICE);
 		return false;
 	}
 
 	// get the original partition storage
 	self->storage_origin =
-		storage_mgr_find(&catalog->storage_mgr, &self->origin->target->name);
+		storage_mgr_find(&engine->storage_mgr, &self->origin->target->name);
 
 	// if partition has the same storage already, do nothing
 	if (self->storage == self->storage_origin)
 	{
-		catalog_unlock(catalog, ref, LOCK_ACCESS|LOCK_SERVICE);
+		engine_unlock(engine, ref, LOCK_ACCESS|LOCK_SERVICE);
 		return false;
 	}
 
@@ -92,7 +92,7 @@ compaction_begin(Compaction* self, uint64_t min, Str* storage,
 	self->memtable = part_memtable_rotate(self->origin);
 
 	// keeping service lock till the end
-	catalog_unlock(catalog, ref, LOCK_ACCESS);
+	engine_unlock(engine, ref, LOCK_ACCESS);
 
 	// set storage, if not provided by request
 	if (self->storage == NULL)
@@ -118,17 +118,17 @@ compaction_merge(Compaction* self)
 static void
 compaction_apply(Compaction* self)
 {
-	auto catalog = &self->engine->catalog;
-	auto origin  = self->origin;
-	auto part    = self->part;
+	auto engine = self->engine;
+	auto origin = self->origin;
+	auto part   = self->part;
 
 	// find the original partition
-	auto ref = catalog_lock(catalog, origin->min, LOCK_ACCESS, false, false);
+	auto ref = engine_lock(engine, origin->min, LOCK_ACCESS, false, false);
 	assert(ref);
 	assert(ref == self->ref);
 
 	// update catalog
-	mutex_lock(&catalog->lock);
+	mutex_lock(&engine->lock);
 
 	// update partition reference
 	ref->part = self->part;
@@ -139,7 +139,7 @@ compaction_apply(Compaction* self)
 	// add new partition to the storage
 	storage_add(self->storage, part);
 
-	mutex_unlock(&catalog->lock);
+	mutex_unlock(&engine->lock);
 
 	// reuse memtable
 	*part->memtable = *origin->memtable;
@@ -148,7 +148,7 @@ compaction_apply(Compaction* self)
 	              origin->memtable->size_split,
 	              origin->comparator);
 
-	catalog_unlock(catalog, ref, LOCK_ACCESS);
+	engine_unlock(engine, ref, LOCK_ACCESS);
 }
 
 static void
@@ -207,7 +207,7 @@ compaction_run(Compaction* self, uint64_t min, Str* storage,
 	}
 
 	// complete
-	catalog_unlock(&self->engine->catalog, self->ref, LOCK_SERVICE);
+	engine_unlock(self->engine, self->ref, LOCK_SERVICE);
 
 	if (catch(&e))
 		rethrow();

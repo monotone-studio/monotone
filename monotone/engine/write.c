@@ -28,10 +28,10 @@ engine_write_to(Engine* self, Ref* ref, Row* row)
 	memtable_follow(memtable, 0);
 
 	// schedule refresh
-	if (!part->refresh && part_refresh_ready(part))
+	if (!ref->refresh && part_refresh_ready(part))
 	{
-		service_refresh(&self->service, part->min);
-		part->refresh = true;
+		service_refresh(self->service, part->min);
+		ref->refresh = true;
 	}
 }
 
@@ -51,14 +51,14 @@ engine_write(Engine* self, bool delete, uint64_t time,
 	uint64_t min = row_interval_min(row);
 
 	// find or create partition
-	auto ref = catalog_lock(&self->catalog, min, LOCK_ACCESS, false, true);
+	auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
 
 	// write
 	Exception e;
 	if (try(&e)) {
 		engine_write_to(self, ref, row);
 	}
-	catalog_unlock(&self->catalog, ref, LOCK_ACCESS);
+	engine_unlock(self, ref, LOCK_ACCESS);
 	if (catch(&e))
 		rethrow();
 }

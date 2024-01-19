@@ -18,7 +18,7 @@ worker_main(void* arg)
 	runtime_init(self->context);
 	thread_set_name(&self->thread, "worker");
 
-	auto service = &self->engine->service;
+	auto service = self->engine->service;
 	for (;;)
 	{
 		ServiceReq* req = NULL;
