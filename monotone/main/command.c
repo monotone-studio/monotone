@@ -8,7 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 #include <monotone_main.h>
 
@@ -118,13 +118,13 @@ execute_show(Main* self, Lex* lex, Buf* output)
 		Token name;
 		if (lex_if(lex, KNAME, &name))
 		{
-			engine_partitions_show(&self->engine, &name.string, output);
+			engine_storage_show_partitions(&self->engine, &name.string, output);
 			return;
 		}
 		if (! lex_if(lex, KEOF, NULL))
 			error("SHOW PARTITIONS <storage name> expected");
 
-		engine_partitions_show(&self->engine, NULL, output);
+		engine_storage_show_partitions(&self->engine, NULL, output);
 		return;
 	}
 
@@ -132,13 +132,6 @@ execute_show(Main* self, Lex* lex, Buf* output)
 	if (lex_if(lex, KCONVEYOR, NULL))
 	{
 		engine_conveyor_show(&self->engine, output);
-		return;
-	}
-
-	// service
-	if (lex_if(lex, KSERVICE, NULL))
-	{
-		engine_service_show(&self->engine, output);
 		return;
 	}
 
@@ -479,8 +472,18 @@ execute_partition_move(Main* self, Lex* lex)
 		error("MOVE PARTITION id INTO <name>");
 
 	// move partition
-	engine_partition_move(&self->engine, id.integer, &name.string,
-	                      if_exists);
+	Compaction cp;
+	compaction_init(&cp, &self->engine);
+
+	Exception e;
+	if (try(&e))
+	{
+		engine_move(&self->engine, &cp, id.integer, &name.string,
+		            if_exists);
+	}
+	compaction_free(&cp);
+	if (catch(&e))
+		rethrow();
 }
 
 static void
@@ -497,7 +500,7 @@ execute_partition_drop(Main* self, Lex* lex)
 		error("DROP PARTITION <id>");
 
 	// drop partition
-	engine_partition_drop(&self->engine, id.integer, if_exists);
+	engine_drop(&self->engine, id.integer, if_exists);
 }
 
 static void
@@ -532,8 +535,8 @@ execute_partitions_move(Main* self, Lex* lex)
 		error("MOVE PARTITIONS FROM min TO max INTO <name>");
 
 	// move partitions
-	engine_partitions_move(&self->engine, min.integer, max.integer,
-	                       &name.string);
+	engine_move_range(&self->engine, min.integer, max.integer,
+	                  &name.string);
 }
 
 static void
@@ -559,7 +562,7 @@ execute_partitions_drop(Main* self, Lex* lex)
 		error("DROP PARTITIONS FROM min TO <max>");
 
 	// drop partitions
-	engine_partitions_drop(&self->engine, min.integer, max.integer);
+	engine_drop_range(&self->engine, min.integer, max.integer);
 }
 
 void
