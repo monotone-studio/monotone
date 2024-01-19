@@ -21,8 +21,3 @@
 // service
 #include "catalog/service_req.h"
 #include "catalog/service.h"
-
-// catalog
-#include "catalog/lock.h"
-#include "catalog/ref.h"
-#include "catalog/catalog.h"
