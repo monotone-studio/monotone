@@ -55,3 +55,11 @@ part_memtable_rotate(Part* self)
 	self->memtable = current;
 	return prev;
 }
+
+static inline bool
+part_refresh_ready(Part* self)
+{
+	if (! self->target->compaction_wm)
+		return false;
+	return self->memtable->size > (uint32_t)self->target->compaction_wm;
+}
