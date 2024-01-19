@@ -18,12 +18,7 @@
 // compaction
 #include "engine/compaction.h"
 #include "engine/op.h"
-
-#if 0
-#if 0
 #include "engine/op_ddl.h"
-#endif
-#endif
 
 // worker
 #include "engine/worker.h"
