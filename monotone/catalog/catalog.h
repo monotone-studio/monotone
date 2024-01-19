@@ -33,3 +33,5 @@ Ref* catalog_lock(Catalog*, uint64_t, int, bool, bool);
 void catalog_unlock(Catalog*, Ref*, int);
 
 void catalog_drop(Catalog*, uint64_t, bool);
+bool catalog_rebalance(Catalog*, uint64_t*, Str*);
+void catalog_checkpoint(Catalog*);

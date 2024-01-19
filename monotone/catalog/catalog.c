@@ -193,3 +193,71 @@ catalog_drop(Catalog* self, uint64_t min, bool if_exists)
 	part_delete(ref->part, true);
 	ref_free(ref);
 }
+
+static inline Part*
+catalog_rebalance_tier(Catalog* self, Tier* tier, Str* storage)
+{
+	if (tier->storage->list_count <= tier->config->capacity)
+		return NULL;
+
+	// get oldest partition (by psn)
+	auto oldest = storage_oldest(tier->storage);
+
+	// schedule partition drop
+	if (list_is_last(&self->conveyor.list, &tier->link))
+		return oldest;
+
+	// schedule partition move to the next tier storage
+	auto next = container_of(tier->link.next, Tier, link);
+	str_copy(storage, &next->storage->target->name);
+	return oldest;
+}
+
+bool
+catalog_rebalance(Catalog* self, uint64_t* min, Str* storage)
+{
+	// take catalog shared lock
+	catalog_lock_global(self, true);
+	guard(lock_guard, catalog_unlock_global, self);
+
+	if (conveyor_empty(&self->conveyor))
+		return false;
+
+	mutex_lock(&self->lock);
+
+	list_foreach(&self->conveyor.list)
+	{
+		auto tier = list_at(Tier, link);
+		auto part = catalog_rebalance_tier(self, tier, storage);
+		if (part)
+		{
+			*min = part->min;
+			mutex_unlock(&self->lock);
+			return true;
+		}
+	}
+
+	mutex_unlock(&self->lock);
+	return false;
+}
+
+void
+catalog_checkpoint(Catalog* self)
+{
+	// take exclusive lock
+	catalog_lock_global(self, false);
+	guard(guard, catalog_unlock_global, self);
+
+	// schedule refresh
+	auto slice = mapping_min(&self->mapping);
+	while (slice)
+	{
+		auto ref = ref_of(slice);
+		if (!ref->refresh && ref->part->memtable->size > 0)
+		{
+			service_refresh(self->service, slice->min);
+			ref->refresh = true;
+		}
+		slice = mapping_next(&self->mapping, slice);
+	}
+}
