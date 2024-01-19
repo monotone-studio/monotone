@@ -26,19 +26,20 @@ worker_main(void* arg)
 		if (type == SERVICE_SHUTDOWN)
 			break;
 
-		// always doing rebalance first
-		engine_rebalance(self->engine, &self->compaction);
-		if (type == SERVICE_REBALANCE)
-			continue;
-
 		Exception e;
-		if (try(&e)) {
-			engine_refresh(self->engine, &self->compaction, req->min, true);
+		if (try(&e))
+		{
+			// always doing rebalance first
+			engine_rebalance(self->engine, &self->compaction);
+
+			if (type == SERVICE_REFRESH)
+				engine_refresh(self->engine, &self->compaction, req->min, true);
 		}
 		if (catch(&e))
 		{ }
 
-		service_req_free(req);
+		if (req)
+			service_req_free(req);
 	}
 
 	return NULL;
