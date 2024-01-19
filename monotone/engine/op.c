@@ -8,189 +8,140 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 
 void
-engine_storage_create(Engine* self, Target* target, bool if_not_exists)
+engine_refresh(Engine* self, Compaction* cp, uint64_t min,
+               bool if_exists)
 {
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	// create storage
-	storage_mgr_create(&self->storage_mgr, target, if_not_exists);
-
-	// rewrite config file
-	config_update();
+	unused(self);
+	compaction_reset(cp);
+	compaction_run(cp, min, NULL, if_exists);
 }
 
 void
-engine_storage_drop(Engine* self, Str* name, bool if_exists)
+engine_move(Engine* self, Compaction* cp, uint64_t min, Str* storage,
+            bool if_exists)
 {
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	// drop storage
-	storage_mgr_drop(&self->storage_mgr, name, if_exists);
-
-	// rewrite config file
-	config_update();
+	unused(self);
+	compaction_reset(cp);
+	compaction_run(cp, min, storage, if_exists);
 }
 
 void
-engine_storage_show(Engine* self, Str* name, Buf* buf)
+engine_drop(Engine* self, uint64_t min, bool if_exists)
 {
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+	// take exclusive engine lock
+	engine_lock_global(self, false);
 
-	storage_mgr_show(&self->storage_mgr, name, buf);
+	// find partition = min
+	auto slice = mapping_match(&self->mapping, min);
+	if (! slice)
+	{
+		engine_unlock_global(self);
+		if (! if_exists)
+			error("drop: partition <%" PRIu64 "> does not exists", min);
+		return;
+	}
+
+	// remove partition from mapping
+	mapping_remove(&self->mapping, slice);
+
+	// remove partition from storage
+	auto ref = ref_of(slice);
+	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->target->name);
+	storage_remove(storage, ref->part);
+
+	engine_unlock_global(self);
+
+	// delete partition file and free
+	part_delete(ref->part, true);
+	ref_free(ref);
+}
+
+static inline Part*
+engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
+{
+	if (tier->storage->list_count <= tier->config->capacity)
+		return NULL;
+
+	// get oldest partition (by psn)
+	auto oldest = storage_oldest(tier->storage);
+
+	// schedule partition drop
+	if (list_is_last(&self->conveyor.list, &tier->link))
+		return oldest;
+
+	// schedule partition move to the next tier storage
+	auto next = container_of(tier->link.next, Tier, link);
+	str_copy(storage, &next->storage->target->name);
+	return oldest;
+}
+
+static bool
+engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
+{
+	// take engine shared lock
+	engine_lock_global(self, true);
+	guard(lock_guard, engine_unlock_global, self);
+
+	if (conveyor_empty(&self->conveyor))
+		return false;
+
+	mutex_lock(&self->lock);
+
+	list_foreach(&self->conveyor.list)
+	{
+		auto tier = list_at(Tier, link);
+		auto part = engine_rebalance_tier(self, tier, storage);
+		if (part)
+		{
+			*min = part->min;
+			mutex_unlock(&self->lock);
+			return true;
+		}
+	}
+
+	mutex_unlock(&self->lock);
+	return false;
 }
 
 void
-engine_conveyor_alter(Engine* self, List* configs)
+engine_rebalance(Engine* self, Compaction* cp)
 {
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	// alter conveyor
-	conveyor_alter(&self->conveyor, configs);
-
-	// rewrite config file
-	config_update();
-}
-
-void
-engine_conveyor_show(Engine* self, Buf* buf)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	conveyor_print(&self->conveyor, buf);
+	for (;;)
+	{
+		Str storage;
+		str_init(&storage);
+		guard(guard, str_free, &storage);
+		uint64_t min;
+		if (! engine_rebalance_next(self, &min, &storage))
+			break;
+		if (str_empty(&storage))
+			engine_drop(self, min, true);
+		else
+			engine_move(self, cp, min, &storage, true);
+	}
 }
 
 void
 engine_checkpoint(Engine* self)
 {
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
+	// take exclusive lock
+	engine_lock_global(self, false);
+	guard(guard, engine_unlock_global, self);
 
-	auto part = part_tree_min(&self->tree);
-	while (part)
+	// schedule refresh
+	auto slice = mapping_min(&self->mapping);
+	while (slice)
 	{
-		if (part->memtable->size > 0)
-			service_add_if_not_pending(&self->service, SERVICE_MERGE, part->min, NULL);
-		part = part_tree_next(&self->tree, part);
+		auto ref = ref_of(slice);
+		if (!ref->refresh && ref->part->memtable->size > 0)
+		{
+			service_refresh(self->service, slice->min);
+			ref->refresh = true;
+		}
+		slice = mapping_next(&self->mapping, slice);
 	}
-}
-
-void
-engine_partition_move(Engine* self, uint64_t min, Str* name, bool if_exists)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	auto part = part_tree_match(&self->tree, min);
-	if (! part)
-	{
-		if (! if_exists)
-			error("partition: %" PRIu64 " is not found", min);
-		return;
-	}
-
-	auto storage = storage_mgr_find(&self->storage_mgr, name);
-	if (! storage)
-		error("storage '%.*s': not exists", str_size(name),
-		      str_of(name));
-
-	service_add(&self->service, SERVICE_MOVE, min, name);
-}
-
-void
-engine_partition_drop(Engine* self, uint64_t min, bool if_exists)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	auto part = part_tree_match(&self->tree, min);
-	if (! part)
-	{
-		if (! if_exists)
-			error("partition: %" PRIu64 " is not found", min);
-		return;
-	}
-
-	service_add(&self->service, SERVICE_DROP, min, NULL);
-}
-
-void
-engine_partitions_move(Engine* self, uint64_t min, uint64_t max, Str* name)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	auto storage = storage_mgr_find(&self->storage_mgr, name);
-	if (! storage)
-		error("storage '%.*s': not exists", str_size(name),
-		      str_of(name));
-
-	if (self->tree.tree_count == 0)
-		return;
-
-	auto part = part_tree_seek(&self->tree, min);
-	while (part)
-	{
-		if (part->min >= max)
-			return;
-		service_add(&self->service, SERVICE_MOVE, part->min, name);
-		part = part_tree_next(&self->tree, part);
-	}
-}
-
-void
-engine_partitions_drop(Engine* self, uint64_t min, uint64_t max)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	if (self->tree.tree_count == 0)
-		return;
-
-	auto part = part_tree_seek(&self->tree, min);
-	while (part)
-	{
-		if (part->min >= max)
-			return;
-		service_add(&self->service, SERVICE_DROP, part->min, NULL);
-		part = part_tree_next(&self->tree, part);
-	}
-}
-
-void
-engine_partitions_show(Engine* self, Str* name, Buf* buf)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	storage_mgr_show_partitions(&self->storage_mgr, name, buf);
-}
-
-void
-engine_service_show(Engine* self, Buf* buf)
-{
-	// take engine exclusive lock
-	lock_mgr_lock_exclusive(&self->lock_mgr);
-	guard(lock_guard, lock_mgr_unlock_exclusive, &self->lock_mgr);
-
-	service_show(&self->service, buf);
 }
