@@ -11,6 +11,7 @@ typedef struct Main Main;
 struct Main
 {
 	Engine     engine;
+	Service    service;
 	WorkerMgr  worker_mgr;
 	Logger     logger;
 	UuidMgr    uuid_mgr;

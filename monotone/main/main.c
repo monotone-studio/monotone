@@ -8,7 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_io.h>
-#include <monotone_storage.h>
+#include <monotone_catalog.h>
 #include <monotone_engine.h>
 #include <monotone_main.h>
 
@@ -26,7 +26,9 @@ main_init(Main* self)
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
-	engine_init(&self->engine, &self->comparator);
+
+	service_init(&self->service);
+	engine_init(&self->engine, &self->comparator, &self->service);
 	worker_mgr_init(&self->worker_mgr);
 }
 
@@ -34,6 +36,7 @@ void
 main_free(Main* self)
 {
 	engine_free(&self->engine);
+	service_free(&self->service);
 	config_free(&self->config);
 }
 
@@ -117,7 +120,7 @@ void
 main_stop(Main* self)
 {
 	// shutdown workers
-	service_shutdown(&self->engine.service);
+	service_shutdown(&self->service);
 
 	worker_mgr_stop(&self->worker_mgr);
 
