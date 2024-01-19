@@ -8,6 +8,8 @@
 
 void engine_refresh(Engine*, Compaction*, uint64_t, bool);
 void engine_move(Engine*, Compaction*, uint64_t, Str*, bool);
+void engine_move_range(Engine*, uint64_t, uint64_t, Str*);
 void engine_drop(Engine*, uint64_t, bool);
+void engine_drop_range(Engine*, uint64_t, uint64_t);
 void engine_rebalance(Engine*, Compaction*);
 void engine_checkpoint(Engine*);

@@ -60,6 +60,24 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 	ref_free(ref);
 }
 
+void
+engine_move_range(Engine* self, uint64_t min, uint64_t max,
+                  Str* storage)
+{
+	(void)self;
+	(void)min;
+	(void)max;
+	(void)storage;
+}
+
+void
+engine_drop_range(Engine* self, uint64_t min, uint64_t max)
+{
+	(void)self;
+	(void)min;
+	(void)max;
+}
+
 static inline Part*
 engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 {
