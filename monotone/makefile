@@ -9,7 +9,7 @@ CFLAGS_INCLUDE = -I. \
                  -Iruntime \
                  -Ilib \
                  -Iio \
-                 -Istorage \
+                 -Icatalog \
                  -Iengine \
                  -Imain \
                  -Iapi
@@ -30,13 +30,14 @@ OBJECTS        = \
                  io/part.o \
                  io/writer.o \
                  io/merger.o \
-                 storage/storage_mgr.o \
-                 storage/conveyor.o \
+                 catalog/storage_mgr.o \
+                 catalog/conveyor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
                  engine/write.o \
-                 engine/op.o \
                  engine/compaction.o \
+                 engine/op.o \
+                 engine/op_ddl.o \
                  engine/worker.o \
                  engine/worker_mgr.o \
                  main/main.o \
