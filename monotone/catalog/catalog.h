@@ -31,3 +31,5 @@ void catalog_lock_global(Catalog*, bool);
 void catalog_unlock_global(Catalog*);
 Ref* catalog_lock(Catalog*, uint64_t, int, bool, bool);
 void catalog_unlock(Catalog*, Ref*, int);
+
+void catalog_drop(Catalog*, uint64_t, bool);

@@ -162,3 +162,34 @@ catalog_unlock(Catalog* self, Ref* ref, int lock)
 	// unlock or dereference global catalog lock
 	catalog_unlock_global(self);
 }
+
+void
+catalog_drop(Catalog* self, uint64_t min, bool if_exists)
+{
+	// take exclusive catalog lock
+	catalog_lock_global(self, false);
+
+	// find partition = min
+	auto slice = mapping_match(&self->mapping, min);
+	if (! slice)
+	{
+		catalog_unlock_global(self);
+		if (! if_exists)
+			error("drop: partition <%" PRIu64 "> does not exists", min);
+		return;
+	}
+
+	// remove partition from mapping
+	mapping_remove(&self->mapping, slice);
+
+	// remove partition from storage
+	auto ref = ref_of(slice);
+	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->target->name);
+	storage_remove(storage, ref->part);
+
+	catalog_unlock_global(self);
+
+	// delete partition file and free
+	part_delete(ref->part, true);
+	ref_free(ref);
+}
