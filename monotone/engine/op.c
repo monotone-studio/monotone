@@ -61,21 +61,46 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 }
 
 void
-engine_move_range(Engine* self, uint64_t min, uint64_t max,
+engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
                   Str* storage)
 {
-	(void)self;
-	(void)min;
-	(void)max;
-	(void)storage;
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_move(self, refresh, ref_min, storage, true);
+		min = ref_max;
+	}
 }
 
 void
 engine_drop_range(Engine* self, uint64_t min, uint64_t max)
 {
-	(void)self;
-	(void)min;
-	(void)max;
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_drop(self, ref_min, true);
+		min = ref_max;
+	}
 }
 
 static inline Part*
