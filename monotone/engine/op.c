@@ -10,6 +10,7 @@
 #include <monotone_io.h>
 #include <monotone_catalog.h>
 #include <monotone_engine.h>
+#include <malloc.h>
 
 void
 engine_refresh(Engine* self, Refresh* refresh, uint64_t min,
@@ -187,4 +188,6 @@ engine_checkpoint(Engine* self)
 		}
 		slice = mapping_next(&self->mapping, slice);
 	}
+
+	malloc_trim(0);
 }
