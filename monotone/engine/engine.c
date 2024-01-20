@@ -114,7 +114,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 }
 
 hot Ref*
-engine_lock(Engine* self, uint64_t min, RefLock lock,
+engine_lock(Engine* self, uint64_t min, LockType lock,
             bool gte,
             bool create_if_not_exists)
 {
@@ -160,8 +160,11 @@ engine_lock(Engine* self, uint64_t min, RefLock lock,
 }
 
 void
-engine_unlock(Engine* self, Ref* ref, RefLock lock)
+engine_unlock(Engine* self, Ref* ref, LockType lock)
 {
+	mutex_lock(&self->lock);
+	guard(unlock, mutex_unlock, &self->lock);
+
 	ref_unlock(ref, lock);
 
 	// unlock or dereference global engine lock

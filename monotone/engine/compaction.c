@@ -89,11 +89,13 @@ compaction_begin(Compaction* self, uint64_t min, Str* storage,
 		self->storage = self->storage_origin;
 
 	// rotate memtable
+	mutex_lock(&engine->lock);
 	ref_lock(ref, LOCK_ACCESS);
 
 	self->memtable = part_memtable_rotate(self->origin);
 
 	ref_unlock(ref, LOCK_ACCESS);
+	mutex_unlock(&engine->lock);
 
 	// keeping service lock till the end of compaction
 	return true;
@@ -120,10 +122,9 @@ compaction_apply(Compaction* self)
 	auto origin = self->origin;
 	auto part   = self->part;
 
-	ref_lock(self->ref, LOCK_ACCESS);
-
 	// update catalog
 	mutex_lock(&engine->lock);
+	ref_lock(self->ref, LOCK_ACCESS);
 
 	// update partition reference
 	self->ref->part = self->part;
@@ -134,8 +135,6 @@ compaction_apply(Compaction* self)
 	// add new partition to the storage
 	storage_add(self->storage, part);
 
-	mutex_unlock(&engine->lock);
-
 	// reuse memtable
 	*part->memtable = *origin->memtable;
 	memtable_init(origin->memtable,
@@ -144,6 +143,7 @@ compaction_apply(Compaction* self)
 	              origin->comparator);
 
 	ref_unlock(self->ref, LOCK_ACCESS);
+	mutex_unlock(&engine->lock);
 }
 
 static void

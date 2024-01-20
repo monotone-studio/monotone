@@ -6,7 +6,7 @@
 // time-series storage
 //
 
-#include "engine/lock.h"
+#include "engine/lockage.h"
 #include "engine/ref.h"
 
 // engine
