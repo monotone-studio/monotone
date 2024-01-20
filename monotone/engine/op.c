@@ -141,6 +141,12 @@ engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
 		auto part = engine_rebalance_tier(self, tier, storage);
 		if (part)
 		{
+			// mark partition for refresh to avoid concurrent rebalance
+			// calls for the same partition
+			if (part->refresh)
+				continue;
+			part->refresh = true;
+
 			*min = part->min;
 			mutex_unlock(&self->lock);
 			return true;
