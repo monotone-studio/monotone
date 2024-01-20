@@ -472,16 +472,16 @@ execute_partition_move(Main* self, Lex* lex)
 		error("MOVE PARTITION id INTO <name>");
 
 	// move partition
-	Compaction cp;
-	compaction_init(&cp, &self->engine);
+	Refresh refresh;
+	refresh_init(&refresh, &self->engine);
 
 	Exception e;
 	if (try(&e))
 	{
-		engine_move(&self->engine, &cp, id.integer, &name.string,
+		engine_move(&self->engine, &refresh, id.integer, &name.string,
 		            if_exists);
 	}
-	compaction_free(&cp);
+	refresh_free(&refresh);
 	if (catch(&e))
 		rethrow();
 }
