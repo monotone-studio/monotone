@@ -22,6 +22,27 @@ engine_refresh(Engine* self, Refresh* refresh, uint64_t min,
 }
 
 void
+engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_refresh(self, refresh, ref_min, true);
+		min = ref_max;
+	}
+}
+
+void
 engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
             bool if_exists)
 {
