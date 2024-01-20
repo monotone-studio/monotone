@@ -82,7 +82,7 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  path              '%.*s'\n", str_size(&target->path),
 	           str_of(&target->path));
 	buf_printf(buf, "  sync              %s\n", target->sync ? "true" : "false");
-	buf_printf(buf, "  crc               %s\n", target->sync ? "true" : "false");
+	buf_printf(buf, "  crc               %s\n", target->crc  ? "true" : "false");
 	buf_printf(buf, "  compression       %" PRIu64 "\n", target->compression);
 	buf_printf(buf, "  refresh_wm        %" PRIu64 "\n", target->refresh_wm);
 	buf_printf(buf, "  region_size       %" PRIu64 "\n", target->region_size);
