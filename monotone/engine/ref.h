@@ -10,7 +10,6 @@ typedef struct Ref Ref;
 
 struct Ref
 {
-	bool    refresh;
 	Part*   part;
 	Lockage lockage;
 	Slice   slice;
@@ -20,8 +19,7 @@ static inline Ref*
 ref_allocate(uint64_t min, uint64_t max)
 {
 	auto self = (Ref*)mn_malloc(sizeof(Ref));
-	self->refresh = false;
-	self->part    = NULL;
+	self->part = NULL;
 	lockage_init(&self->lockage);
 	slice_init(&self->slice, min, max);
 	return self;

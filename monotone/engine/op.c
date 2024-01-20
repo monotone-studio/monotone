@@ -181,10 +181,10 @@ engine_checkpoint(Engine* self)
 	while (slice)
 	{
 		auto ref = ref_of(slice);
-		if (!ref->refresh && ref->part->memtable->size > 0)
+		if (!ref->part->refresh && ref->part->memtable->size > 0)
 		{
 			service_refresh(self->service, slice->min);
-			ref->refresh = true;
+			ref->part->refresh = true;
 		}
 		slice = mapping_next(&self->mapping, slice);
 	}

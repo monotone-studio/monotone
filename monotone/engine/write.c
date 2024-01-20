@@ -28,10 +28,10 @@ engine_write_to(Engine* self, Ref* ref, Row* row)
 	memtable_follow(memtable, 0);
 
 	// schedule refresh
-	if (!ref->refresh && part_refresh_ready(part))
+	if (part_refresh_ready(part))
 	{
 		service_refresh(self->service, part->min);
-		ref->refresh = true;
+		part->refresh = true;
 	}
 }
 

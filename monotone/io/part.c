@@ -36,6 +36,7 @@ part_allocate(Comparator* comparator,
               uint64_t    max)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
+	self->refresh    = false;
 	self->id         = id;
 	self->id_parent  = id_parent;
 	self->min        = min;
