@@ -38,7 +38,8 @@ enum
 	KMOVE,
 	KFROM,
 	KINTO,
-	KSERVICE
+	KREFRESH,
+	KREBALANCE
 };
 
 struct Token

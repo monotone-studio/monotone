@@ -38,7 +38,8 @@ static Keyword keywords[] =
 	{ KMOVE,       "move",       4},
 	{ KFROM,       "from",       4},
 	{ KINTO,       "into",       4},
-	{ KSERVICE,    "service",    7},
+	{ KREFRESH,    "refresh",    7},
+	{ KREBALANCE,  "rebalance",  9},
 	{ 0,            NULL,        0}
 };
 

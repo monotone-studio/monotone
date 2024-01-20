@@ -573,6 +573,87 @@ execute_partitions_drop(Main* self, Lex* lex)
 	engine_drop_range(&self->engine, min.integer, max.integer);
 }
 
+static void
+execute_partition_refresh(Main* self, Lex* lex)
+{
+	// REFRESH PARTITION [IF EXISTS] <id>
+
+	// if exists
+	bool if_exists = parse_if_exists(lex);
+
+	// id
+	Token id;
+	if (! lex_if(lex, KINT, &id))
+		error("REFRESH PARTITION <id>");
+
+	// refresh partition
+	Refresh refresh;
+	refresh_init(&refresh, &self->engine);
+	Exception e;
+	if (try(&e))
+	{
+		engine_refresh(&self->engine, &refresh, id.integer, if_exists);
+	}
+	refresh_free(&refresh);
+	if (catch(&e))
+		rethrow();
+}
+
+static void
+execute_partitions_refresh(Main* self, Lex* lex)
+{
+	// REFRESH PARTITIONS FROM <min> TO <max>
+
+	// from
+	if (! lex_if(lex, KFROM, NULL))
+		error("REFRESH PARTITIONS <FROM> min TO max");
+
+	// min
+	Token min;
+	if (! lex_if(lex, KINT, &min))
+		error("REFRESH PARTITIONS FROM <min> TO max");
+
+	// to
+	if (! lex_if(lex, KTO, NULL))
+		error("REFRESH PARTITIONS FROM min <TO> max");
+
+	Token max;
+	if (! lex_if(lex, KINT, &max))
+		error("REFRESH PARTITIONS FROM min TO <max>");
+
+	// refresh partitions
+	Refresh refresh;
+	refresh_init(&refresh, &self->engine);
+	Exception e;
+	if (try(&e))
+	{
+		engine_refresh_range(&self->engine, &refresh, min.integer,
+		                     max.integer);
+	}
+	refresh_free(&refresh);
+	if (catch(&e))
+		rethrow();
+}
+
+static void
+execute_rebalance(Main* self, Lex* lex)
+{
+	// REBALANCE PARTITIONS
+	if (! lex_if(lex, KPARTITIONS, NULL))
+		error("REBALANCE <PARTITIONS> expected");
+
+	Refresh refresh;
+	refresh_init(&refresh, &self->engine);
+	Exception e;
+	if (try(&e))
+	{
+		engine_rebalance(&self->engine, &refresh);
+	}
+	refresh_free(&refresh);
+	if (catch(&e))
+		rethrow();
+}
+
 void
 main_execute(Main* self, const char* command, char** result)
 {
@@ -669,6 +750,29 @@ main_execute(Main* self, const char* command, char** result)
 			execute_partitions_move(self, &lex);
 		else
 			error("MOVE <PARTITION|PARTITIONS> expected");
+		break;
+	}
+	case KREFRESH:
+	{
+		if (! config_online())
+			error("storage is not online");
+
+		// REFRESH PARTITION | PARTITIONS
+		if (lex_if(&lex, KPARTITION, NULL))
+			execute_partition_refresh(self, &lex);
+		else
+		if (lex_if(&lex, KPARTITIONS, NULL))
+			execute_partitions_refresh(self, &lex);
+		else
+			error("REFRESH <PARTITION|PARTITIONS> expected");
+		break;
+	}
+	case KREBALANCE:
+	{
+		if (! config_online())
+			error("storage is not online");
+
+		execute_rebalance(self, &lex);
 		break;
 	}
 	case KEOF:
