@@ -12,21 +12,21 @@
 #include <monotone_engine.h>
 
 void
-engine_refresh(Engine* self, Compaction* cp, uint64_t min,
+engine_refresh(Engine* self, Refresh* refresh, uint64_t min,
                bool if_exists)
 {
 	unused(self);
-	compaction_reset(cp);
-	compaction_run(cp, min, NULL, if_exists);
+	refresh_reset(refresh);
+	refresh_run(refresh, min, NULL, if_exists);
 }
 
 void
-engine_move(Engine* self, Compaction* cp, uint64_t min, Str* storage,
+engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
             bool if_exists)
 {
 	unused(self);
-	compaction_reset(cp);
-	compaction_run(cp, min, storage, if_exists);
+	refresh_reset(refresh);
+	refresh_run(refresh, min, storage, if_exists);
 }
 
 void
@@ -126,7 +126,7 @@ engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
 }
 
 void
-engine_rebalance(Engine* self, Compaction* cp)
+engine_rebalance(Engine* self, Refresh* refresh)
 {
 	for (;;)
 	{
@@ -139,7 +139,7 @@ engine_rebalance(Engine* self, Compaction* cp)
 		if (str_empty(&storage))
 			engine_drop(self, min, true);
 		else
-			engine_move(self, cp, min, &storage, true);
+			engine_move(self, refresh, min, &storage, true);
 	}
 }
 

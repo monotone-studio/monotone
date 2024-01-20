@@ -30,10 +30,10 @@ worker_main(void* arg)
 		if (try(&e))
 		{
 			// always doing rebalance first
-			engine_rebalance(self->engine, &self->compaction);
+			engine_rebalance(self->engine, &self->refresh);
 
 			if (type == SERVICE_REFRESH)
-				engine_refresh(self->engine, &self->compaction, req->min, true);
+				engine_refresh(self->engine, &self->refresh, req->min, true);
 		}
 		if (catch(&e))
 		{ }
@@ -50,14 +50,14 @@ worker_init(Worker* self, Engine* engine)
 {
 	self->engine  = engine;
 	self->context = NULL;
-	compaction_init(&self->compaction, engine);
+	refresh_init(&self->refresh, engine);
 	thread_init(&self->thread);
 }
 
 void
 worker_free(Worker* self)
 {
-	compaction_free(&self->compaction);
+	refresh_free(&self->refresh);
 }
 
 void

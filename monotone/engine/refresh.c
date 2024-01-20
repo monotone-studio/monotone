@@ -12,7 +12,7 @@
 #include <monotone_engine.h>
 
 void
-compaction_init(Compaction* self, Engine* engine)
+refresh_init(Refresh* self, Engine* engine)
 {
 	self->ref            = NULL;
 	self->origin         = NULL;
@@ -25,13 +25,13 @@ compaction_init(Compaction* self, Engine* engine)
 }
 
 void
-compaction_free(Compaction* self)
+refresh_free(Refresh* self)
 {
 	merger_free(&self->merger);
 }
 
 void
-compaction_reset(Compaction* self)
+refresh_reset(Refresh* self)
 {
 	self->ref            = NULL;
 	self->origin         = NULL;
@@ -43,8 +43,7 @@ compaction_reset(Compaction* self)
 }
 
 static bool
-compaction_begin(Compaction* self, uint64_t min, Str* storage,
-                 bool if_exists)
+refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 {
 	auto engine = self->engine;
 
@@ -53,7 +52,7 @@ compaction_begin(Compaction* self, uint64_t min, Str* storage,
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
-			error("compaction: partition <%" PRIu64 "> not found", min);
+			error("refresh: partition <%" PRIu64 "> not found", min);
 		return false;
 	}
 
@@ -64,7 +63,7 @@ compaction_begin(Compaction* self, uint64_t min, Str* storage,
 		if (unlikely(! self->storage))
 		{
 			engine_unlock(engine, ref, LOCK_SERVICE);
-			error("compaction: storage <%.*s> not found", str_size(storage),
+			error("refresh: storage <%.*s> not found", str_size(storage),
 			      str_of(storage));
 		}
 	}
@@ -97,12 +96,12 @@ compaction_begin(Compaction* self, uint64_t min, Str* storage,
 	ref_unlock(ref, LOCK_ACCESS);
 	mutex_unlock(&engine->lock);
 
-	// keeping service lock till the end of compaction
+	// keeping service lock till the end of refresh
 	return true;
 }
 
 static void
-compaction_merge(Compaction* self)
+refresh_merge(Refresh* self)
 {
 	MergerReq merger_req =
 	{
@@ -116,7 +115,7 @@ compaction_merge(Compaction* self)
 }
 
 static void
-compaction_apply(Compaction* self)
+refresh_apply(Refresh* self)
 {
 	auto engine = self->engine;
 	auto origin = self->origin;
@@ -147,7 +146,7 @@ compaction_apply(Compaction* self)
 }
 
 static void
-compaction_end(Compaction* self)
+refresh_end(Refresh* self)
 {
 	auto origin = self->origin;
 	auto part   = self->part;
@@ -171,8 +170,7 @@ compaction_end(Compaction* self)
 }
 
 void
-compaction_run(Compaction* self, uint64_t min, Str* storage,
-               bool if_exists)
+refresh_run(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 {
 	// step 1. find partition and take the service lock
 	//         match storage
@@ -184,7 +182,7 @@ compaction_run(Compaction* self, uint64_t min, Str* storage,
 	//         on move
 	//           do nothing if partition storage not changed
 	//
-	if (! compaction_begin(self, min, storage, if_exists))
+	if (! refresh_begin(self, min, storage, if_exists))
 		return;
 
 	Exception e;
@@ -192,13 +190,13 @@ compaction_run(Compaction* self, uint64_t min, Str* storage,
 	{
 		// step 2. create new partition by merging existing partition
 		// file with the memtable
-		compaction_merge(self);
+		refresh_merge(self);
 
 		// step 3. replace existing partition with the new one
-		compaction_apply(self);
+		refresh_apply(self);
 
 		// step 4. finilize and cleanup
-		compaction_end(self);
+		refresh_end(self);
 	}
 
 	// complete

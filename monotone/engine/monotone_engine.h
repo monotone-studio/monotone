@@ -15,8 +15,10 @@
 #include "engine/engine_cursor.h"
 #include "engine/write.h"
 
-// compaction
-#include "engine/compaction.h"
+// refresh
+#include "engine/refresh.h"
+
+// service operations
 #include "engine/op.h"
 #include "engine/op_ddl.h"
 
