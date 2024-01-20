@@ -100,6 +100,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	}
 	storage_add(storage, part);
 	part->target = storage->target;
+	unguard(&guard);
 
 	// schedule rebalance
 	if (! conveyor_empty(&self->conveyor))
@@ -109,7 +110,6 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	if (head && head->min < min)
 		service_refresh(self->service, head->min);
 
-	unguard(&guard);
 	return &ref->slice;
 }
 
