@@ -474,7 +474,6 @@ execute_partition_move(Main* self, Lex* lex)
 	// move partition
 	Refresh refresh;
 	refresh_init(&refresh, &self->engine);
-
 	Exception e;
 	if (try(&e))
 	{
@@ -535,8 +534,17 @@ execute_partitions_move(Main* self, Lex* lex)
 		error("MOVE PARTITIONS FROM min TO max INTO <name>");
 
 	// move partitions
-	engine_move_range(&self->engine, min.integer, max.integer,
-	                  &name.string);
+	Refresh refresh;
+	refresh_init(&refresh, &self->engine);
+	Exception e;
+	if (try(&e))
+	{
+		engine_move_range(&self->engine, &refresh, min.integer, max.integer,
+		                  &name.string);
+	}
+	refresh_free(&refresh);
+	if (catch(&e))
+		rethrow();
 }
 
 static void
