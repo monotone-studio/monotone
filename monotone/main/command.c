@@ -267,10 +267,10 @@ execute_storage_create(Main* self, Lex* lex)
 			// path <string>
 			parse_string(lex, &name, &target->path);
 		} else
-		if (str_compare_raw(&name.string, "compaction_wm", 13))
+		if (str_compare_raw(&name.string, "refresh_wm", 10))
 		{
-			// compaction_wm <int>
-			parse_int(lex, &name, &target->compaction_wm);
+			// refresh_wm <int>
+			parse_int(lex, &name, &target->refresh_wm);
 		} else
 		if (str_compare_raw(&name.string, "sync", 4))
 		{

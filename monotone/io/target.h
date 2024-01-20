@@ -15,7 +15,7 @@ struct Target
 	bool    sync;
 	bool    crc;
 	int64_t compression;
-	int64_t compaction_wm;
+	int64_t refresh_wm;
 	int64_t region_size;
 };
 
@@ -23,11 +23,11 @@ static inline Target*
 target_allocate(void)
 {
 	auto self = (Target*)mn_malloc(sizeof(Target));
-	self->sync          = true;
-	self->crc           = false;
-	self->compression   = COMPRESSION_OFF;
-	self->region_size   = 128 * 1024;
-	self->compaction_wm = 40 * 1024 * 1024;
+	self->sync        = true;
+	self->crc         = false;
+	self->compression = COMPRESSION_OFF;
+	self->region_size = 128 * 1024;
+	self->refresh_wm  = 40 * 1024 * 1024;
 	str_init(&self->name);
 	str_init(&self->path);
 	return self;
@@ -74,9 +74,9 @@ target_set_compression(Target* self, int value)
 }
 
 static inline void
-target_set_compaction_wm(Target* self, int value)
+target_set_refresh_wm(Target* self, int value)
 {
-	self->compaction_wm = value;
+	self->refresh_wm = value;
 }
 
 static inline void
@@ -95,7 +95,7 @@ target_copy(Target* self)
 	target_set_sync(copy, self->sync);
 	target_set_crc(copy, self->crc);
 	target_set_compression(copy, self->compression);
-	target_set_compaction_wm(copy, self->compaction_wm);
+	target_set_refresh_wm(copy, self->refresh_wm);
 	target_set_region_size(copy, self->region_size);
 	return unguard(&copy_guard);
 }
@@ -130,9 +130,9 @@ target_read(uint8_t** pos)
 	data_skip(pos);
 	data_read_integer(pos, &self->compression);
 
-	// compaction_wm
+	// refresh_wm
 	data_skip(pos);
-	data_read_integer(pos, &self->compaction_wm);
+	data_read_integer(pos, &self->refresh_wm);
 
 	// region_size
 	data_skip(pos);
@@ -167,9 +167,9 @@ target_write(Target* self, Buf* buf)
 	encode_raw(buf, "compression", 11);
 	encode_integer(buf, self->compression);
 
-	// compaction_wm
-	encode_raw(buf, "compaction_wm", 13);
-	encode_integer(buf, self->compaction_wm);
+	// refresh_wm
+	encode_raw(buf, "refresh_wm", 10);
+	encode_integer(buf, self->refresh_wm);
 
 	// region_size
 	encode_raw(buf, "region_size", 11);
