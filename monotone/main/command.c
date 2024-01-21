@@ -338,21 +338,33 @@ execute_storage_drop(Main* self, Lex* lex)
 }
 
 static void
-execute_storage_alter(Main* self, Lex* lex)
+execute_storage_alter_rename(Main* self, Lex* lex, Str* storage, bool if_exists)
 {
-	// ALTER STORAGE [IF EXISTS] name (options)
-	bool if_exists = parse_if_exists(lex);
+	// ALTER STORAGE [IF EXISTS] name RENAME TO name
+
+	// TO
+	if (! lex_if(lex, KTO, NULL))
+		error("ALTER STORAGE RENAME <TO> expected");
 
 	// name
 	Token name;
 	if (! lex_if(lex, KNAME, &name))
-		error("ALTER STORAGE <name> expected");
+		error("ALTER STORAGE RENAME TO <name> expected");
+
+	// rename storage
+	engine_storage_rename(&self->engine, storage, &name.string, if_exists);
+}
+
+static void
+execute_storage_alter_set(Main* self, Lex* lex, Str* storage, bool if_exists)
+{
+	// ALTER STORAGE [IF EXISTS] name SET (options)
 
 	// create storage target
 	int  target_mask = 0;
 	auto target = target_allocate();
 	guard(guard, target_free, target);
-	target_set_name(target, &name.string);
+	target_set_name(target, storage);
 
 	if (lex_if(lex, KEOF, NULL))
 		goto alter;
@@ -368,16 +380,11 @@ execute_storage_alter(Main* self, Lex* lex)
 	for (;;)
 	{
 		// key
+		Token name;
 		if (! lex_if(lex, KNAME, &name))
-			error("ALTER STORAGE (<name> expected");
+			error("ALTER STORAGE SET (<name> expected");
 
 		// value
-		if (str_compare_raw(&name.string, "name", 4))
-		{
-			// name <string>
-			parse_string(lex, &name, &target->name);
-			target_mask |= TARGET_NAME;
-		} else
 		if (str_compare_raw(&name.string, "path", 4))
 		{
 			// path <string>
@@ -425,7 +432,7 @@ execute_storage_alter(Main* self, Lex* lex)
 
 		// )
 		if (! lex_if(lex, ')', NULL))
-			error("ALTER STORAGE name (...<)> expected");
+			error("ALTER STORAGE name SET (...<)> expected");
 
 		break;
 	}
@@ -433,6 +440,35 @@ execute_storage_alter(Main* self, Lex* lex)
 alter:
 	// alter storage
 	engine_storage_alter(&self->engine, target, target_mask, if_exists);
+}
+
+static void
+execute_storage_alter(Main* self, Lex* lex)
+{
+	// ALTER STORAGE [IF EXISTS] name RENAME TO name
+	// ALTER STORAGE [IF EXISTS] name SET (options)
+	bool if_exists = parse_if_exists(lex);
+
+	// name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("ALTER STORAGE <name> expected");
+
+	// rename
+	if (lex_if(lex, KRENAME, NULL))
+	{
+		execute_storage_alter_rename(self, lex, &name.string, if_exists);
+		return;
+	}
+
+	// set
+	if (lex_if(lex, KSET, NULL))
+	{
+		execute_storage_alter_set(self, lex, &name.string, if_exists);
+		return;
+	}
+
+	error("ALTER STORAGE name <RENAME or SET> expected");
 }
 
 static void
@@ -879,6 +915,8 @@ main_execute(Main* self, const char* command, char** result)
 		error("unknown command: %s", command);
 		break;
 	}
+
+	// todo: check for eof
 
 	if (result && buf_size(&output) > 0)
 	{
