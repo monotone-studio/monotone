@@ -157,6 +157,26 @@ storage_mgr_alter(StorageMgr* self, Target* target, int mask, bool if_exists)
 }
 
 void
+storage_mgr_rename(StorageMgr* self, Str* name, Str* name_new, bool if_exists)
+{
+	auto storage = storage_mgr_find(self, name_new);
+	if (storage)
+		error("storage '%.*s': already exists", str_size(name_new),
+		      str_of(name_new));
+
+	storage = storage_mgr_find(self, name);
+	if (! storage)
+	{
+		if (! if_exists)
+			error("storage '%.*s': not exists", str_size(name), str_of(name));
+		return;
+	}
+
+	target_set_name(storage->target, name_new);
+	storage_mgr_save(self);
+}
+
+void
 storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
 {
 	if (name == NULL)
