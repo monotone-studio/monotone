@@ -141,6 +141,22 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 }
 
 void
+storage_mgr_alter(StorageMgr* self, Target* target, int mask, bool if_exists)
+{
+	auto storage = storage_mgr_find(self, &target->name);
+	if (! storage)
+	{
+		if (! if_exists)
+			error("storage '%.*s': not exists", str_size(&target->name),
+			      str_of(&target->name));
+		return;
+	}
+
+	target_alter(storage->target, target, mask);
+	storage_mgr_save(self);
+}
+
+void
 storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
 {
 	if (name == NULL)
