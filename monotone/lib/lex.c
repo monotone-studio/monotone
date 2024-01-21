@@ -35,6 +35,7 @@ static Keyword keywords[] =
 	{ KDROP,       "drop"  ,     4},
 	{ KCONVEYOR,   "conveyor",   8},
 	{ KALTER,      "alter",      5},
+	{ KRENAME,     "rename",     6},
 	{ KMOVE,       "move",       4},
 	{ KFROM,       "from",       4},
 	{ KINTO,       "into",       4},
