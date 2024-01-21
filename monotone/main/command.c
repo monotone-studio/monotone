@@ -372,6 +372,18 @@ execute_storage_alter(Main* self, Lex* lex)
 			error("ALTER STORAGE (<name> expected");
 
 		// value
+		if (str_compare_raw(&name.string, "name", 4))
+		{
+			// name <string>
+			parse_string(lex, &name, &target->name);
+			target_mask |= TARGET_NAME;
+		} else
+		if (str_compare_raw(&name.string, "path", 4))
+		{
+			// path <string>
+			parse_string(lex, &name, &target->path);
+			target_mask |= TARGET_PATH;
+		} else
 		if (str_compare_raw(&name.string, "refresh_wm", 10))
 		{
 			// refresh_wm <int>
@@ -403,7 +415,7 @@ execute_storage_alter(Main* self, Lex* lex)
 			target_mask |= TARGET_REGION_SIZE;
 		} else
 		{
-			error("ALTER STORAGE: unknown or unsupported option %.*s", str_size(&name.string),
+			error("ALTER STORAGE: unknown option %.*s", str_size(&name.string),
 			      str_of(&name.string));
 		}
 

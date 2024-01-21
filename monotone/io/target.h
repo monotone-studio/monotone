@@ -10,11 +10,13 @@ typedef struct Target Target;
 
 enum
 {
-	TARGET_SYNC        = 1,
-	TARGET_CRC         = 2,
-	TARGET_COMPRESSION = 4,
-	TARGET_REFRESH_WM  = 8,
-	TARGET_REGION_SIZE = 16
+	TARGET_NAME        = 1,
+	TARGET_PATH        = 2,
+	TARGET_SYNC        = 4,
+	TARGET_CRC         = 8,
+	TARGET_COMPRESSION = 16,
+	TARGET_REFRESH_WM  = 32,
+	TARGET_REGION_SIZE = 64
 };
 
 struct Target
@@ -188,6 +190,12 @@ target_write(Target* self, Buf* buf)
 static inline void
 target_alter(Target* self, Target* alter, int mask)
 {
+	if (mask & TARGET_NAME)
+		target_set_name(self, &alter->name);
+
+	if (mask & TARGET_PATH)
+		target_set_path(self, &alter->path);
+
 	if (mask & TARGET_SYNC)
 		target_set_sync(self, alter->sync);
 
