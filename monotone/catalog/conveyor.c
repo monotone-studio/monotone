@@ -130,6 +130,21 @@ conveyor_alter(Conveyor* self, List* configs)
 }
 
 void
+conveyor_rename(Conveyor* self, Str* storage, Str* storage_new)
+{
+	list_foreach_safe(&self->list)
+	{
+		auto tier = list_at(Tier, link);
+		if (str_compare(&tier->config->name, storage))
+		{
+			tier_config_set_name(tier->config, storage_new);
+			conveyor_save(self);
+			break;
+		}
+	}
+}
+
+void
 conveyor_print(Conveyor* self, Buf* buf)
 {
 	bool first = true;
