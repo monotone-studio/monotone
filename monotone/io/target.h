@@ -8,6 +8,15 @@
 
 typedef struct Target Target;
 
+enum
+{
+	TARGET_SYNC        = 1,
+	TARGET_CRC         = 2,
+	TARGET_COMPRESSION = 4,
+	TARGET_REFRESH_WM  = 8,
+	TARGET_REGION_SIZE = 16
+};
+
 struct Target
 {
 	Str     name;
@@ -174,4 +183,23 @@ target_write(Target* self, Buf* buf)
 	// region_size
 	encode_raw(buf, "region_size", 11);
 	encode_integer(buf, self->region_size);
+}
+
+static inline void
+target_alter(Target* self, Target* alter, int mask)
+{
+	if (mask & TARGET_SYNC)
+		target_set_sync(self, alter->sync);
+
+	if (mask & TARGET_CRC)
+		target_set_crc(self, alter->crc);
+
+	if (mask & TARGET_COMPRESSION)
+		target_set_compression(self, alter->compression);
+
+	if (mask & TARGET_REFRESH_WM)
+		target_set_compression(self, alter->refresh_wm);
+
+	if (mask & TARGET_REGION_SIZE)
+		target_set_region_size(self, alter->region_size);
 }
