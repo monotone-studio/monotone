@@ -338,6 +338,92 @@ execute_storage_drop(Main* self, Lex* lex)
 }
 
 static void
+execute_storage_alter(Main* self, Lex* lex)
+{
+	// ALTER STORAGE [IF EXISTS] name (options)
+	bool if_exists = parse_if_exists(lex);
+
+	// name
+	Token name;
+	if (! lex_if(lex, KNAME, &name))
+		error("ALTER STORAGE <name> expected");
+
+	// create storage target
+	int  target_mask = 0;
+	auto target = target_allocate();
+	guard(guard, target_free, target);
+	target_set_name(target, &name.string);
+
+	if (lex_if(lex, KEOF, NULL))
+		goto alter;
+
+	// (
+	if (! lex_if(lex, '(', NULL))
+		error("ALTER STORAGE name <(> expected");
+
+	// [)]
+	if (lex_if(lex, ')', NULL))
+		goto alter;
+
+	for (;;)
+	{
+		// key
+		if (! lex_if(lex, KNAME, &name))
+			error("ALTER STORAGE (<name> expected");
+
+		// value
+		if (str_compare_raw(&name.string, "refresh_wm", 10))
+		{
+			// refresh_wm <int>
+			parse_int(lex, &name, &target->refresh_wm);
+			target_mask |= TARGET_REFRESH_WM;
+		} else
+		if (str_compare_raw(&name.string, "sync", 4))
+		{
+			// sync <bool>
+			parse_bool(lex, &name, &target->sync);
+			target_mask |= TARGET_SYNC;
+		} else
+		if (str_compare_raw(&name.string, "crc", 3))
+		{
+			// crc <bool>
+			parse_bool(lex, &name, &target->crc);
+			target_mask |= TARGET_CRC;
+		} else
+		if (str_compare_raw(&name.string, "compression", 11))
+		{
+			// compression <int>
+			parse_int(lex, &name, &target->compression);
+			target_mask |= TARGET_COMPRESSION;
+		} else
+		if (str_compare_raw(&name.string, "region_size", 11))
+		{
+			// region_size <int>
+			parse_int(lex, &name, &target->region_size);
+			target_mask |= TARGET_REGION_SIZE;
+		} else
+		{
+			error("ALTER STORAGE: unknown or unsupported option %.*s", str_size(&name.string),
+			      str_of(&name.string));
+		}
+
+		// ,
+		if (lex_if(lex, ',', NULL))
+			continue;
+
+		// )
+		if (! lex_if(lex, ')', NULL))
+			error("ALTER STORAGE name (...<)> expected");
+
+		break;
+	}
+
+alter:
+	// alter storage
+	engine_storage_alter(&self->engine, target, target_mask, if_exists);
+}
+
+static void
 free_configs(List* list)
 {
 	list_foreach_safe(list)
@@ -729,7 +815,7 @@ main_execute(Main* self, const char* command, char** result)
 
 		// ALTER STORAGE | CONVEYOR
 		if (lex_if(&lex, KSTORAGE, NULL))
-			; // todo
+			execute_storage_alter(self, &lex);
 		else
 		if (lex_if(&lex, KCONVEYOR, NULL))
 			execute_conveyor_alter(self, &lex);
