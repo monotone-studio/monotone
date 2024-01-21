@@ -40,6 +40,20 @@ engine_storage_drop(Engine* self, Str* name, bool if_exists)
 }
 
 void
+engine_storage_alter(Engine* self, Target* target, int mask, bool if_exists)
+{
+	// take engine exclusive lock
+	engine_lock_global(self, false);
+	guard(guard, engine_unlock_global, self);
+
+	// alter storage
+	storage_mgr_alter(&self->storage_mgr, target, mask, if_exists);
+
+	// rewrite config file
+	config_update();
+}
+
+void
 engine_storage_show(Engine* self, Str* name, Buf* buf)
 {
 	// take engine exclusive lock
