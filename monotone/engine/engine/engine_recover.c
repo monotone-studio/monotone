@@ -83,18 +83,20 @@ engine_recover_storage(Engine* self, Storage* storage)
 
 		// <min>.<id>
 		// <min>.<id>.<id_parent>
-		uint64_t min       = 0;
-		uint64_t id        = 0;
-		uint64_t id_parent = 0;
-		if (engine_recover_id(entry->d_name, &min, &id, &id_parent) == -1)
+		uint64_t min        = 0;
+		uint64_t psn        = 0;
+		uint64_t psn_parent = 0;
+		if (engine_recover_id(entry->d_name, &min, &psn, &psn_parent) == -1)
 			continue;
 
-		Part* part;
-		part = part_allocate(self->comparator, storage->source,
-		                     id, id_parent,
-		                     min,
-		                     min + config_interval());
-		part->source = storage->source;
+		PartId id =
+		{
+			.id        = psn,
+			.id_parent = psn_parent,
+			.min       = min,
+			.max       = min + config_interval()
+		};
+		auto part = part_allocate(self->comparator, storage->source, &id);
 		storage_add(storage, part);
 	}
 }
@@ -108,13 +110,13 @@ engine_recover_validate(Engine* self, Storage* storage)
 		auto part = list_at(Part, link);
 
 		// sync psn
-		config_psn_follow(part->id);
-		config_psn_follow(part->id_parent);
+		config_psn_follow(part->id.id);
+		config_psn_follow(part->id.id_parent);
 
 		// <min>.<id>.<id_parent>
-		if (part->id != part->id_parent)
+		if (part->id.id != part->id.id_parent)
 		{
-			auto parent = storage_mgr_find_part(storage_mgr, part->id_parent);
+			auto parent = storage_mgr_find_part(storage_mgr, part->id.id_parent);
 			if (parent)
 			{
 				// parent still exists, remove incomplete partition
@@ -128,7 +130,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 
 			// rename to completion
 			part_rename(part);
-			part->id_parent = part->id;
+			part->id.id_parent = part->id.id;
 		}
 	}
 }
@@ -161,7 +163,7 @@ engine_recover(Engine* self)
 			auto part = list_at(Part, link);
 			part_open(part);
 
-			auto ref  = ref_allocate(part->min, part->max);
+			auto ref  = ref_allocate(part->id.min, part->id.max);
 			ref_prepare(ref, &self->lock, &self->cond_var, part);
 
 			mapping_add(&self->mapping, &ref->slice);

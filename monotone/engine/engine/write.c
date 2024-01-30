@@ -31,7 +31,7 @@ engine_write_to(Engine* self, Ref* ref, Row* row)
 	// schedule refresh
 	if (part_refresh_ready(part))
 	{
-		service_refresh(self->service, part->min);
+		service_refresh(self->service, part->id.min);
 		part->refresh = true;
 	}
 }

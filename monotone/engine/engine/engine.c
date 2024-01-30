@@ -79,8 +79,15 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	guard(guard, ref_free, ref);
 
 	// create new partition
-	auto id   = config_psn_next();
-	auto part = part_allocate(self->comparator, NULL, id, id, min, max);
+	auto psn  = config_psn_next();
+	PartId id =
+	{
+		.id        = psn,
+		.id_parent = psn,
+		.min       = min,
+		.max       = max
+	};
+	auto part = part_allocate(self->comparator, NULL, &id);
 	ref_prepare(ref, &self->lock, &self->cond_var, part);
 
 	// update mapping

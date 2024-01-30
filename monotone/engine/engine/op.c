@@ -169,7 +169,7 @@ engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
 				continue;
 			part->refresh = true;
 
-			*min = part->min;
+			*min = part->id.min;
 			mutex_unlock(&self->lock);
 			return true;
 		}
