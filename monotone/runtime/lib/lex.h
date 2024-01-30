@@ -19,6 +19,7 @@ enum
 	// keywords
 	KTRUE,
 	KFALSE,
+	KRESET,
 	KSET,
 	KTO,
 	KSHOW,
