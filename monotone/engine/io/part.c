@@ -14,18 +14,18 @@ static inline void
 part_path(char* path, Source* source, uint64_t min, uint64_t id)
 {
 	// <source_path>/<min>.<id>
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64,
-	         str_of(&source->path), min, id);
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64,
+	               min, id);
 }
 
 static inline void
-part_path_incomplete(char* path, Source* source, uint64_t min,
+part_path_incomplete(char*    path, Source* source, uint64_t min,
                      uint64_t id,
                      uint64_t id_parent)
 {
 	// <source_path>/<min>.<id>.<id_parent>
-	snprintf(path, PATH_MAX, "%s/%020" PRIu64 ".%020" PRIu64 ".%020" PRIu64,
-	         str_of(&source->path), min, id, id_parent);
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".%020" PRIu64,
+	               min, id, id_parent);
 }
 
 Part*
