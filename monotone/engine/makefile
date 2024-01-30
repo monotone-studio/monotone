@@ -27,7 +27,6 @@ OBJECTS        = \
                  engine/write.o \
                  engine/refresh.o \
                  engine/op.o \
-                 engine/op_ddl.o \
                  engine/worker.o \
                  engine/worker_mgr.o
 $(LIB): clean $(OBJECTS)
