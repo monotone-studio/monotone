@@ -20,6 +20,7 @@ static Keyword keywords[] =
 	{ KTRUE,       "true",       4},
 	{ KFALSE,      "false",      5},
 	{ KSET,        "set",        3},
+	{ KRESET,      "reset",      5},
 	{ KTO,         "to",         2},
 	{ KSHOW,       "show",       4},
 	{ KALL,        "all",        3},
