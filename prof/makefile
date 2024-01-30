@@ -5,16 +5,20 @@ CC             = clang
 RM             = rm
 CFLAGS         = -Wall -pthread -O2 -g -fPIE
 CFLAGS_INCLUDE = -I. \
-                 -I../monotone \
                  -I../monotone/runtime \
-                 -I../monotone/lib \
-                 -I../monotone/io \
-                 -I../monotone/catalog \
+                 -I../monotone/runtime/runtime \
+                 -I../monotone/runtime/lib \
                  -I../monotone/engine \
+                 -I../monotone/engine/io \
+                 -I../monotone/engine/catalog \
+                 -I../monotone/engine/engine \
                  -I../monotone/main \
-                 -I../monotone/api
+                 -I../monotone/main/main \
+                 -I../monotone/main/api
 LFLAGS         = -rdynamic -pthread -Wl,-whole-archive \
-                  ../monotone/libmonotone.a \
+                  ../monotone/runtime/libmonotone-runtime.a \
+                  ../monotone/engine/libmonotone-engine.a \
+                  ../monotone/main/libmonotone-main.a \
                   -Wl,-no-whole-archive -lm -lzstd
 SRC            = test.c
 TARGET         = test
