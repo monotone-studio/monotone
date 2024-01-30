@@ -72,7 +72,7 @@ storage_find(Storage* self, uint64_t min)
 	list_foreach(&self->list)
 	{
 		auto part = list_at(Part, link);
-		if (part->min == min)
+		if (part->id.min == min)
 			return part;
 	}
 	return NULL;
@@ -88,7 +88,7 @@ storage_oldest(Storage* self)
 		if (min == NULL)
 			min = part;
 		else
-		if (part->id < min->id)
+		if (part->id.id < min->id.id)
 			min = part;
 	}
 	return min;
@@ -104,6 +104,6 @@ storage_show_partitions(Storage* self, Buf* buf)
 		auto part = list_at(Part, link);
 		uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
 		buf_printf(buf, "  [%20" PRIu64",%20" PRIu64 "] size: %" PRIu64 ", size_cached: %" PRIu64 "\n",
-		           part->min, part->max, part->file.size, size_cached);
+		           part->id.min, part->id.max, part->file.size, size_cached);
 	}
 }

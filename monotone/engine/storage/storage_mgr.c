@@ -243,7 +243,7 @@ storage_mgr_find_part(StorageMgr* self, uint64_t id)
 		list_foreach(&storage->list)
 		{
 			auto part = list_at(Part, link);
-			if (part->id == id)
+			if (part->id.id == id)
 				return part;
 		}
 	}

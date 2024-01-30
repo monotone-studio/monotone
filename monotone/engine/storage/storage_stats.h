@@ -37,10 +37,10 @@ storage_stats(Storage* self, StorageStats* stats)
 		auto part = list_at(Part, link);
 
 		// min/max
-		if (part->min < stats->min)
-			stats->min = part->min;
-		if (part->max > stats->max)
-			stats->max = part->max;
+		if (part->id.min < stats->min)
+			stats->min = part->id.min;
+		if (part->id.max > stats->max)
+			stats->max = part->id.max;
 
 		// rows
 		if (part->index)
