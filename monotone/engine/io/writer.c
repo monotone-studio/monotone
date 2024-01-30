@@ -14,7 +14,7 @@ void
 writer_init(Writer* self)
 {
 	self->file   = NULL;
-	self->target = NULL;
+	self->source = NULL;
 	iov_init(&self->iov);
 	region_writer_init(&self->region_writer);
 	index_writer_init(&self->index_writer);
@@ -31,7 +31,7 @@ writer_free(Writer* self)
 void
 writer_reset(Writer* self)
 {
-	self->target = NULL;
+	self->source = NULL;
 	iov_reset(&self->iov);
 	region_writer_reset(&self->region_writer);
 	index_writer_reset(&self->index_writer);
@@ -42,14 +42,14 @@ writer_is_region_limit(Writer* self)
 {
 	if (unlikely(! region_writer_started(&self->region_writer)))
 		return true;
-	return region_writer_size(&self->region_writer) >= (uint32_t)self->target->region_size;
+	return region_writer_size(&self->region_writer) >= (uint32_t)self->source->region_size;
 }
 
 static inline void
 writer_start_region(Writer* self)
 {
 	region_writer_reset(&self->region_writer);
-	region_writer_start(&self->region_writer, self->target->compression);
+	region_writer_start(&self->region_writer, self->source->compression);
 }
 
 hot static inline void
@@ -72,14 +72,14 @@ writer_stop_region(Writer* self)
 }
 
 void
-writer_start(Writer* self, Target* target, File* file)
+writer_start(Writer* self, Source* source, File* file)
 {
-	self->target = target;
+	self->source = source;
 	self->file   = file;
 
 	// start new index
 	index_writer_reset(&self->index_writer);
-	index_writer_start(&self->index_writer, target->compression, target->crc);
+	index_writer_start(&self->index_writer, source->compression, source->crc);
 }
 
 void

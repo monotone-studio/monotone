@@ -13,7 +13,7 @@ struct MergerReq
 {
 	Part*     origin;
 	Memtable* memtable;
-	Target*   target;
+	Source*   source;
 };
 
 struct Merger

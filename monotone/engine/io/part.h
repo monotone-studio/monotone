@@ -21,13 +21,13 @@ struct Part
 	File        file;
 	Index*      index;
 	Buf         index_buf;
-	Target*     target;
+	Source*     source;
 	Comparator* comparator;
 	List        link;
 };
 
 Part*
-part_allocate(Comparator*, Target*, uint64_t, uint64_t, uint64_t, uint64_t);
+part_allocate(Comparator*, Source*, uint64_t, uint64_t, uint64_t, uint64_t);
 void part_free(Part*);
 void part_open(Part*);
 void part_create(Part*);
@@ -62,7 +62,7 @@ part_refresh_ready(Part* self)
 {
 	if (self->refresh)
 		return false;
-	if (! self->target->refresh_wm)
+	if (! self->source->refresh_wm)
 		return false;
-	return self->memtable->size > (uint32_t)self->target->refresh_wm;
+	return self->memtable->size > (uint32_t)self->source->refresh_wm;
 }
