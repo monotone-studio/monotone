@@ -38,7 +38,7 @@ static inline CmdShow*
 cmd_show_allocate(Token* name)
 {
 	CmdShow* self;
-	self = cmd_allocate(CMD_SHOW, NULL, sizeof(CmdShow));
+	self = cmd_allocate(CMD_SHOW, NULL, sizeof(*self));
 	self->name = *name;
 	return self;
 }
@@ -47,7 +47,7 @@ static inline CmdSet*
 cmd_set_allocate(Token* name, Token* value)
 {
 	CmdSet* self;
-	self = cmd_allocate(CMD_SET, NULL, sizeof(CmdSet));
+	self = cmd_allocate(CMD_SET, NULL, sizeof(*self));
 	self->name  = *name;
 	self->value = *value;
 	return self;

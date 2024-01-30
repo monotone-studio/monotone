@@ -37,7 +37,7 @@ cmd_conveyor_alter_allocate(void)
 {
 	CmdConveyorAlter* self;
 	self = cmd_allocate(CMD_CONVEYOR_ALTER, cmd_conveyor_alter_free,
-	                    sizeof(CmdConveyorAlter));
+	                    sizeof(*self));
 	self->list_count = 0;
 	list_init(&self->list);
 	return self;

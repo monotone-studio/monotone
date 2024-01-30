@@ -65,7 +65,7 @@ cmd_storage_create_allocate(void)
 {
 	CmdStorageCreate* self;
 	self = cmd_allocate(CMD_STORAGE_CREATE, cmd_storage_create_free,
-	                    sizeof(CmdStorageCreate));
+	                    sizeof(*self));
 	self->if_not_exists = false;
 	self->config        = NULL;
 	return self;
@@ -75,7 +75,7 @@ static inline CmdStorageDrop*
 cmd_storage_drop_allocate(void)
 {
 	CmdStorageDrop* self;
-	self = cmd_allocate(CMD_STORAGE_DROP, NULL, sizeof(CmdStorageDrop));
+	self = cmd_allocate(CMD_STORAGE_DROP, NULL, sizeof(*self));
 	self->if_exists = false;
 	token_init(&self->name);
 	return self;
@@ -94,7 +94,7 @@ cmd_storage_alter_allocate(void)
 {
 	CmdStorageAlter* self;
 	self = cmd_allocate(CMD_STORAGE_ALTER, cmd_storage_alter_free,
-	                    sizeof(CmdStorageAlter));
+	                    sizeof(*self));
 	self->if_exists   = false;
 	self->config      = NULL;
 	self->config_mask = 0;
