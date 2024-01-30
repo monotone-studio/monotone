@@ -40,7 +40,7 @@ storage_mgr_save(StorageMgr* self)
 	list_foreach(&self->list)
 	{
 		auto storage = list_at(Storage, link);
-		target_write(storage->target, &buf);
+		source_write(storage->source, &buf);
 	}
 
 	// update state
@@ -61,12 +61,12 @@ storage_mgr_open(StorageMgr* self)
 	data_read_array(&pos, &count);
 	for (int i = 0; i < count; i++)
 	{
-		// create target
-		auto target = target_read(&pos);
-		guard(guard, target_free, target);
+		// create source
+		auto source = source_read(&pos);
+		guard(guard, source_free, source);
 
 		// create storage
-		auto storage = storage_allocate(target);
+		auto storage = storage_allocate(source);
 		list_append(&self->list, &storage->link);
 		self->list_count++;
 	}
@@ -89,26 +89,26 @@ storage_mgr_close(StorageMgr* self)
 }
 
 void
-storage_mgr_create(StorageMgr* self, Target* target, bool if_not_exists)
+storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 {
-	auto storage = storage_mgr_find(self, &target->name);
+	auto storage = storage_mgr_find(self, &source->name);
 	if (storage)
 	{
 		if (! if_not_exists)
-			error("storage '%.*s': already exists", str_size(&target->name),
-			      str_of(&target->name));
+			error("storage '%.*s': already exists", str_size(&source->name),
+			      str_of(&source->name));
 		return;
 	}
 
 	// create storage directory, if not exists
-	auto path = str_of(&target->path);
+	auto path = str_of(&source->path);
 	if (! fs_exists("%s", path))
 	{
 		log("storage: new directory '%s'", path);
 		fs_mkdir(0755, "%s", path);
 	}
 
-	storage = storage_allocate(target);
+	storage = storage_allocate(source);
 	list_append(&self->list, &storage->link);
 	self->list_count++;
 
@@ -142,18 +142,18 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 }
 
 void
-storage_mgr_alter(StorageMgr* self, Target* target, int mask, bool if_exists)
+storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 {
-	auto storage = storage_mgr_find(self, &target->name);
+	auto storage = storage_mgr_find(self, &source->name);
 	if (! storage)
 	{
 		if (! if_exists)
-			error("storage '%.*s': not exists", str_size(&target->name),
-			      str_of(&target->name));
+			error("storage '%.*s': not exists", str_size(&source->name),
+			      str_of(&source->name));
 		return;
 	}
 
-	target_alter(storage->target, target, mask);
+	source_alter(storage->source, source, mask);
 	storage_mgr_save(self);
 }
 
@@ -173,7 +173,7 @@ storage_mgr_rename(StorageMgr* self, Str* name, Str* name_new, bool if_exists)
 		return;
 	}
 
-	target_set_name(storage->target, name_new);
+	source_set_name(storage->source, name_new);
 	storage_mgr_save(self);
 }
 
@@ -227,7 +227,7 @@ storage_mgr_find(StorageMgr* self, Str* name)
 	list_foreach(&self->list)
 	{
 		auto storage = list_at(Storage, link);
-		if (str_compare(&storage->target->name, name))
+		if (str_compare(&storage->source->name, name))
 			return storage;
 	}
 	return NULL;

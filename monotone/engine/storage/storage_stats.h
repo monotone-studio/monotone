@@ -64,12 +64,12 @@ storage_stats(Storage* self, StorageStats* stats)
 hot static inline void
 storage_stats_show(Storage* self, Buf* buf)
 {
-	auto target = self->target;
+	auto source = self->source;
 	StorageStats stats;
 	storage_stats_init(&stats);
 	storage_stats(self, &stats);
-	buf_printf(buf, "%.*s\n", str_size(&target->name),
-	           str_of(&target->name));
+	buf_printf(buf, "%.*s\n", str_size(&source->name),
+	           str_of(&source->name));
 	buf_printf(buf, "  partitions        %" PRIu64 "\n", stats.partitions);
 	buf_printf(buf, "  min               %" PRIu64 "\n", stats.min);
 	buf_printf(buf, "  max               %" PRIu64 "\n", stats.max);
@@ -78,12 +78,12 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  size              %" PRIu64 " Mb\n", stats.size / 1024 / 1024);
 	buf_printf(buf, "  size_uncompressed %" PRIu64 " Mb\n", stats.size_uncompressed / 1024 / 1024);
 	buf_printf(buf, "  size_cached       %" PRIu64 " Mb\n", stats.size_cached / 1024 / 1024);
-	// target
-	buf_printf(buf, "  path              '%.*s'\n", str_size(&target->path),
-	           str_of(&target->path));
-	buf_printf(buf, "  sync              %s\n", target->sync ? "true" : "false");
-	buf_printf(buf, "  crc               %s\n", target->crc  ? "true" : "false");
-	buf_printf(buf, "  compression       %" PRIu64 "\n", target->compression);
-	buf_printf(buf, "  refresh_wm        %" PRIu64 "\n", target->refresh_wm);
-	buf_printf(buf, "  region_size       %" PRIu64 "\n", target->region_size);
+	// source
+	buf_printf(buf, "  path              '%.*s'\n", str_size(&source->path),
+	           str_of(&source->path));
+	buf_printf(buf, "  sync              %s\n", source->sync ? "true" : "false");
+	buf_printf(buf, "  crc               %s\n", source->crc  ? "true" : "false");
+	buf_printf(buf, "  compression       %" PRIu64 "\n", source->compression);
+	buf_printf(buf, "  refresh_wm        %" PRIu64 "\n", source->refresh_wm);
+	buf_printf(buf, "  region_size       %" PRIu64 "\n", source->region_size);
 }

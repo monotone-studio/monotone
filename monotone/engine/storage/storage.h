@@ -13,28 +13,28 @@ struct Storage
 	List    list;
 	int     list_count;
 	int     refs;
-	Target* target;
+	Source* source;
 	List    link;
 };
 
 static inline void
 storage_free(Storage* self)
 {
-	if (self->target)
-		target_free(self->target);
+	if (self->source)
+		source_free(self->source);
 	mn_free(self);
 }
 
 static inline Storage*
-storage_allocate(Target* target)
+storage_allocate(Source* source)
 {
 	Storage* self = mn_malloc(sizeof(Storage));
-	self->target     = NULL;
+	self->source     = NULL;
 	self->refs       = 0;
 	self->list_count = 0;
 	list_init(&self->list);
 	guard(self_guard, storage_free, self);
-	self->target     = target_copy(target);
+	self->source     = source_copy(source);
 	return unguard(&self_guard);
 }
 
@@ -61,7 +61,7 @@ storage_add(Storage* self, Part* part)
 static inline void
 storage_remove(Storage* self, Part* part)
 {
-	assert(part->target == self->target);
+	assert(part->source == self->source);
 	list_unlink(&part->link);
 	self->list_count--;
 }
@@ -97,8 +97,8 @@ storage_oldest(Storage* self)
 static inline void
 storage_show_partitions(Storage* self, Buf* buf)
 {
-	buf_printf(buf, "%.*s\n", str_size(&self->target->name),
-	           str_of(&self->target->name));
+	buf_printf(buf, "%.*s\n", str_size(&self->source->name),
+	           str_of(&self->source->name));
 	list_foreach(&self->list)
 	{
 		auto part = list_at(Part, link);
