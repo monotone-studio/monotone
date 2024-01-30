@@ -11,7 +11,7 @@ CFLAGS_INCLUDE = -I../runtime \
                  -I../runtime/config \
                  -I../engine \
                  -I../engine/io \
-                 -I../engine/catalog \
+                 -I../engine/storage \
                  -I../engine/engine \
                  -I. \
                  -Imain \
