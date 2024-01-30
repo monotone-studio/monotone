@@ -14,12 +14,18 @@ CFLAGS_INCLUDE = -I../runtime \
                  -I../engine/storage \
                  -I../engine/engine \
                  -I. \
+                 -Icommand \
                  -Imain \
                  -Iapi
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-main.a
 OBJECTS        = \
-                 main/main.o \
+                 command/parse_config.o \
+                 command/parse_storage.o \
+                 command/parse_conveyor.o \
+                 command/parse_partition.o \
+                 command/parse.o \
+#                main/main.o \
                  main/command.o \
                  api/monotone.o
 $(LIB): clean $(OBJECTS)
