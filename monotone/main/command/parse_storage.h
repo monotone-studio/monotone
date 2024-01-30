@@ -40,6 +40,18 @@ cmd_storage_create_of(Cmd* self)
 	return (CmdStorageCreate*)self;
 }
 
+static inline CmdStorageDrop*
+cmd_storage_drop_of(Cmd* self)
+{
+	return (CmdStorageDrop*)self;
+}
+
+static inline CmdStorageAlter*
+cmd_storage_alter_of(Cmd* self)
+{
+	return (CmdStorageAlter*)self;
+}
+
 static inline void
 cmd_storage_create_free(Cmd* self)
 {
@@ -60,12 +72,6 @@ cmd_storage_create_allocate(void)
 }
 
 static inline CmdStorageDrop*
-cmd_storage_drop_of(Cmd* self)
-{
-	return (CmdStorageDrop*)self;
-}
-
-static inline CmdStorageDrop*
 cmd_storage_drop_allocate(void)
 {
 	CmdStorageDrop* self;
@@ -73,12 +79,6 @@ cmd_storage_drop_allocate(void)
 	self->if_exists = false;
 	token_init(&self->name);
 	return self;
-}
-
-static inline CmdStorageAlter*
-cmd_storage_alter_of(Cmd* self)
-{
-	return (CmdStorageAlter*)self;
 }
 
 static inline void

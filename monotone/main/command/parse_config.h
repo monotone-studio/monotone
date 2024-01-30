@@ -28,6 +28,12 @@ cmd_show_of(Cmd* self)
 	return (CmdShow*)self;
 }
 
+static inline CmdSet*
+cmd_set_of(Cmd* self)
+{
+	return (CmdSet*)self;
+}
+
 static inline CmdShow*
 cmd_show_allocate(Token* name)
 {
@@ -35,12 +41,6 @@ cmd_show_allocate(Token* name)
 	self = cmd_allocate(CMD_SHOW, NULL, sizeof(CmdShow));
 	self->name = *name;
 	return self;
-}
-
-static inline CmdSet*
-cmd_set_of(Cmd* self)
-{
-	return (CmdSet*)self;
 }
 
 static inline CmdSet*
