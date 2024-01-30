@@ -7,7 +7,8 @@ RM             = rm
 CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
 CFLAGS_INCLUDE = -I. \
                  -Iruntime \
-                 -Ilib
+                 -Ilib \
+                 -Iconfig
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-runtime.a
 OBJECTS        = \
@@ -20,7 +21,7 @@ OBJECTS        = \
                  lib/uuid.o \
                  lib/compression.o \
                  lib/lex.o \
-                 lib/config.o
+                 config/config.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
 	@echo $(AR) $(LIB)
