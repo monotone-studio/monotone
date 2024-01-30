@@ -161,3 +161,4 @@ Cmd* parse_partition_move(Lex*);
 Cmd* parse_partition_move_range(Lex*);
 Cmd* parse_partition_refresh(Lex*);
 Cmd* parse_partition_refresh_range(Lex*);
+Cmd* parse_partition_rebalance(Lex*);
