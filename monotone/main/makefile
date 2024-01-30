@@ -8,6 +8,7 @@ CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
 CFLAGS_INCLUDE = -I../runtime \
                  -I../runtime/runtime \
                  -I../runtime/lib \
+                 -I../runtime/config \
                  -I../engine \
                  -I../engine/io \
                  -I../engine/catalog \
