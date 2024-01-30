@@ -14,13 +14,9 @@
 #include <monotone_command.h>
 
 static void
-parse_conveyor_tiers(Lex* self, Cmd* arg)
+parse_conveyor_set(Lex* self, Cmd* arg)
 {
 	auto cmd = cmd_conveyor_alter_of(arg);
-
-	// reset conveyor (no storage list)
-	if (lex_if(self, KEOF, NULL))
-		return;
 
 	// storage [(options]), ...]
 	for (;;)
@@ -28,7 +24,7 @@ parse_conveyor_tiers(Lex* self, Cmd* arg)
 		// storage name
 		Token name;
 		if (! lex_if(self, KNAME, &name))
-			error("ALTER CONVEYOR <storage name> expected");
+			error("ALTER CONVEYOR SET <storage name> expected");
 
 		// create tier config
 		auto config = tier_config_allocate();
@@ -53,7 +49,7 @@ parse_conveyor_tiers(Lex* self, Cmd* arg)
 
 		// (
 		if (! lex_if(self, '(', NULL))
-			error("ALTER CONVEYOR storage_name <(> expected");
+			error("ALTER CONVEYOR SET name <(> expected");
 
 		// [)]
 		if (lex_if(self, ')', NULL))
@@ -68,7 +64,7 @@ parse_conveyor_tiers(Lex* self, Cmd* arg)
 		{
 			// name
 			if (! lex_if(self, KNAME, &name))
-				error("ALTER CONVEYOR namme (<name> value) expected");
+				error("ALTER CONVEYOR SET name (<name> value) expected");
 
 			// value
 			if (str_compare_raw(&name.string, "capacity", 8))
@@ -87,7 +83,7 @@ parse_conveyor_tiers(Lex* self, Cmd* arg)
 
 			// )
 			if (! lex_if(self, ')', NULL))
-				error("ALTER CONVEYOR name (...<)> expected");
+				error("ALTER CONVEYOR SET name (...<)> expected");
 
 			break;
 		}
@@ -102,19 +98,29 @@ parse_conveyor_tiers(Lex* self, Cmd* arg)
 		if (lex_if(self, KEOF, NULL))
 			break;
 
-		error("ALTER CONVEYOR storage_name() <,> expected");
+		error("ALTER CONVEYOR SET name() <,> expected");
 	}
 }
 
 Cmd*
 parse_conveyor_alter(Lex* self)
 {
-	// ALTER CONVEYOR storage_name (tier_options) [, ...]
+	// ALTER CONVEYOR RESET
+	// ALTER CONVEYOR SET storage_name (tier_options) [, ...]
 	auto cmd = cmd_conveyor_alter_allocate();
 	guard(guard, cmd_free, &cmd->cmd);
 
-	// [storage (options), ...]
-	parse_conveyor_tiers(self, &cmd->cmd);
+	// RESET | SET
+	if (lex_if(self, KRESET, NULL)) {
+		// empty list
+	} else
+	{
+		if (! lex_if(self, KSET, NULL))
+			error("ALTER CONVEYOR <SET | RESET> expected");
+
+		// SET storage (options), ...
+		parse_conveyor_set(self, &cmd->cmd);
+	}
 
 	unguard(&guard);
 	return &cmd->cmd;
