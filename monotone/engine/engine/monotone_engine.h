@@ -6,6 +6,11 @@
 // time-series storage
 //
 
+// service
+#include "engine/service_req.h"
+#include "engine/service.h"
+
+// partition reference
 #include "engine/lockage.h"
 #include "engine/ref.h"
 
