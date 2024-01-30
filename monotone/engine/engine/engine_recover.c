@@ -65,16 +65,10 @@ engine_recover_storage(Engine* self, Storage* storage)
 {
 	auto source = storage->source;
 
-	// create storage directory, if not exists
-	const char* path = str_of(&source->path);
-	if (! fs_exists("%s", path))
-	{
-		log("storage: new directory '%s'", path);
-		fs_mkdir(0755, "%s", path);
-		return;
-	}
+	// read storage directory
+	char path[PATH_MAX];
+	source_pathfmt(source, path, sizeof(path), "");
 
-	// read directory
 	DIR* dir = opendir(path);
 	if (unlikely(dir == NULL))
 		error("storage: directory '%s' open error", path);
