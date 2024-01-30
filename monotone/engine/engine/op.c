@@ -73,7 +73,7 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 
 	// remove partition from storage
 	auto ref = ref_of(slice);
-	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->target->name);
+	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->source->name);
 	storage_remove(storage, ref->part);
 
 	engine_unlock_global(self);
@@ -141,7 +141,7 @@ engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 
 	// schedule partition move to the next tier storage
 	auto next = container_of(tier->link.next, Tier, link);
-	str_copy(storage, &next->storage->target->name);
+	str_copy(storage, &next->storage->source->name);
 	return oldest;
 }
 

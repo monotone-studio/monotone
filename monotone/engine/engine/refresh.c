@@ -75,7 +75,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 
 	// get the original partition storage
 	self->storage_origin =
-		storage_mgr_find(&engine->storage_mgr, &self->origin->target->name);
+		storage_mgr_find(&engine->storage_mgr, &self->origin->source->name);
 
 	// if partition has the same storage already, do nothing
 	if (self->storage == self->storage_origin)
@@ -108,7 +108,7 @@ refresh_merge(Refresh* self)
 	{
 		.origin   = self->origin,
 		.memtable = self->memtable,
-		.target   = self->storage->target
+		.source   = self->storage->source
 	};
 	merger_execute(&self->merger, &merger_req);
 	self->part = self->merger.part;

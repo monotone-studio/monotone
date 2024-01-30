@@ -63,10 +63,10 @@ engine_recover_id(char*     path,
 static void
 engine_recover_storage(Engine* self, Storage* storage)
 {
-	auto target = storage->target;
+	auto source = storage->source;
 
 	// create storage directory, if not exists
-	const char* path = str_of(&target->path);
+	const char* path = str_of(&source->path);
 	if (! fs_exists("%s", path))
 	{
 		log("storage: new directory '%s'", path);
@@ -96,11 +96,11 @@ engine_recover_storage(Engine* self, Storage* storage)
 			continue;
 
 		Part* part;
-		part = part_allocate(self->comparator, storage->target,
+		part = part_allocate(self->comparator, storage->source,
 		                     id, id_parent,
 		                     min,
 		                     min + config_interval());
-		part->target = storage->target;
+		part->source = storage->source;
 		storage_add(storage, part);
 	}
 }

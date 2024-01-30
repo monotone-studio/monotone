@@ -100,7 +100,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 		storage = storage_mgr_first(&self->storage_mgr);
 	}
 	storage_add(storage, part);
-	part->target = storage->target;
+	part->source = storage->source;
 	unguard(&guard);
 
 	// schedule rebalance

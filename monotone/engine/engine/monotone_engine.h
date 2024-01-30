@@ -25,7 +25,6 @@
 
 // service operations
 #include "engine/op.h"
-#include "engine/op_ddl.h"
 
 // worker
 #include "engine/worker.h"
