@@ -69,9 +69,6 @@ engine_unlock_global(Engine* self)
 static Slice*
 engine_create(Engine* self, uint64_t min, uint64_t max)
 {
-	// validate storage manager and conveyor
-	conveyor_validate(&self->conveyor);
-
 	auto head = mapping_max(&self->mapping);
 
 	// create new reference
@@ -102,7 +99,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 		storage = primary->storage;
 	} else
 	{
-		// conveyor is not set, using first storage
+		// conveyor is not set, using main storage
 		assert(self->storage_mgr.list_count == 1);
 		storage = storage_mgr_first(&self->storage_mgr);
 	}
