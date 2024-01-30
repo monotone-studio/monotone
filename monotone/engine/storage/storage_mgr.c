@@ -101,7 +101,8 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 	}
 
 	// create storage directory, if not exists
-	auto path = str_of(&source->path);
+	char path[PATH_MAX];
+	source_pathfmt(source, path, sizeof(path), "");
 	if (! fs_exists("%s", path))
 	{
 		log("storage: new directory '%s'", path);

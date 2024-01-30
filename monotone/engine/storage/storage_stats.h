@@ -78,6 +78,8 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  size              %" PRIu64 " Mb\n", stats.size / 1024 / 1024);
 	buf_printf(buf, "  size_uncompressed %" PRIu64 " Mb\n", stats.size_uncompressed / 1024 / 1024);
 	buf_printf(buf, "  size_cached       %" PRIu64 " Mb\n", stats.size_cached / 1024 / 1024);
+
+	/*
 	// source
 	buf_printf(buf, "  path              '%.*s'\n", str_size(&source->path),
 	           str_of(&source->path));
@@ -86,4 +88,5 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  compression       %" PRIu64 "\n", source->compression);
 	buf_printf(buf, "  refresh_wm        %" PRIu64 "\n", source->refresh_wm);
 	buf_printf(buf, "  region_size       %" PRIu64 "\n", source->region_size);
+	*/
 }
