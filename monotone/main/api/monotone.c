@@ -28,6 +28,13 @@ struct monotone_cursor
 	struct monotone* env;
 };
 
+static inline void
+monotone_enter(monotone_t* self)
+{
+	error_reset(&self->main.error);
+	runtime_init(&self->main.context);
+}
+
 MONOTONE_API monotone_t*
 monotone_init(monotone_compare_t compare, void* compare_arg)
 {
@@ -37,7 +44,7 @@ monotone_init(monotone_compare_t compare, void* compare_arg)
 	self->type = MONOTONE_OBJ;
 	main_init(&self->main);
 
-	main_set_runtime(&self->main);
+	monotone_enter(self);
 	Exception e;
 	if (try(&e))
 	{
@@ -60,7 +67,7 @@ monotone_free(void* ptr)
 	case MONOTONE_OBJ:
 	{
 		monotone_t* self = ptr;
-		main_set_runtime(&self->main);
+		monotone_enter(self);
 		Exception e;
 		if (try(&e))
 		{
@@ -75,7 +82,7 @@ monotone_free(void* ptr)
 	{
 		monotone_cursor_t* self = ptr;
 		monotone_t* env = self->env;
-		main_set_runtime(&env->main);
+		monotone_enter(env);
 		Exception e;
 		if (try(&e)) {
 			engine_cursor_close(&self->cursor);
@@ -105,8 +112,7 @@ monotone_free(void* ptr)
 MONOTONE_API const char*
 monotone_error(monotone_t* self)
 {
-	unused(self);
-	return mn_runtime.error.text;
+	return self->main.error.text;
 }
 
 hot MONOTONE_API uint64_t
@@ -124,7 +130,7 @@ MONOTONE_API int
 monotone_execute(monotone_t* self, const char* command, char** result)
 {
 	int rc = 0;
-	main_set_runtime(&self->main);
+	monotone_enter(self);
 	Exception e;
 	if (try(&e))
 	{
@@ -140,7 +146,7 @@ MONOTONE_API int
 monotone_open(monotone_t* self, const char* directory)
 {
 	int rc = 0;
-	main_set_runtime(&self->main);
+	monotone_enter(self);
 	Exception e;
 	if (try(&e))
 	{
@@ -155,7 +161,7 @@ monotone_open(monotone_t* self, const char* directory)
 hot MONOTONE_API int
 monotone_insert(monotone_t* self, monotone_row_t* row)
 {
-	main_set_runtime(&self->main);
+	monotone_enter(self);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -172,7 +178,7 @@ monotone_insert(monotone_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_delete(monotone_t* self, monotone_row_t* row)
 {
-	main_set_runtime(&self->main);
+	monotone_enter(self);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -189,7 +195,7 @@ monotone_delete(monotone_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_delete_by(monotone_cursor_t* self)
 {
-	main_set_runtime(&self->env->main);
+	monotone_enter(self->env);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -205,7 +211,7 @@ monotone_delete_by(monotone_cursor_t* self)
 hot MONOTONE_API int
 monotone_update_by(monotone_cursor_t* self, monotone_row_t* row)
 {
-	main_set_runtime(&self->env->main);
+	monotone_enter(self->env);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
@@ -222,7 +228,7 @@ monotone_update_by(monotone_cursor_t* self, monotone_row_t* row)
 hot MONOTONE_API monotone_cursor_t*
 monotone_cursor(monotone_t* self, monotone_row_t* row)
 {
-	main_set_runtime(&self->main);
+	monotone_enter(self);
 
 	monotone_cursor_t* cursor;
 	cursor = malloc(sizeof(monotone_cursor_t));
@@ -256,7 +262,7 @@ monotone_cursor(monotone_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 {
-	main_set_runtime(&self->env->main);
+	monotone_enter(self->env);
 	int rc;
 	Exception e;
 	if (try(&e))
@@ -280,7 +286,7 @@ monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 hot MONOTONE_API int
 monotone_next(monotone_cursor_t* self)
 {
-	main_set_runtime(&self->env->main);
+	monotone_enter(self->env);
 	int rc;
 	Exception e;
 	if (try(&e)) {
