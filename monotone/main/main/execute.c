@@ -19,47 +19,34 @@ execute_show(Executable* self)
 {
 	auto cmd = cmd_show_of(self->cmd);
 
-	control_lock_exclusive();
-	guard(guard, control_unlock_guard, NULL);
-
-	// storages
-	if (str_compare_raw(&cmd->name.string, "storages", 8))
-	{
+	switch (cmd->type) {
+	case SHOW_STORAGES:
 		storage_mgr_show(&self->main->engine.storage_mgr, NULL,
 		                  self->output);
-		return;
-	}
-
-	// partitions
-	if (str_compare_raw(&cmd->name.string, "partitions", 10))
-	{
+		break;
+	case SHOW_PARTITIONS:
 		storage_mgr_show_partitions(&self->main->engine.storage_mgr, NULL,
 		                            self->output);
-		return;
-	}
-
-	// conveyor
-	if (str_compare_raw(&cmd->name.string, "conveyor", 8))
-	{
+		break;
+	case SHOW_CONVEYOR:
 		conveyor_print(&self->main->engine.conveyor, self->output);
-		return;
-	}
-
-	// all
-	if (str_compare_raw(&cmd->name.string, "all", 3))
-	{
+		break;
+	case SHOW_ALL:
 		config_print(config(), self->output);
-		return;
+		break;
+	case SHOW_NAME:
+	{
+		// name
+		auto var = config_find(config(), &cmd->name.string);
+		if (var && var_is(var, VAR_S))
+			var = NULL;
+		if (unlikely(var == NULL))
+			error("SHOW name: '%.*s' not found", str_size(&cmd->name.string),
+			      str_of(&cmd->name.string));
+		var_print_value(var, self->output);
+		break;
 	}
-
-	// name
-	auto var = config_find(config(), &cmd->name.string);
-	if (var && var_is(var, VAR_S))
-		var = NULL;
-	if (unlikely(var == NULL))
-		error("SHOW name: '%.*s' not found", str_size(&cmd->name.string),
-		      str_of(&cmd->name.string));
-	var_print_value(var, self->output);
+	}
 }
 
 static void
@@ -313,6 +300,7 @@ execute_partition_refresh_range(Executable* self)
 
 static Execute cmds[CMD_MAX] =
 {
+	{ NULL,                            false },
 	{ execute_show,                    true  },
 	{ execute_set,                     true  },
 	{ execute_checkpoint,              false },
