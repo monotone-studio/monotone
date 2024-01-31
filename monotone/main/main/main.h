@@ -17,6 +17,7 @@ struct Main
 	Logger     logger;
 	UuidMgr    uuid_mgr;
 	Comparator comparator;
+	Error      error;
 	Context    context;
 	Control    control;
 	Config     config;
@@ -28,9 +29,3 @@ void main_free(Main*);
 void main_prepare(Main*);
 void main_start(Main*, const char*);
 void main_stop(Main*);
-
-static inline void
-main_set_runtime(Main* self)
-{
-	runtime_init(&self->context);
-}

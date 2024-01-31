@@ -54,10 +54,12 @@ main_init(Main* self)
 	self->global.uuid_mgr = &self->uuid_mgr;
 
 	// runtime
+	self->context.error   = &self->error;
 	self->context.log     = (LogFunction)logger_write;
 	self->context.log_arg = &self->logger;
 	self->context.global  = &self->global;
 
+	error_init(&self->error, self->context.log, self->context.log_arg);
 	comparator_init(&self->comparator);
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
