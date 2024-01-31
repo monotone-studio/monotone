@@ -38,6 +38,7 @@ engine_open(Engine* self)
 {
 	// recover storages
 	storage_mgr_open(&self->storage_mgr);
+	storage_mgr_create_system(&self->storage_mgr);
 
 	// recover conveyor
 	conveyor_open(&self->conveyor);

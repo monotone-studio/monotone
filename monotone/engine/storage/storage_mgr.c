@@ -88,7 +88,19 @@ storage_mgr_close(StorageMgr* self)
 	}
 }
 
-void
+bool
+storage_mgr_create_system(StorageMgr* self)
+{
+	// create system storage, if not exists
+	auto config = source_allocate();
+	guard(guard, source_free, config);
+	Str name;
+	str_set_cstr(&name, "main");
+	source_set_name(config, &name);
+	return storage_mgr_create(self, config, true);
+}
+
+bool
 storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 {
 	auto storage = storage_mgr_find(self, &source->name);
@@ -97,7 +109,7 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 		if (! if_not_exists)
 			error("storage '%.*s': already exists", str_size(&source->name),
 			      str_of(&source->name));
-		return;
+		return false;
 	}
 
 	// create storage directory, if not exists
@@ -114,11 +126,18 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 	self->list_count++;
 
 	storage_mgr_save(self);
+	return true;
 }
 
 void
 storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 {
+	if (unlikely(str_compare_raw(name, "main", 4)))
+	{
+		error("storage '%.*s': system storage cannot be dropped",
+		      str_size(name), str_of(name));
+	}
+
 	auto storage = storage_mgr_find(self, name);
 	if (! storage)
 	{
@@ -161,6 +180,12 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 void
 storage_mgr_rename(StorageMgr* self, Str* name, Str* name_new, bool if_exists)
 {
+	if (unlikely(str_compare_raw(name, "main", 4)))
+	{
+		error("storage '%.*s': system storage cannot be renamed",
+		      str_size(name), str_of(name));
+	}
+
 	auto storage = storage_mgr_find(self, name_new);
 	if (storage)
 		error("storage '%.*s': already exists", str_size(name_new),
