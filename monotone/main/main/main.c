@@ -11,14 +11,49 @@
 #include <monotone_io.h>
 #include <monotone_storage.h>
 #include <monotone_engine.h>
+#include <monotone_command.h>
 #include <monotone_main.h>
+
+static void
+main_control_save_config(void* arg)
+{
+	Main* self = arg;
+	char path[PATH_MAX];
+	snprintf(path, sizeof(path), "%s/config.json",
+	         config_directory());
+	config_save(&self->config, path);
+}
+
+static void
+main_control_lock(void* arg, bool shared)
+{
+	Main* self = arg;
+	rwlock_lock(&self->lock, shared);
+}
+
+static void
+main_control_unlock(void* arg)
+{
+	Main* self = arg;
+	rwlock_unlock(&self->lock);
+}
 
 void
 main_init(Main* self)
 {
+	// control
+	auto control = &self->control;
+	control->save_config = main_control_save_config;
+	control->lock        = main_control_lock;
+	control->unlock      = main_control_unlock;
+	control->arg         = self;
+
+	// global
 	self->global.config   = &self->config;
+	self->global.control  = &self->control;
 	self->global.uuid_mgr = &self->uuid_mgr;
 
+	// runtime
 	self->context.log     = (LogFunction)logger_write;
 	self->context.log_arg = &self->logger;
 	self->context.global  = &self->global;
@@ -28,6 +63,7 @@ main_init(Main* self)
 	uuid_mgr_init(&self->uuid_mgr);
 	config_init(&self->config);
 
+	rwlock_init(&self->lock);
 	service_init(&self->service);
 	engine_init(&self->engine, &self->comparator, &self->service);
 	worker_mgr_init(&self->worker_mgr);
@@ -39,6 +75,7 @@ main_free(Main* self)
 	engine_free(&self->engine);
 	service_free(&self->service);
 	config_free(&self->config);
+	rwlock_free(&self->lock);
 }
 
 void

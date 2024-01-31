@@ -10,6 +10,7 @@ typedef struct Main Main;
 
 struct Main
 {
+	Rwlock     lock;
 	Engine     engine;
 	Service    service;
 	WorkerMgr  worker_mgr;
@@ -17,6 +18,7 @@ struct Main
 	UuidMgr    uuid_mgr;
 	Comparator comparator;
 	Context    context;
+	Control    control;
 	Config     config;
 	Global     global;
 };
