@@ -47,10 +47,10 @@ monotone_now(monotone_t*);
 
 // main
 MONOTONE_API int
-monotone_execute(monotone_t*, const char* command, char** result);
+monotone_open(monotone_t*, const char* path);
 
 MONOTONE_API int
-monotone_open(monotone_t*, const char* path);
+monotone_execute(monotone_t*, const char* command, char** result);
 
 // insert, update, delete
 MONOTONE_API int

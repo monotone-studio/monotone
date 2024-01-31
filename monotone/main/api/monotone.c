@@ -127,22 +127,6 @@ monotone_now(monotone_t* self)
 }
 
 MONOTONE_API int
-monotone_execute(monotone_t* self, const char* command, char** result)
-{
-	int rc = 0;
-	monotone_enter(self);
-	Exception e;
-	if (try(&e))
-	{
-		main_execute(&self->main, command, result);
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-MONOTONE_API int
 monotone_open(monotone_t* self, const char* directory)
 {
 	int rc = 0;
@@ -151,6 +135,22 @@ monotone_open(monotone_t* self, const char* directory)
 	if (try(&e))
 	{
 		main_start(&self->main, directory);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
+}
+
+MONOTONE_API int
+monotone_execute(monotone_t* self, const char* command, char** result)
+{
+	int rc = 0;
+	monotone_enter(self);
+	Exception e;
+	if (try(&e))
+	{
+		main_execute(&self->main, command, result);
 	}
 	if (catch(&e)) {
 		rc = -1;
