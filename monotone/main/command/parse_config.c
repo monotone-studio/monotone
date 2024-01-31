@@ -17,16 +17,35 @@ Cmd*
 parse_show(Lex* self)
 {
 	// SHOW name
-	Token name;
-	if (! lex_if(self, KNAME, &name))
-		error("SHOW <name> expected");
-	return &cmd_show_allocate(&name)->cmd;
+	int type;
+	Token tk;
+	lex_next(self, &tk);
+	switch (tk.id) {
+	case KSTORAGES:
+		type = SHOW_STORAGES;
+		break;
+	case KPARTITIONS:
+		type = SHOW_PARTITIONS;
+		break;
+	case KCONVEYOR:
+		type = SHOW_CONVEYOR;
+		break;
+	case KALL:
+		type = SHOW_ALL;
+		break;
+	case KNAME:
+		type = SHOW_NAME;
+		break;
+	default:
+		error("SHOW <STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
+	}
+	return &cmd_show_allocate(type, &tk)->cmd;
 }
 
 Cmd*
 parse_set(Lex* self)
 {
-	// SET name TO INT|STRING
+	// SET name TO INT|STRING|BOOL
 
 	// name
 	Token name;
@@ -40,8 +59,6 @@ parse_set(Lex* self)
 	// value
 	Token value;
 	lex_next(self, &value);
-	if (value.id != KINT && value.id != KSTRING)
-		error("SET name TO <value> expected string or int");
 
 	return &cmd_set_allocate(&name, &value)->cmd;
 }

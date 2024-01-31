@@ -9,9 +9,19 @@
 typedef struct CmdShow CmdShow;
 typedef struct CmdSet  CmdSet;
 
+enum
+{
+	SHOW_STORAGES,
+	SHOW_PARTITIONS,
+	SHOW_CONVEYOR,
+	SHOW_ALL,
+	SHOW_NAME
+};
+
 struct CmdShow
 {
 	Cmd   cmd;
+	int   type;
 	Token name;
 };
 
@@ -35,10 +45,11 @@ cmd_set_of(Cmd* self)
 }
 
 static inline CmdShow*
-cmd_show_allocate(Token* name)
+cmd_show_allocate(int type, Token* name)
 {
 	CmdShow* self;
 	self = cmd_allocate(CMD_SHOW, NULL, sizeof(*self));
+	self->type = type;
 	self->name = *name;
 	return self;
 }
