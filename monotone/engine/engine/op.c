@@ -55,14 +55,14 @@ engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 void
 engine_drop(Engine* self, uint64_t min, bool if_exists)
 {
-	// take exclusive engine lock
-	engine_lock_global(self, false);
+	// take exclusive control lock
+	control_lock_exclusive();
 
 	// find partition = min
 	auto slice = mapping_match(&self->mapping, min);
 	if (! slice)
 	{
-		engine_unlock_global(self);
+		control_unlock();
 		if (! if_exists)
 			error("drop: partition <%" PRIu64 "> does not exists", min);
 		return;
@@ -76,7 +76,7 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->source->name);
 	storage_remove(storage, ref->part);
 
-	engine_unlock_global(self);
+	control_unlock();
 
 	// delete partition file and free
 	part_delete(ref->part, true);
@@ -148,9 +148,9 @@ engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 static bool
 engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
 {
-	// take engine shared lock
-	engine_lock_global(self, true);
-	guard(lock_guard, engine_unlock_global, self);
+	// take control shared lock
+	control_lock_shared();
+	guard(lock_guard, control_unlock_guard, NULL);
 
 	if (conveyor_empty(&self->conveyor))
 		return false;
@@ -200,9 +200,9 @@ engine_rebalance(Engine* self, Refresh* refresh)
 void
 engine_checkpoint(Engine* self)
 {
-	// take exclusive lock
-	engine_lock_global(self, false);
-	guard(guard, engine_unlock_global, self);
+	// take exclusive control lock
+	control_lock_exclusive();
+	guard(guard, control_unlock_guard, NULL);
 
 	// schedule refresh
 	auto slice = mapping_min(&self->mapping);

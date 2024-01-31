@@ -17,7 +17,6 @@ engine_init(Engine* self, Comparator* comparator, Service* service)
 {
 	self->service    = service;
 	self->comparator = comparator;
-	rwlock_init(&self->lock_global);
 	mutex_init(&self->lock);
 	cond_var_init(&self->cond_var);
 	mapping_init(&self->mapping, comparator);
@@ -28,7 +27,6 @@ engine_init(Engine* self, Comparator* comparator, Service* service)
 void
 engine_free(Engine* self)
 {
-	rwlock_free(&self->lock_global);
 	mutex_free(&self->lock);
 	cond_var_free(&self->cond_var);
 	conveyor_free(&self->conveyor);
@@ -52,18 +50,6 @@ void
 engine_close(Engine* self)
 {
 	storage_mgr_close(&self->storage_mgr);
-}
-
-void
-engine_lock_global(Engine* self, bool shared)
-{
-	rwlock_lock(&self->lock_global, shared);
-}
-
-void
-engine_unlock_global(Engine* self)
-{
-	rwlock_unlock(&self->lock_global);
 }
 
 static Slice*
@@ -123,9 +109,9 @@ engine_lock(Engine* self, uint64_t min, LockType lock,
             bool gte,
             bool create_if_not_exists)
 {
-	// take shared engine lock to avoid exclusive operations
-	engine_lock_global(self, true);
-	guard(cglguard, engine_unlock_global, self);
+	// take shared control lock to avoid exclusive operations
+	control_lock_shared();
+	guard(cglguard, control_unlock_guard, NULL);
 
 	mutex_lock(&self->lock);
 	guard(unlock, mutex_unlock, &self->lock);
@@ -172,6 +158,6 @@ engine_unlock(Engine* self, Ref* ref, LockType lock)
 
 	ref_unlock(ref, lock);
 
-	// unlock or dereference global engine lock
-	engine_unlock_global(self);
+	// unlock or dereference shared control lock
+	control_unlock();
 }
