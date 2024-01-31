@@ -31,6 +31,16 @@ error_init(Error* self, LogFunction log, void* log_arg)
 	self->log_arg  = log_arg;
 }
 
+static inline void
+error_reset(Error* self)
+{
+	self->text_len = 0;
+	self->text[0]  = 0;
+	self->file     = NULL;
+	self->function = NULL;
+	self->line     = 0;
+}
+
 static inline void no_return
 error_throw(Error*        self,
             ExceptionMgr* mgr,
