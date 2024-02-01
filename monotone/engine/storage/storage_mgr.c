@@ -48,6 +48,9 @@ storage_mgr_save(StorageMgr* self)
 	var_data_set_buf(&config()->storages, &buf);
 }
 
+static Storage*
+storage_mgr_create_object(StorageMgr*, Source*);
+
 void
 storage_mgr_open(StorageMgr* self)
 {
@@ -67,7 +70,7 @@ storage_mgr_open(StorageMgr* self)
 		guard(guard, source_free, source);
 
 		// create storage
-		auto storage = storage_allocate(source);
+		auto storage = storage_mgr_create_object(self, source);
 		list_append(&self->list, &storage->link);
 		self->list_count++;
 	}
@@ -101,29 +104,10 @@ storage_mgr_create_system(StorageMgr* self)
 	return storage_mgr_create(self, config, true);
 }
 
-bool
-storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
+static Storage*
+storage_mgr_create_object(StorageMgr* self, Source* source)
 {
-	auto storage = storage_mgr_find(self, &source->name);
-	if (storage)
-	{
-		if (! if_not_exists)
-			error("storage '%.*s': already exists", str_size(&source->name),
-			      str_of(&source->name));
-		return false;
-	}
-
-	// create storage directory, if not exists
-	char path[PATH_MAX];
-	source_pathfmt(source, path, sizeof(path), "");
-	if (! fs_exists("%s", path))
-	{
-		log("storage: new directory '%s'", path);
-		fs_mkdir(0755, "%s", path);
-	}
-
-	// create storage object
-	storage = storage_allocate(source);
+	auto storage = storage_allocate(source);
 
 	// find cloud interface and create cloud object, if defined
 	Exception e;
@@ -149,6 +133,32 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 		rethrow();
 	}
 
+	return storage;
+}
+
+bool
+storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
+{
+	auto storage = storage_mgr_find(self, &source->name);
+	if (storage)
+	{
+		if (! if_not_exists)
+			error("storage '%.*s': already exists", str_size(&source->name),
+			      str_of(&source->name));
+		return false;
+	}
+
+	// create storage directory, if not exists
+	char path[PATH_MAX];
+	source_pathfmt(source, path, sizeof(path), "");
+	if (! fs_exists("%s", path))
+	{
+		log("storage: new directory '%s'", path);
+		fs_mkdir(0755, "%s", path);
+	}
+
+	// create storage object
+	storage = storage_mgr_create_object(self, source);
 	list_append(&self->list, &storage->link);
 	self->list_count++;
 
