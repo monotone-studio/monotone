@@ -27,6 +27,9 @@ struct IndexRegion
 struct Index
 {
 	uint32_t crc;
+	uint64_t id;
+	uint64_t id_min;
+	uint64_t id_max;
 	uint32_t size;
 	uint64_t size_total;
 	uint64_t size_total_origin;
