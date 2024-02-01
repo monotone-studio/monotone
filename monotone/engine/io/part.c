@@ -84,6 +84,7 @@ part_open(Part* self)
 		      str_of(&self->file.path));
 
 	// read index
+	buf_reset(&self->index_buf);
 	file_pread_buf(&self->file, &self->index_buf, eof.size, offset);
 
 	// set and validate index
@@ -137,4 +138,32 @@ part_rename(Part* self)
 	part_path(path_to, self->source, &self->id);
 	if (fs_exists("%s", path))
 		fs_rename(path, "%s", path_to);
+}
+
+Part*
+part_download(Cloud*      cloud,
+              Comparator* comparator,
+              Source*     source,
+              PartId*     id)
+{
+	Part* part = NULL;
+	Exception e;
+	if (try(&e))
+	{
+		// download partition file locally
+		cloud_download(cloud, id->min, id->id);
+
+		// open
+		part = part_allocate(comparator, source, id);
+		part_open(part);
+
+		// todo: remove index file
+	}
+	if (catch(&e))
+	{
+		if (part)
+			part_free(part);
+		rethrow();
+	}
+	return part;
 }

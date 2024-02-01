@@ -40,6 +40,9 @@ void part_create(Part*);
 void part_delete(Part*, bool);
 void part_rename(Part*);
 
+Part*
+part_download(Cloud*, Comparator*, Source*, PartId*);
+
 static inline Memtable*
 part_memtable_of(Part* self, Memtable** prev)
 {
