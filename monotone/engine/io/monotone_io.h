@@ -9,6 +9,10 @@
 // source
 #include "io/source.h"
 
+// cloud
+#include "io/cloud.h"
+#include "io/cloud_mgr.h"
+
 // row
 #include "io/row.h"
 #include "io/comparator.h"

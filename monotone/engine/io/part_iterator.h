@@ -31,6 +31,7 @@ part_iterator_open_region(PartIterator* self, Row* row)
 	reader->read_buf              = &self->read_buf;
 	reader->read_buf_uncompressed = &self->read_buf_uncompressed;
 	reader->file                  = &self->part->file;
+	reader->cloud                 = NULL;
 	reader_execute(reader);
 
 	// prepare region iterator
