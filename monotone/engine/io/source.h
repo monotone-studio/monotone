@@ -12,17 +12,19 @@ enum
 {
 	SOURCE_NAME        = 1,
 	SOURCE_PATH        = 2,
-	SOURCE_SYNC        = 4,
-	SOURCE_CRC         = 8,
-	SOURCE_COMPRESSION = 16,
-	SOURCE_REFRESH_WM  = 32,
-	SOURCE_REGION_SIZE = 64
+	SOURCE_CLOUD       = 4,
+	SOURCE_SYNC        = 8,
+	SOURCE_CRC         = 16,
+	SOURCE_COMPRESSION = 32,
+	SOURCE_REFRESH_WM  = 64,
+	SOURCE_REGION_SIZE = 128
 };
 
 struct Source
 {
 	Str     name;
 	Str     path;
+	Str     cloud;
 	bool    sync;
 	bool    crc;
 	int64_t compression;
@@ -41,6 +43,7 @@ source_allocate(void)
 	self->refresh_wm  = 40 * 1024 * 1024;
 	str_init(&self->name);
 	str_init(&self->path);
+	str_init(&self->cloud);
 	return self;
 }
 
@@ -49,21 +52,29 @@ source_free(Source* self)
 {
 	str_free(&self->name);
 	str_free(&self->path);
+	str_free(&self->cloud);
 	mn_free(self);
 }
 
 static inline void
-source_set_name(Source* self, Str* name)
+source_set_name(Source* self, Str* value)
 {
 	str_free(&self->name);
-	str_copy(&self->name, name);
+	str_copy(&self->name, value);
 }
 
 static inline void
-source_set_path(Source* self, Str* path)
+source_set_path(Source* self, Str* value)
 {
 	str_free(&self->path);
-	str_copy(&self->path, path);
+	str_copy(&self->path, value);
+}
+
+static inline void
+source_set_cloud(Source* self, Str* value)
+{
+	str_free(&self->cloud);
+	str_copy(&self->cloud, value);
 }
 
 static inline void
@@ -103,6 +114,7 @@ source_copy(Source* self)
 	guard(copy_guard, source_free, copy);
 	source_set_name(copy, &self->name);
 	source_set_path(copy, &self->path);
+	source_set_cloud(copy, &self->cloud);
 	source_set_sync(copy, self->sync);
 	source_set_crc(copy, self->crc);
 	source_set_compression(copy, self->compression);
@@ -128,6 +140,13 @@ source_read(uint8_t** pos)
 	// path
 	data_skip(pos);
 	data_read_string_copy(pos, &self->path);
+
+	// cloud
+	data_skip(pos);
+	data_read_string_copy(pos, &self->cloud);
+
+	// sync
+	data_skip(pos);
 
 	// sync
 	data_skip(pos);
@@ -166,6 +185,10 @@ source_write(Source* self, Buf* buf)
 	encode_raw(buf, "path", 4);
 	encode_string(buf, &self->path);
 
+	// cloud
+	encode_raw(buf, "cloud", 5);
+	encode_string(buf, &self->cloud);
+
 	// reference
 	encode_raw(buf, "sync", 4);
 	encode_bool(buf, self->sync);
@@ -195,6 +218,9 @@ source_alter(Source* self, Source* alter, int mask)
 
 	if (mask & SOURCE_PATH)
 		source_set_path(self, &alter->path);
+
+	if (mask & SOURCE_CLOUD)
+		source_set_cloud(self, &alter->cloud);
 
 	if (mask & SOURCE_SYNC)
 		source_set_sync(self, alter->sync);
