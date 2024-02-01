@@ -10,11 +10,12 @@ typedef struct StorageMgr StorageMgr;
 
 struct StorageMgr
 {
-	List list;
-	int  list_count;
+	List      list;
+	int       list_count;
+	CloudMgr* cloud_mgr;
 };
 
-void storage_mgr_init(StorageMgr*);
+void storage_mgr_init(StorageMgr*, CloudMgr*);
 void storage_mgr_free(StorageMgr*);
 void storage_mgr_open(StorageMgr*);
 void storage_mgr_close(StorageMgr*);

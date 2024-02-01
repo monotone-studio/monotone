@@ -12,10 +12,11 @@
 #include <monotone_storage.h>
 
 void
-storage_mgr_init(StorageMgr* self)
+storage_mgr_init(StorageMgr* self, CloudMgr* cloud_mgr)
 {
 	self->list_count = 0;
 	list_init(&self->list);
+	self->cloud_mgr = cloud_mgr;
 }
 
 void
@@ -121,7 +122,33 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 		fs_mkdir(0755, "%s", path);
 	}
 
+	// create storage object
 	storage = storage_allocate(source);
+
+	// find cloud interface and create cloud object, if defined
+	Exception e;
+	if (try(&e))
+	{
+		if (! str_empty(&source->cloud))
+		{
+			auto cloud_if = cloud_mgr_find(self->cloud_mgr, &source->cloud);
+			if (! cloud_if)
+				error("storage '%.*s': cloud interface '%.*s' does not exists",
+				      str_size(&source->name),
+				      str_of(&source->name),
+				      str_size(&source->cloud),
+				      str_of(&source->cloud));
+
+			storage->cloud = cloud_create(cloud_if, storage->source);
+		}
+	}
+
+	if (catch(&e))
+	{
+		storage_free(storage);
+		rethrow();
+	}
+
 	list_append(&self->list, &storage->link);
 	self->list_count++;
 
