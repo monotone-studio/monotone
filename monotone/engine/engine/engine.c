@@ -13,14 +13,17 @@
 #include <monotone_engine.h>
 
 void
-engine_init(Engine* self, Comparator* comparator, Service* service)
+engine_init(Engine*     self,
+            Comparator* comparator,
+            Service*    service,
+            CloudMgr*   cloud_mgr)
 {
 	self->service    = service;
 	self->comparator = comparator;
 	mutex_init(&self->lock);
 	cond_var_init(&self->cond_var);
 	mapping_init(&self->mapping, comparator);
-	storage_mgr_init(&self->storage_mgr);
+	storage_mgr_init(&self->storage_mgr, cloud_mgr);
 	conveyor_init(&self->conveyor, &self->storage_mgr);
 }
 

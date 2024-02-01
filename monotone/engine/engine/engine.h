@@ -22,7 +22,7 @@ struct Engine
 	Comparator* comparator;
 };
 
-void engine_init(Engine*, Comparator*, Service*);
+void engine_init(Engine*, Comparator*, Service*, CloudMgr*);
 void engine_free(Engine*);
 void engine_open(Engine*);
 void engine_close(Engine*);

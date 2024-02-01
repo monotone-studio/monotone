@@ -67,7 +67,9 @@ main_init(Main* self)
 
 	rwlock_init(&self->lock);
 	service_init(&self->service);
-	engine_init(&self->engine, &self->comparator, &self->service);
+	cloud_mgr_init(&self->cloud_mgr);
+	engine_init(&self->engine, &self->comparator, &self->service,
+	            &self->cloud_mgr);
 	worker_mgr_init(&self->worker_mgr);
 }
 
@@ -146,6 +148,8 @@ main_start(Main* self, const char* directory)
 	log("");
 	config_print_log(config());
 	log("");
+
+	// todo: register cloud ifaces
 
 	// recover
 	engine_open(&self->engine);

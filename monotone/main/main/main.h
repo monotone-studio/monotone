@@ -14,6 +14,7 @@ struct Main
 	Engine     engine;
 	Service    service;
 	WorkerMgr  worker_mgr;
+	CloudMgr   cloud_mgr;
 	Logger     logger;
 	UuidMgr    uuid_mgr;
 	Comparator comparator;
