@@ -27,6 +27,14 @@ struct Cloud
 	CloudIf* iface;
 };
 
+static inline void
+cloud_iface_init(CloudIf* self, Str* name)
+{
+	memset(self, 0, sizeof(*self));
+	str_set_str(&self->name, name);
+	list_init(&self->link);
+}
+
 static inline Cloud*
 cloud_create(CloudIf* iface, Source* source)
 {
