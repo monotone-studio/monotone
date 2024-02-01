@@ -13,6 +13,7 @@ struct Storage
 	List    list;
 	int     list_count;
 	int     refs;
+	Cloud*  cloud;
 	Source* source;
 	List    link;
 };
@@ -20,6 +21,8 @@ struct Storage
 static inline void
 storage_free(Storage* self)
 {
+	if (self->cloud)
+		cloud_free(self->cloud);
 	if (self->source)
 		source_free(self->source);
 	mn_free(self);
@@ -29,6 +32,7 @@ static inline Storage*
 storage_allocate(Source* source)
 {
 	Storage* self = mn_malloc(sizeof(Storage));
+	self->cloud      = NULL;
 	self->source     = NULL;
 	self->refs       = 0;
 	self->list_count = 0;
