@@ -31,6 +31,12 @@ file_error(File* self, const char* operation)
 	      strerror(errno));
 }
 
+static inline bool
+file_is_openned(File* self)
+{
+	return self->fd != -1;
+}
+
 static inline void
 file_open(File* self, const char* path)
 {
