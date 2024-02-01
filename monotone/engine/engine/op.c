@@ -219,3 +219,70 @@ engine_checkpoint(Engine* self)
 
 	malloc_trim(0);
 }
+
+void
+engine_download(Engine* self, uint64_t min, bool if_exists)
+{
+	// find the original partition
+	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
+	if (unlikely(! ref))
+	{
+		if (! if_exists)
+			error("download: partition <%" PRIu64 "> not found", min);
+		return;
+	}
+	auto origin = ref->part;
+
+	// downloaded and openned
+	if (file_is_openned(&origin->file))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		return;
+	}
+
+	// get the original partition storage
+	auto storage = storage_mgr_find(&self->storage_mgr, &origin->source->name);
+
+	// download and open partition
+	Part* part = NULL;
+	Exception e;
+	if (try(&e))
+	{
+		part = part_download(storage->cloud, origin->comparator,
+		                     origin->source, &origin->id);
+	}
+
+	if (catch(&e))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		rethrow();
+	}
+
+	// replace catalog with new partition object
+	mutex_lock(&self->lock);
+	ref_lock(ref, LOCK_ACCESS);
+
+	// update partition reference
+	ref->part = part;
+
+	// remove old partition from its storage
+	storage_remove(storage, origin);
+
+	// add new partition to the storage
+	storage_add(storage, part);
+
+	// reuse memtable
+	*part->memtable = *origin->memtable;
+	memtable_init(origin->memtable,
+	              origin->memtable->size_page,
+	              origin->memtable->size_split,
+	              origin->comparator);
+
+	ref_unlock(ref, LOCK_ACCESS);
+	mutex_unlock(&self->lock);
+
+	engine_unlock(self, ref, LOCK_SERVICE);
+
+	// free previous partition
+	part_free(part);
+}
