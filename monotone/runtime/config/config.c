@@ -86,6 +86,7 @@ config_prepare(Config* self)
 		{ "interval",                VAR_INT,    VAR_C,                &self->interval,                NULL,        3000000          },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
 		// state
+		{ "psn",                     VAR_INT,    VAR_E,                &self->psn,                     NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
 		{ "conveyor",                VAR_DATA,   VAR_C|VAR_H,          &self->conveyor,                NULL,        0                },
 		// stats

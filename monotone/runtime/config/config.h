@@ -23,6 +23,7 @@ struct Config
 	Var  interval;
 	Var  workers;
 	// state
+	Var  psn;
 	Var  storages;
 	Var  conveyor;
 	// stats
