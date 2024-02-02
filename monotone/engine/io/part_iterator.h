@@ -15,8 +15,6 @@ struct PartIterator
 	IndexIterator  index_iterator;
 	IndexRegion*   current;
 	Part*          part;
-	Buf            read_buf;
-	Buf            read_buf_uncompressed;
 	Reader         reader;
 };
 
@@ -25,14 +23,12 @@ part_iterator_open_region(PartIterator* self, Row* row)
 {
 	// read region from file
 	Reader* reader = &self->reader;
-	reader->id                    = &self->part->id;
-	reader->index                 = self->part->index;
-	reader->index_region          = self->current;
-	reader->region                = NULL;
-	reader->read_buf              = &self->read_buf;
-	reader->read_buf_uncompressed = &self->read_buf_uncompressed;
-	reader->file                  = &self->part->file;
-	reader->cloud                 = NULL;
+	reader->id           = &self->part->id;
+	reader->index        = self->part->index;
+	reader->index_region = self->current;
+	reader->region       = NULL;
+	reader->file         = &self->part->file;
+	reader->cloud        = NULL;
 	reader_execute(reader);
 
 	// prepare region iterator
@@ -98,16 +94,13 @@ part_iterator_next(PartIterator* self)
 static inline void
 part_iterator_free(PartIterator* self)
 {
-	buf_free(&self->read_buf);
-	buf_free(&self->read_buf_uncompressed);
+	reader_free(&self->reader);
 }
 
 static inline void
 part_iterator_reset(PartIterator* self)
 {
 	reader_reset(&self->reader);
-	buf_reset(&self->read_buf);
-	buf_reset(&self->read_buf_uncompressed);
 	region_iterator_reset(&self->region_iterator);
 }
 
@@ -117,8 +110,6 @@ part_iterator_init(PartIterator* self)
 	self->part    = NULL;
 	self->current = NULL;
 	reader_init(&self->reader);
-	buf_init(&self->read_buf);
-	buf_init(&self->read_buf_uncompressed);
 	index_iterator_init(&self->index_iterator);
 	region_iterator_init(&self->region_iterator);
 
