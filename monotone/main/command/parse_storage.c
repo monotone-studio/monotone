@@ -40,6 +40,12 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			parse_string(self, &name, &config->path);
 			mask |= SOURCE_PATH;
 		} else
+		if (str_compare_raw(&name.string, "cloud", 5))
+		{
+			// cloud <string>
+			parse_string(self, &name, &config->cloud);
+			mask |= SOURCE_CLOUD;
+		} else
 		if (str_compare_raw(&name.string, "refresh_wm", 10))
 		{
 			// refresh_wm <int>
