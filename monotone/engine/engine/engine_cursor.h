@@ -17,6 +17,31 @@ struct EngineCursor
 };
 
 hot static inline void
+engine_cursor_open_part(EngineCursor* self, uint64_t min, Row* key)
+{
+	auto engine = self->engine;
+
+	// match and lock partition
+	self->ref = engine_lock(engine, min, LOCK_ACCESS, true, false);
+	if (self->ref == NULL)
+		return;
+	auto part = self->ref->part;
+
+	// match storage and get cloud
+	Cloud* cloud = NULL;
+	if (! str_empty(&part->source->cloud))
+	{
+		auto storage = storage_mgr_find(&engine->storage_mgr, &part->source->name);
+		assert(storage);
+		cloud = storage->cloud;
+	}
+
+	// open partition cursor
+	part_cursor_open(&self->cursor, cloud, part, key);
+	self->current = part_cursor_at(&self->cursor);
+}
+
+hot static inline void
 engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 {
 	self->ref     = NULL;
@@ -27,13 +52,8 @@ engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 	uint64_t min = 0;
 	if (key)
 		min = row_interval_min(key);
-	self->ref = engine_lock(engine, min, LOCK_ACCESS, true, false);
-	if (self->ref == NULL)
-		return;
 
-	// open partition cursor
-	part_cursor_open(&self->cursor, self->ref->part, key);
-	self->current = part_cursor_at(&self->cursor);
+	engine_cursor_open_part(self, min, key);
 }
 
 hot static inline void
@@ -91,12 +111,7 @@ engine_cursor_next(EngineCursor* self)
 	part_cursor_reset(&self->cursor);
 
 	// open next partition
-	self->ref = engine_lock(self->engine, next_interval, LOCK_ACCESS, true, false);
-	if (unlikely(self->ref == NULL))
-		return;
-
-	part_cursor_open(&self->cursor, self->ref->part, NULL);
-	self->current = part_cursor_at(&self->cursor);
+	engine_cursor_open_part(self, next_interval, NULL);
 }
 
 hot static inline void
