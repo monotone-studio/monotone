@@ -72,7 +72,6 @@ part_open(Part* self, bool read_index)
 	if (! read_index)
 	{
 		assert(self->index);
-		self->in_storage = true;
 		return;
 	}
 
@@ -96,8 +95,6 @@ part_open(Part* self, bool read_index)
 			error("partition: file '%s' crc mismatch",
 			      str_of(&self->file.path));
 	}
-
-	self->in_storage = true;
 }
 
 void
@@ -168,8 +165,6 @@ part_cloud_open(Part* self)
 			error("partition: cloud file '%s' crc mismatch",
 			      str_of(&file.path));
 	}
-
-	self->in_cloud = true;
 }
 
 void
@@ -217,8 +212,7 @@ part_cloud_rename(Part* self)
 void
 part_download(Part* self, Cloud* cloud)
 {
-	if (self->in_storage)
-		return;
+	assert(self->in_cloud);
 
 	// download partition file locally
 	cloud_download(cloud, &self->id);
@@ -230,9 +224,6 @@ part_download(Part* self, Cloud* cloud)
 void
 part_upload(Part* self, Cloud* cloud)
 {
-	if (self->in_cloud)
-		return;
-
 	assert(self->in_storage);
 	Exception e;
 	if (try(&e))
@@ -251,48 +242,28 @@ part_upload(Part* self, Cloud* cloud)
 		part_cloud_delete(self, false);
 		rethrow();
 	}
-
-	self->in_cloud = true;
-}
-
-static void
-part_offload_local(Part* self)
-{
-	// partition must exists on cloud
-	if (! self->in_cloud)
-	{
-		// error
-		return;
-	}
-
-	part_delete(self, true);
-	file_close(&self->file);
-	self->in_storage = false;
-}
-
-static void
-part_offload_cloud(Part* self, Cloud* cloud)
-{
-	// partition must exists locally
-	if (! self->in_storage)
-	{
-		// error
-		return;
-	}
-
-	// remove cloud file first
-	part_cloud_delete(self, true);
-	self->in_cloud = false;
-
-	// remove from cloud
-	cloud_remove(cloud, &self->id);
 }
 
 void
-part_offload(Part* self, Cloud* cloud, bool local)
+part_offload(Part* self, Cloud* cloud, bool from_storage)
 {
-	if (local)
-		part_offload_local(self);
-	else
-		part_offload_cloud(self, cloud);
+	// remove from storage
+	if (from_storage)
+	{
+		assert(self->in_cloud);
+
+		// remove data file
+		file_close(&self->file);
+		part_delete(self, true);
+		return;
+	}
+
+	// remove from cloud
+	assert(self->in_storage);
+
+	// remove cloud file first
+	part_cloud_delete(self, true);
+
+	// remove from cloud
+	cloud_remove(cloud, &self->id);
 }
