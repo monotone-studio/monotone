@@ -10,6 +10,7 @@ typedef struct Reader Reader;
 
 struct Reader
 {
+	Id*          id;
 	Index*       index;
 	IndexRegion* index_region;
 	Region*      region;
@@ -22,6 +23,7 @@ struct Reader
 static inline void
 reader_init(Reader* self)
 {
+	self->id                    = NULL;
 	self->index                 = NULL;
 	self->index_region          = NULL;
 	self->region                = NULL;
@@ -34,6 +36,7 @@ reader_init(Reader* self)
 static inline void
 reader_reset(Reader* self)
 {
+	self->id                    = NULL;
 	self->index                 = NULL;
 	self->index_region          = NULL;
 	self->region                = NULL;
@@ -60,7 +63,7 @@ reader_execute(Reader* self)
 			error("partition file not found");
 
 		// read region data from cloud
-		cloud_read(self->cloud, self->index->id_min, self->index->id,
+		cloud_read(self->cloud, self->id,
 		           self->read_buf,
 		           self->index_region->size,
 		           self->index_region->offset);

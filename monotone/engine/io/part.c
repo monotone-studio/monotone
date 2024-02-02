@@ -10,24 +10,8 @@
 #include <monotone_config.h>
 #include <monotone_io.h>
 
-static inline void
-part_path(char* path, Source* source, PartId* id)
-{
-	// <source_path>/<min>.<id>
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64,
-	               id->min, id->id);
-}
-
-static inline void
-part_path_incomplete(char* path, Source* source, PartId* id)
-{
-	// <source_path>/<min>.<id>.<id_parent>
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".%020" PRIu64,
-	               id->min, id->id, id->id_parent);
-}
-
 Part*
-part_allocate(Comparator* comparator, Source* source, PartId* id)
+part_allocate(Comparator* comparator, Source* source, Id* id)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->refresh    = false;
@@ -61,7 +45,7 @@ part_open(Part* self)
 
 	// <source_path>/<min>.<id>
 	char path[PATH_MAX];
-	part_path(path, self->source, &self->id);
+	id_path(&self->id, self->source, path);
 	file_open(&self->file, path);
 
 	if (unlikely(self->file.size < (sizeof(Index) + sizeof(IndexEof))))
@@ -111,7 +95,7 @@ part_create(Part* self)
 {
 	// <source_path>/<min>.<id>.<id_parent>
 	char path[PATH_MAX];
-	part_path_incomplete(path, self->source, &self->id);
+	id_path_incomplete(&self->id, self->source, path);
 	file_create(&self->file, path);
 }
 
@@ -122,9 +106,9 @@ part_delete(Part* self, bool complete)
 	// <source_path>/<min>.<psn>.<id_parent>
 	char path[PATH_MAX];
 	if (complete)
-		part_path(path, self->source, &self->id);
+		id_path(&self->id, self->source, path);
 	else
-		part_path_incomplete(path, self->source, &self->id);
+		id_path_incomplete(&self->id, self->source, path);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
@@ -134,8 +118,8 @@ part_rename(Part* self)
 {
 	char path[PATH_MAX];
 	char path_to[PATH_MAX];
-	part_path_incomplete(path, self->source, &self->id);
-	part_path(path_to, self->source, &self->id);
+	id_path_incomplete(&self->id, self->source, path);
+	id_path(&self->id, self->source, path_to);
 	if (fs_exists("%s", path))
 		fs_rename(path, "%s", path_to);
 }
@@ -144,14 +128,14 @@ Part*
 part_download(Cloud*      cloud,
               Comparator* comparator,
               Source*     source,
-              PartId*     id)
+              Id*         id)
 {
 	Part* part = NULL;
 	Exception e;
 	if (try(&e))
 	{
 		// download partition file locally
-		cloud_download(cloud, id->min, id->id);
+		cloud_download(cloud, id);
 
 		// open
 		part = part_allocate(comparator, source, id);

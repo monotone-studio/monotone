@@ -8,6 +8,7 @@
 
 // source
 #include "io/source.h"
+#include "io/id.h"
 
 // cloud
 #include "io/cloud.h"

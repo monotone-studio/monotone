@@ -103,7 +103,7 @@ merger_execute(Merger* self, MergerReq* req)
 	merge_iterator_open(it, origin->comparator);
 
 	// allocate and create incomplete partition file
-	PartId id =
+	Id id =
 	{
 		.id        = config_psn_next(),
 		.id_parent = origin->id.id,

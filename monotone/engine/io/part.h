@@ -6,21 +6,12 @@
 // time-series storage
 //
 
-typedef struct PartId PartId;
-typedef struct Part   Part;
-
-struct PartId
-{
-	uint64_t id;
-	uint64_t id_parent;
-	uint64_t min;
-	uint64_t max;
-};
+typedef struct Part Part;
 
 struct Part
 {
 	bool        refresh;
-	PartId      id;
+	Id          id;
 	Memtable*   memtable;
 	Memtable    memtable_a;
 	Memtable    memtable_b;
@@ -33,7 +24,7 @@ struct Part
 };
 
 Part*
-part_allocate(Comparator*, Source*, PartId*);
+part_allocate(Comparator*, Source*, Id*);
 void part_free(Part*);
 void part_open(Part*);
 void part_create(Part*);
@@ -41,7 +32,7 @@ void part_delete(Part*, bool);
 void part_rename(Part*);
 
 Part*
-part_download(Cloud*, Comparator*, Source*, PartId*);
+part_download(Cloud*, Comparator*, Source*, Id*);
 
 static inline Memtable*
 part_memtable_of(Part* self, Memtable** prev)
