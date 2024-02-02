@@ -26,11 +26,8 @@ void storage_mgr_alter(StorageMgr*, Source*, int, bool);
 void storage_mgr_rename(StorageMgr*, Str*, Str*, bool);
 void storage_mgr_show(StorageMgr*, Str*, Buf*);
 void storage_mgr_show_partitions(StorageMgr*, Str*, Buf*);
-
 Storage*
 storage_mgr_find(StorageMgr*, Str*);
-Part*
-storage_mgr_find_part(StorageMgr*, uint64_t);
 
 static inline Storage*
 storage_mgr_first(StorageMgr* self)

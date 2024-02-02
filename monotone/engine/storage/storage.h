@@ -92,7 +92,7 @@ storage_oldest(Storage* self)
 		if (min == NULL)
 			min = part;
 		else
-		if (part->id.id < min->id.id)
+		if (part->id.psn < min->id.psn)
 			min = part;
 	}
 	return min;

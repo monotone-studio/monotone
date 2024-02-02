@@ -295,19 +295,3 @@ storage_mgr_find(StorageMgr* self, Str* name)
 	}
 	return NULL;
 }
-
-Part*
-storage_mgr_find_part(StorageMgr* self, uint64_t id)
-{
-	list_foreach(&self->list)
-	{
-		auto storage = list_at(Storage, link);
-		list_foreach(&storage->list)
-		{
-			auto part = list_at(Part, link);
-			if (part->id.id == id)
-				return part;
-		}
-	}
-	return NULL;
-}
