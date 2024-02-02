@@ -231,58 +231,183 @@ engine_download(Engine* self, uint64_t min, bool if_exists)
 			error("download: partition <%" PRIu64 "> not found", min);
 		return;
 	}
-	auto origin = ref->part;
+	auto part = ref->part;
 
-	// downloaded and openned
-	if (file_is_openned(&origin->file))
+	// get the original partition storage
+	auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
+	assert(storage);
+
+	if (! storage->cloud)
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		error("download: partition <%" PRIu64 "> storage has no associated cloud", min);
+	}
+
+	// partition file exists locally
+	if (part->in_storage)
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		return;
 	}
 
-	// get the original partition storage
-	auto storage = storage_mgr_find(&self->storage_mgr, &origin->source->name);
-
-	// download and open partition
-	Part* part = NULL;
+	// download and open partition file
 	Exception e;
-	if (try(&e))
-	{
-		part = part_download(storage->cloud, origin->comparator,
-		                     origin->source, &origin->id);
+	if (try(&e)) {
+		part_download(part, storage->cloud);
 	}
-
 	if (catch(&e))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		rethrow();
 	}
 
-	// replace catalog with new partition object
+	// update partition state
 	mutex_lock(&self->lock);
 	ref_lock(ref, LOCK_ACCESS);
 
-	// update partition reference
-	ref->part = part;
-
-	// remove old partition from its storage
-	storage_remove(storage, origin);
-
-	// add new partition to the storage
-	storage_add(storage, part);
-
-	// reuse memtable
-	*part->memtable = *origin->memtable;
-	memtable_init(origin->memtable,
-	              origin->memtable->size_page,
-	              origin->memtable->size_split,
-	              origin->comparator);
+	part->in_storage = true;
 
 	ref_unlock(ref, LOCK_ACCESS);
 	mutex_unlock(&self->lock);
 
+	// complete
 	engine_unlock(self, ref, LOCK_SERVICE);
+}
 
-	// free previous partition
-	part_free(part);
+void
+engine_upload(Engine* self, uint64_t min, bool if_exists)
+{
+	// find the original partition
+	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
+	if (unlikely(! ref))
+	{
+		if (! if_exists)
+			error("upload: partition <%" PRIu64 "> not found", min);
+		return;
+	}
+	auto part = ref->part;
+
+	// get the original partition storage
+	auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
+	assert(storage);
+
+	if (! storage->cloud)
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		error("upload: partition <%" PRIu64 "> storage has no associated cloud", min);
+	}
+
+	// partition already on cloud
+	if (part->in_cloud)
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		return;
+	}
+
+	// download and open partition file
+	Exception e;
+	if (try(&e)) {
+		part_upload(part, storage->cloud);
+	}
+	if (catch(&e))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		rethrow();
+	}
+
+	// update partition state
+	mutex_lock(&self->lock);
+	ref_lock(ref, LOCK_ACCESS);
+
+	part->in_cloud = true;
+
+	ref_unlock(ref, LOCK_ACCESS);
+	mutex_unlock(&self->lock);
+
+	// complete
+	engine_unlock(self, ref, LOCK_SERVICE);
+}
+
+void
+engine_offload(Engine* self, uint64_t min, bool from_storage, bool if_exists)
+{
+	// find the original partition
+	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
+	if (unlikely(! ref))
+	{
+		if (! if_exists)
+			error("offload: partition <%" PRIu64 "> not found", min);
+		return;
+	}
+	auto part = ref->part;
+
+	// get the original partition storage
+	auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
+	assert(storage);
+
+	if (! storage->cloud)
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		error("offload: partition <%" PRIu64 "> storage has no associated cloud", min);
+	}
+
+	// remove from storage or cloud
+	if (from_storage)
+	{
+		// already removed
+		if (! part->in_storage)
+		{
+			engine_unlock(self, ref, LOCK_SERVICE);
+			return;
+		}
+
+		// partition not in cloud
+		if (! part->in_cloud)
+		{
+			engine_unlock(self, ref, LOCK_SERVICE);
+			error("offload: partition <%" PRIu64 "> must uploaded first", min);
+		}
+
+	} else
+	{
+		// already removed
+		if (! part->in_cloud)
+		{
+			engine_unlock(self, ref, LOCK_SERVICE);
+			return;
+		}
+
+		// partition not in storage
+		if (! part->in_storage)
+		{
+			engine_unlock(self, ref, LOCK_SERVICE);
+			error("offload: partition <%" PRIu64 "> must downloaded first", min);
+		}
+	}
+
+	// execute removal
+	Exception e;
+	if (try(&e)) {
+		part_offload(part, storage->cloud, from_storage);
+	}
+	if (catch(&e))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		rethrow();
+	}
+
+	// update partition state
+	mutex_lock(&self->lock);
+	ref_lock(ref, LOCK_ACCESS);
+
+	if (from_storage)
+		part->in_storage = false;
+	else
+		part->in_cloud = false;
+
+	ref_unlock(ref, LOCK_ACCESS);
+	mutex_unlock(&self->lock);
+
+	// complete
+	engine_unlock(self, ref, LOCK_SERVICE);
 }

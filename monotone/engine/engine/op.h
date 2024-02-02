@@ -16,3 +16,5 @@ void engine_rebalance(Engine*, Refresh*);
 void engine_checkpoint(Engine*);
 
 void engine_download(Engine*, uint64_t, bool);
+void engine_upload(Engine*, uint64_t, bool);
+void engine_offload(Engine*, uint64_t, bool, bool);
