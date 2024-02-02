@@ -31,3 +31,19 @@ id_path_incomplete(Id* self, Source* source, char* path)
 	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".%020" PRIu64,
 	               self->min, self->id, self->id_parent);
 }
+
+static inline void
+id_path_cloud(Id* self, Source* source, char* path)
+{
+	// <source_path>/<min>.<id>.cloud
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".cloud",
+	               self->min, self->id);
+}
+
+static inline void
+id_path_cloud_incomplete(Id* self, Source* source, char* path)
+{
+	// <source_path>/<min>.<id>.cloud.incomplete
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".cloud.incomplete",
+	               self->min, self->id);
+}
