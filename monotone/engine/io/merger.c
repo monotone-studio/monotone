@@ -103,6 +103,7 @@ merger_execute(Merger* self, MergerReq* req)
 
 	// allocate and create incomplete partition file
 	Id id = origin->id;
+	id.psn = config_psn_next();
 	self->part = part_allocate(origin->comparator, req->source, &id);
 	part_create(self->part);
 
