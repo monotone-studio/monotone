@@ -27,15 +27,13 @@ struct IndexRegion
 struct Index
 {
 	uint32_t crc;
-	uint64_t id;
-	uint64_t id_min;
-	uint64_t id_max;
+	Id       id;
 	uint32_t size;
 	uint64_t size_total;
 	uint64_t size_total_origin;
 	uint32_t count;
 	uint64_t count_total;
-	uint64_t lsn_max;
+	uint64_t lsn;
 	uint8_t  compression;
 	uint32_t reserved[4];
 	// u32 offset[]

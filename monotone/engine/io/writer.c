@@ -83,12 +83,7 @@ writer_start(Writer* self, Source* source, File* file)
 }
 
 void
-writer_stop(Writer*  self,
-            uint64_t id,
-            uint64_t id_min,
-            uint64_t id_max,
-            uint64_t lsn_max,
-            bool     sync)
+writer_stop(Writer*  self, Id* id, uint64_t lsn, bool sync)
 {
 	if (! index_writer_started(&self->index_writer))
 		return;
@@ -96,7 +91,7 @@ writer_stop(Writer*  self,
 	if (region_writer_started(&self->region_writer))
 		writer_stop_region(self);
 
-	index_writer_stop(&self->index_writer, id, id_min, id_max, lsn_max);
+	index_writer_stop(&self->index_writer, id, lsn);
 
 	// write index
 	iov_reset(&self->iov);
