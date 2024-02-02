@@ -67,7 +67,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 
 	// create new partition
 	auto psn  = config_psn_next();
-	PartId id =
+	Id id =
 	{
 		.id        = psn,
 		.id_parent = psn,

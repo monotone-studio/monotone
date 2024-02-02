@@ -89,7 +89,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 		if (engine_recover_id(entry->d_name, &min, &psn, &psn_parent) == -1)
 			continue;
 
-		PartId id =
+		Id id =
 		{
 			.id        = psn,
 			.id_parent = psn_parent,
