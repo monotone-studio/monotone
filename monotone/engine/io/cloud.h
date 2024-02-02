@@ -14,11 +14,10 @@ struct CloudIf
 	Str    name;
 	Cloud* (*create)(Source*);
 	void   (*free)(Cloud*);
-	void   (*download)(Cloud*, uint64_t min, uint64_t id);
-	void   (*upload)(Cloud*, uint64_t min, uint64_t id);
-	void   (*remove)(Cloud*, uint64_t min, uint64_t id);
-	void   (*read)(Cloud*, uint64_t min, uint64_t id, Buf*, uint32_t size,
-	               uint64_t offset);
+	void   (*download)(Cloud*, Id*);
+	void   (*upload)(Cloud*, Id*);
+	void   (*remove)(Cloud*, Id*);
+	void   (*read)(Cloud*, Id*, Buf*, uint32_t size, uint64_t offset);
 	List   link;
 };
 
@@ -48,27 +47,26 @@ cloud_free(Cloud* self)
 }
 
 static inline void
-cloud_download(Cloud* self, uint64_t min, uint64_t id)
+cloud_download(Cloud* self, Id* id)
 {
-	self->iface->download(self, min, id);
+	self->iface->download(self, id);
 }
 
 static inline void
-cloud_upload(Cloud* self, uint64_t min, uint64_t id)
+cloud_upload(Cloud* self, Id* id)
 {
-	self->iface->upload(self, min, id);
+	self->iface->upload(self, id);
 }
 
 static inline void
-cloud_remove(Cloud* self, uint64_t min, uint64_t id)
+cloud_remove(Cloud* self, Id* id)
 {
-	self->iface->remove(self, min, id);
+	self->iface->remove(self, id);
 }
 
 static inline void
-cloud_read(Cloud* self, uint64_t min, uint64_t id, Buf* buf,
-           uint32_t size,
+cloud_read(Cloud* self, Id* id, Buf* buf, uint32_t size,
            uint64_t offset)
 {
-	self->iface->read(self, min, id, buf, size, offset);
+	self->iface->read(self, id, buf, size, offset);
 }
