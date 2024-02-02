@@ -15,6 +15,8 @@ part_allocate(Comparator* comparator, Source* source, Id* id)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->refresh    = false;
+	self->in_storage = false;
+	self->in_cloud   = false;
 	self->id         = *id;
 	self->index      = NULL;
 	self->source     = source;
@@ -39,7 +41,7 @@ part_free(Part* self)
 }
 
 void
-part_open(Part* self)
+part_open(Part* self, bool read_index)
 {
 	// open data file and read index
 
@@ -67,8 +69,14 @@ part_open(Part* self)
 		error("partition: file '%s' size mismatch",
 		      str_of(&self->file.path));
 
+	if (! read_index)
+	{
+		assert(self->index);
+		self->in_storage = true;
+		return;
+	}
+
 	// read index
-	buf_reset(&self->index_buf);
 	file_pread_buf(&self->file, &self->index_buf, eof.size, offset);
 
 	// set and validate index
@@ -88,6 +96,8 @@ part_open(Part* self)
 			error("partition: file '%s' crc mismatch",
 			      str_of(&self->file.path));
 	}
+
+	self->in_storage = true;
 }
 
 void
@@ -124,30 +134,165 @@ part_rename(Part* self)
 		fs_rename(path, "%s", path_to);
 }
 
-Part*
-part_download(Cloud*      cloud,
-              Comparator* comparator,
-              Source*     source,
-              Id*         id)
+void
+part_cloud_open(Part* self)
 {
-	Part* part = NULL;
+	// open and read cloud file as index
+
+	// <source_path>/<min>.<id>.cloud
+	char path[PATH_MAX];
+	id_path_cloud(&self->id, self->source, path);
+
+	File file;
+	file_init(&file);
+	file_open(&file, path);
+	guard(close, file_close, &file);
+
+	if (unlikely(file.size < (sizeof(Index))))
+		error("partition: file '%s' has incorrect size",
+		      str_of(&self->file.path));
+
+	// read index
+	file_pread_buf(&file, &self->index_buf, file.size, 0);
+
+	// set and validate index
+	self->index = (Index*)self->index_buf.start;
+
+	// check crc
+	if (self->source->crc)
+	{
+		uint32_t crc;
+		crc = crc32(0, self->index_buf.start + sizeof(uint32_t),
+		            buf_size(&self->index_buf) - sizeof(uint32_t));
+		if (crc != self->index->crc)
+			error("partition: cloud file '%s' crc mismatch",
+			      str_of(&file.path));
+	}
+
+	self->in_cloud = true;
+}
+
+void
+part_cloud_create(Part* self)
+{
+	// <source_path>/<min>.<id>.cloud.incomplete
+	char path[PATH_MAX];
+	id_path_cloud_incomplete(&self->id, self->source, path);
+
+	// create, write and sync incomplete cloud file
+	File file;
+	file_init(&file);
+	file_create(&file, path);
+	guard(close, file_close, &file);
+	file_write(&file, &self->index_buf, buf_size(&self->index_buf));
+	file_sync(&file);
+	file_close(&file);
+}
+
+void
+part_cloud_delete(Part* self, bool complete)
+{
+	// <source_path>/<min>.<psn>.cloud
+	// <source_path>/<min>.<psn>.cloud.incomplete
+	char path[PATH_MAX];
+	if (complete)
+		id_path_cloud(&self->id, self->source, path);
+	else
+		id_path_cloud_incomplete(&self->id, self->source, path);
+	if (fs_exists("%s", path))
+		fs_unlink("%s", path);
+}
+
+void
+part_cloud_rename(Part* self)
+{
+	char path[PATH_MAX];
+	char path_to[PATH_MAX];
+	id_path_cloud_incomplete(&self->id, self->source, path);
+	id_path_cloud(&self->id, self->source, path_to);
+	if (fs_exists("%s", path))
+		fs_rename(path, "%s", path_to);
+}
+
+void
+part_download(Part* self, Cloud* cloud)
+{
+	if (self->in_storage)
+		return;
+
+	// download partition file locally
+	cloud_download(cloud, &self->id);
+
+	// open
+	part_open(self, false);
+}
+
+void
+part_upload(Part* self, Cloud* cloud)
+{
+	if (self->in_cloud)
+		return;
+
+	assert(self->in_storage);
 	Exception e;
 	if (try(&e))
 	{
-		// download partition file locally
-		cloud_download(cloud, id);
+		// create incomplete cloud file (index dump)
+		part_cloud_create(self);
 
-		// open
-		part = part_allocate(comparator, source, id);
-		part_open(part);
+		// upload partition file to cloud
+		cloud_upload(cloud, &self->id);
 
-		// todo: remove index file
+		// rename partition cloud file as completed
+		part_cloud_rename(self);
 	}
 	if (catch(&e))
 	{
-		if (part)
-			part_free(part);
+		part_cloud_delete(self, false);
 		rethrow();
 	}
-	return part;
+
+	self->in_cloud = true;
+}
+
+static void
+part_offload_local(Part* self)
+{
+	// partition must exists on cloud
+	if (! self->in_cloud)
+	{
+		// error
+		return;
+	}
+
+	part_delete(self, true);
+	file_close(&self->file);
+	self->in_storage = false;
+}
+
+static void
+part_offload_cloud(Part* self, Cloud* cloud)
+{
+	// partition must exists locally
+	if (! self->in_storage)
+	{
+		// error
+		return;
+	}
+
+	// remove cloud file first
+	part_cloud_delete(self, true);
+	self->in_cloud = false;
+
+	// remove from cloud
+	cloud_remove(cloud, &self->id);
+}
+
+void
+part_offload(Part* self, Cloud* cloud, bool local)
+{
+	if (local)
+		part_offload_local(self);
+	else
+		part_offload_cloud(self, cloud);
 }
