@@ -25,6 +25,7 @@ part_iterator_open_region(PartIterator* self, Row* row)
 {
 	// read region from file
 	Reader* reader = &self->reader;
+	reader->id                    = &self->part->id;
 	reader->index                 = self->part->index;
 	reader->index_region          = self->current;
 	reader->region                = NULL;
