@@ -10,40 +10,37 @@ typedef struct Id Id;
 
 struct Id
 {
-	uint64_t id;
-	uint64_t id_parent;
 	uint64_t min;
 	uint64_t max;
-};
+} packed;
 
 static inline void
 id_path(Id* self, Source* source, char* path)
 {
-	// <source_path>/<min>.<id>
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64,
-	               self->min, self->id);
+	// <source_path>/<min>
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64, self->min);
 }
 
 static inline void
 id_path_incomplete(Id* self, Source* source, char* path)
 {
-	// <source_path>/<min>.<id>.<id_parent>
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".%020" PRIu64,
-	               self->min, self->id, self->id_parent);
+	// <source_path>/<min>.incomplete
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".incomplete",
+	               self->min);
 }
 
 static inline void
 id_path_cloud(Id* self, Source* source, char* path)
 {
-	// <source_path>/<min>.<id>.cloud
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".cloud",
-	               self->min, self->id);
+	// <source_path>/<min>.cloud
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".cloud",
+	               self->min);
 }
 
 static inline void
 id_path_cloud_incomplete(Id* self, Source* source, char* path)
 {
-	// <source_path>/<min>.<id>.cloud.incomplete
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".%020" PRIu64 ".cloud.incomplete",
-	               self->min, self->id);
+	// <source_path>/<min>.cloud.incomplete
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".cloud.incomplete",
+	               self->min);
 }
