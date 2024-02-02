@@ -93,7 +93,7 @@ merger_execute(Merger* self, MergerReq* req)
 
 	// prepare partition iterator
 	part_iterator_reset(&self->part_iterator);
-	part_iterator_open(&self->part_iterator, origin, NULL);
+	part_iterator_open(&self->part_iterator, NULL, origin, NULL);
 
 	// prepare merge iterator
 	auto it = &self->merge_iterator;

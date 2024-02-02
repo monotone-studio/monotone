@@ -15,6 +15,7 @@ struct PartIterator
 	IndexIterator  index_iterator;
 	IndexRegion*   current;
 	Part*          part;
+	Cloud*         cloud;
 	Reader         reader;
 };
 
@@ -28,7 +29,7 @@ part_iterator_open_region(PartIterator* self, Row* row)
 	reader->index_region = self->current;
 	reader->region       = NULL;
 	reader->file         = &self->part->file;
-	reader->cloud        = NULL;
+	reader->cloud        = self->cloud;
 	reader_execute(reader);
 
 	// prepare region iterator
@@ -39,8 +40,9 @@ part_iterator_open_region(PartIterator* self, Row* row)
 }
 
 hot static inline bool
-part_iterator_open(PartIterator* self, Part* part, Row* row)
+part_iterator_open(PartIterator* self, Cloud* cloud, Part* part, Row* row)
 {
+	self->cloud   = cloud;
 	self->part    = part;
 	self->current = NULL;
 
