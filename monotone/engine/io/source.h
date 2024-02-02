@@ -147,9 +147,6 @@ source_read(uint8_t** pos)
 
 	// sync
 	data_skip(pos);
-
-	// sync
-	data_skip(pos);
 	data_read_bool(pos, &self->sync);
 
 	// crc
@@ -175,7 +172,7 @@ static inline void
 source_write(Source* self, Buf* buf)
 {
 	// map
-	encode_map(buf, 7);
+	encode_map(buf, 8);
 
 	// name
 	encode_raw(buf, "name", 4);
@@ -189,7 +186,7 @@ source_write(Source* self, Buf* buf)
 	encode_raw(buf, "cloud", 5);
 	encode_string(buf, &self->cloud);
 
-	// reference
+	// sync
 	encode_raw(buf, "sync", 4);
 	encode_bool(buf, self->sync);
 
