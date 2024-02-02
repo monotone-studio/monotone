@@ -161,7 +161,7 @@ engine_recover(Engine* self)
 		list_foreach(&storage->list)
 		{
 			auto part = list_at(Part, link);
-			part_open(part);
+			part_open(part, true);
 
 			auto ref  = ref_allocate(part->id.min, part->id.max);
 			ref_prepare(ref, &self->lock, &self->cond_var, part);

@@ -57,6 +57,13 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 		return false;
 	}
 
+	// ensure partition exists locally
+	if (! ref->part->in_storage)
+	{
+		engine_unlock(engine, ref, LOCK_SERVICE);
+		error("refresh: partition <%" PRIu64 "> does not exists locally", min);
+	}
+
 	// match storage, if provided by request
 	if (storage)
 	{
