@@ -295,3 +295,21 @@ storage_mgr_find(StorageMgr* self, Str* name)
 	}
 	return NULL;
 }
+
+Part*
+storage_mgr_find_part(StorageMgr* self, Storage* exclude, uint64_t min)
+{
+	list_foreach(&self->list)
+	{
+		auto storage = list_at(Storage, link);
+		if (storage == exclude)
+			continue;
+		list_foreach(&storage->list)
+		{
+			auto part = list_at(Part, link);
+			if (part->id.min == min)
+				return part;
+		}
+	}
+	return NULL;
+}
