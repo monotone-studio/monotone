@@ -28,6 +28,19 @@ parse_if_exists(Lex* self)
 	return true;
 }
 
+static inline bool
+parse_if_cloud(Lex* self)
+{
+	if (! lex_if(self, KIF, NULL))
+		return false;
+	Token tk;
+	if (! lex_if(self, KNAME, &tk))
+		error("IF <CLOUD> expected");
+	if (! (str_size(&tk.string) == 5 && !strncasecmp(tk.string.pos, "cloud", 5)))
+		error("IF <CLOUD> expected");
+	return true;
+}
+
 static inline void
 parse_int(Lex* self, Token* name, int64_t* value)
 {
