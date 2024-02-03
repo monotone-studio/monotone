@@ -6,152 +6,32 @@
 // time-series partition
 //
 
-typedef struct CmdPartitionDrop         CmdPartitionDrop;
-typedef struct CmdPartitionDropRange    CmdPartitionDropRange;
-typedef struct CmdPartitionMove         CmdPartitionMove;
-typedef struct CmdPartitionMoveRange    CmdPartitionMoveRange;
-typedef struct CmdPartitionRefresh      CmdPartitionRefresh;
-typedef struct CmdPartitionRefreshRange CmdPartitionRefreshRange;
+typedef struct CmdPartition CmdPartition;
 
-struct CmdPartitionDrop
-{
-	Cmd      cmd;
-	bool     if_exists;
-	uint64_t min;
-};
-
-struct CmdPartitionDropRange
+struct CmdPartition
 {
 	Cmd      cmd;
 	uint64_t min;
 	uint64_t max;
-};
-
-struct CmdPartitionMove
-{
-	Cmd      cmd;
 	bool     if_exists;
-	uint64_t min;
 	Token    storage;
 };
 
-struct CmdPartitionMoveRange
+static inline CmdPartition*
+cmd_partition_of(Cmd* self)
 {
-	Cmd      cmd;
-	uint64_t min;
-	uint64_t max;
-	Token    storage;
-};
-
-struct CmdPartitionRefresh
-{
-	Cmd      cmd;
-	bool     if_exists;
-	uint64_t min;
-};
-
-struct CmdPartitionRefreshRange
-{
-	Cmd      cmd;
-	uint64_t min;
-	uint64_t max;
-};
-
-static inline CmdPartitionDrop*
-cmd_partition_drop_of(Cmd* self)
-{
-	return (CmdPartitionDrop*)self;
+	return (CmdPartition*)self;
 }
 
-static inline CmdPartitionDropRange*
-cmd_partition_drop_range_of(Cmd* self)
+static inline CmdPartition*
+cmd_partition_allocate(CmdType type)
 {
-	return (CmdPartitionDropRange*)self;
-}
-
-static inline CmdPartitionMove*
-cmd_partition_move_of(Cmd* self)
-{
-	return (CmdPartitionMove*)self;
-}
-
-static inline CmdPartitionMoveRange*
-cmd_partition_move_range_of(Cmd* self)
-{
-	return (CmdPartitionMoveRange*)self;
-}
-
-static inline CmdPartitionRefresh*
-cmd_partition_refresh_of(Cmd* self)
-{
-	return (CmdPartitionRefresh*)self;
-}
-
-static inline CmdPartitionRefreshRange*
-cmd_partition_refresh_range_of(Cmd* self)
-{
-	return (CmdPartitionRefreshRange*)self;
-}
-
-static inline CmdPartitionDrop*
-cmd_partition_drop_allocate(uint64_t min, bool if_exists)
-{
-	CmdPartitionDrop* self;
-	self = cmd_allocate(CMD_PARTITION_DROP, NULL, sizeof(*self));
-	self->min       = min;
-	self->if_exists = if_exists;
-	return self;
-}
-
-static inline CmdPartitionDropRange*
-cmd_partition_drop_range_allocate(uint64_t min, uint64_t max)
-{
-	CmdPartitionDropRange* self;
-	self = cmd_allocate(CMD_PARTITION_DROP_RANGE, NULL, sizeof(*self));
-	self->min = min;
-	self->max = max;
-	return self;
-}
-
-static inline CmdPartitionMove*
-cmd_partition_move_allocate(uint64_t min, Token* storage, bool if_exists)
-{
-	CmdPartitionMove* self;
-	self = cmd_allocate(CMD_PARTITION_MOVE, NULL, sizeof(*self));
-	self->min       = min;
-	self->storage   = *storage;
-	self->if_exists = if_exists;
-	return self;
-}
-
-static inline CmdPartitionMoveRange*
-cmd_partition_move_range_allocate(uint64_t min, uint64_t max, Token* storage)
-{
-	CmdPartitionMoveRange* self;
-	self = cmd_allocate(CMD_PARTITION_MOVE_RANGE, NULL, sizeof(*self));
-	self->min     = min;
-	self->max     = max;
-	self->storage = *storage;
-	return self;
-}
-
-static inline CmdPartitionRefresh*
-cmd_partition_refresh_allocate(uint64_t min, bool if_exists)
-{
-	CmdPartitionRefresh* self;
-	self = cmd_allocate(CMD_PARTITION_REFRESH, NULL, sizeof(*self));
-	self->min       = min;
-	self->if_exists = if_exists;
-	return self;
-}
-
-static inline CmdPartitionRefreshRange*
-cmd_partition_refresh_range_allocate(uint64_t min, uint64_t max)
-{
-	CmdPartitionRefreshRange* self;
-	self = cmd_allocate(CMD_PARTITION_REFRESH_RANGE, NULL, sizeof(*self));
-	self->min = min;
-	self->max = max;
+	CmdPartition* self;
+	self = cmd_allocate(type, NULL, sizeof(*self));
+	self->min       = 0;
+	self->max       = 0;
+	self->if_exists = false;
+	token_init(&self->storage);
 	return self;
 }
 

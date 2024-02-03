@@ -26,7 +26,10 @@ parse_partition_drop(Lex* self)
 	if (! lex_if(self, KINT, &id))
 		error("DROP PARTITION <id>");
 
-	return &cmd_partition_drop_allocate(id.integer, if_exists)->cmd;
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_DROP);
+	cmd->min       = id.integer;
+	cmd->if_exists = if_exists;
+	return &cmd->cmd;
 }
 
 Cmd*
@@ -51,7 +54,10 @@ parse_partition_drop_range(Lex* self)
 	if (! lex_if(self, KINT, &max))
 		error("DROP PARTITIONS FROM min TO <max>");
 
-	return &cmd_partition_drop_range_allocate(min.integer, max.integer)->cmd;
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_DROP_RANGE);
+	cmd->min = min.integer;
+	cmd->max = max.integer;
+	return &cmd->cmd;
 }
 
 Cmd*
@@ -76,7 +82,11 @@ parse_partition_move(Lex* self)
 	if (! lex_if(self, KNAME, &name))
 		error("MOVE PARTITION id INTO <name>");
 
-	return &cmd_partition_move_allocate(id.integer, &name, if_exists)->cmd;
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_MOVE);
+	cmd->min       = id.integer;
+	cmd->if_exists = if_exists;
+	cmd->storage   = name;
+	return &cmd->cmd;
 }
 
 Cmd*
@@ -110,7 +120,11 @@ parse_partition_move_range(Lex* self)
 	if (! lex_if(self, KNAME, &name))
 		error("MOVE PARTITIONS FROM min TO max INTO <name>");
 
-	return &cmd_partition_move_range_allocate(min.integer, max.integer, &name)->cmd;
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_MOVE_RANGE);
+	cmd->min     = min.integer;
+	cmd->max     = max.integer;
+	cmd->storage = name;
+	return &cmd->cmd;
 }
 
 Cmd*
@@ -126,7 +140,10 @@ parse_partition_refresh(Lex* self)
 	if (! lex_if(self, KINT, &id))
 		error("REFRESH PARTITION <id>");
 
-	return &cmd_partition_refresh_allocate(id.integer, if_exists)->cmd;
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_REFRESH);
+	cmd->min       = id.integer;
+	cmd->if_exists = if_exists;
+	return &cmd->cmd;
 }
 
 Cmd*
@@ -151,5 +168,8 @@ parse_partition_refresh_range(Lex* self)
 	if (! lex_if(self, KINT, &max))
 		error("REFRESH PARTITIONS FROM min TO <max>");
 
-	return &cmd_partition_refresh_range_allocate(min.integer, max.integer)->cmd;
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_REFRESH_RANGE);
+	cmd->min = min.integer;
+	cmd->max = max.integer;
+	return &cmd->cmd;
 }
