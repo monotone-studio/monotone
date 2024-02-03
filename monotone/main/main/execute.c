@@ -205,7 +205,7 @@ execute_conveyor_alter(Executable* self)
 static void
 execute_partition_drop(Executable* self)
 {
-	auto cmd = cmd_partition_drop_of(self->cmd);
+	auto cmd = cmd_partition_of(self->cmd);
 
 	// drop partition
 	engine_drop(&self->main->engine, cmd->min, cmd->if_exists);
@@ -214,7 +214,7 @@ execute_partition_drop(Executable* self)
 static void
 execute_partition_drop_range(Executable* self)
 {
-	auto cmd = cmd_partition_drop_range_of(self->cmd);
+	auto cmd = cmd_partition_of(self->cmd);
 
 	// drop partitions
 	engine_drop_range(&self->main->engine, cmd->min, cmd->max);
@@ -223,7 +223,7 @@ execute_partition_drop_range(Executable* self)
 static void
 execute_partition_move(Executable* self)
 {
-	auto cmd = cmd_partition_move_of(self->cmd);
+	auto cmd = cmd_partition_of(self->cmd);
 	auto engine = &self->main->engine;
 
 	// move partition
@@ -243,7 +243,7 @@ execute_partition_move(Executable* self)
 static void
 execute_partition_move_range(Executable* self)
 {
-	auto cmd = cmd_partition_move_range_of(self->cmd);
+	auto cmd = cmd_partition_of(self->cmd);
 	auto engine = &self->main->engine;
 
 	// move partitions
@@ -263,7 +263,7 @@ execute_partition_move_range(Executable* self)
 static void
 execute_partition_refresh(Executable* self)
 {
-	auto cmd = cmd_partition_refresh_of(self->cmd);
+	auto cmd = cmd_partition_of(self->cmd);
 	auto engine = &self->main->engine;
 
 	// refresh partition
@@ -282,7 +282,7 @@ execute_partition_refresh(Executable* self)
 static void
 execute_partition_refresh_range(Executable* self)
 {
-	auto cmd = cmd_partition_refresh_range_of(self->cmd);
+	auto cmd = cmd_partition_of(self->cmd);
 	auto engine = &self->main->engine;
 
 	// refresh partitions
