@@ -18,7 +18,7 @@ struct PartCursor
 };
 
 hot static inline void
-part_cursor_open(PartCursor* self, Cloud* cloud, Part* part, Row* row)
+part_cursor_open(PartCursor* self, Part* part, Row* row)
 {
 	self->part = part;
 
@@ -37,7 +37,7 @@ part_cursor_open(PartCursor* self, Cloud* cloud, Part* part, Row* row)
 	}
 
 	// open part iterator
-	part_iterator_open(&self->part_iterator, cloud, part, row);
+	part_iterator_open(&self->part_iterator, part, row);
 	merge_iterator_add(&self->merge_iterator, &self->part_iterator.iterator);
 
 	// open merge iterator
