@@ -15,7 +15,6 @@ struct PartIterator
 	IndexIterator  index_iterator;
 	IndexRegion*   current;
 	Part*          part;
-	Cloud*         cloud;
 	Reader         reader;
 };
 
@@ -23,26 +22,18 @@ hot static inline bool
 part_iterator_open_region(PartIterator* self, Row* row)
 {
 	// read region from file
-	Reader* reader = &self->reader;
-	reader->id           = &self->part->id;
-	reader->index        = self->part->index;
-	reader->index_region = self->current;
-	reader->region       = NULL;
-	reader->file         = &self->part->file;
-	reader->cloud        = self->cloud;
-	reader_execute(reader);
+	auto region = reader_execute(&self->reader, self->part, self->current);
 
 	// prepare region iterator
 	region_iterator_reset(&self->region_iterator);
-	return region_iterator_open(&self->region_iterator, reader->region,
+	return region_iterator_open(&self->region_iterator, region,
 	                             self->part->comparator,
 	                             row);
 }
 
 hot static inline bool
-part_iterator_open(PartIterator* self, Cloud* cloud, Part* part, Row* row)
+part_iterator_open(PartIterator* self, Part* part, Row* row)
 {
-	self->cloud   = cloud;
 	self->part    = part;
 	self->current = NULL;
 
