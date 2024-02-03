@@ -74,8 +74,8 @@ engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 	}
 }
 
-bool
-engine_truncate(Engine* self, uint64_t min, bool if_exists)
+static bool
+engine_drop_truncate(Engine* self, uint64_t min, bool if_exists)
 {
 	// find the original partition
 	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
@@ -85,6 +85,7 @@ engine_truncate(Engine* self, uint64_t min, bool if_exists)
 			error("truncate: partition <%" PRIu64 "> not found", min);
 		return false;
 	}
+	auto part = ref->part;
 
 	// get access lock
 	mutex_lock(&self->lock);
@@ -94,19 +95,19 @@ engine_truncate(Engine* self, uint64_t min, bool if_exists)
 	Exception e;
 	if (try(&e))
 	{
-		if (part_has(ref->part, PART_FILE_CLOUD))
+		if (part_has(part, PART_FILE_CLOUD))
 		{
-			part_offload(ref->part, false);
-			part_unset(ref->part, PART_FILE_CLOUD);
+			part_offload(part, false);
+			part_unset(part, PART_FILE_CLOUD);
 		}
-
-		if (part_has(ref->part, PART_FILE))
+		if (part_has(part, PART_FILE))
 		{
-			part_offload(ref->part, true);
-			part_unset(ref->part, PART_FILE);
+			part_offload(part, true);
+			part_unset(part, PART_FILE);
 		}
-
-		memtable_free(ref->part->memtable);
+		buf_reset(&part->index_buf);
+		part->index = NULL;
+		memtable_free(part->memtable);
 	}
 
 	ref_unlock(ref, LOCK_ACCESS);
@@ -118,27 +119,6 @@ engine_truncate(Engine* self, uint64_t min, bool if_exists)
 		rethrow();
 
 	return true;
-}
-
-void
-engine_truncate_range(Engine* self, uint64_t min, uint64_t max)
-{
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_truncate(self, ref_min, true);
-		min = ref_max;
-	}
 }
 
 static bool
@@ -186,7 +166,7 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 	{
 		// in order to avoid heavy exclusive lock during drop,
 		// do truncate first
-		auto exists = engine_truncate(self, min, if_exists);
+		auto exists = engine_drop_truncate(self, min, if_exists);
 		if (! exists)
 			break;
 
