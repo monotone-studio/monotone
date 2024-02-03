@@ -51,8 +51,6 @@ part_upload(Part* self)
 void
 part_offload(Part* self, bool from_storage)
 {
-	assert(self->cloud);
-
 	// remove from storage
 	if (from_storage)
 	{
@@ -63,6 +61,7 @@ part_offload(Part* self, bool from_storage)
 	}
 
 	// remove from cloud
+	assert(self->cloud);
 
 	// remove cloud file first
 	part_file_cloud_delete(self, true);
