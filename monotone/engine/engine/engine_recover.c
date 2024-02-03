@@ -13,9 +13,12 @@
 #include <monotone_engine.h>
 
 static inline int
-engine_recover_id_read(char** pos, uint64_t* id)
+engine_recover_id(const char* path, uint64_t* id)
 {
-	char* path = *pos;
+	// <min>
+	// <min>.incomplete
+	// <min>.cloud
+	// <min>.cloud.incomplete
 	*id = 0;
 	while (*path && *path != '.')
 	{
@@ -24,40 +27,20 @@ engine_recover_id_read(char** pos, uint64_t* id)
 		*id = (*id * 10) + *path - '0';
 		path++;
 	}
-	*pos = path;
-	return 0;
-}
 
-static inline int
-engine_recover_id(char*     path,
-                  uint64_t* min,
-                  uint64_t* id,
-                  uint64_t* id_parent)
-{
-	// <min>.<id>
-	// <min>.<id>.<id_parent>
-
-	// min
-	if (engine_recover_id_read(&path, min) == -1)
-		return -1;
-	if (*path != '.')
-		return -1;
-	path++;
-
-	// id
-	if (engine_recover_id_read(&path, id) == -1)
-		return -1;
+	int state = -1;
 	if (! *path)
-	{
-		*id_parent = *id;
-		return 0;
-	}
-	if (*path != '.')
-		return -1;
-	path++;
-
-	// id_parent
-	return engine_recover_id_read(&path, id_parent);
+		state = PART_FILE;
+	else
+	if (! strcmp(path, ".incomplete"))
+		state = PART_FILE_INCOMPLETE;
+	else
+	if (! strcmp(path, ".cloud"))
+		state = PART_FILE_CLOUD;
+	else
+	if (! strcmp(path, ".cloud.incomplete"))
+		state = PART_FILE_CLOUD_INCOMPLETE;
+	return state;
 }
 
 static void
@@ -81,56 +64,98 @@ engine_recover_storage(Engine* self, Storage* storage)
 		if (entry->d_name[0] == '.')
 			continue;
 
-		// <min>.<id>
-		// <min>.<id>.<id_parent>
-		uint64_t min        = 0;
-		uint64_t psn        = 0;
-		uint64_t psn_parent = 0;
-		if (engine_recover_id(entry->d_name, &min, &psn, &psn_parent) == -1)
-			continue;
-
-		Id id =
+		// <min>
+		// <min>.incomplete
+		// <min>.cloud
+		// <min>.cloud.incomplete
+		uint64_t min;
+		auto state = engine_recover_id(entry->d_name, &min);
+		if (state == -1)
 		{
-			.id        = psn,
-			.id_parent = psn_parent,
-			.min       = min,
-			.max       = min + config_interval()
-		};
-		auto part = part_allocate(self->comparator, storage->source, &id);
-		storage_add(storage, part);
+			log("storage: skipping unknown file: '%s/%s'",
+			    path, entry->d_name);
+			continue;
+		}
+
+		// find or create partition object
+		auto part = storage_find(storage, min);
+		if (part == NULL)
+		{
+			Id id =
+			{
+				.min = min,
+				.max = min + config_interval(),
+				.psn = 0
+			};
+			auto part = part_allocate(self->comparator, storage->source, &id);
+			storage_add(storage, part);
+		}
+		part_set(part, state);
 	}
 }
 
 static void
 engine_recover_validate(Engine* self, Storage* storage)
 {
-	auto storage_mgr = &self->storage_mgr;
 	list_foreach_safe(&storage->list)
 	{
 		auto part = list_at(Part, link);
 
-		// sync psn
-		config_psn_follow(part->id.id);
-		config_psn_follow(part->id.id_parent);
-
-		// <min>.<id>.<id_parent>
-		if (part->id.id != part->id.id_parent)
+		// remove incomplete cloud file
+		if (part_has(part, PART_FILE_CLOUD_INCOMPLETE))
 		{
-			auto parent = storage_mgr_find_part(storage_mgr, part->id.id_parent);
-			if (parent)
+			part_file_cloud_delete(part, false);
+			part_unset(part, PART_FILE_CLOUD_INCOMPLETE);
+		}
+
+		switch (part->state) {
+		case PART_FILE:
+		case PART_FILE | PART_FILE_CLOUD:
+			// normal state
+			break;
+
+		// crash recovery cases
+		case PART_FILE | PART_FILE_INCOMPLETE:
+		case PART_FILE | PART_FILE_CLOUD | PART_FILE_INCOMPLETE:
+			// remove incomplete file
+			part_file_delete(part, false);
+			part_unset(part, PART_FILE_INCOMPLETE);
+			break;
+
+		case PART_FILE_INCOMPLETE:
+		{
+			// ensure partition does not exists on other storages
+			auto ref = storage_mgr_find_part(&self->storage_mgr, storage, part->id.min);
+			if (ref)
 			{
+				if (! part_has(ref, PART_FILE))
+					error("partition <%" PRIu64"> has unexpected state: %d",
+					      ref->id.min, ref->state);
+
 				// parent still exists, remove incomplete partition
 				storage_remove(storage, part);
-				part_delete(part, true);
+				part_file_delete(part, false);
 				part_free(part);
 				continue;
 			}
 
-			// parent has been removed after sync during compaction
+			// rename
+			part_file_complete(part);
+			part_unset(part, PART_FILE_INCOMPLETE);
+			break;
+		}
+		case PART_FILE_INCOMPLETE | PART_FILE_CLOUD:
+			// this can happen only on the same storage
 
-			// rename to completion
-			part_rename(part);
-			part->id.id_parent = part->id.id;
+			// rename
+			part_file_complete(part);
+			part_unset(part, PART_FILE_INCOMPLETE);
+			break;
+
+		default:
+			error("partition <%" PRIu64"> has unexpected state: %d",
+			      part->id.min, part->state);
+			break;
 		}
 	}
 }
@@ -161,11 +186,23 @@ engine_recover(Engine* self)
 		list_foreach(&storage->list)
 		{
 			auto part = list_at(Part, link);
-			part_open(part, true);
 
-			auto ref  = ref_allocate(part->id.min, part->id.max);
+			// open partition or cloud file, read index
+			if (part_has(part, PART_FILE))
+				part_file_open(part, true);
+			else
+			if (part_has(part, PART_FILE_CLOUD))
+				part_file_cloud_open(part);
+			else
+				abort();
+
+			// sync psn
+			part->id.psn = part->index->id.psn;
+			config_psn_follow(part->id.psn);
+
+			// register partition reference
+			auto ref = ref_allocate(part->id.min, part->id.max);
 			ref_prepare(ref, &self->lock, &self->cond_var, part);
-
 			mapping_add(&self->mapping, &ref->slice);
 		}
 	}

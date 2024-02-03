@@ -66,13 +66,11 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	guard(guard, ref_free, ref);
 
 	// create new partition
-	auto psn  = config_psn_next();
 	Id id =
 	{
-		.id        = psn,
-		.id_parent = psn,
-		.min       = min,
-		.max       = max
+		.min = min,
+		.max = max,
+		.psn = config_psn_next()
 	};
 	auto part = part_allocate(self->comparator, NULL, &id);
 	ref_prepare(ref, &self->lock, &self->cond_var, part);

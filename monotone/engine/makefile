@@ -17,14 +17,15 @@ CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-engine.a
 OBJECTS        = \
                  io/memtable.o \
-                 io/part.o \
+                 io/part_file.o \
+                 io/part_op.o \
                  io/writer.o \
                  io/merger.o \
                  storage/storage_mgr.o \
                  storage/conveyor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
-                 engine/write.o \
+#                engine/write.o \
                  engine/refresh.o \
                  engine/op.o \
                  engine/worker.o \
