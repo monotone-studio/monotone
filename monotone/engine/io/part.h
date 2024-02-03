@@ -10,6 +10,7 @@ typedef struct Part Part;
 
 enum
 {
+	PART_FILE_NONE             = 0,
 	PART_FILE                  = 1,
 	PART_FILE_INCOMPLETE       = 2,
 	PART_FILE_CLOUD            = 4,
@@ -39,7 +40,7 @@ part_allocate(Comparator* comparator, Source* source, Id* id)
 	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->id         = *id;
 	self->refresh    = false;
-	self->state      = 0;
+	self->state      = PART_FILE_NONE;
 	self->index      = NULL;
 	self->cloud      = NULL;
 	self->source     = source;
@@ -88,7 +89,7 @@ part_set_cloud(Part* self, Cloud* cloud)
 }
 
 static inline Memtable*
-part_memtable_of(Part* self, Memtable** prev)
+part_memtable(Part* self, Memtable** prev)
 {
 	if (self->memtable == &self->memtable_a)
 		*prev = &self->memtable_b;

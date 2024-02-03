@@ -24,7 +24,7 @@ part_cursor_open(PartCursor* self, Cloud* cloud, Part* part, Row* row)
 
 	// open memtable iterators
 	Memtable* memtable_prev;
-	auto memtable = part_memtable_of(part, &memtable_prev);
+	auto memtable = part_memtable(part, &memtable_prev);
 	if (memtable->count > 0)
 	{
 		memtable_iterator_open(&self->memtable_iterator_a, memtable, row);
