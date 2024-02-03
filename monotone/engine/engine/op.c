@@ -52,13 +52,76 @@ engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 	refresh_run(refresh, min, storage, if_exists);
 }
 
+bool
+engine_truncate(Engine* self, uint64_t min, bool if_exists)
+{
+	// find the original partition
+	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
+	if (unlikely(! ref))
+	{
+		if (! if_exists)
+			error("truncate: partition <%" PRIu64 "> not found", min);
+		return false;
+	}
+
+	// get access lock
+	mutex_lock(&self->lock);
+	ref_lock(ref, LOCK_ACCESS);
+
+	// delete partition file and free
+	Exception e;
+	if (try(&e))
+	{
+		if (part_has(ref->part, PART_FILE_CLOUD))
+		{
+			part_offload(ref->part, false);
+			part_unset(ref->part, PART_FILE_CLOUD);
+		}
+
+		if (part_has(ref->part, PART_FILE))
+		{
+			part_offload(ref->part, true);
+			part_unset(ref->part, PART_FILE);
+		}
+
+		memtable_free(ref->part->memtable);
+	}
+
+	ref_unlock(ref, LOCK_ACCESS);
+	mutex_unlock(&self->lock);
+
+	engine_unlock(self, ref, LOCK_SERVICE);
+
+	if (catch(&e))
+		rethrow();
+
+	return true;
+}
+
+void
+engine_truncate_range(Engine* self, uint64_t min, uint64_t max)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_truncate(self, ref_min, true);
+		min = ref_max;
+	}
+}
+
 void
 engine_drop(Engine* self, uint64_t min, bool if_exists)
 {
-	(void)self;
-	(void)min;
-	(void)if_exists;
-#if 0
 	// take exclusive control lock
 	control_lock_exclusive();
 
@@ -80,12 +143,22 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->source->name);
 	storage_remove(storage, ref->part);
 
-	control_unlock();
-
 	// delete partition file and free
-	part_file_delete(ref->part, true);
+	Exception e;
+	if (try(&e))
+	{
+		if (part_has(ref->part, PART_FILE_CLOUD))
+			part_offload(ref->part, false);
+
+		if (part_has(ref->part, PART_FILE))
+			part_offload(ref->part, true);
+	}
+	if (catch(&e))
+	{ }
+
 	ref_free(ref);
-#endif
+
+	control_unlock();
 }
 
 void
@@ -309,8 +382,13 @@ engine_upload(Engine* self, uint64_t min,
 		return;
 	}
 
-	// todo:
-	assert(part_has(part, PART_FILE));
+	// ensure partition file exists locally
+	if (! part_has(part, PART_FILE))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		error("upload: partition <%" PRIu64 "> file not yet exists", min);
+		return;
+	}
 
 	// create cloud file and upload data file
 	Exception e;
