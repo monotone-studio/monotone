@@ -25,19 +25,9 @@ engine_cursor_open_part(EngineCursor* self, uint64_t min, Row* key)
 	self->ref = engine_lock(engine, min, LOCK_ACCESS, true, false);
 	if (self->ref == NULL)
 		return;
-	auto part = self->ref->part;
-
-	// match storage and get cloud
-	Cloud* cloud = NULL;
-	if (! str_empty(&part->source->cloud))
-	{
-		auto storage = storage_mgr_find(&engine->storage_mgr, &part->source->name);
-		assert(storage);
-		cloud = storage->cloud;
-	}
 
 	// open partition cursor
-	part_cursor_open(&self->cursor, cloud, part, key);
+	part_cursor_open(&self->cursor, self->ref->part, key);
 	self->current = part_cursor_at(&self->cursor);
 }
 
