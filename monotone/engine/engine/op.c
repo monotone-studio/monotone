@@ -347,6 +347,27 @@ engine_download(Engine* self, uint64_t min,
 }
 
 void
+engine_download_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_download(self, ref_min, true, if_cloud);
+		min = ref_max;
+	}
+}
+
+void
 engine_upload(Engine* self, uint64_t min,
               bool    if_exists,
               bool    if_cloud)
@@ -406,6 +427,27 @@ engine_upload(Engine* self, uint64_t min,
 
 	// complete
 	engine_unlock(self, ref, LOCK_SERVICE);
+}
+
+void
+engine_upload_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_upload(self, ref_min, true, if_cloud);
+		min = ref_max;
+	}
 }
 
 void
@@ -487,4 +529,27 @@ engine_offload(Engine* self, uint64_t min, bool from_storage,
 	engine_unlock(self, ref, LOCK_SERVICE);
 	if (catch(&e))
 		rethrow();
+}
+
+void
+engine_offload_range(Engine* self, uint64_t min, uint64_t max,
+                     bool    from_storage,
+                     bool    if_cloud)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_offload(self, ref_min, from_storage, true, if_cloud);
+		min = ref_max;
+	}
 }

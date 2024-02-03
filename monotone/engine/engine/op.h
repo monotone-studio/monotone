@@ -18,5 +18,8 @@ void engine_checkpoint(Engine*);
 
 // cloud operations
 void engine_download(Engine*, uint64_t, bool, bool);
+void engine_download_range(Engine*, uint64_t, uint64_t, bool);
 void engine_upload(Engine*, uint64_t, bool, bool);
+void engine_upload_range(Engine*, uint64_t, uint64_t, bool);
 void engine_offload(Engine*, uint64_t, bool, bool, bool);
+void engine_offload_range(Engine*, uint64_t, uint64_t, bool, bool);
