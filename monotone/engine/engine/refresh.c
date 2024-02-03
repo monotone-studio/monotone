@@ -58,7 +58,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 	}
 
 	// ensure partition is offloaded
-	if (! part_has(ref->part, PART_FILE_CLOUD))
+	if (part_has(ref->part, PART_FILE_CLOUD))
 	{
 		engine_unlock(engine, ref, LOCK_SERVICE);
 		error("refresh: partition <%" PRIu64 "> does not exists locally", min);
