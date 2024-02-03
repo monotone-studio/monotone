@@ -35,7 +35,7 @@ part_upload(Part* self)
 		// create incomplete cloud file (index dump)
 		part_file_cloud_create(self);
 
-		// upload partition file to cloud
+		// upload partition file to the cloud
 		cloud_upload(self->cloud, &self->id);
 
 		// rename partition cloud file as completed
@@ -56,7 +56,6 @@ part_offload(Part* self, bool from_storage)
 	// remove from storage
 	if (from_storage)
 	{
-		assert(part_has(self, PART_FILE));
 		assert(part_has(self, PART_FILE_CLOUD));
 
 		// remove data file
@@ -66,7 +65,6 @@ part_offload(Part* self, bool from_storage)
 	}
 
 	// remove from cloud
-	assert(part_has(self, PART_FILE_CLOUD));
 	assert(part_has(self, PART_FILE));
 
 	// remove cloud file first

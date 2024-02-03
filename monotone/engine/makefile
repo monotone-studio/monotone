@@ -21,11 +21,11 @@ OBJECTS        = \
                  io/part_op.o \
                  io/writer.o \
                  io/merger.o \
-                 storage/storage_mgr.o \
+#                storage/storage_mgr.o \
                  storage/conveyor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
-#                engine/write.o \
+                 engine/write.o \
                  engine/refresh.o \
                  engine/op.o \
                  engine/worker.o \

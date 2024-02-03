@@ -36,9 +36,6 @@
 #include "io/index_iterator.h"
 #include "io/index_writer.h"
 
-// reader
-#include "io/reader.h"
-
 // writer
 #include "io/writer.h"
 
@@ -46,6 +43,11 @@
 #include "io/part.h"
 #include "io/part_file.h"
 #include "io/part_op.h"
+
+// reader
+#include "io/reader.h"
+
+// partition iterator
 #include "io/part_iterator.h"
 #include "io/part_cursor.h"
 
