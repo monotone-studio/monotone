@@ -13,8 +13,8 @@
 void
 part_download(Part* self)
 {
+	assert(part_has(self, PART_FILE_CLOUD));
 	assert(self->cloud);
-	assert(self->in_cloud);
 
 	// download partition file locally
 	cloud_download(self->cloud, &self->id);
@@ -26,8 +26,8 @@ part_download(Part* self)
 void
 part_upload(Part* self)
 {
+	assert(part_has(self, PART_FILE));
 	assert(self->cloud);
-	assert(self->in_storage);
 
 	Exception e;
 	if (try(&e))
@@ -56,7 +56,8 @@ part_offload(Part* self, bool from_storage)
 	// remove from storage
 	if (from_storage)
 	{
-		assert(self->in_cloud);
+		assert(part_has(self, PART_FILE));
+		assert(part_has(self, PART_FILE_CLOUD));
 
 		// remove data file
 		file_close(&self->file);
@@ -65,7 +66,8 @@ part_offload(Part* self, bool from_storage)
 	}
 
 	// remove from cloud
-	assert(self->in_storage);
+	assert(part_has(self, PART_FILE_CLOUD));
+	assert(part_has(self, PART_FILE));
 
 	// remove cloud file first
 	part_file_cloud_delete(self, true);

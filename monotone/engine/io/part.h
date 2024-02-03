@@ -8,12 +8,19 @@
 
 typedef struct Part Part;
 
+enum
+{
+	PART_FILE                  = 1,
+	PART_FILE_INCOMPLETE       = 2,
+	PART_FILE_CLOUD            = 4,
+	PART_FILE_CLOUD_INCOMPLETE = 8
+};
+
 struct Part
 {
 	Id          id;
 	bool        refresh;
-	bool        in_storage;
-	bool        in_cloud;
+	int         state;
 	Memtable*   memtable;
 	Memtable    memtable_a;
 	Memtable    memtable_b;
@@ -32,8 +39,7 @@ part_allocate(Comparator* comparator, Source* source, Id* id)
 	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->id         = *id;
 	self->refresh    = false;
-	self->in_storage = false;
-	self->in_cloud   = false;
+	self->state      = 0;
 	self->index      = NULL;
 	self->cloud      = NULL;
 	self->source     = source;
@@ -55,6 +61,24 @@ part_free(Part* self)
 	file_close(&self->file);
 	buf_free(&self->index_buf);
 	mn_free(self);
+}
+
+static inline void
+part_set(Part* self, int state)
+{
+	self->state |= state;
+}
+
+static inline void
+part_unset(Part* self, int state)
+{
+	self->state &= ~state;
+}
+
+static inline bool
+part_has(Part* self, int mask)
+{
+	return (self->state & mask) > 0;
 }
 
 static inline void
