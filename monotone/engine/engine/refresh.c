@@ -57,8 +57,8 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 		return false;
 	}
 
-	// ensure partition exists locally
-	if (! ref->part->in_storage)
+	// ensure partition is offloaded
+	if (! part_has(ref->part, PART_FILE_CLOUD))
 	{
 		engine_unlock(engine, ref, LOCK_SERVICE);
 		error("refresh: partition <%" PRIu64 "> does not exists locally", min);
@@ -166,14 +166,14 @@ refresh_end(Refresh* self)
 	// recovery crash case 1
 
 	// remove and free old partition
-	part_delete(origin, true);
+	part_file_delete(origin, true);
 	part_free(origin);
 	self->origin = NULL;
 
 	// recovery crash case 2
 
 	// rename new partition
-	part_rename(part);
+	part_file_complete(part);
 	self->part = NULL;
 }
 
