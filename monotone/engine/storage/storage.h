@@ -60,6 +60,7 @@ storage_add(Storage* self, Part* part)
 {
 	list_append(&self->list, &part->link);
 	self->list_count++;
+	part_set_cloud(part, self->cloud);
 }
 
 static inline void
@@ -68,6 +69,7 @@ storage_remove(Storage* self, Part* part)
 	assert(part->source == self->source);
 	list_unlink(&part->link);
 	self->list_count--;
+	part_set_cloud(part, NULL);
 }
 
 hot static inline Part*
