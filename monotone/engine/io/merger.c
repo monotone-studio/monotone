@@ -105,7 +105,7 @@ merger_execute(Merger* self, MergerReq* req)
 	Id id = origin->id;
 	id.psn = config_psn_next();
 	self->part = part_allocate(origin->comparator, req->source, &id);
-	part_create(self->part);
+	part_file_create(self->part);
 
 	// write partition file
 	merger_write(self, req);

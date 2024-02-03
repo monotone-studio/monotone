@@ -44,6 +44,8 @@
 
 // partition
 #include "io/part.h"
+#include "io/part_file.h"
+#include "io/part_op.h"
 #include "io/part_iterator.h"
 #include "io/part_cursor.h"
 
