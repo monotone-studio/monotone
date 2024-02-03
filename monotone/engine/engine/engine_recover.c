@@ -104,6 +104,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 		// remove incomplete cloud file
 		if (part_has(part, PART_FILE_CLOUD_INCOMPLETE))
 		{
+			// crash during upload
 			part_file_cloud_delete(part, false);
 			part_unset(part, PART_FILE_CLOUD_INCOMPLETE);
 		}
@@ -116,15 +117,16 @@ engine_recover_validate(Engine* self, Storage* storage)
 
 		// crash recovery cases
 		case PART_FILE | PART_FILE_INCOMPLETE:
-		case PART_FILE | PART_FILE_CLOUD | PART_FILE_INCOMPLETE:
-			// remove incomplete file
+			// crash during refresh on the same storage
 			part_file_delete(part, false);
 			part_unset(part, PART_FILE_INCOMPLETE);
 			break;
 
 		case PART_FILE_INCOMPLETE:
 		{
-			// ensure partition does not exists on other storages
+			// crash during refresh on the same storage or move
+
+			// ensure partition does not exists on other storage
 			auto ref = storage_mgr_find_part(&self->storage_mgr, storage, part->id.min);
 			if (ref)
 			{
@@ -144,11 +146,10 @@ engine_recover_validate(Engine* self, Storage* storage)
 			part_unset(part, PART_FILE_INCOMPLETE);
 			break;
 		}
-		case PART_FILE_INCOMPLETE | PART_FILE_CLOUD:
-			// this can happen only on the same storage
 
-			// rename
-			part_file_complete(part);
+		case PART_FILE_INCOMPLETE | PART_FILE_CLOUD:
+			// crash during download
+			part_file_delete(part, false);
 			part_unset(part, PART_FILE_INCOMPLETE);
 			break;
 
