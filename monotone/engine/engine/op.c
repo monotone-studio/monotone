@@ -52,6 +52,28 @@ engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 	refresh_run(refresh, min, storage, if_exists);
 }
 
+void
+engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
+                  Str* storage)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_move(self, refresh, ref_min, storage, true);
+		min = ref_max;
+	}
+}
+
 bool
 engine_truncate(Engine* self, uint64_t min, bool if_exists)
 {
@@ -119,8 +141,8 @@ engine_truncate_range(Engine* self, uint64_t min, uint64_t max)
 	}
 }
 
-void
-engine_drop(Engine* self, uint64_t min, bool if_exists)
+static bool
+engine_drop_reference(Engine* self, uint64_t min)
 {
 	// take exclusive control lock
 	control_lock_exclusive();
@@ -130,56 +152,48 @@ engine_drop(Engine* self, uint64_t min, bool if_exists)
 	if (! slice)
 	{
 		control_unlock();
-		if (! if_exists)
-			error("drop: partition <%" PRIu64 "> does not exists", min);
-		return;
+		return true;
+	}
+	auto ref = ref_of(slice);
+	auto part = ref->part;
+
+	// remove only truncated partitions
+	if (part->state != PART_FILE_NONE)
+	{
+		// retry truncate
+		control_unlock();
+		return false;
 	}
 
 	// remove partition from mapping
 	mapping_remove(&self->mapping, slice);
 
 	// remove partition from storage
-	auto ref = ref_of(slice);
-	auto storage = storage_mgr_find(&self->storage_mgr, &ref->part->source->name);
-	storage_remove(storage, ref->part);
-
-	// delete partition file and free
-	Exception e;
-	if (try(&e))
-	{
-		if (part_has(ref->part, PART_FILE_CLOUD))
-			part_offload(ref->part, false);
-
-		if (part_has(ref->part, PART_FILE))
-			part_offload(ref->part, true);
-	}
-	if (catch(&e))
-	{ }
-
-	ref_free(ref);
+	auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
+	storage_remove(storage, part);
 
 	control_unlock();
+
+	// free
+	ref_free(ref);
+	return true;
 }
 
 void
-engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
-                  Str* storage)
+engine_drop(Engine* self, uint64_t min, bool if_exists)
 {
 	for (;;)
 	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
+		// in order to avoid heavy exclusive lock during drop,
+		// do truncate first
+		auto exists = engine_truncate(self, min, if_exists);
+		if (! exists)
+			break;
 
-		if (ref_min >= max)
-			return;
-
-		engine_move(self, refresh, ref_min, storage, true);
-		min = ref_max;
+		// try to drop partition mapping, or retry truncate if
+		// partition is still not empty
+		if (engine_drop_reference(self, min))
+			break;
 	}
 }
 
