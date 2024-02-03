@@ -298,23 +298,86 @@ execute_partition_refresh_range(Executable* self)
 		rethrow();
 }
 
+static void
+execute_partition_download(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// download partition
+	engine_download(&self->main->engine, cmd->min, cmd->if_exists, cmd->if_cloud);
+}
+
+static void
+execute_partition_download_range(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// drop partitions
+	engine_download_range(&self->main->engine, cmd->min, cmd->max, cmd->if_cloud);
+}
+
+static void
+execute_partition_upload(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// upload partition
+	engine_upload(&self->main->engine, cmd->min, cmd->if_exists, cmd->if_cloud);
+}
+
+static void
+execute_partition_upload_range(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// upload partitions
+	engine_upload_range(&self->main->engine, cmd->min, cmd->max, cmd->if_cloud);
+}
+
+static void
+execute_partition_offload(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// offload partition
+	engine_offload(&self->main->engine, cmd->min, cmd->from_storage,
+	               cmd->if_exists, cmd->if_cloud);
+}
+
+static void
+execute_partition_offload_range(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// offload partitions
+	engine_offload_range(&self->main->engine, cmd->min, cmd->max,
+	                     cmd->from_storage,
+	                     cmd->if_cloud);
+}
+
 static Execute cmds[CMD_MAX] =
 {
-	{ NULL,                            false },
-	{ execute_show,                    true  },
-	{ execute_set,                     true  },
-	{ execute_checkpoint,              false },
-	{ execute_rebalance,               false },
-	{ execute_storage_create,          true  },
-	{ execute_storage_drop,            true  },
-	{ execute_storage_alter,           true  },
-	{ execute_conveyor_alter,          true  },
-	{ execute_partition_drop,          false },
-	{ execute_partition_drop_range,    false },
-	{ execute_partition_move,          false },
-	{ execute_partition_move_range,    false },
-	{ execute_partition_refresh,       false },
-	{ execute_partition_refresh_range, false }
+	{ NULL,                             false },
+	{ execute_show,                     true  },
+	{ execute_set,                      true  },
+	{ execute_checkpoint,               false },
+	{ execute_rebalance,                false },
+	{ execute_storage_create,           true  },
+	{ execute_storage_drop,             true  },
+	{ execute_storage_alter,            true  },
+	{ execute_conveyor_alter,           true  },
+	{ execute_partition_drop,           false },
+	{ execute_partition_drop_range,     false },
+	{ execute_partition_move,           false },
+	{ execute_partition_move_range,     false },
+	{ execute_partition_refresh,        false },
+	{ execute_partition_refresh_range,  false },
+	{ execute_partition_download,       false },
+	{ execute_partition_download_range, false },
+	{ execute_partition_upload,         false },
+	{ execute_partition_upload_range,   false },
+	{ execute_partition_offload,        false },
+	{ execute_partition_offload_range,  false }
 };
 
 void
