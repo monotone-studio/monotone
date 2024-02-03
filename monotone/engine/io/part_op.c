@@ -56,8 +56,6 @@ part_offload(Part* self, bool from_storage)
 	// remove from storage
 	if (from_storage)
 	{
-		assert(part_has(self, PART_FILE_CLOUD));
-
 		// remove data file
 		file_close(&self->file);
 		part_file_delete(self, true);
@@ -65,7 +63,6 @@ part_offload(Part* self, bool from_storage)
 	}
 
 	// remove from cloud
-	assert(part_has(self, PART_FILE));
 
 	// remove cloud file first
 	part_file_cloud_delete(self, true);
