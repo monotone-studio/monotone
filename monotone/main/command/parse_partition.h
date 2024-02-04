@@ -15,7 +15,7 @@ struct CmdPartition
 	uint64_t max;
 	bool     if_exists;
 	bool     if_cloud;
-	bool     mask;
+	int      mask;
 	Token    storage;
 };
 
