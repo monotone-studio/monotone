@@ -16,7 +16,7 @@
 Cmd*
 parse_partition_drop(Lex* self)
 {
-	// DROP PARTITION [IF EXISTS] <id>
+	// DROP PARTITION [IF EXISTS] <id> [ON STORAGE | ON CLOUD]
 
 	// if exists
 	bool if_exists = parse_if_exists(self);
@@ -26,16 +26,30 @@ parse_partition_drop(Lex* self)
 	if (! lex_if(self, KINT, &id))
 		error("DROP PARTITION <id>");
 
+	// [on storage | on cloud]
+	int mask = PART_FILE|PART_FILE_CLOUD;
+	if (lex_if(self, KON, NULL))
+	{
+		if (lex_if(self, KSTORAGE, NULL))
+			mask = PART_FILE;
+		else
+		if (lex_if(self, KCLOUD, NULL))
+			mask = PART_FILE_CLOUD;
+		else
+			error("DROP PARTITION id <ON STORAGE | ON CLOUD> expected");
+	}
+
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_DROP);
 	cmd->min       = id.integer;
 	cmd->if_exists = if_exists;
+	cmd->mask      = mask;
 	return &cmd->cmd;
 }
 
 Cmd*
 parse_partition_drop_range(Lex* self)
 {
-	// DROP PARTITIONS FROM <min> TO <max>
+	// DROP PARTITIONS FROM <min> TO <max> [ON STORAGE | ON CLOUD]
 
 	// from
 	if (! lex_if(self, KFROM, NULL))
@@ -54,9 +68,23 @@ parse_partition_drop_range(Lex* self)
 	if (! lex_if(self, KINT, &max))
 		error("DROP PARTITIONS FROM min TO <max>");
 
+	// [on storage | on cloud]
+	int mask = PART_FILE|PART_FILE_CLOUD;
+	if (lex_if(self, KON, NULL))
+	{
+		if (lex_if(self, KSTORAGE, NULL))
+			mask = PART_FILE;
+		else
+		if (lex_if(self, KCLOUD, NULL))
+			mask = PART_FILE_CLOUD;
+		else
+			error("DROP PARTITION FROM min TO max <ON STORAGE | ON CLOUD> expected");
+	}
+
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_DROP_RANGE);
-	cmd->min = min.integer;
-	cmd->max = max.integer;
+	cmd->min  = min.integer;
+	cmd->max  = max.integer;
+	cmd->mask = mask;
 	return &cmd->cmd;
 }
 
@@ -270,61 +298,6 @@ parse_partition_upload_range(Lex* self)
 	bool if_cloud = parse_if_cloud(self);
 
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_UPLOAD_RANGE);
-	cmd->min      = min.integer;
-	cmd->max      = max.integer;
-	cmd->if_cloud = if_cloud;
-	return &cmd->cmd;
-}
-
-Cmd*
-parse_partition_offload(Lex* self)
-{
-	// OFFLOAD PARTITION [IF EXISTS] <id> [IF CLOUD]
-
-	// if exists
-	bool if_exists = parse_if_exists(self);
-
-	// id
-	Token id;
-	if (! lex_if(self, KINT, &id))
-		error("UPLOAD PARTITION <id>");
-
-	// [if cloud]
-	bool if_cloud = parse_if_cloud(self);
-
-	auto cmd = cmd_partition_allocate(CMD_PARTITION_OFFLOAD);
-	cmd->min       = id.integer;
-	cmd->if_exists = if_exists;
-	cmd->if_cloud  = if_cloud;
-	return &cmd->cmd;
-}
-
-Cmd*
-parse_partition_offload_range(Lex* self)
-{
-	// OFFLOAD PARTITIONS FROM <min> TO <max> [IF CLOUD]
-
-	// from
-	if (! lex_if(self, KFROM, NULL))
-		error("OFFLOAD PARTITIONS <FROM> min TO max");
-
-	// min
-	Token min;
-	if (! lex_if(self, KINT, &min))
-		error("OFFLOAD PARTITIONS FROM <min> TO max");
-
-	// to
-	if (! lex_if(self, KTO, NULL))
-		error("OFFLOAD PARTITIONS FROM min <TO> max");
-
-	Token max;
-	if (! lex_if(self, KINT, &max))
-		error("OFFLOAD PARTITIONS FROM min TO <max>");
-
-	// [if cloud]
-	bool if_cloud = parse_if_cloud(self);
-
-	auto cmd = cmd_partition_allocate(CMD_PARTITION_OFFLOAD_RANGE);
 	cmd->min      = min.integer;
 	cmd->max      = max.integer;
 	cmd->if_cloud = if_cloud;
