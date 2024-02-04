@@ -67,7 +67,11 @@ main_init(Main* self)
 
 	rwlock_init(&self->lock);
 	service_init(&self->service);
+
+	cloud_mock_init(&self->cloud_mock);
 	cloud_mgr_init(&self->cloud_mgr);
+	cloud_mgr_register(&self->cloud_mgr, &self->cloud_mock.iface);
+
 	engine_init(&self->engine, &self->comparator, &self->service,
 	            &self->cloud_mgr);
 	worker_mgr_init(&self->worker_mgr);

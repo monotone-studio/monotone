@@ -15,6 +15,7 @@ struct Main
 	Service    service;
 	WorkerMgr  worker_mgr;
 	CloudMgr   cloud_mgr;
+	CloudMock  cloud_mock;
 	Logger     logger;
 	UuidMgr    uuid_mgr;
 	Comparator comparator;
