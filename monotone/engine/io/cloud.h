@@ -12,7 +12,7 @@ typedef struct Cloud   Cloud;
 struct CloudIf
 {
 	Str    name;
-	Cloud* (*create)(Source*);
+	Cloud* (*create)(CloudIf*, Source*);
 	void   (*free)(Cloud*);
 	void   (*download)(Cloud*, Id*);
 	void   (*upload)(Cloud*, Id*);
@@ -24,6 +24,7 @@ struct CloudIf
 struct Cloud
 {
 	CloudIf* iface;
+	Source*  source;
 };
 
 static inline void
@@ -37,7 +38,7 @@ cloud_iface_init(CloudIf* self, Str* name)
 static inline Cloud*
 cloud_create(CloudIf* iface, Source* source)
 {
-	return iface->create(source);
+	return iface->create(iface, source);
 }
 
 static inline void
