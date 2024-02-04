@@ -112,6 +112,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 		switch (part->state) {
 		case PART_FILE:
 		case PART_FILE | PART_FILE_CLOUD:
+		case PART_FILE_CLOUD:
 			// normal state
 			break;
 
