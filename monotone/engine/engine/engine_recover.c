@@ -72,7 +72,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 		auto state = engine_recover_id(entry->d_name, &min);
 		if (state == -1)
 		{
-			log("storage: skipping unknown file: '%s/%s'",
+			log("storage: skipping unknown file: '%s%s'",
 			    path, entry->d_name);
 			continue;
 		}
@@ -87,7 +87,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 				.max = min + config_interval(),
 				.psn = 0
 			};
-			auto part = part_allocate(self->comparator, storage->source, &id);
+			part = part_allocate(self->comparator, storage->source, &id);
 			storage_add(storage, part);
 		}
 		part_set(part, state);
