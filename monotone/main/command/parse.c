@@ -106,6 +106,30 @@ parse(Lex* self)
 			error("REFRESH <PARTITION|PARTITIONS> expected");
 		break;
 	}
+	case KDOWNLOAD:
+	{
+		// DOWNLOAD PARTITION | PARTITIONS
+		if (lex_if(self, KPARTITION, NULL))
+			cmd = parse_partition_download(self);
+		else
+		if (lex_if(self, KPARTITIONS, NULL))
+			cmd = parse_partition_download_range(self);
+		else
+			error("DOWNLOAD <PARTITION|PARTITIONS> expected");
+		break;
+	}
+	case KUPLOAD:
+	{
+		// UPLOAD PARTITION | PARTITIONS
+		if (lex_if(self, KPARTITION, NULL))
+			cmd = parse_partition_upload(self);
+		else
+		if (lex_if(self, KPARTITIONS, NULL))
+			cmd = parse_partition_upload_range(self);
+		else
+			error("UPLOAD <PARTITION|PARTITIONS> expected");
+		break;
+	}
 	case KEOF:
 		break;
 	default:
