@@ -208,7 +208,7 @@ execute_partition_drop(Executable* self)
 	auto cmd = cmd_partition_of(self->cmd);
 
 	// drop partition
-	engine_drop(&self->main->engine, cmd->min, cmd->if_exists);
+	engine_drop(&self->main->engine, cmd->min, cmd->if_exists, cmd->mask);
 }
 
 static void
@@ -217,7 +217,7 @@ execute_partition_drop_range(Executable* self)
 	auto cmd = cmd_partition_of(self->cmd);
 
 	// drop partitions
-	engine_drop_range(&self->main->engine, cmd->min, cmd->max);
+	engine_drop_range(&self->main->engine, cmd->min, cmd->max, cmd->mask);
 }
 
 static void
@@ -334,27 +334,6 @@ execute_partition_upload_range(Executable* self)
 	engine_upload_range(&self->main->engine, cmd->min, cmd->max, cmd->if_cloud);
 }
 
-static void
-execute_partition_offload(Executable* self)
-{
-	auto cmd = cmd_partition_of(self->cmd);
-
-	// offload partition
-	engine_offload(&self->main->engine, cmd->min, cmd->from_storage,
-	               cmd->if_exists, cmd->if_cloud);
-}
-
-static void
-execute_partition_offload_range(Executable* self)
-{
-	auto cmd = cmd_partition_of(self->cmd);
-
-	// offload partitions
-	engine_offload_range(&self->main->engine, cmd->min, cmd->max,
-	                     cmd->from_storage,
-	                     cmd->if_cloud);
-}
-
 static Execute cmds[CMD_MAX] =
 {
 	{ NULL,                             false },
@@ -375,9 +354,7 @@ static Execute cmds[CMD_MAX] =
 	{ execute_partition_download,       false },
 	{ execute_partition_download_range, false },
 	{ execute_partition_upload,         false },
-	{ execute_partition_upload_range,   false },
-	{ execute_partition_offload,        false },
-	{ execute_partition_offload_range,  false }
+	{ execute_partition_upload_range,   false }
 };
 
 void
