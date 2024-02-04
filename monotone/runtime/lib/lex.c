@@ -42,9 +42,10 @@ static Keyword keywords[] =
 	{ KINTO,       "into",       4},
 	{ KREFRESH,    "refresh",    7},
 	{ KREBALANCE,  "rebalance",  9},
+	{ KON,         "on",         2},
+	{ KCLOUD,      "cloud",      5},
 	{ KDOWNLOAD,   "download",   8},
 	{ KUPLOAD,     "upload",     6},
-	{ KOFFLOAD,    "offload",    7},
 	{ 0,            NULL,        0}
 };
 
