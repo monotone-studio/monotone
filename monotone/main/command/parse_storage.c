@@ -29,11 +29,18 @@ parse_storage_options(Lex* self, Source* config, char* command)
 	for (;;)
 	{
 		// name
-		lex_keywords(self, false);
 		Token name;
-		if (! lex_if(self, KNAME, &name))
-				error("%s (<name> expected", command);
-		lex_keywords(self, true);
+		lex_next(self, &name);
+		switch (name.id) {
+		case KCLOUD:
+			name.id = KNAME;
+			break;
+		case KNAME:
+			break;
+		default:
+			error("%s (<name> expected", command);
+			break;
+		}
 
 		// value
 		if (str_compare_raw(&name.string, "path", 4))
