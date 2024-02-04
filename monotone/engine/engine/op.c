@@ -75,14 +75,14 @@ engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 }
 
 static bool
-engine_drop_truncate(Engine* self, uint64_t min, bool if_exists)
+engine_drop_file(Engine* self, uint64_t min, bool if_exists, int mask)
 {
 	// find the original partition
 	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
-			error("truncate: partition <%" PRIu64 "> not found", min);
+			error("drop: partition <%" PRIu64 "> not found", min);
 		return false;
 	}
 	auto part = ref->part;
@@ -91,23 +91,44 @@ engine_drop_truncate(Engine* self, uint64_t min, bool if_exists)
 	mutex_lock(&self->lock);
 	ref_lock(ref, LOCK_ACCESS);
 
-	// delete partition file and free
+	// delete partition file on storage or cloud
 	Exception e;
 	if (try(&e))
 	{
-		if (part_has(part, PART_FILE_CLOUD))
+		// unless full drop, ensure that at least one copy remains
+		bool full_drop = (mask == (PART_FILE|PART_FILE_CLOUD));
+
+		if (mask & PART_FILE_CLOUD)
 		{
-			part_offload(part, false);
-			part_unset(part, PART_FILE_CLOUD);
+			if (! full_drop)
+			{
+				// partition not in the storage
+				if (! part_has(part, PART_FILE))
+					error("drop: partition <%" PRIu64 "> must downloaded first", min);
+			}
+
+			if (part_has(part, PART_FILE_CLOUD))
+			{
+				part_offload(part, false);
+				part_unset(part, PART_FILE_CLOUD);
+			}
 		}
-		if (part_has(part, PART_FILE))
+
+		if (mask & PART_FILE)
 		{
-			part_offload(part, true);
-			part_unset(part, PART_FILE);
+			if (! full_drop)
+			{
+				// partition not in the cloud
+				if (! part_has(part, PART_FILE_CLOUD))
+					error("drop: partition <%" PRIu64 "> must be uploaded first", min);
+			}
+
+			if (part_has(part, PART_FILE))
+			{
+				part_offload(part, true);
+				part_unset(part, PART_FILE);
+			}
 		}
-		buf_reset(&part->index_buf);
-		part->index = NULL;
-		memtable_free(part->memtable);
 	}
 
 	ref_unlock(ref, LOCK_ACCESS);
@@ -137,7 +158,7 @@ engine_drop_reference(Engine* self, uint64_t min)
 	auto ref = ref_of(slice);
 	auto part = ref->part;
 
-	// remove only truncated partitions
+	// remove only empty partitions
 	if (part->state != PART_FILE_NONE)
 	{
 		// retry truncate
@@ -160,25 +181,34 @@ engine_drop_reference(Engine* self, uint64_t min)
 }
 
 void
-engine_drop(Engine* self, uint64_t min, bool if_exists)
+engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
 {
-	for (;;)
+	// partition drop
+	if (mask == (PART_FILE|PART_FILE_CLOUD))
 	{
-		// in order to avoid heavy exclusive lock during drop,
-		// do truncate first
-		auto exists = engine_drop_truncate(self, min, if_exists);
-		if (! exists)
-			break;
+		for (;;)
+		{
+			// in order to avoid heavy exclusive lock during drop,
+			// separate file drop first
+			auto exists = engine_drop_file(self, min, if_exists, mask);
+			if (! exists)
+				break;
 
-		// try to drop partition mapping, or retry truncate if
-		// partition is still not empty
-		if (engine_drop_reference(self, min))
-			break;
+			// try to drop partition mapping, or retry drop if
+			// partition still has files
+			if (engine_drop_reference(self, min))
+				break;
+		}
+
+		return;
 	}
+
+	// drop partition file on storage or cloud only
+	engine_drop_file(self, min, if_exists, mask);
 }
 
 void
-engine_drop_range(Engine* self, uint64_t min, uint64_t max)
+engine_drop_range(Engine* self, uint64_t min, uint64_t max, int mask)
 {
 	for (;;)
 	{
@@ -193,7 +223,7 @@ engine_drop_range(Engine* self, uint64_t min, uint64_t max)
 		if (ref_min >= max)
 			return;
 
-		engine_drop(self, ref_min, true);
+		engine_drop(self, ref_min, true, mask);
 		min = ref_max;
 	}
 }
@@ -263,7 +293,7 @@ engine_rebalance(Engine* self, Refresh* refresh)
 		if (! engine_rebalance_next(self, &min, &storage))
 			break;
 		if (str_empty(&storage))
-			engine_drop(self, min, true);
+			engine_drop(self, min, true, PART_FILE|PART_FILE_CLOUD);
 		else
 			engine_move(self, refresh, min, &storage, true);
 	}
@@ -446,110 +476,6 @@ engine_upload_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
 			return;
 
 		engine_upload(self, ref_min, true, if_cloud);
-		min = ref_max;
-	}
-}
-
-void
-engine_offload(Engine* self, uint64_t min, bool from_storage,
-               bool    if_exists,
-               bool    if_cloud)
-{
-	// find the original partition
-	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
-	if (unlikely(! ref))
-	{
-		if (! if_exists)
-			error("offload: partition <%" PRIu64 "> not found", min);
-		return;
-	}
-	auto part = ref->part;
-
-	if (! part->cloud)
-	{
-		engine_unlock(self, ref, LOCK_SERVICE);
-		if (! if_cloud)
-			error("offload: partition <%" PRIu64 "> storage has no associated cloud", min);
-		return;
-	}
-
-	// remove from storage or cloud
-	if (from_storage)
-	{
-		// already removed
-		if (! part_has(part, PART_FILE))
-		{
-			engine_unlock(self, ref, LOCK_SERVICE);
-			return;
-		}
-
-		// partition not in the cloud
-		if (! part_has(part, PART_FILE_CLOUD))
-		{
-			engine_unlock(self, ref, LOCK_SERVICE);
-			error("offload: partition <%" PRIu64 "> must be uploaded first", min);
-		}
-
-	} else
-	{
-		// already removed
-		if (! part_has(part, PART_FILE_CLOUD))
-		{
-			engine_unlock(self, ref, LOCK_SERVICE);
-			return;
-		}
-
-		// partition not in the storage
-		if (! part_has(part, PART_FILE))
-		{
-			engine_unlock(self, ref, LOCK_SERVICE);
-			error("offload: partition <%" PRIu64 "> must downloaded first", min);
-		}
-	}
-
-	// update partition state first, to avoid heavy locking
-	mutex_lock(&self->lock);
-	ref_lock(ref, LOCK_ACCESS);
-
-	if (from_storage)
-		part_unset(part, PART_FILE);
-	else
-		part_unset(part, PART_FILE_CLOUD);
-
-	ref_unlock(ref, LOCK_ACCESS);
-	mutex_unlock(&self->lock);
-
-	// execute removal
-	Exception e;
-	if (try(&e)) {
-		part_offload(part, from_storage);
-	}
-
-	// complete
-	engine_unlock(self, ref, LOCK_SERVICE);
-	if (catch(&e))
-		rethrow();
-}
-
-void
-engine_offload_range(Engine* self, uint64_t min, uint64_t max,
-                     bool    from_storage,
-                     bool    if_cloud)
-{
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_offload(self, ref_min, from_storage, true, if_cloud);
 		min = ref_max;
 	}
 }
