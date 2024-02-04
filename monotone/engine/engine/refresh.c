@@ -61,7 +61,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 	if (part_has(ref->part, PART_FILE_CLOUD))
 	{
 		engine_unlock(engine, ref, LOCK_SERVICE);
-		error("refresh: partition <%" PRIu64 "> does not exists locally", min);
+		error("refresh: partition <%" PRIu64 "> must be dropped from cloud first", min);
 	}
 
 	// match storage, if provided by request
