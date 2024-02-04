@@ -150,7 +150,7 @@ part_file_cloud_create(Part* self)
 	file_init(&file);
 	file_create(&file, path);
 	guard(close, file_close, &file);
-	file_write(&file, &self->index_buf, buf_size(&self->index_buf));
+	file_write_buf(&file, &self->index_buf);
 	file_sync(&file);
 	file_close(&file);
 }
