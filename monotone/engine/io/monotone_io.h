@@ -13,6 +13,7 @@
 // cloud
 #include "io/cloud.h"
 #include "io/cloud_mgr.h"
+#include "io/cloud_mock.h"
 
 // row
 #include "io/row.h"
