@@ -78,7 +78,7 @@ mock_upload(Cloud* self, Id* id)
 	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
 	id_path(id, self->source, path_from);
-	mock_path(id, self->source, path_from);
+	mock_path(id, self->source, path_to);
 
 	// read storage file
 	Buf buf;
