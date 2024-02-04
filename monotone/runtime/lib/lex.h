@@ -65,6 +65,7 @@ struct Lex
 {
 	char* pos;
 	char* end;
+	bool  keywords;
 	Token backlog[4];
 	int   backlog_size;
 };
@@ -77,6 +78,7 @@ token_init(Token* tk)
 
 void lex_init(Lex*);
 void lex_start(Lex*, Str*);
+void lex_keywords(Lex*, bool);
 void lex_next(Lex*, Token*);
 void lex_push(Lex*, Token*);
 bool lex_if(Lex*, int, Token*);

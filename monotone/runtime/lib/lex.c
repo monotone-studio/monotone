@@ -55,6 +55,7 @@ lex_init(Lex* self)
 	self->pos          = NULL;
 	self->end          = NULL;
 	self->backlog_size = 0;
+	self->keywords     = true;
 }
 
 void
@@ -62,6 +63,12 @@ lex_start(Lex* self, Str* text)
 {
 	self->pos = str_of(text);
 	self->end = str_of(text) + str_size(text);
+}
+
+void
+lex_keywords(Lex* self, bool on)
+{
+	self->keywords = on;
 }
 
 void
@@ -152,6 +159,9 @@ reread_as_float:
 		}
 		str_set(&tk->string, start, self->pos - start);
 		tk->id = KNAME;
+
+		if (! self->keywords)
+			return;
 
 		// find keyword
 		auto keyword = &keywords[0];
