@@ -166,6 +166,7 @@ refresh_end(Refresh* self)
 	// recovery crash case 1
 
 	// remove and free old partition
+	file_close(&origin->file);
 	part_file_delete(origin, true);
 	part_free(origin);
 	self->origin = NULL;
