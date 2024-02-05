@@ -34,7 +34,7 @@ worker_main(void* arg)
 			engine_rebalance(self->engine, &self->refresh);
 
 			if (type == SERVICE_REFRESH)
-				engine_refresh(self->engine, &self->refresh, req->min, NULL, true);
+				engine_sync(self->engine, &self->refresh, req->min, NULL, true);
 		}
 		if (catch(&e))
 		{ }
