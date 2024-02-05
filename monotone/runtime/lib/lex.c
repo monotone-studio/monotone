@@ -46,6 +46,7 @@ static Keyword keywords[] =
 	{ KCLOUD,      "cloud",      5},
 	{ KDOWNLOAD,   "download",   8},
 	{ KUPLOAD,     "upload",     6},
+	{ KSYNC,       "sync",       4},
 	{ 0,            NULL,        0}
 };
 

@@ -45,7 +45,8 @@ enum
 	KON,
 	KCLOUD,
 	KDOWNLOAD,
-	KUPLOAD
+	KUPLOAD,
+	KSYNC
 };
 
 struct Token
