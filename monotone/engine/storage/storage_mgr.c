@@ -104,6 +104,24 @@ storage_mgr_create_system(StorageMgr* self)
 	return storage_mgr_create(self, config, true);
 }
 
+static void
+storage_set_cloud(StorageMgr* self, Storage* storage)
+{
+	auto source = storage->source;
+	if (str_empty(&source->cloud))
+		return;
+
+	auto cloud_if = cloud_mgr_find(self->cloud_mgr, &source->cloud);
+	if (! cloud_if)
+		error("storage '%.*s': cloud interface '%.*s' does not exists",
+		      str_size(&source->name),
+		      str_of(&source->name),
+		      str_size(&source->cloud),
+		      str_of(&source->cloud));
+
+	storage->cloud = cloud_create(cloud_if, storage->source);
+}
+
 static Storage*
 storage_mgr_create_object(StorageMgr* self, Source* source)
 {
@@ -111,28 +129,14 @@ storage_mgr_create_object(StorageMgr* self, Source* source)
 
 	// find cloud interface and create cloud object, if defined
 	Exception e;
-	if (try(&e))
-	{
-		if (! str_empty(&source->cloud))
-		{
-			auto cloud_if = cloud_mgr_find(self->cloud_mgr, &source->cloud);
-			if (! cloud_if)
-				error("storage '%.*s': cloud interface '%.*s' does not exists",
-				      str_size(&source->name),
-				      str_of(&source->name),
-				      str_size(&source->cloud),
-				      str_of(&source->cloud));
-
-			storage->cloud = cloud_create(cloud_if, storage->source);
-		}
+	if (try(&e)) {
+		storage_set_cloud(self, storage);
 	}
-
 	if (catch(&e))
 	{
 		storage_free(storage);
 		rethrow();
 	}
-
 	return storage;
 }
 
@@ -210,8 +214,48 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 		return;
 	}
 
+	// in case of cloud change, ensure all partitions are
+	// offloaded first
+	if (mask & SOURCE_CLOUD)
+	{
+		list_foreach(&storage->list)
+		{
+			auto part = list_at(Part, link);
+			if (part_has(part, PART_FILE_CLOUD))
+				error("storage '%.*s': some partitions are still remain on cloud",
+				      str_size(&source->name),
+				      str_of(&source->name));
+		}
+	}
+
 	source_alter(storage->source, source, mask);
 	storage_mgr_save(self);
+
+	if (mask & SOURCE_CLOUD)
+	{
+		if (storage->cloud)
+		{
+			cloud_free(storage->cloud);
+			storage->cloud = NULL;
+		}
+
+		list_foreach(&storage->list)
+		{
+			auto part = list_at(Part, link);
+			part->cloud = NULL;
+		}
+
+		storage_set_cloud(self, storage);
+
+		if (storage->cloud)
+		{
+			list_foreach(&storage->list)
+			{
+				auto part = list_at(Part, link);
+				part->cloud = storage->cloud;
+			}
+		}
+	}
 }
 
 void
