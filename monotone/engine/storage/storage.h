@@ -109,7 +109,7 @@ storage_show_partitions(Storage* self, Buf* buf)
 	{
 		auto part = list_at(Part, link);
 		uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
-		buf_printf(buf, "  [%20" PRIu64",%20" PRIu64 "] size: %" PRIu64 ", size_cached: %" PRIu64 ", on storage: %s, on cloud: %s\n",
+		buf_printf(buf, "  [%20" PRIu64",%20" PRIu64 "] file size: %" PRIu64 ", size_cached: %" PRIu64 ", on storage: %s, on cloud: %s\n",
 		           part->id.min, part->id.max, part->file.size, size_cached,
 		           part_has(part, PART_FILE) ? "yes": "no",
 		           part_has(part, PART_FILE_CLOUD) ? "yes": "no");

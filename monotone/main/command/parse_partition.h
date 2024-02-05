@@ -49,3 +49,5 @@ Cmd* parse_partition_download(Lex*);
 Cmd* parse_partition_download_range(Lex*);
 Cmd* parse_partition_upload(Lex*);
 Cmd* parse_partition_upload_range(Lex*);
+Cmd* parse_partition_sync(Lex*);
+Cmd* parse_partition_sync_range(Lex*);

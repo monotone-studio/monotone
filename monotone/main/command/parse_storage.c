@@ -33,6 +33,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 		lex_next(self, &name);
 		switch (name.id) {
 		case KCLOUD:
+		case KSYNC:
 			name.id = KNAME;
 			break;
 		case KNAME:
