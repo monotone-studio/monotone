@@ -14,38 +14,8 @@
 #include <malloc.h>
 
 void
-engine_refresh(Engine* self, Refresh* refresh, uint64_t min,
+engine_refresh(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
                bool if_exists)
-{
-	unused(self);
-	refresh_reset(refresh);
-	refresh_run(refresh, min, NULL, if_exists);
-}
-
-void
-engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max)
-{
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_refresh(self, refresh, ref_min, true);
-		min = ref_max;
-	}
-}
-
-void
-engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
-            bool if_exists)
 {
 	unused(self);
 	refresh_reset(refresh);
@@ -53,8 +23,8 @@ engine_move(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 }
 
 void
-engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
-                  Str* storage)
+engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
+                     Str* storage)
 {
 	for (;;)
 	{
@@ -69,7 +39,7 @@ engine_move_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 		if (ref_min >= max)
 			return;
 
-		engine_move(self, refresh, ref_min, storage, true);
+		engine_refresh(self, refresh, ref_min, storage, true);
 		min = ref_max;
 	}
 }
@@ -295,7 +265,7 @@ engine_rebalance(Engine* self, Refresh* refresh)
 		if (str_empty(&storage))
 			engine_drop(self, min, true, PART_FILE|PART_FILE_CLOUD);
 		else
-			engine_move(self, refresh, min, &storage, true);
+			engine_refresh(self, refresh, min, &storage, true);
 	}
 }
 
