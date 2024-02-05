@@ -13,37 +13,6 @@
 #include <monotone_engine.h>
 #include <malloc.h>
 
-void
-engine_refresh(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
-               bool if_exists)
-{
-	unused(self);
-	refresh_reset(refresh);
-	refresh_run(refresh, min, storage, if_exists);
-}
-
-void
-engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
-                     Str* storage)
-{
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_refresh(self, refresh, ref_min, storage, true);
-		min = ref_max;
-	}
-}
-
 static bool
 engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int mask)
 {
@@ -347,8 +316,8 @@ engine_upload_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
 }
 
 void
-engine_sync(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
-            bool if_exists)
+engine_refresh(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
+               bool if_exists)
 {
 	// download partition from cloud, if necessary
 	engine_download(self, min, if_exists, true);
@@ -357,7 +326,8 @@ engine_sync(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 	engine_drop(self, min, if_exists, PART_FILE_CLOUD);
 
 	// refresh partition
-	engine_refresh(self, refresh, min, storage, if_exists);
+	refresh_reset(refresh);
+	refresh_run(refresh, min, storage, if_exists);
 
 	// upload partition back to cloud
 	engine_upload(self, min, true, true);
@@ -367,8 +337,8 @@ engine_sync(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 }
 
 void
-engine_sync_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
-                  Str* storage)
+engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
+                     Str* storage)
 {
 	for (;;)
 	{
@@ -383,7 +353,7 @@ engine_sync_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 		if (ref_min >= max)
 			return;
 
-		engine_sync(self, refresh, ref_min, storage, true);
+		engine_refresh(self, refresh, ref_min, storage, true);
 		min = ref_max;
 	}
 }
@@ -455,7 +425,7 @@ engine_rebalance(Engine* self, Refresh* refresh)
 		if (str_empty(&storage))
 			engine_drop(self, min, true, PART_FILE|PART_FILE_CLOUD);
 		else
-			engine_sync(self, refresh, min, &storage, true);
+			engine_refresh(self, refresh, min, &storage, true);
 	}
 }
 
