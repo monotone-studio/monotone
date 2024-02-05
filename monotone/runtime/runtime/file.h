@@ -74,6 +74,7 @@ file_close(File* self)
 		self->fd = -1;
 	}
 	str_free(&self->path);
+	self->size = 0;
 }
 
 static inline void
