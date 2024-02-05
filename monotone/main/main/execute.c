@@ -232,8 +232,8 @@ execute_partition_move(Executable* self)
 	Exception e;
 	if (try(&e))
 	{
-		engine_sync(engine, &refresh, cmd->min, &cmd->storage.string,
-		            cmd->if_exists);
+		engine_refresh(engine, &refresh, cmd->min, &cmd->storage.string,
+		               cmd->if_exists);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))
@@ -252,8 +252,8 @@ execute_partition_move_range(Executable* self)
 	Exception e;
 	if (try(&e))
 	{
-		engine_sync_range(engine, &refresh, cmd->min, cmd->max,
-		                  &cmd->storage.string);
+		engine_refresh_range(engine, &refresh, cmd->min, cmd->max,
+		                     &cmd->storage.string);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))
@@ -334,44 +334,6 @@ execute_partition_upload_range(Executable* self)
 	engine_upload_range(&self->main->engine, cmd->min, cmd->max, cmd->if_cloud);
 }
 
-static void
-execute_partition_sync(Executable* self)
-{
-	auto cmd = cmd_partition_of(self->cmd);
-	auto engine = &self->main->engine;
-
-	// sync partition
-	Refresh refresh;
-	refresh_init(&refresh, engine);
-	Exception e;
-	if (try(&e))
-	{
-		engine_sync(engine, &refresh, cmd->min, NULL, cmd->if_exists);
-	}
-	refresh_free(&refresh);
-	if (catch(&e))
-		rethrow();
-}
-
-static void
-execute_partition_sync_range(Executable* self)
-{
-	auto cmd = cmd_partition_of(self->cmd);
-	auto engine = &self->main->engine;
-
-	// refresh partitions
-	Refresh refresh;
-	refresh_init(&refresh, engine);
-	Exception e;
-	if (try(&e))
-	{
-		engine_sync_range(engine, &refresh, cmd->min, cmd->max, NULL);
-	}
-	refresh_free(&refresh);
-	if (catch(&e))
-		rethrow();
-}
-
 static Execute cmds[CMD_MAX] =
 {
 	{ NULL,                             false },
@@ -392,9 +354,7 @@ static Execute cmds[CMD_MAX] =
 	{ execute_partition_download,       false },
 	{ execute_partition_download_range, false },
 	{ execute_partition_upload,         false },
-	{ execute_partition_upload_range,   false },
-	{ execute_partition_sync,           false },
-	{ execute_partition_sync_range,     false }
+	{ execute_partition_upload_range,   false }
 };
 
 void
