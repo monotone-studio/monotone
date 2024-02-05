@@ -130,18 +130,6 @@ parse(Lex* self)
 			error("UPLOAD <PARTITION|PARTITIONS> expected");
 		break;
 	}
-	case KSYNC:
-	{
-		// SYNC PARTITION | PARTITIONS
-		if (lex_if(self, KPARTITION, NULL))
-			cmd = parse_partition_sync(self);
-		else
-		if (lex_if(self, KPARTITIONS, NULL))
-			cmd = parse_partition_sync_range(self);
-		else
-			error("SYNC <PARTITION|PARTITIONS> expected");
-		break;
-	}
 	case KEOF:
 		break;
 	default:
