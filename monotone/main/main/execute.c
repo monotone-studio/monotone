@@ -232,8 +232,8 @@ execute_partition_move(Executable* self)
 	Exception e;
 	if (try(&e))
 	{
-		engine_move(engine, &refresh, cmd->min, &cmd->storage.string,
-		            cmd->if_exists);
+		engine_refresh(engine, &refresh, cmd->min, &cmd->storage.string,
+		               cmd->if_exists);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))
@@ -252,8 +252,8 @@ execute_partition_move_range(Executable* self)
 	Exception e;
 	if (try(&e))
 	{
-		engine_move_range(engine, &refresh, cmd->min, cmd->max,
-		                  &cmd->storage.string);
+		engine_refresh_range(engine, &refresh, cmd->min, cmd->max,
+		                     &cmd->storage.string);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))
@@ -272,7 +272,7 @@ execute_partition_refresh(Executable* self)
 	Exception e;
 	if (try(&e))
 	{
-		engine_refresh(engine, &refresh, cmd->min, cmd->if_exists);
+		engine_refresh(engine, &refresh, cmd->min, NULL, cmd->if_exists);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))
@@ -291,7 +291,7 @@ execute_partition_refresh_range(Executable* self)
 	Exception e;
 	if (try(&e))
 	{
-		engine_refresh_range(engine, &refresh, cmd->min, cmd->max);
+		engine_refresh_range(engine, &refresh, cmd->min, cmd->max, NULL);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))
