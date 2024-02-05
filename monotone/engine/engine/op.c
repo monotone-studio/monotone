@@ -45,7 +45,7 @@ engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 }
 
 static bool
-engine_drop_file(Engine* self, uint64_t min, bool if_exists, int mask)
+engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int mask)
 {
 	// find the original partition
 	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
@@ -57,6 +57,13 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, int mask)
 	}
 	auto part = ref->part;
 
+	// execute drop only if file is on cloud
+	if (if_cloud && !part_has(part, PART_FILE_CLOUD))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		return false;
+	}
+
 	// get access lock
 	mutex_lock(&self->lock);
 	ref_lock(ref, LOCK_ACCESS);
@@ -65,18 +72,8 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, int mask)
 	Exception e;
 	if (try(&e))
 	{
-		// unless full drop, ensure that at least one copy remains
-		bool full_drop = (mask == (PART_FILE|PART_FILE_CLOUD));
-
 		if (mask & PART_FILE_CLOUD)
 		{
-			if (! full_drop)
-			{
-				// partition not in the storage
-				if (! part_has(part, PART_FILE))
-					error("drop: partition <%" PRIu64 "> must downloaded first", min);
-			}
-
 			if (part_has(part, PART_FILE_CLOUD))
 			{
 				part_offload(part, false);
@@ -86,13 +83,6 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, int mask)
 
 		if (mask & PART_FILE)
 		{
-			if (! full_drop)
-			{
-				// partition not in the cloud
-				if (! part_has(part, PART_FILE_CLOUD))
-					error("drop: partition <%" PRIu64 "> must be uploaded first", min);
-			}
-
 			if (part_has(part, PART_FILE))
 			{
 				part_offload(part, true);
@@ -160,7 +150,7 @@ engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
 		{
 			// in order to avoid heavy exclusive lock during drop,
 			// separate file drop first
-			auto exists = engine_drop_file(self, min, if_exists, mask);
+			auto exists = engine_drop_file(self, min, if_exists, false, mask);
 			if (! exists)
 				break;
 
@@ -174,7 +164,7 @@ engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
 	}
 
 	// drop partition file on storage or cloud only
-	engine_drop_file(self, min, if_exists, mask);
+	engine_drop_file(self, min, if_exists, false, mask);
 }
 
 void
@@ -196,100 +186,6 @@ engine_drop_range(Engine* self, uint64_t min, uint64_t max, int mask)
 		engine_drop(self, ref_min, true, mask);
 		min = ref_max;
 	}
-}
-
-static inline Part*
-engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
-{
-	if (tier->storage->list_count <= tier->config->capacity)
-		return NULL;
-
-	// get oldest partition (by psn)
-	auto oldest = storage_oldest(tier->storage);
-
-	// schedule partition drop
-	if (list_is_last(&self->conveyor.list, &tier->link))
-		return oldest;
-
-	// schedule partition move to the next tier storage
-	auto next = container_of(tier->link.next, Tier, link);
-	str_copy(storage, &next->storage->source->name);
-	return oldest;
-}
-
-static bool
-engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
-{
-	// take control shared lock
-	control_lock_shared();
-	guard(lock_guard, control_unlock_guard, NULL);
-
-	if (conveyor_empty(&self->conveyor))
-		return false;
-
-	mutex_lock(&self->lock);
-
-	list_foreach(&self->conveyor.list)
-	{
-		auto tier = list_at(Tier, link);
-		auto part = engine_rebalance_tier(self, tier, storage);
-		if (part)
-		{
-			// mark partition for refresh to avoid concurrent rebalance
-			// calls for the same partition
-			if (part->refresh)
-				continue;
-			part->refresh = true;
-
-			*min = part->id.min;
-			mutex_unlock(&self->lock);
-			return true;
-		}
-	}
-
-	mutex_unlock(&self->lock);
-	return false;
-}
-
-void
-engine_rebalance(Engine* self, Refresh* refresh)
-{
-	for (;;)
-	{
-		Str storage;
-		str_init(&storage);
-		guard(guard, str_free, &storage);
-		uint64_t min;
-		if (! engine_rebalance_next(self, &min, &storage))
-			break;
-		if (str_empty(&storage))
-			engine_drop(self, min, true, PART_FILE|PART_FILE_CLOUD);
-		else
-			engine_refresh(self, refresh, min, &storage, true);
-	}
-}
-
-void
-engine_checkpoint(Engine* self)
-{
-	// take exclusive control lock
-	control_lock_exclusive();
-	guard(guard, control_unlock_guard, NULL);
-
-	// schedule refresh
-	auto slice = mapping_min(&self->mapping);
-	while (slice)
-	{
-		auto ref = ref_of(slice);
-		if (!ref->part->refresh && ref->part->memtable->size > 0)
-		{
-			service_refresh(self->service, slice->min);
-			ref->part->refresh = true;
-		}
-		slice = mapping_next(&self->mapping, slice);
-	}
-
-	malloc_trim(0);
 }
 
 void
@@ -315,8 +211,8 @@ engine_download(Engine* self, uint64_t min,
 		return;
 	}
 
-	// partition file exists locally
-	if (part_has(part, PART_FILE))
+	// partition does not exists on cloud
+	if (! part_has(part, PART_FILE_CLOUD))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		return;
@@ -448,4 +344,140 @@ engine_upload_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
 		engine_upload(self, ref_min, true, if_cloud);
 		min = ref_max;
 	}
+}
+
+void
+engine_sync(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
+            bool if_exists)
+{
+	// download partition from cloud, if necessary
+	engine_download(self, min, if_exists, true);
+
+	// drop partition from cloud
+	engine_drop(self, min, if_exists, PART_FILE_CLOUD);
+
+	// refresh partition
+	engine_refresh(self, refresh, min, storage, if_exists);
+
+	// upload partition back to cloud
+	engine_upload(self, min, true, true);
+
+	// drop partition from storage, only if file been uploaded
+	engine_drop_file(self, min, if_exists, true, PART_FILE);
+}
+
+void
+engine_sync_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
+                  Str* storage)
+{
+	for (;;)
+	{
+		// get next ref >= min
+		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
+		if (ref == NULL)
+			return;
+		uint64_t ref_min = ref->slice.min;
+		uint64_t ref_max = ref->slice.max;
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (ref_min >= max)
+			return;
+
+		engine_sync(self, refresh, ref_min, storage, true);
+		min = ref_max;
+	}
+}
+
+static inline Part*
+engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
+{
+	if (tier->storage->list_count <= tier->config->capacity)
+		return NULL;
+
+	// get oldest partition (by psn)
+	auto oldest = storage_oldest(tier->storage);
+
+	// schedule partition drop
+	if (list_is_last(&self->conveyor.list, &tier->link))
+		return oldest;
+
+	// schedule partition move to the next tier storage
+	auto next = container_of(tier->link.next, Tier, link);
+	str_copy(storage, &next->storage->source->name);
+	return oldest;
+}
+
+static bool
+engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
+{
+	// take control shared lock
+	control_lock_shared();
+	guard(lock_guard, control_unlock_guard, NULL);
+
+	if (conveyor_empty(&self->conveyor))
+		return false;
+
+	mutex_lock(&self->lock);
+
+	list_foreach(&self->conveyor.list)
+	{
+		auto tier = list_at(Tier, link);
+		auto part = engine_rebalance_tier(self, tier, storage);
+		if (part)
+		{
+			// mark partition for refresh to avoid concurrent rebalance
+			// calls for the same partition
+			if (part->refresh)
+				continue;
+			part->refresh = true;
+
+			*min = part->id.min;
+			mutex_unlock(&self->lock);
+			return true;
+		}
+	}
+
+	mutex_unlock(&self->lock);
+	return false;
+}
+
+void
+engine_rebalance(Engine* self, Refresh* refresh)
+{
+	for (;;)
+	{
+		Str storage;
+		str_init(&storage);
+		guard(guard, str_free, &storage);
+		uint64_t min;
+		if (! engine_rebalance_next(self, &min, &storage))
+			break;
+		if (str_empty(&storage))
+			engine_drop(self, min, true, PART_FILE|PART_FILE_CLOUD);
+		else
+			engine_sync(self, refresh, min, &storage, true);
+	}
+}
+
+void
+engine_checkpoint(Engine* self)
+{
+	// take exclusive control lock
+	control_lock_exclusive();
+	guard(guard, control_unlock_guard, NULL);
+
+	// schedule refresh
+	auto slice = mapping_min(&self->mapping);
+	while (slice)
+	{
+		auto ref = ref_of(slice);
+		if (!ref->part->refresh && ref->part->memtable->size > 0)
+		{
+			service_refresh(self->service, slice->min);
+			ref->part->refresh = true;
+		}
+		slice = mapping_next(&self->mapping, slice);
+	}
+
+	malloc_trim(0);
 }
