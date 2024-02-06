@@ -125,7 +125,7 @@ index_writer_add(IndexWriter*  self,
 	ref->size         = size;
 	ref->size_key_min = 0;
 	ref->size_key_max = 0;
-	ref->count        = region->rows;
+	ref->rows         = region->rows;
 	ref->crc          = crc;
 	memset(ref->reserved, 0, sizeof(ref->reserved));
 	buf_advance(&self->data, sizeof(IndexRegion));

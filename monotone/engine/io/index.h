@@ -19,7 +19,7 @@ struct IndexRegion
 	uint32_t size_origin;
 	uint32_t size_key_min;
 	uint32_t size_key_max;
-	uint32_t count;
+	uint32_t rows;
 	uint32_t crc;
 	uint32_t reserved[4];
 } packed;
