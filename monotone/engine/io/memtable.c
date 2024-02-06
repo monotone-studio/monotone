@@ -68,7 +68,7 @@ memtable_free(Memtable* self)
 }
 
 void
-memtable_reinit(Memtable* self)
+memtable_reuse(Memtable* self)
 {
 	self->count       = 0;
 	self->count_pages = 0;
