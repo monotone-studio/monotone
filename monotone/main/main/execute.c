@@ -26,7 +26,8 @@ execute_show(Executable* self)
 		break;
 	case SHOW_PARTITIONS:
 		storage_mgr_show_partitions(&self->main->engine.storage_mgr, NULL,
-		                            self->output);
+		                            self->output,
+		                            cmd->verbose, cmd->debug);
 		break;
 	case SHOW_CONVEYOR:
 		conveyor_print(&self->main->engine.conveyor, self->output);
