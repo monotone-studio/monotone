@@ -1,0 +1,6 @@
+#
+
+# rw
+directory rw
+group rw
+test memtable
