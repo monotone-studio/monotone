@@ -39,7 +39,14 @@ parse_show(Lex* self)
 	default:
 		error("SHOW <STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
 	}
-	return &cmd_show_allocate(type, &tk)->cmd;
+
+	// [verbose]
+	bool verbose = lex_if(self, KVERBOSE, NULL);
+
+	// [debug]
+	bool debug = lex_if(self, KDEBUG, NULL);
+
+	return &cmd_show_allocate(type, &tk, verbose, debug)->cmd;
 }
 
 Cmd*

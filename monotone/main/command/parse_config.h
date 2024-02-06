@@ -22,6 +22,8 @@ struct CmdShow
 {
 	Cmd   cmd;
 	int   type;
+	bool  verbose;
+	bool  debug;
 	Token name;
 };
 
@@ -45,12 +47,14 @@ cmd_set_of(Cmd* self)
 }
 
 static inline CmdShow*
-cmd_show_allocate(int type, Token* name)
+cmd_show_allocate(int type, Token* name, bool verbose, bool debug)
 {
 	CmdShow* self;
 	self = cmd_allocate(CMD_SHOW, NULL, sizeof(*self));
-	self->type = type;
-	self->name = *name;
+	self->type    = type;
+	self->name    = *name;
+	self->verbose = verbose;
+	self->debug   = debug;
 	return self;
 }
 
