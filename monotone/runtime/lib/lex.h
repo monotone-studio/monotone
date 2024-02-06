@@ -46,7 +46,8 @@ enum
 	KCLOUD,
 	KDOWNLOAD,
 	KUPLOAD,
-	KSYNC
+	KVERBOSE,
+	KDEBUG
 };
 
 struct Token
