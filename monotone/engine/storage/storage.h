@@ -105,14 +105,14 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 {
 	if (debug)
 		verbose = true;
-	buf_printf(buf, "<%.*s>\n", str_size(&self->source->name),
+	buf_printf(buf, "%.*s\n", str_size(&self->source->name),
 	           str_of(&self->source->name));
 	list_foreach(&self->list)
 	{
 		auto part = list_at(Part, link);
 		if (verbose)
 		{
-			buf_printf(buf, "  <%" PRIu64 ">\n", part->id.min);
+			buf_printf(buf, "  %" PRIu64 "\n", part->id.min);
 			buf_printf(buf, "    min         %" PRIu64 "\n", part->id.min);
 			buf_printf(buf, "    max         %" PRIu64 "\n", part->id.max);
 			buf_printf(buf, "    storage     %s\n", str_of(&part->source->name));
