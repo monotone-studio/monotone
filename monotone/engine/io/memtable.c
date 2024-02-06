@@ -64,6 +64,12 @@ memtable_free(Memtable* self)
 {
 	if (self->tree.root)
 		memtable_truncate(self->tree.root, NULL);
+	memtable_reuse(self);
+}
+
+void
+memtable_reinit(Memtable* self)
+{
 	self->count       = 0;
 	self->count_pages = 0;
 	self->size        = 0;
