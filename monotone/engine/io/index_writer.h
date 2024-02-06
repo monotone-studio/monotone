@@ -101,7 +101,7 @@ index_writer_add(IndexWriter*  self,
                  uint64_t      region_offset)
 {
 	auto region = region_writer_header(region_writer);
-	assert(region->count > 0);
+	assert(region->rows > 0);
 
 	// write region offset
 	uint32_t offset = buf_size(&self->data);
@@ -125,7 +125,7 @@ index_writer_add(IndexWriter*  self,
 	ref->size         = size;
 	ref->size_key_min = 0;
 	ref->size_key_max = 0;
-	ref->count        = region->count;
+	ref->count        = region->rows;
 	ref->crc          = crc;
 	memset(ref->reserved, 0, sizeof(ref->reserved));
 	buf_advance(&self->data, sizeof(IndexRegion));
@@ -144,7 +144,7 @@ index_writer_add(IndexWriter*  self,
 	// update header
 	auto header = index_writer_header(self);
 	header->count++;
-	header->count_total += region->count;
+	header->count_total += region->rows;
 	header->size += sizeof(uint32_t) + sizeof(IndexRegion) +
 	                row_size(min) +
 	                row_size(max);
