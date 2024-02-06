@@ -29,8 +29,8 @@ struct Index
 	uint32_t crc;
 	Id       id;
 	uint32_t size;
-	uint64_t size_total;
-	uint64_t size_total_origin;
+	uint64_t size_regions;
+	uint64_t size_regions_origin;
 	uint32_t regions;
 	uint64_t rows;
 	uint64_t lsn;

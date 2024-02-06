@@ -148,8 +148,8 @@ index_writer_add(IndexWriter*  self,
 	header->size += sizeof(uint32_t) + sizeof(IndexRegion) +
 	                row_size(min) +
 	                row_size(max);
-	header->size_total += size;
-	header->size_total_origin += region->size;
+	header->size_regions += size;
+	header->size_regions_origin += region->size;
 }
 
 static inline void

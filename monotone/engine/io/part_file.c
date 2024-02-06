@@ -51,7 +51,7 @@ part_file_open(Part* self, bool read_index)
 	// set and validate index
 	self->index = (Index*)self->index_buf.start;
 
-	if (offset != (int64_t)self->index->size_total)
+	if (offset != (int64_t)self->index->size_regions)
 		error("partition: file '%s' size mismatch",
 		      str_of(&self->file.path));
 
