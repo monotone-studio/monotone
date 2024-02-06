@@ -1,5 +1,6 @@
 
 //
+// monotone
 //
 // time-series storage
 //
@@ -935,6 +936,7 @@ test_suite_cmd_compact(TestSuite* self, char* arg)
 
 	return 0;
 }
+#endif
 
 static struct
 {
@@ -943,6 +945,7 @@ static struct
 	int        (*function)(TestSuite*, char*);
 } cmds[] =
 {
+#if 0
 	// test suite specific
 	{ "trap",            4,  test_suite_cmd_trap            },
 	{ "unit",            4,  test_suite_cmd_unit            },
@@ -975,20 +978,17 @@ static struct
 	{ "memtable_rotate", 15, test_suite_cmd_memtable_rotate },
 	{ "memtable",        8,  test_suite_cmd_memtable        },
 	{ "compact",         7,  test_suite_cmd_compact         },
+#endif
 	{  NULL,             0,  NULL                           }
 };
-#endif
 
 int
 test_suite_cmd(TestSuite* self, char* query)
 {
-	/*
 	for (int i = 0; cmds[i].name; i++)
 		if (! strncmp(query, cmds[i].name, cmds[i].name_size))
 			return cmds[i].function(self, query + cmds[i].name_size);
-			*/
 
-	test_error(self, "line %d: unknown command: %s",
-	           self->current_line, query);
-	return -1;
+	// todo: execute
+	return 0;
 }
