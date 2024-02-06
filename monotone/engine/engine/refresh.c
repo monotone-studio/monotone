@@ -144,10 +144,7 @@ refresh_apply(Refresh* self)
 
 	// reuse memtable
 	*part->memtable = *origin->memtable;
-	memtable_init(origin->memtable,
-	              origin->memtable->size_page,
-	              origin->memtable->size_split,
-	              origin->comparator);
+	memtable_reuse(origin->memtable);
 
 	ref_unlock(self->ref, LOCK_ACCESS);
 	mutex_unlock(&engine->lock);
