@@ -25,7 +25,8 @@ void storage_mgr_drop(StorageMgr*, Str*, bool);
 void storage_mgr_alter(StorageMgr*, Source*, int, bool);
 void storage_mgr_rename(StorageMgr*, Str*, Str*, bool);
 void storage_mgr_show(StorageMgr*, Str*, Buf*);
-void storage_mgr_show_partitions(StorageMgr*, Str*, Buf*);
+void storage_mgr_show_partitions(StorageMgr*, Str*, Buf*, bool, bool);
+
 Storage*
 storage_mgr_find(StorageMgr*, Str*);
 Part*

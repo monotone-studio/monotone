@@ -307,14 +307,15 @@ storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
 }
 
 void
-storage_mgr_show_partitions(StorageMgr* self, Str* name, Buf* buf)
+storage_mgr_show_partitions(StorageMgr* self, Str* name, Buf* buf,
+                            bool verbose, bool debug)
 {
 	if (name == NULL)
 	{
 		list_foreach(&self->list)
 		{
 			auto storage = list_at(Storage, link);
-			storage_show_partitions(storage, buf);
+			storage_show_partitions(storage, buf, verbose, debug);
 		}
 		return;
 	}
@@ -325,7 +326,7 @@ storage_mgr_show_partitions(StorageMgr* self, Str* name, Buf* buf)
 		error("storage '%.*s': not exists", str_size(name), str_of(name));
 		return;
 	}
-	storage_show_partitions(storage, buf);
+	storage_show_partitions(storage, buf, verbose, debug);
 }
 
 Storage*

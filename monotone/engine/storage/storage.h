@@ -101,17 +101,64 @@ storage_oldest(Storage* self)
 }
 
 static inline void
-storage_show_partitions(Storage* self, Buf* buf)
+storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 {
-	buf_printf(buf, "%.*s\n", str_size(&self->source->name),
+	if (debug)
+		verbose = true;
+	buf_printf(buf, "<%.*s>\n", str_size(&self->source->name),
 	           str_of(&self->source->name));
 	list_foreach(&self->list)
 	{
 		auto part = list_at(Part, link);
-		uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
-		buf_printf(buf, "  [%20" PRIu64",%20" PRIu64 "] file size: %" PRIu64 ", size_cached: %" PRIu64 ", on storage: %s, on cloud: %s\n",
-		           part->id.min, part->id.max, part->file.size, size_cached,
-		           part_has(part, PART_FILE) ? "yes": "no",
-		           part_has(part, PART_FILE_CLOUD) ? "yes": "no");
+		if (verbose)
+		{
+			buf_printf(buf, "  <%" PRIu64 ">\n", part->id.min);
+			buf_printf(buf, "    min         %" PRIu64 "\n", part->id.min);
+			buf_printf(buf, "    max         %" PRIu64 "\n", part->id.max);
+			buf_printf(buf, "    storage     %s\n", str_of(&part->source->name));
+			buf_printf(buf, "    cloud       %s\n", str_of(&part->source->cloud));
+			buf_printf(buf, "    on storage  %s\n", part_has(part, PART_FILE) ? "yes" : "no");
+			buf_printf(buf, "    on cloud    %s\n", part_has(part, PART_FILE_CLOUD) ? "yes" : "no");
+			buf_printf(buf, "    memtable_a  %" PRIu64 " / %" PRIu64 "\n",
+			           part->memtable_a.count, part->memtable_a.size);
+			buf_printf(buf, "    memtable_b  %" PRIu64 " / %" PRIu64 "\n",
+			           part->memtable_b.count, part->memtable_b.size);
+			buf_printf(buf, "    file        %" PRIu64 "\n", part->file.size);
+			auto index = part->index;
+			if (index)
+			{
+				buf_printf(buf, "    index\n");
+				buf_printf(buf, "      size                %" PRIu64 "\n", index->size);
+				buf_printf(buf, "      size_regions        %" PRIu64 "\n", index->size_regions);
+				buf_printf(buf, "      size_regions_origin %" PRIu64 "\n", index->size_regions_origin);
+				buf_printf(buf, "      regions             %" PRIu32 "\n", index->regions);
+				buf_printf(buf, "      rows                %" PRIu64 "\n", index->rows);
+				buf_printf(buf, "      lsn                 %" PRIu64 "\n", index->lsn);
+				buf_printf(buf, "      compression         %" PRIu8  "\n", index->compression);
+				if (debug)
+				{
+					for (uint32_t i = 0; i < index->regions; i++)
+					{
+						auto region = index_get(index, i);
+						auto min = index_region_min(index, i);
+						auto max = index_region_max(index, i);
+						buf_printf(buf, "      region\n");
+						buf_printf(buf, "        min             %" PRIu64 "\n", min->time);
+						buf_printf(buf, "        max             %" PRIu64 "\n", max->time);
+						buf_printf(buf, "        rows            %" PRIu32 "\n", region->rows);
+						buf_printf(buf, "        offset          %" PRIu32 "\n", region->offset);
+						buf_printf(buf, "        size            %" PRIu32 "\n", region->size);
+					}
+				}
+			}
+
+		} else
+		{
+			uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
+			buf_printf(buf, "   %20" PRIu64" %20" PRIu64 " file size: %" PRIu64 ", size_cached: %" PRIu64 ", on storage: %s, on cloud: %s\n",
+			           part->id.min, part->id.max, part->file.size, size_cached,
+			           part_has(part, PART_FILE) ? "yes": "no",
+			           part_has(part, PART_FILE_CLOUD) ? "yes": "no");
+		}
 	}
 }

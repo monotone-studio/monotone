@@ -48,7 +48,7 @@ storage_stats(Storage* self, StorageStats* stats)
 
 		// rows
 		if (part->index)
-			stats->rows += part->index->count_total;
+			stats->rows += part->index->rows;
 		uint64_t rows_cached = part->memtable_a.count + part->memtable_b.count;
 		stats->rows_cached += rows_cached;
 		stats->rows += rows_cached;
@@ -56,8 +56,8 @@ storage_stats(Storage* self, StorageStats* stats)
 		// size
 		if (part->index)
 		{
-			stats->size += part->index->size_total;
-			stats->size_uncompressed += part->index->size_total_origin;
+			stats->size += part->index->size_regions;
+			stats->size_uncompressed += part->index->size_regions_origin;
 		}
 		uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
 		stats->size_cached += size_cached;
