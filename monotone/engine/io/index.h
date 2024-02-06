@@ -31,8 +31,8 @@ struct Index
 	uint32_t size;
 	uint64_t size_total;
 	uint64_t size_total_origin;
-	uint32_t count;
-	uint64_t count_total;
+	uint32_t regions;
+	uint64_t rows;
 	uint64_t lsn;
 	uint8_t  compression;
 	uint32_t reserved[4];
@@ -49,10 +49,10 @@ struct IndexEof
 static inline IndexRegion*
 index_get(Index* self, int pos)
 {
-	assert(pos < (int)self->count);
+	assert(pos < (int)self->regions);
 	auto start  = (char*)self + sizeof(Index);
 	auto offset = (uint32_t*)start;
-	return (IndexRegion*)(start + (sizeof(uint32_t) * self->count) +
+	return (IndexRegion*)(start + (sizeof(uint32_t) * self->regions) +
 	        offset[pos]);
 }
 
@@ -80,5 +80,5 @@ index_min(Index* self)
 static inline Row*
 index_max(Index* self)
 {
-	return index_region_max(self, self->count - 1);
+	return index_region_max(self, self->regions - 1);
 }

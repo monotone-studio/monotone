@@ -29,7 +29,7 @@ hot static inline int
 index_iterator_search(IndexIterator* self, Row* row)
 {
 	int begin = 0;
-	int end   = self->index->count - 1;
+	int end   = self->index->regions - 1;
 	while (begin != end)
 	{
 		int mid = begin + (end - begin) / 2;
@@ -38,8 +38,8 @@ index_iterator_search(IndexIterator* self, Row* row)
 		else
 			end = mid;
 	}
-	if (unlikely(end >= (int)self->index->count))
-		end = self->index->count - 1;
+	if (unlikely(end >= (int)self->index->regions))
+		end = self->index->regions - 1;
 	return end;
 }
 
@@ -53,7 +53,7 @@ index_iterator_open(IndexIterator* self,
 	self->current    = NULL;
 	self->pos        = 0;
 	self->comparator = comparator;
-	if (unlikely(index == NULL || index->count == 0))
+	if (unlikely(index == NULL || index->regions == 0))
 		return;
 
 	if (row == NULL) {
@@ -66,7 +66,7 @@ index_iterator_open(IndexIterator* self,
 	rc = compare(comparator, index_region_max(index, self->pos), row);
 	if (rc < 0)
 		self->pos++;
-	if (unlikely(self->pos >= (int)index->count))
+	if (unlikely(self->pos >= (int)index->regions))
 		return;
 
 	self->current = index_get(index, self->pos);
@@ -89,7 +89,7 @@ index_iterator_next(IndexIterator* self)
 {
 	self->pos++;
 	self->current = NULL;
-	if (unlikely(self->pos >= (int)self->index->count))
+	if (unlikely(self->pos >= (int)self->index->regions))
 		return;
 	self->current = index_get(self->index, self->pos);
 }

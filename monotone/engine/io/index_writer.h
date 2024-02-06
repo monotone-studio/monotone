@@ -143,8 +143,8 @@ index_writer_add(IndexWriter*  self,
 
 	// update header
 	auto header = index_writer_header(self);
-	header->count++;
-	header->count_total += region->rows;
+	header->regions++;
+	header->rows += region->rows;
 	header->size += sizeof(uint32_t) + sizeof(IndexRegion) +
 	                row_size(min) +
 	                row_size(max);
