@@ -16,11 +16,10 @@
 static int
 parse_storage_options(Lex* self, Source* config, char* command)
 {
+	// [(]
 	int mask = 0;
-
-	// (
 	if (! lex_if(self, '(', NULL))
-		error("%s name <(> expected", command);
+		return mask;
 
 	// [)]
 	if (lex_if(self, ')', NULL))
@@ -123,7 +122,7 @@ parse_storage_create(Lex* self)
 	cmd->config = source_allocate();
 	source_set_name(cmd->config, &name.string);
 
-	// (options)
+	// [(options)]
 	parse_storage_options(self, cmd->config, "CREATE STORAGE");
 
 	unguard(&guard);
