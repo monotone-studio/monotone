@@ -103,17 +103,10 @@ mapping_replace(Mapping* self, Slice* a, Slice* b)
 hot static inline Slice*
 mapping_seek(Mapping* self, uint64_t min)
 {
-	// slice[n].min >= key && key < slice[n + 1].min
+	// slice.min >= key
 	RbtreeNode* node = NULL;
-	int rc;
-	rc = mapping_find(&self->tree, self->comparator, &min, &node);
+	mapping_find(&self->tree, self->comparator, &min, &node);
 	assert(node != NULL);
-	if (rc == 1)
-	{
-		auto prev = rbtree_prev(&self->tree, node);
-		if (prev)
-			node = prev;
-	}
 	return container_of(node, Slice, node);
 }
 
