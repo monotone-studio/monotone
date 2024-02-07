@@ -4,3 +4,5 @@
 directory rw
 group rw
 test memtable
+test partition
+test mapping
