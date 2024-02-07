@@ -32,6 +32,9 @@ engine_cursor_open_part(EngineCursor* self, uint64_t min, Row* key)
 }
 
 hot static inline void
+engine_cursor_next(EngineCursor*);
+
+hot static inline void
 engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 {
 	self->ref     = NULL;
@@ -44,6 +47,10 @@ engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 		min = row_interval_min(key);
 
 	engine_cursor_open_part(self, min, key);
+
+	// partition found but cursor key set to > max
+	if (self->ref && !self->current)
+		engine_cursor_next(self);
 }
 
 hot static inline void
