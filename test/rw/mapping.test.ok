@@ -1,0 +1,547 @@
+init
+set workers to 0
+set interval to 10
+open
+alter storage main set (sync false, region_size 60)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         60
+# test: create partitions
+insert 10
+insert 11
+insert 19
+insert 20
+insert 21
+show partitions verbose
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  2 / 26
+    memtable_b  0 / 0
+    file        0
+# test: select (no key)
+select
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+# test: select
+select 0
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 1
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 3
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 10
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 11
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 12
+[19]
+[20]
+[21]
+(eof)
+select 20
+[20]
+[21]
+(eof)
+select 21
+[21]
+(eof)
+select 23
+(eof)
+# test: refresh
+refresh partition 10
+refresh partition 20
+files main
+00000000000000000010
+00000000000000000020
+show partitions verbose
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        225
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+# test: select
+select
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+# test: create partition (in the past)
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+show partitions verbose
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        225
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  10 / 130
+    memtable_b  0 / 0
+    file        0
+refresh partition 0
+show partitions verbose
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        225
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        655
+    index
+      size                381
+      size_regions        266
+      size_regions_origin 266
+      regions             4
+      rows                10
+      lsn                 0
+      compression         0
+# test: select
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+select 9
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+# test: create partition (in the future)
+insert 4096
+show partitions verbose
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        225
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        655
+    index
+      size                381
+      size_regions        266
+      size_regions_origin 266
+      regions             4
+      rows                10
+      lsn                 0
+      compression         0
+  4090
+    min         4090
+    max         4100
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+refresh partition 4096
+show partitions verbose
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        225
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        655
+    index
+      size                381
+      size_regions        266
+      size_regions_origin 266
+      regions             4
+      rows                10
+      lsn                 0
+      compression         0
+  4090
+    min         4090
+    max         4100
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+files main
+00000000000000000000
+00000000000000000010
+00000000000000000020
+00000000000000004090
+# test: select
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+[4096]
+(eof)
+# test: select (gap)
+select 21
+[21]
+[4096]
+(eof)
+select 22
+[4096]
+(eof)
+select 4096
+[4096]
+(eof)
+select 4097
+(eof)
+# test: partition has only deletes
+delete 4096
+# test: select
+select 21
+[21]
+(eof)
+select 4096
+(eof)
+select 4097
+(eof)
+# test: create partition (in the future) #2
+insert 8096
+# test: select
+select 21
+[21]
+[8096]
+(eof)
+select 4090
+[8096]
+(eof)
+select 8090
+[8096]
+(eof)
+# test: partition has only deletes #2
+delete 8096
+# test: select
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+(eof)
+# test: create partition (in the future) #3
+insert 100000
+# test: select
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+[10]
+[11]
+[19]
+[20]
+[21]
+[100000]
+(eof)
+close

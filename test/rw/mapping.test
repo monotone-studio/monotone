@@ -1,0 +1,111 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+alter storage main set (sync false, region_size 60)
+show storages
+
+# test: create partitions
+insert 10
+insert 11
+insert 19
+
+insert 20
+insert 21
+
+show partitions verbose
+
+# test: select (no key)
+select
+
+# test: select
+select 0
+select 1
+select 3
+
+select 10
+select 11
+select 12
+
+select 20
+select 21
+select 23
+
+# test: refresh
+refresh partition 10
+refresh partition 20
+files main
+
+show partitions verbose
+
+# test: select
+select
+
+# test: create partition (in the past)
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+show partitions verbose
+refresh partition 0
+show partitions verbose
+
+# test: select
+select
+select 9
+
+# test: create partition (in the future)
+insert 4096
+show partitions verbose
+refresh partition 4096
+show partitions verbose
+files main
+
+# test: select
+select
+
+# test: select (gap)
+select 21
+select 22
+select 4096
+select 4097
+
+# test: partition has only deletes
+delete 4096
+
+# test: select
+select 21
+select 4096
+select 4097
+
+# test: create partition (in the future) #2
+insert 8096
+
+# test: select
+select 21
+
+select 4090
+select 8090
+
+# test: partition has only deletes #2
+delete 8096
+
+# test: select
+select
+
+# test: create partition (in the future) #3
+insert 100000
+
+# test: select
+select
+
+close
