@@ -1,0 +1,48 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: drop storage parsing
+drop
+drop storage
+drop storage if
+drop storage if 123
+drop storage if not
+drop storage if exists
+drop storage if exists 123
+drop storage 123
+
+# test: drop storage
+create storage test
+show storages
+
+drop storage test
+show storages
+
+# test: drop storage (not exists)
+drop storage test
+
+# test: drop storage if exists
+drop storage if exists test
+
+# test: drop storage main
+drop storage main
+
+# test: create storage (with partition)
+create storage test
+insert 0
+move partition 0 into test
+
+show storages
+show partitions verbose
+
+# test: drop storage (with partition)
+drop storage test
+drop partition 0
+drop storage test
+show storages
+
+close
