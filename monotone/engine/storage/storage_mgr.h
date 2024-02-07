@@ -18,7 +18,6 @@ struct StorageMgr
 void storage_mgr_init(StorageMgr*, CloudMgr*);
 void storage_mgr_free(StorageMgr*);
 void storage_mgr_open(StorageMgr*);
-void storage_mgr_close(StorageMgr*);
 bool storage_mgr_create_system(StorageMgr*);
 bool storage_mgr_create(StorageMgr*, Source*, bool);
 void storage_mgr_drop(StorageMgr*, Str*, bool);

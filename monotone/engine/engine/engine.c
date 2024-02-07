@@ -53,7 +53,15 @@ engine_open(Engine* self)
 void
 engine_close(Engine* self)
 {
-	storage_mgr_close(&self->storage_mgr);
+	for (;;)
+	{
+		auto slice = mapping_min(&self->mapping);
+		if (! slice)
+			break;
+		mapping_remove(&self->mapping, slice);
+		auto ref = ref_of(slice);
+		ref_free(ref);
+	}
 }
 
 static Slice*
