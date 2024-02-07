@@ -96,7 +96,6 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	} else
 	{
 		// conveyor is not set, using main storage
-		assert(self->storage_mgr.list_count == 1);
 		storage = storage_mgr_first(&self->storage_mgr);
 	}
 	storage_add(storage, part);
