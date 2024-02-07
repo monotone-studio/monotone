@@ -67,12 +67,15 @@ test_suite_cmd_files(TestSuite* self, char* arg)
 	char* arg_dir = test_arg(&arg);
 
 	char path[PATH_MAX];
-	snprintf(path, sizeof(path), "%s/%s", self->option_result_dir, arg_dir);
+	if (arg_dir)
+		snprintf(path, sizeof(path), "%s/%s", self->option_result_dir, arg_dir);
+	else
+		snprintf(path, sizeof(path), "%s", self->option_result_dir);
 
 	DIR* dir = opendir(path);
 	if (unlikely(dir == NULL))
 	{
-		test_error(self, "failed to open directory");
+		test_error(self, "failed to open directory: %s", path);
 		return -1;
 	}
 
