@@ -99,7 +99,8 @@ test2
   compression         0
   refresh_wm          41943040
   region_size         131072
-# test: alter storage if exists
+drop storage test2
+# test: alter storage rename if exists
 alter storage if exists test rename to test2
 show storages
 main
@@ -119,7 +120,11 @@ main
   compression         0
   refresh_wm          41943040
   region_size         131072
-test2
+# test: alter storage rename main
+alter storage main rename to test
+error: storage 'main': system storage cannot be renamed
+show storages
+main
   min                 18446744073709551615
   max                 0
   partitions          0
@@ -133,6 +138,133 @@ test2
   cloud               ''
   sync                true
   crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: alter storage set
+create storage test
+alter storage test set
+alter storage test set abc
+error: unexpected clause at the end of command
+alter storage test set (
+error: ALTER STORAGE (<name> expected
+alter storage test set (sync
+error: sync <true/false> expected
+alter storage test set (sync,
+error: sync <true/false> expected
+alter storage test set (sync,)
+error: sync <true/false> expected
+alter storage test set (sync 123
+error: sync <true/false> expected
+alter storage test set (sync true,
+error: ALTER STORAGE (<name> expected
+alter storage test set (sync true,)
+error: ALTER STORAGE (<name> expected
+alter storage test set (sync false)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+alter storage test set (sync true)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+alter storage test set (sync false, crc true)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 true
   compression         0
   refresh_wm          41943040
   region_size         131072

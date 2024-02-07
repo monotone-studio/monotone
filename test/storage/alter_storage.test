@@ -25,9 +25,35 @@ alter storage test rename to main
 # test: alter storage rename
 alter storage test rename to test2
 show storages
+drop storage test2
 
-# test: alter storage if exists
+# test: alter storage rename if exists
 alter storage if exists test rename to test2
+show storages
+
+# test: alter storage rename main
+alter storage main rename to test
+show storages
+
+# test: alter storage set
+create storage test
+alter storage test set
+alter storage test set abc
+alter storage test set (
+alter storage test set (sync
+alter storage test set (sync,
+alter storage test set (sync,)
+alter storage test set (sync 123
+alter storage test set (sync true,
+alter storage test set (sync true,)
+
+alter storage test set (sync false)
+show storages
+
+alter storage test set (sync true)
+show storages
+
+alter storage test set (sync false, crc true)
 show storages
 
 close
