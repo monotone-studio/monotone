@@ -92,4 +92,9 @@ create storage test (cloud 'mock')
 show storages
 drop storage test
 
+# test: create storage set path
+create storage test (path '__dir')
+files __dir
+drop storage test
+
 close
