@@ -1,0 +1,33 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: alter storage parsing
+alter
+alter storage
+alter storage if
+alter storage if abc
+alter storage if not abc
+alter storage if exists
+alter storage if exists test abc
+
+# test: alter storage rename (already exists)
+create storage test
+show storages
+alter storage test rename
+alter storage test rename to
+alter storage test rename to test
+alter storage test rename to main
+
+# test: alter storage rename
+alter storage test rename to test2
+show storages
+
+# test: alter storage if exists
+alter storage if exists test rename to test2
+show storages
+
+close
