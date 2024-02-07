@@ -167,16 +167,18 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 	if (! storage)
 	{
 		if (! if_exists)
-			error("storage '%.*s': not exists", str_size(name), str_of(name));
+			error("storage '%.*s': not exists", str_size(name),
+			      str_of(name));
 		return;
 	}
 
 	if (storage->refs > 0)
-		error("storage '%.*s': has active dependencies",
-		      str_size(name), str_of(name));
+		error("storage '%.*s': has dependencies", str_size(name),
+		      str_of(name));
 
 	if (storage->list_count > 0)
-		error("storage '%.*s': has data", str_size(name), str_of(name));
+		error("storage '%.*s': has partitions", str_size(name),
+		      str_of(name));
 
 	list_unlink(&storage->link);
 	self->list_count--;
@@ -251,18 +253,18 @@ storage_mgr_rename(StorageMgr* self, Str* name, Str* name_new, bool if_exists)
 		      str_size(name), str_of(name));
 	}
 
-	auto storage = storage_mgr_find(self, name_new);
-	if (storage)
-		error("storage '%.*s': already exists", str_size(name_new),
-		      str_of(name_new));
-
-	storage = storage_mgr_find(self, name);
+	auto storage = storage_mgr_find(self, name);
 	if (! storage)
 	{
 		if (! if_exists)
 			error("storage '%.*s': not exists", str_size(name), str_of(name));
 		return;
 	}
+
+	auto ref = storage_mgr_find(self, name_new);
+	if (ref)
+		error("storage '%.*s': already exists", str_size(name_new),
+		      str_of(name_new));
 
 	source_set_name(storage->source, name_new);
 	storage_mgr_save(self);
