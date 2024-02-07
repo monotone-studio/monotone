@@ -116,8 +116,8 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 
 hot Ref*
 engine_lock(Engine* self, uint64_t min, LockType lock,
-            bool gte,
-            bool create_if_not_exists)
+            bool    gte,
+            bool    create_if_not_exists)
 {
 	// take shared control lock to avoid exclusive operations
 	control_lock_shared();
@@ -129,13 +129,9 @@ engine_lock(Engine* self, uint64_t min, LockType lock,
 	Slice* slice;
 	if (gte)
 	{
-		// engine is empty
-		if (unlikely(self->mapping.tree_count == 0))
-			return NULL;
-
 		// find partition >= min
-		slice = mapping_seek(&self->mapping, min);
-		if (slice->max <= min)
+		slice = mapping_gte(&self->mapping, min);
+		if (! slice)
 			return NULL;
 	} else
 	{
