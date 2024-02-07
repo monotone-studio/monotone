@@ -1,0 +1,154 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: main storage created on open
+show storages
+
+# test: create storage parsing
+create
+create storage
+create storage if
+create storage if abc
+create storage if not abc
+create storage if not exists
+create storage 123
+create storage test junk
+create storage test (
+create storage test (123
+create storage test (name
+create storage test (sync
+create storage test (sync int
+create storage test (sync false
+create storage test (sync false,
+create storage test (sync false,)
+create storage test (sync false, sync false
+create storage test (sync false, sync false) junk
+
+# test: create storage (no options)
+create storage test
+show storages
+
+# test: create storage (exists)
+create storage test
+
+# test: create storage if not exists
+create storage if not exists test
+show storages
+
+# test: drop storage parsing
+drop
+drop storage
+drop storage if
+drop storage if 123
+drop storage if not
+drop storage if exists
+drop storage if exists 123
+drop storage 123
+
+# test: drop storage
+drop storage test
+show storages
+
+# test: drop storage (not exists)
+drop storage test
+
+# test: drop storage if exists
+drop storage if exists test
+
+# test: drop storage main
+drop storage main
+
+# test: create storage (with partition)
+create storage test
+insert 0
+move partition 0 into test
+
+show storages
+show partitions verbose
+
+# test: drop storage (with partition)
+drop storage test
+drop partition 0
+drop storage test
+show storages
+
+# test: create storage (with options)
+
+# sync
+create storage test (sync
+create storage test (sync 123
+create storage test (sync false)
+show storages
+drop storage test
+
+# crc
+create storage test (crc
+create storage test (crc 123
+create storage test (crc true)
+show storages
+drop storage test
+
+# refresh_wm
+create storage test (refresh_wm
+create storage test (refresh_wm false
+create storage test (refresh_wm 0)
+show storages
+drop storage test
+
+# region_size
+create storage test (region_size
+create storage test (region_size false
+create storage test (region_size 4096)
+show storages
+drop storage test
+
+# compression
+create storage test (compression
+create storage test (compression false
+create storage test (compression 1)
+show storages
+drop storage test
+
+# path
+create storage test (path
+create storage test (path false
+create storage test (path 'on_base')
+show storages
+drop storage test
+
+# cloud
+create storage test (cloud
+create storage test (cloud false
+create storage test (cloud 'undef')
+create storage test (cloud 'mock')
+show storages
+drop storage test
+
+# test: alter storage parsing
+alter
+alter storage
+alter storage if
+alter storage if abc
+alter storage if not abc
+alter storage if exists
+alter storage if exists test abc
+
+# test: alter storage rename (already exists)
+create storage test
+show storages
+alter storage test rename
+alter storage test rename test
+
+# test: alter storage rename
+alter storage test rename test2
+show storages
+
+# test: alter storage if exists
+alter storage if exists test rename test2
+show storages
+
+close

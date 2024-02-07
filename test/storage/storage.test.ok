@@ -1,0 +1,686 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: main storage created on open
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: create storage parsing
+create
+error: CREATE <STORAGE> expected
+create storage
+error: CREATE STORAGE <name> expected
+create storage if
+error: IF <NOT> EXISTS expected
+create storage if abc
+error: IF <NOT> EXISTS expected
+create storage if not abc
+error: IF NOT <EXISTS> expected
+create storage if not exists
+error: CREATE STORAGE <name> expected
+create storage 123
+error: CREATE STORAGE <name> expected
+create storage test junk
+error: unexpected clause at the end of command
+create storage test (
+error: CREATE STORAGE (<name> expected
+create storage test (123
+error: CREATE STORAGE (<name> expected
+create storage test (name
+error: CREATE STORAGE: unknown option name
+create storage test (sync
+error: sync <true/false> expected
+create storage test (sync int
+error: sync <true/false> expected
+create storage test (sync false
+error: CREATE STORAGE name (...<)> expected
+create storage test (sync false,
+error: CREATE STORAGE (<name> expected
+create storage test (sync false,)
+error: CREATE STORAGE (<name> expected
+create storage test (sync false, sync false
+error: CREATE STORAGE name (...<)> expected
+create storage test (sync false, sync false) junk
+error: unexpected clause at the end of command
+# test: create storage (no options)
+create storage test
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: create storage (exists)
+create storage test
+error: storage 'test': already exists
+# test: create storage if not exists
+create storage if not exists test
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: drop storage parsing
+drop
+error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+drop storage
+error: DROP STORAGE <name> expected
+drop storage if
+error: IF <EXISTS> expected
+drop storage if 123
+error: IF <EXISTS> expected
+drop storage if not
+error: IF <EXISTS> expected
+drop storage if exists
+error: DROP STORAGE <name> expected
+drop storage if exists 123
+error: DROP STORAGE <name> expected
+drop storage 123
+error: DROP STORAGE <name> expected
+# test: drop storage
+drop storage test
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: drop storage (not exists)
+drop storage test
+error: storage 'test': not exists
+# test: drop storage if exists
+drop storage if exists test
+# test: drop storage main
+drop storage main
+error: storage 'main': system storage cannot be dropped
+# test: create storage (with partition)
+create storage test
+insert 0
+move partition 0 into test
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+# test: drop storage (with partition)
+drop storage test
+error: storage 'test': has partitions
+drop partition 0
+drop storage test
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: create storage (with options)
+create storage test (sync
+error: sync <true/false> expected
+create storage test (sync 123
+error: sync <true/false> expected
+create storage test (sync false)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+drop storage test
+create storage test (crc
+error: crc <true/false> expected
+create storage test (crc 123
+error: crc <true/false> expected
+create storage test (crc true)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 true
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+drop storage test
+create storage test (refresh_wm
+error: refresh_wm <integer> expected
+create storage test (refresh_wm false
+error: refresh_wm <integer> expected
+create storage test (refresh_wm 0)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          0
+  region_size         131072
+drop storage test
+create storage test (region_size
+error: region_size <integer> expected
+create storage test (region_size false
+error: region_size <integer> expected
+create storage test (region_size 4096)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         4096
+drop storage test
+create storage test (compression
+error: compression <integer> expected
+create storage test (compression false
+error: compression <integer> expected
+create storage test (compression 1)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         1
+  refresh_wm          41943040
+  region_size         131072
+drop storage test
+create storage test (path
+error: path <string> expected
+create storage test (path false
+error: path <string> expected
+create storage test (path 'on_base')
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                'on_base'
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+drop storage test
+create storage test (cloud
+error: cloud <string> expected
+create storage test (cloud false
+error: cloud <string> expected
+create storage test (cloud 'undef')
+error: storage 'test': cloud interface 'undef' does not exists
+create storage test (cloud 'mock')
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               'mock'
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+drop storage test
+# test: alter storage parsing
+alter
+error: ALTER <STORAGE|CONVEYOR> expected
+alter storage
+error: ALTER STORAGE <name> expected
+alter storage if
+error: IF <EXISTS> expected
+alter storage if abc
+error: IF <EXISTS> expected
+alter storage if not abc
+error: IF <EXISTS> expected
+alter storage if exists
+error: ALTER STORAGE <name> expected
+alter storage if exists test abc
+error: ALTER STORAGE name <RENAME or SET> expected
+# test: alter storage rename (already exists)
+create storage test
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+alter storage test rename
+error: ALTER STORAGE RENAME <name> expected
+alter storage test rename test
+error: storage 'test': already exists
+# test: alter storage rename
+alter storage test rename test2
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test2
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: alter storage if exists
+alter storage if exists test rename test2
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test2
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+close
