@@ -100,28 +100,6 @@ mapping_replace(Mapping* self, Slice* a, Slice* b)
 	rbtree_replace(&self->tree, &a->node, &b->node);
 }
 
-hot static inline Slice*
-mapping_seek(Mapping* self, uint64_t min)
-{
-	// slice.min >= key
-	RbtreeNode* node = NULL;
-	mapping_find(&self->tree, self->comparator, &min, &node);
-	assert(node != NULL);
-	return container_of(node, Slice, node);
-}
-
-hot static inline Slice*
-mapping_match(Mapping* self, uint64_t min)
-{
-	// exact match
-	if (self->tree_count == 0)
-		return NULL;
-	auto slice = mapping_seek(self, min);
-	if (slice->min <= min && min < slice->max)
-		return slice;
-	return NULL;
-}
-
 static inline Slice*
 mapping_next(Mapping* self, Slice* slice)
 {
@@ -138,4 +116,37 @@ mapping_prev(Mapping* self, Slice* slice)
 	if (! node)
 		return NULL;
 	return mapping_of(node);
+}
+
+hot static inline Slice*
+mapping_seek(Mapping* self, uint64_t min)
+{
+	// slice[n].min >= key && key < slice[n + 1].min
+	RbtreeNode* node = NULL;
+	mapping_find(&self->tree, self->comparator, &min, &node);
+	assert(node != NULL);
+	return container_of(node, Slice, node);
+}
+
+hot static inline Slice*
+mapping_gte(Mapping* self, uint64_t min)
+{
+	if (self->tree_count == 0)
+		return NULL;
+	auto slice = mapping_seek(self, min);
+	if (slice->max <= min)
+		return mapping_next(self, slice);
+	return slice;
+}
+
+hot static inline Slice*
+mapping_match(Mapping* self, uint64_t min)
+{
+	// exact match
+	if (self->tree_count == 0)
+		return NULL;
+	auto slice = mapping_seek(self, min);
+	if (slice->min <= min && min < slice->max)
+		return slice;
+	return NULL;
 }
