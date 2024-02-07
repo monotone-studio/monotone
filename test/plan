@@ -1,8 +1,8 @@
 #
 
 # rw
-directory rw
-group rw
+directory functional
+group functional
 test memtable
 test partition
 test mapping
