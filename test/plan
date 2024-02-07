@@ -1,8 +1,15 @@
 #
 
-# rw
-directory functional
-group functional
-test memtable
-test partition
-test mapping
+# functional
+#directory functional
+#group functional
+#test memtable
+#test partition
+#test mapping
+
+# storage
+directory storage
+group storage
+test create_storage
+test drop_storage
+test alter_storage
