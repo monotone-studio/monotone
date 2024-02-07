@@ -1,0 +1,271 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+alter storage main set (sync false)
+show storages
+
+# test: insert + refresh (create region)
+insert 1
+insert 2
+insert 3
+insert 5
+show partitions debug
+refresh partition 0
+
+# test: validate
+show partitions debug
+files main
+
+# test: select (no key)
+select
+
+# test: select (min)
+select 0
+
+# test: select (point lookup)
+select 2
+
+# test: select (next after)
+select 4
+
+# test: select (out of range)
+select 6
+select 12
+
+# test: replace by key
+insert 0 x
+insert 3 x
+show partitions debug
+
+# test: select (memtable + region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: update by cursor
+cursor c 2
+update_by c 2 y
+cursor_close c
+show partitions debug
+
+# test: select (memtable + region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: delete by key
+delete 0
+delete 1
+show partitions debug
+
+# test: select (memtable + region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: delete by cursor
+cursor c 2
+delete_by c
+cursor_close c
+show partitions debug
+
+# test: select (memtable + region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (region)
+select
+select 0
+select 2
+select 4
+select 6
+select 12
+
+# test: delete all
+delete 3
+delete 5
+show partitions debug
+
+# test: select (memtable + region)
+select
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (empty region)
+select
+
+# test: insert (empty partition exists)
+insert 1 z
+insert 2 z
+insert 3 z
+insert 5 z
+show partitions debug
+
+# test: select (memtable + region)
+select
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (region)
+select
+
+# test: delete by non-existent key
+delete 6
+delete 7
+delete 8
+show partitions debug
+
+# test: select (memtable + region)
+select
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (region)
+select
+
+# test: create regions
+drop partition 0
+show partitions debug
+
+alter storage main set (region_size 60)
+show storages
+
+# test: insert + refresh (create regions)
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+refresh partition 0
+show partitions debug
+
+# test: select (regions)
+select 0
+select 1
+select 2
+select 3
+select 4
+select 5
+select 6
+select 7
+select 8
+select 9
+select 10
+
+# test: update
+insert 2 i
+insert 4 i
+insert 6 i
+insert 8 i
+insert 10 i
+show partitions debug
+
+# test: select (memtable + regions)
+select 0
+select 1
+select 2
+select 3
+select 4
+select 5
+select 6
+select 7
+select 8
+select 9
+select 10
+
+# test: refresh
+refresh partition 0
+show partitions debug
+
+# test: select (regions)
+select
+
+# test: delete
+delete 5
+delete 6
+delete 7
+delete 8
+delete 9
+delete 10
+
+# test: select (memtable + regions)
+select
+
+# test: refresh (delete regions)
+refresh partition 0
+show partitions debug
+
+# test: select (regions)
+select
+
+drop partition 0
+select
+
+close

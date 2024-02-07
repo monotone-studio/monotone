@@ -122,8 +122,7 @@ main_deploy(Main* self, Str* directory)
 
 	// read or create config file
 	char path[PATH_MAX];
-	snprintf(path, sizeof(path), "%s/config.json",
-	         config_directory());
+	snprintf(path, sizeof(path), "%s/config.json", config_directory());
 	config_open(&self->config, path);
 
 	// configure logger

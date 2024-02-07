@@ -1,0 +1,1142 @@
+init
+set workers to 0
+set interval to 10
+open
+alter storage main set (sync false)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: insert + refresh (create region)
+insert 1
+insert 2
+insert 3
+insert 5
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  4 / 52
+    memtable_b  0 / 0
+    file        0
+refresh partition 0
+# test: validate
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             5
+        rows            4
+        offset          0
+        size            92
+files main
+00000000000000000000
+# test: select (no key)
+select
+[1]
+[2]
+[3]
+[5]
+(eof)
+# test: select (min)
+select 0
+[1]
+[2]
+[3]
+[5]
+(eof)
+# test: select (point lookup)
+select 2
+[2]
+[3]
+[5]
+(eof)
+# test: select (next after)
+select 4
+[5]
+(eof)
+# test: select (out of range)
+select 6
+(eof)
+select 12
+(eof)
+# test: replace by key
+insert 0 x
+insert 3 x
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  2 / 28
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             5
+        rows            4
+        offset          0
+        size            92
+# test: select (memtable + region)
+select
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 2
+[2]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        279
+    index
+      size                160
+      size_regions        111
+      size_regions_origin 111
+      regions             1
+      rows                5
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             5
+        rows            5
+        offset          0
+        size            111
+# test: select (region)
+select
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2]
+[3, x]
+[5]
+(eof)
+select 2
+[2]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: update by cursor
+cursor c 2
+update_by c 2 y
+cursor_close c
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  1 / 14
+    memtable_b  0 / 0
+    file        279
+    index
+      size                160
+      size_regions        111
+      size_regions_origin 111
+      regions             1
+      rows                5
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             5
+        rows            5
+        offset          0
+        size            111
+# test: select (memtable + region)
+select
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        280
+    index
+      size                160
+      size_regions        112
+      size_regions_origin 112
+      regions             1
+      rows                5
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             5
+        rows            5
+        offset          0
+        size            112
+# test: select (region)
+select
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[0, x]
+[1]
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: delete by key
+delete 0
+delete 1
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  2 / 26
+    memtable_b  0 / 0
+    file        280
+    index
+      size                160
+      size_regions        112
+      size_regions_origin 112
+      regions             1
+      rows                5
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             5
+        rows            5
+        offset          0
+        size            112
+# test: select (memtable + region)
+select
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        245
+    index
+      size                160
+      size_regions        77
+      size_regions_origin 77
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             2
+        max             5
+        rows            3
+        offset          0
+        size            77
+# test: select (region)
+select
+[2, y]
+[3, x]
+[5]
+(eof)
+select 0
+[2, y]
+[3, x]
+[5]
+(eof)
+select 2
+[2, y]
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: delete by cursor
+cursor c 2
+delete_by c
+cursor_close c
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  1 / 14
+    memtable_b  0 / 0
+    file        245
+    index
+      size                160
+      size_regions        77
+      size_regions_origin 77
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             2
+        max             5
+        rows            3
+        offset          0
+        size            77
+# test: select (memtable + region)
+select
+[3, x]
+[5]
+(eof)
+select 0
+[3, x]
+[5]
+(eof)
+select 2
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        227
+    index
+      size                160
+      size_regions        59
+      size_regions_origin 59
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+      region
+        min             3
+        max             5
+        rows            2
+        offset          0
+        size            59
+# test: select (region)
+select
+[3, x]
+[5]
+(eof)
+select 0
+[3, x]
+[5]
+(eof)
+select 2
+[3, x]
+[5]
+(eof)
+select 4
+[5]
+(eof)
+select 6
+(eof)
+select 12
+(eof)
+# test: delete all
+delete 3
+delete 5
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  2 / 26
+    memtable_b  0 / 0
+    file        227
+    index
+      size                160
+      size_regions        59
+      size_regions_origin 59
+      regions             1
+      rows                2
+      lsn                 0
+      compression         0
+      region
+        min             3
+        max             5
+        rows            2
+        offset          0
+        size            59
+# test: select (memtable + region)
+select
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        93
+    index
+      size                85
+      size_regions        0
+      size_regions_origin 0
+      regions             0
+      rows                0
+      lsn                 0
+      compression         0
+# test: select (empty region)
+select
+(eof)
+# test: insert (empty partition exists)
+insert 1 z
+insert 2 z
+insert 3 z
+insert 5 z
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  4 / 56
+    memtable_b  0 / 0
+    file        93
+    index
+      size                85
+      size_regions        0
+      size_regions_origin 0
+      regions             0
+      rows                0
+      lsn                 0
+      compression         0
+# test: select (memtable + region)
+select
+[1, z]
+[2, z]
+[3, z]
+[5, z]
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        265
+    index
+      size                161
+      size_regions        96
+      size_regions_origin 96
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             5
+        rows            4
+        offset          0
+        size            96
+# test: select (region)
+select
+[1, z]
+[2, z]
+[3, z]
+[5, z]
+(eof)
+# test: delete by non-existent key
+delete 6
+delete 7
+delete 8
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        265
+    index
+      size                161
+      size_regions        96
+      size_regions_origin 96
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             5
+        rows            4
+        offset          0
+        size            96
+# test: select (memtable + region)
+select
+[1, z]
+[2, z]
+[3, z]
+[5, z]
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        265
+    index
+      size                161
+      size_regions        96
+      size_regions_origin 96
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             5
+        rows            4
+        offset          0
+        size            96
+# test: select (region)
+select
+[1, z]
+[2, z]
+[3, z]
+[5, z]
+(eof)
+# test: create regions
+drop partition 0
+show partitions debug
+main
+alter storage main set (region_size 60)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         60
+# test: insert + refresh (create regions)
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        540
+    index
+      size                307
+      size_regions        225
+      size_regions_origin 225
+      regions             3
+      rows                9
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             3
+        rows            3
+        offset          0
+        size            75
+      region
+        min             4
+        max             6
+        rows            3
+        offset          75
+        size            75
+      region
+        min             7
+        max             9
+        rows            3
+        offset          150
+        size            75
+# test: select (regions)
+select 0
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 1
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 2
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 3
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 4
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 5
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 6
+[6]
+[7]
+[8]
+[9]
+(eof)
+select 7
+[7]
+[8]
+[9]
+(eof)
+select 8
+[8]
+[9]
+(eof)
+select 9
+[9]
+(eof)
+select 10
+(eof)
+# test: update
+insert 2 i
+insert 4 i
+insert 6 i
+insert 8 i
+insert 10 i
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  4 / 56
+    memtable_b  0 / 0
+    file        540
+    index
+      size                307
+      size_regions        225
+      size_regions_origin 225
+      regions             3
+      rows                9
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             3
+        rows            3
+        offset          0
+        size            75
+      region
+        min             4
+        max             6
+        rows            3
+        offset          75
+        size            75
+      region
+        min             7
+        max             9
+        rows            3
+        offset          150
+        size            75
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 14
+    memtable_b  0 / 0
+    file        0
+# test: select (memtable + regions)
+select 0
+[1]
+[2, i]
+[3]
+[4, i]
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 1
+[1]
+[2, i]
+[3]
+[4, i]
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 2
+[2, i]
+[3]
+[4, i]
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 3
+[3]
+[4, i]
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 4
+[4, i]
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 5
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 6
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 7
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+select 8
+[8, i]
+[9]
+[10, i]
+(eof)
+select 9
+[9]
+[10, i]
+(eof)
+select 10
+[10, i]
+(eof)
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 14
+    memtable_b  0 / 0
+    file        0
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        546
+    index
+      size                309
+      size_regions        229
+      size_regions_origin 229
+      regions             3
+      rows                9
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             3
+        rows            3
+        offset          0
+        size            76
+      region
+        min             4
+        max             6
+        rows            3
+        offset          76
+        size            77
+      region
+        min             7
+        max             9
+        rows            3
+        offset          153
+        size            76
+# test: select (regions)
+select
+[1]
+[2, i]
+[3]
+[4, i]
+[5]
+[6, i]
+[7]
+[8, i]
+[9]
+[10, i]
+(eof)
+# test: delete
+delete 5
+delete 6
+delete 7
+delete 8
+delete 9
+delete 10
+# test: select (memtable + regions)
+select
+[1]
+[2, i]
+[3]
+[4, i]
+(eof)
+# test: refresh (delete regions)
+refresh partition 0
+show partitions debug
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        361
+    index
+      size                235
+      size_regions        118
+      size_regions_origin 118
+      regions             2
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             1
+        max             3
+        rows            3
+        offset          0
+        size            76
+      region
+        min             4
+        max             4
+        rows            1
+        offset          76
+        size            42
+# test: select (regions)
+select
+[1]
+[2, i]
+[3]
+[4, i]
+(eof)
+drop partition 0
+select
+(eof)
+close
