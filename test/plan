@@ -1,11 +1,11 @@
 #
 
 # functional
-#directory functional
-#group functional
-#test memtable
-#test partition
-#test mapping
+directory functional
+group functional
+test memtable
+test partition
+test mapping
 
 # storage
 directory storage
@@ -16,3 +16,6 @@ test alter_storage
 test alter_conveyor
 test refresh
 test move
+test drop
+test rebalance
+test service
