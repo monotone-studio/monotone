@@ -25,6 +25,7 @@ static Keyword keywords[] =
 	{ KSHOW,       "show",       4},
 	{ KALL,        "all",        3},
 	{ KCHECKPOINT, "checkpoint", 10},
+	{ KSERVICE,    "service",    7},
 	{ KCREATE,     "create",     6},
 	{ KSTORAGE,    "storage",    7},
 	{ KSTORAGES,   "storages",   8},
