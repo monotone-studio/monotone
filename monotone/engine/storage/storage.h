@@ -117,6 +117,7 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 			buf_printf(buf, "    max         %" PRIu64 "\n", part->id.max);
 			buf_printf(buf, "    storage     %s\n", str_of(&part->source->name));
 			buf_printf(buf, "    cloud       %s\n", str_of(&part->source->cloud));
+			buf_printf(buf, "    refresh     %s\n", part->refresh ? "yes" : "no");
 			buf_printf(buf, "    on storage  %s\n", part_has(part, PART_FILE) ? "yes" : "no");
 			buf_printf(buf, "    on cloud    %s\n", part_has(part, PART_FILE_CLOUD) ? "yes" : "no");
 			buf_printf(buf, "    memtable_a  %" PRIu64 " / %" PRIu64 "\n",
