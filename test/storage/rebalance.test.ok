@@ -1,0 +1,815 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: rebalance (no conveyor set)
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: create storages
+create storage hot
+create storage cold
+# test: alter conveyor set capacity
+alter conveyor set hot (capacity 2), cold
+show conveyor
+hot (capacity 2) ⟶ cold ()
+# test: rebalance #1 (no partitions, <= capacity)
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance #2 (< capacity)
+insert 0
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance #3 (= capacity)
+insert 10
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 0
+  max                 20
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance #4 (> capacity)
+insert 20
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 0
+  max                 30
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 10
+  max                 30
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance #5 (more then one, > capacity)
+insert 30
+insert 40
+insert 500
+insert 600
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 10
+  max                 610
+  partitions          6
+  partitions in cloud 0
+  rows                6
+  rows_cached         6
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 500
+  max                 610
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 50
+  partitions          5
+  partitions in cloud 0
+  rows                5
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+select
+[0]
+[10]
+[20]
+[30]
+[40]
+[500]
+[600]
+(eof)
+# test: alter conveyor set capacity zero
+alter conveyor set hot (capacity 0)
+show conveyor
+hot (capacity 0)
+# test: rebalance (auto drop)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 500
+  max                 610
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 50
+  partitions          5
+  partitions in cloud 0
+  rows                5
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 50
+  partitions          5
+  partitions in cloud 0
+  rows                5
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: alter conveyor set capacity zero #2 (chain)
+alter conveyor set hot (capacity 2), cold (capacity 0)
+show conveyor
+hot (capacity 2) ⟶ cold (capacity 0)
+# test: rebalance #1 (auto drop existing)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 50
+  partitions          5
+  partitions in cloud 0
+  rows                5
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance #2 (auto drop)
+insert 0
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance #3 (auto drop)
+insert 10
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 0
+  max                 20
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+select
+[0]
+[10]
+(eof)
+# test: rebalance #4 (auto drop from cold)
+insert 20
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 10
+  max                 30
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+select
+[10]
+[20]
+(eof)
+close

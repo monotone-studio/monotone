@@ -1,0 +1,86 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: rebalance (no conveyor set)
+rebalance
+show storages
+
+# test: create storages
+create storage hot
+create storage cold
+
+# test: alter conveyor set capacity
+alter conveyor set hot (capacity 2), cold
+show conveyor
+
+# test: rebalance #1 (no partitions, <= capacity)
+rebalance
+show storages
+
+# test: rebalance #2 (< capacity)
+insert 0
+rebalance
+show storages
+
+# test: rebalance #3 (= capacity)
+insert 10
+rebalance
+show storages
+
+# test: rebalance #4 (> capacity)
+insert 20
+show storages
+rebalance
+show storages
+
+# test: rebalance #5 (more then one, > capacity)
+insert 30
+insert 40
+insert 500
+insert 600
+show storages
+rebalance
+show storages
+
+select
+
+# test: alter conveyor set capacity zero
+alter conveyor set hot (capacity 0)
+show conveyor
+
+# test: rebalance (auto drop)
+show storages
+rebalance
+show storages
+
+# test: alter conveyor set capacity zero #2 (chain)
+alter conveyor set hot (capacity 2), cold (capacity 0)
+show conveyor
+
+# test: rebalance #1 (auto drop existing)
+show storages
+rebalance
+show storages
+
+# test: rebalance #2 (auto drop)
+insert 0
+rebalance
+show storages
+
+# test: rebalance #3 (auto drop)
+insert 10
+rebalance
+show storages
+select
+
+# test: rebalance #4 (auto drop from cold)
+insert 20
+rebalance
+show storages
+select
+
+close
