@@ -1,0 +1,50 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: create partition
+insert 0
+insert 1
+insert 3
+show partitions debug
+
+# process rebalance events
+service
+show partitions debug
+
+# test: checkpoint
+checkpoint
+show partitions debug
+
+# test: service #1 (refresh)
+service
+show partitions debug
+
+# test: service #2 (noop)
+service
+show partitions debug
+
+select
+
+# test: alter storage set refresh
+alter storage main set (refresh_wm 1)
+
+# test: insert (service refresh)
+show partitions debug
+insert 0 xxx
+show partitions debug
+
+# test: service #1 (refresh)
+service
+show partitions debug
+
+# test: service #2 (noop)
+service
+show partitions debug
+
+select
+
+close

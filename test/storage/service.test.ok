@@ -1,0 +1,235 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: create partition
+insert 0
+insert 1
+insert 3
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+service
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+# test: checkpoint
+checkpoint
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     yes
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+# test: service #1 (refresh)
+service
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            75
+# test: service #2 (noop)
+service
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            75
+select
+[0]
+[1]
+[3]
+(eof)
+# test: alter storage set refresh
+alter storage main set (refresh_wm 1)
+# test: insert (service refresh)
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            75
+insert 0 xxx
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     yes
+    on storage  yes
+    on cloud    no
+    memtable_a  1 / 16
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            75
+# test: service #1 (refresh)
+service
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        248
+    index
+      size                162
+      size_regions        78
+      size_regions_origin 78
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            78
+# test: service #2 (noop)
+service
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        248
+    index
+      size                162
+      size_regions        78
+      size_regions_origin 78
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            78
+select
+[0, xxx]
+[1]
+[3]
+(eof)
+close
