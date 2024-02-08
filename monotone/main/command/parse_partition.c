@@ -205,7 +205,7 @@ parse_partition_refresh_range(Lex* self)
 Cmd*
 parse_partition_download(Lex* self)
 {
-	// DOWNLOAD PARTITION [IF EXISTS] <id>
+	// DOWNLOAD PARTITION [IF EXISTS] <id> [IF CLOUD]
 
 	// if exists
 	bool if_exists = parse_if_exists(self);
@@ -215,16 +215,20 @@ parse_partition_download(Lex* self)
 	if (! lex_if(self, KINT, &id))
 		error("DOWNLOAD PARTITION <id>");
 
+	// [if cloud]
+	bool if_cloud = parse_if_cloud(self);
+
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_DOWNLOAD);
 	cmd->min       = id.integer;
 	cmd->if_exists = if_exists;
+	cmd->if_cloud  = if_cloud;
 	return &cmd->cmd;
 }
 
 Cmd*
 parse_partition_download_range(Lex* self)
 {
-	// DOWNLOAD PARTITIONS FROM <min> TO <max>
+	// DOWNLOAD PARTITIONS FROM <min> TO <max> [IF CLOUD]
 
 	// from
 	if (! lex_if(self, KFROM, NULL))
@@ -243,9 +247,13 @@ parse_partition_download_range(Lex* self)
 	if (! lex_if(self, KINT, &max))
 		error("DOWNLOAD PARTITIONS FROM min TO <max>");
 
+	// [if cloud]
+	bool if_cloud = parse_if_cloud(self);
+
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_DOWNLOAD_RANGE);
-	cmd->min = min.integer;
-	cmd->max = max.integer;
+	cmd->min      = min.integer;
+	cmd->max      = max.integer;
+	cmd->if_cloud = if_cloud;
 	return &cmd->cmd;
 }
 
