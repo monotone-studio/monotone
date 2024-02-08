@@ -1,0 +1,714 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: upload parsing
+upload
+error: UPLOAD <PARTITION|PARTITIONS> expected
+upload abc
+error: UPLOAD <PARTITION|PARTITIONS> expected
+upload partition
+error: UPLOAD PARTITION <id>
+upload partition abc
+error: UPLOAD PARTITION <id>
+upload partition 0 junk
+error: unexpected clause at the end of command
+# test: upload (partition does not exists)
+upload partition 0
+error: upload: partition <0> not found
+# test: upload if exists
+upload partition if exists 0
+# test: upload without cloud
+insert 0
+upload partition 0
+error: upload: partition <0> storage has no associated cloud
+# test: upload if cloud
+upload partition 0 if cloud
+# test: create storage with cloud
+create storage test (cloud 'mock', sync false)
+show storages
+main
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               'mock'
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+alter conveyor set test
+# test: create partitions
+insert 10
+insert 20
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+# test: upload (without storage file)
+upload partition 10
+error: upload: partition <10> file not yet exists
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+# test: refresh
+refresh partition 10
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+select
+[0]
+[10]
+[20]
+(eof)
+# test: upload (already exists)
+upload partition 10
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+# test: download
+download partition 10
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+select
+[0]
+[10]
+[20]
+(eof)
+# test: drop from cloud
+drop partition 10 on cloud
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+select
+[0]
+[10]
+[20]
+(eof)
+# test: upload
+upload partition 10
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+select
+[0]
+[10]
+[20]
+(eof)
+# test: download partitions
+refresh partition 20
+download partitions from 10 to 30
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             20
+        max             20
+        rows            1
+        offset          0
+        size            41
+# test: drop partitions on cloud
+drop partitions from 10 to 30 on cloud
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             20
+        max             20
+        rows            1
+        offset          0
+        size            41
+# test: upload partitions parsing
+upload partitions
+error: UPLOAD PARTITIONS <FROM> min TO max
+upload partitions abc
+error: UPLOAD PARTITIONS <FROM> min TO max
+upload partitions from
+error: UPLOAD PARTITIONS FROM <min> TO max
+upload partitions from abc
+error: UPLOAD PARTITIONS FROM <min> TO max
+upload partitions from 0
+error: UPLOAD PARTITIONS FROM min <TO> max
+upload partitions from 10
+error: UPLOAD PARTITIONS FROM min <TO> max
+upload partitions from 10 abc
+error: UPLOAD PARTITIONS FROM min <TO> max
+upload partitions from 10 to
+error: UPLOAD PARTITIONS FROM min TO <max>
+upload partitions from 10 to abc
+error: UPLOAD PARTITIONS FROM min TO <max>
+upload partitions from 10 to 30 abc
+error: unexpected clause at the end of command
+# test: upload partitions #1
+upload partitions from 10 to 30
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             20
+        max             20
+        rows            1
+        offset          0
+        size            41
+# test: upload partitions #2
+upload partitions from 10 to 30
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             20
+        max             20
+        rows            1
+        offset          0
+        size            41
+select
+[0]
+[10]
+[20]
+(eof)
+close
