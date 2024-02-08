@@ -1,0 +1,85 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: create storage with cloud (not found)
+create storage test (cloud 'unknown')
+
+# test: create storage with cloud
+create storage test (cloud 'mock', sync false)
+show storages
+
+# test: alter storage set cloud none (no partitions)
+alter storage test set (cloud '')
+show storages
+
+# test: alter storage set cloud (unknown)
+alter storage test set (cloud 'undef')
+
+# test: alter storage set cloud (no partitions)
+alter storage test set (cloud 'mock')
+show storages
+
+# test: create partition (no file)
+alter conveyor set test
+insert 0
+show partitions debug
+show storages
+
+# test: alter storage set cloud none (no files)
+alter storage test set (cloud '')
+show storages
+
+# test: alter storage set cloud
+alter storage test set (cloud 'mock')
+
+# test: refresh (create cloud file)
+refresh partition 0
+show partitions debug
+show storages
+
+# test: alter storage set cloud none #1 (exists on cloud)
+alter storage test set (cloud '')
+show storages
+
+# test: download partition
+download partition 0
+show storages
+show partitions debug
+
+# test: alter storage set cloud none #2 (exists on cloud and storage)
+alter storage test set (cloud '')
+show storages
+
+# test: drop partition from cloud
+drop partition 0 on cloud
+show storages
+show partitions debug
+
+# test: alter storage set cloud none #2 (exists on storage only)
+alter storage test set (cloud '')
+show storages
+show partitions debug
+select
+
+# test: alter storage set cloud (storage partitions exists)
+alter storage test set (cloud 'mock')
+show storages
+show partitions debug
+
+# test: upload
+upload partition 0
+show storages
+show partitions debug
+select
+
+# test: drop partition from storage
+drop partition 0 on storage
+show storages
+show partitions debug
+select
+
+close
