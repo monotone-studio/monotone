@@ -6,44 +6,24 @@
 // time-series storage
 //
 
-typedef struct CmdCheckpoint CmdCheckpoint;
-typedef struct CmdRebalance  CmdRebalance;
+typedef struct CmdService CmdService;
 
-struct CmdCheckpoint
+struct CmdService
 {
 	Cmd cmd;
 };
 
-struct CmdRebalance
+static inline CmdService*
+cmd_service_of(Cmd* self)
 {
-	Cmd cmd;
-};
-
-static inline CmdCheckpoint*
-cmd_checkpoint_of(Cmd* self)
-{
-	return (CmdCheckpoint*)self;
+	return (CmdService*)self;
 }
 
-static inline CmdRebalance*
-cmd_rebalance_of(Cmd* self)
+static inline CmdService*
+cmd_service_allocate(CmdType type)
 {
-	return (CmdRebalance*)self;
-}
-
-static inline CmdCheckpoint*
-cmd_checkpoint_allocate(void)
-{
-	CmdCheckpoint* self;
-	self = cmd_allocate(CMD_CHECKPOINT, NULL, sizeof(*self));
-	return self;
-}
-
-static inline CmdRebalance*
-cmd_rebalance_allocate(void)
-{
-	CmdRebalance* self;
-	self = cmd_allocate(CMD_REBALANCE, NULL, sizeof(*self));
+	CmdService* self;
+	self = cmd_allocate(type, NULL, sizeof(*self));
 	return self;
 }
 
@@ -51,12 +31,19 @@ static inline Cmd*
 parse_checkpoint(Lex* self)
 {
 	unused(self);
-	return &cmd_checkpoint_allocate()->cmd;
+	return &cmd_service_allocate(CMD_CHECKPOINT)->cmd;
+}
+
+static inline Cmd*
+parse_service(Lex* self)
+{
+	unused(self);
+	return &cmd_service_allocate(CMD_SERVICE)->cmd;
 }
 
 static inline Cmd*
 parse_rebalance(Lex* self)
 {
 	unused(self);
-	return &cmd_rebalance_allocate()->cmd;
+	return &cmd_service_allocate(CMD_REBALANCE)->cmd;
 }
