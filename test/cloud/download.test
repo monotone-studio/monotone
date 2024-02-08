@@ -1,0 +1,95 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: download parsing
+download
+download abc
+download partition
+download partition abc
+download partition 0 junk
+
+# test: download (partition does not exists)
+download partition 0
+
+# test: download if exists
+download partition if exists 0
+
+# test: download from storage without cloud
+insert 0
+download partition 0
+
+# test: download if cloud
+insert 0
+download partition 0 if cloud
+
+# test: create storage with cloud
+create storage test (cloud 'mock', sync false)
+show storages
+alter conveyor set test
+
+# test: create partitions
+insert 10
+insert 20
+show partitions debug
+
+# test: download (no files)
+download partition 10
+show partitions debug
+select
+
+# test: refresh (create and upload)
+refresh partition 10
+show partitions debug
+select
+
+# test: download
+download partition 10
+show partitions debug
+select
+
+# test: download (already exists)
+download partition 10
+show partitions debug
+select
+
+# test: drop from storage
+drop partition 10 on storage
+show partitions debug
+select
+
+# test: download #2
+download partition 10
+show partitions debug
+select
+
+# test: download partitions parsing
+download partitions
+download partitions abc
+download partitions from
+download partitions from abc
+download partitions from 0
+download partitions from 10
+download partitions from 10 abc
+download partitions from 10 to
+download partitions from 10 to abc
+download partitions from 10 to 30 abc
+
+# test: drop from storage
+refresh partition 10
+refresh partition 20
+show partitions debug
+
+drop partition 10 on storage
+drop partition 20 on storage
+show partitions debug
+
+# test: download partitions
+download partitions from 10 to 30
+show partitions debug
+select
+
+close
