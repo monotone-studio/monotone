@@ -130,6 +130,7 @@ test
     max         10
     storage     test
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
