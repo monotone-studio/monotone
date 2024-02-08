@@ -1,0 +1,95 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: refresh pasing
+refresh
+refresh abc
+refresh partition
+refresh partition abc
+
+# test: refresh partition does not exists
+refresh partition 0
+
+# test: refresh partition if exists
+refresh partition if exists 0
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages
+
+# test: refresh (memtable)
+refresh partition 0
+show storages
+
+# test: select (region)
+select
+
+# test: update
+insert 3
+insert 4
+insert 5
+show storages
+
+# test: select (memtable + region)
+select
+
+# test: refresh (memtable + region)
+refresh partition 0
+show storages
+show partitions debug
+
+# test: select (updated region)
+select
+
+# test: refresh (with no updates)
+refresh partition 0
+show storages
+show partitions debug
+
+# test: set compression
+alter storage main set (compression 1)
+
+# test: refresh (compress)
+refresh partition 0
+show storages
+show partitions debug
+
+# test: select (compressed data)
+select
+
+# test: create partitions
+insert 20
+insert 30
+insert 40
+show storages
+
+# test: refresh partitions parsing
+refresh partitions
+refresh partitions abc
+refresh partitions from
+refresh partitions from abc
+refresh partitions from 0
+refresh partitions from 0 to
+refresh partitions from 0 to abc
+
+# test: refresh partitions
+refresh partitions from 0 to 40
+show storages
+
+# test: select
+select
+
+# test: refresh partitions #2
+refresh partitions from 40 to 50
+show storages
+
+# test: select
+select
+
+close
