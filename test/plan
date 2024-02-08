@@ -15,3 +15,4 @@ test drop_storage
 test alter_storage
 test alter_conveyor
 test refresh
+test move

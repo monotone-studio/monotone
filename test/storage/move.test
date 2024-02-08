@@ -1,0 +1,75 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: move pasing
+move
+move abc
+move partition
+move partition abc
+
+# test: move partition does not exists
+move partition 0 into
+move partition 0 into main
+
+# test: move partition if exists
+move partition if exists 0 into main
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages
+
+# test: move partition (same storage)
+move partition 0 into main
+show storages
+
+# test: move partition
+create storage test
+move partition 0 into test
+show storages
+
+# test: select
+select
+
+# test: create partitions
+insert 10
+insert 20
+insert 30
+insert 40
+show storages
+
+# test: move partitions parsing
+move partitions
+move partitions abc
+move partitions from
+move partitions from abc
+move partitions from 10
+move partitions from 10 to
+move partitions from 10 to 50
+move partitions from 10 to 50 into
+
+# test: move partitions
+move partitions from 10 to 50 into test
+show storages
+show partitions debug
+
+# test: select
+select
+
+# test: set compression
+alter storage main set (compression 1)
+
+# test: move partitions #2
+move partitions from 0 to 50 into main
+show storages
+show partitions debug
+
+# test: select
+select
+
+close
