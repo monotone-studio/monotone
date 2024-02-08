@@ -10,6 +10,7 @@ typedef struct Service Service;
 
 typedef enum
 {
+	SERVICE_NONE,
 	SERVICE_SHUTDOWN,
 	SERVICE_REBALANCE,
 	SERVICE_REFRESH
@@ -78,7 +79,7 @@ service_refresh(Service* self, uint64_t min)
 }
 
 static inline ServiceType
-service_next(Service* self, ServiceReq** req)
+service_next(Service* self, bool wait, ServiceReq** req)
 {
 	mutex_lock(&self->lock);
 
@@ -101,6 +102,11 @@ service_next(Service* self, ServiceReq** req)
 			*req = container_of(list_pop(&self->list), ServiceReq, link);
 			self->list_count--;
 			type = SERVICE_REFRESH;
+			break;
+		}
+		if (! wait)
+		{
+			type = SERVICE_NONE;
 			break;
 		}
 		cond_var_wait(&self->cond_var, &self->lock);
