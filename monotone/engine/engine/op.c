@@ -451,3 +451,31 @@ engine_checkpoint(Engine* self)
 
 	malloc_trim(0);
 }
+
+bool
+engine_service(Engine* self, Refresh* refresh, bool wait)
+{
+	ServiceReq* req = NULL;
+	auto type = service_next(self->service, wait, &req);
+	if (type == SERVICE_NONE)
+		return false;
+	if (type == SERVICE_SHUTDOWN)
+		return true;
+
+	Exception e;
+	if (try(&e))
+	{
+		// always do rebalance first
+		engine_rebalance(self, refresh);
+
+		if (type == SERVICE_REFRESH)
+			engine_refresh(self, refresh, req->min, NULL, true);
+	}
+	if (catch(&e))
+	{ }
+
+	if (req)
+		service_req_free(req);
+
+	return false;
+}

@@ -19,28 +19,11 @@ worker_main(void* arg)
 	runtime_init(self->context);
 	thread_set_name(&self->thread, "worker");
 
-	auto service = self->engine->service;
 	for (;;)
 	{
-		ServiceReq* req = NULL;
-		auto type = service_next(service, &req);
-		if (type == SERVICE_SHUTDOWN)
+		bool shutdown = engine_service(self->engine, &self->refresh, true);
+		if (shutdown)
 			break;
-
-		Exception e;
-		if (try(&e))
-		{
-			// always doing rebalance first
-			engine_rebalance(self->engine, &self->refresh);
-
-			if (type == SERVICE_REFRESH)
-				engine_refresh(self->engine, &self->refresh, req->min, NULL, true);
-		}
-		if (catch(&e))
-		{ }
-
-		if (req)
-			service_req_free(req);
 	}
 
 	return NULL;

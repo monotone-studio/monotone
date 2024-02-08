@@ -21,3 +21,6 @@ void engine_refresh_range(Engine*, Refresh*, uint64_t, uint64_t, Str*);
 // general
 void engine_rebalance(Engine*, Refresh*);
 void engine_checkpoint(Engine*);
+
+// service
+bool engine_service(Engine*, Refresh*, bool);
