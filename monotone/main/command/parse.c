@@ -39,6 +39,12 @@ parse(Lex* self)
 		cmd = parse_checkpoint(self);
 		break;
 	}
+	case KSERVICE:
+	{
+		// SERVICE
+		cmd = parse_service(self);
+		break;
+	}
 	case KREBALANCE:
 	{
 		// REBALANCE
