@@ -1,0 +1,749 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: conveyor is not set by default
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+show conveyor
+
+# test: insert (main only)
+insert 0 x
+show storages
+main
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: insert (more storages wo conveyor)
+create storage hot
+create storage cold
+insert 0 y
+insert 30 y
+show storages
+main
+  min                 0
+  max                 40
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: alter conveyor parsing
+alter
+error: ALTER <STORAGE|CONVEYOR> expected
+alter conveyor
+error: ALTER CONVEYOR <SET | RESET> expected
+alter conveyor abc
+error: ALTER CONVEYOR <SET | RESET> expected
+alter conveyor set
+error: ALTER CONVEYOR SET <storage name> expected
+alter conveyor set 123
+error: ALTER CONVEYOR SET <storage name> expected
+# test: alter conveyor set
+alter conveyor set hot
+show conveyor
+hot ()
+# test: insert (primary changed)
+insert 40 z
+show storages
+main
+  min                 0
+  max                 40
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 40
+  max                 50
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: select
+select
+[0, y]
+[30, y]
+[40, z]
+(eof)
+# test: drop storage (with conveyor dependency)
+drop storage hot
+error: storage 'hot': has dependencies
+# test: alter conveyor reset
+alter conveyor reset
+show conveyor
+
+# test: drop storage #2
+drop storage hot
+error: storage 'hot': has partitions
+drop partition 40
+drop storage hot
+show storages
+main
+  min                 0
+  max                 40
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         2
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: insert (primary changed)
+insert 40 v
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: alter conveyor set (storage does not exists)
+alter conveyor set undef
+error: storage 'undef': not exists
+# test: alter conveyor set (hot swap)
+create storage hot
+alter conveyor set hot
+show conveyor
+hot ()
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+insert 50
+create storage hot_swap
+alter conveyor set hot_swap
+show conveyor
+hot_swap ()
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 50
+  max                 60
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot_swap
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+insert 60
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 50
+  max                 60
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot_swap
+  min                 60
+  max                 70
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: select
+select
+[0, y]
+[30, y]
+[40, v]
+[50]
+[60]
+(eof)
+# test: alter conveyor set capacity (chain)
+move partition 60 into hot
+alter conveyor reset
+drop storage hot_swap
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 50
+  max                 70
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+alter conveyor set hot (capacity 2), cold
+show conveyor
+hot (capacity 2) ⟶ cold ()
+# test: rebalance (<= capacity)
+rebalance
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 50
+  max                 70
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance (> capacity)
+insert 70
+rebalance
+show storages
+main
+  min                 0
+  max                 50
+  partitions          3
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 50
+  max                 60
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 60
+  max                 80
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: rebalance (> capacity) #2
+move partitions from 0 to 50 into hot
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 50
+  max                 60
+  partitions          1
+  partitions in cloud 0
+  rows                1
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 0
+  max                 80
+  partitions          5
+  partitions in cloud 0
+  rows                5
+  rows_cached         1
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+rebalance
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 0
+  max                 80
+  partitions          4
+  partitions in cloud 0
+  rows                4
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 30
+  max                 50
+  partitions          2
+  partitions in cloud 0
+  rows                2
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+close
