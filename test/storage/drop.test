@@ -5,7 +5,7 @@ set workers to 0
 set interval to 10
 open
 
-# test: drop pasing
+# test: drop parsing
 drop
 drop abc
 drop partition

@@ -2,7 +2,7 @@ init
 set workers to 0
 set interval to 10
 open
-# test: refresh pasing
+# test: refresh parsing
 refresh
 error: REFRESH <PARTITION|PARTITIONS> expected
 refresh abc

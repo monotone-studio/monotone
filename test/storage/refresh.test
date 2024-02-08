@@ -5,7 +5,7 @@ set workers to 0
 set interval to 10
 open
 
-# test: refresh pasing
+# test: refresh parsing
 refresh
 refresh abc
 refresh partition

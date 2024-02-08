@@ -2,7 +2,7 @@ init
 set workers to 0
 set interval to 10
 open
-# test: move pasing
+# test: move parsing
 move
 error: MOVE <PARTITION|PARTITIONS> expected
 move abc
