@@ -1,0 +1,75 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: drop pasing
+drop
+drop abc
+drop partition
+drop partition abc
+
+# test: drop partition does not exists
+drop partition 0
+
+# test: drop partition if exists
+drop partition if exists 0
+
+# test: create partition (no file)
+insert 0
+insert 1
+insert 2
+show partitions debug
+
+# test: drop
+drop partition 0
+show partitions debug
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+refresh partition 0
+show partitions debug
+
+# test: drop #2
+drop partition 0
+show partitions debug
+show storages
+
+# test: create partitions
+insert 10
+insert 20
+insert 30
+insert 40
+show partitions debug
+
+# test: drop partitions parsing
+drop partitions
+drop partitions abc
+drop partitions from
+drop partitions from abc
+drop partitions from 0
+drop partitions from 0 to
+drop partitions from 0 to abc
+
+# test: drop partitions
+drop partitions from 0 to 50
+show partitions debug
+
+# test: drop partitions (gap)
+insert 100
+insert 200
+insert 300
+insert 400
+show partitions debug
+show storages
+
+# test: drop partitions
+drop partitions from 0 to 500
+show partitions debug
+show storages
+
+close

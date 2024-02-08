@@ -1,0 +1,245 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: drop pasing
+drop
+error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+drop abc
+error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+drop partition
+error: DROP PARTITION <id>
+drop partition abc
+error: DROP PARTITION <id>
+# test: drop partition does not exists
+drop partition 0
+error: drop: partition <0> not found
+# test: drop partition if exists
+drop partition if exists 0
+# test: create partition (no file)
+insert 0
+insert 1
+insert 2
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+# test: drop
+drop partition 0
+show partitions debug
+main
+# test: create partition
+insert 0
+insert 1
+insert 2
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            75
+# test: drop #2
+drop partition 0
+show partitions debug
+main
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: create partitions
+insert 10
+insert 20
+insert 30
+insert 40
+show partitions debug
+main
+  10
+    min         10
+    max         20
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  20
+    min         20
+    max         30
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  30
+    min         30
+    max         40
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  40
+    min         40
+    max         50
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+# test: drop partitions parsing
+drop partitions
+error: DROP PARTITIONS <FROM> min TO max
+drop partitions abc
+error: DROP PARTITIONS <FROM> min TO max
+drop partitions from
+error: DROP PARTITIONS FROM <min> TO max
+drop partitions from abc
+error: DROP PARTITIONS FROM <min> TO max
+drop partitions from 0
+error: DROP PARTITIONS FROM min <TO> max
+drop partitions from 0 to
+error: DROP PARTITIONS FROM min TO <max>
+drop partitions from 0 to abc
+error: DROP PARTITIONS FROM min TO <max>
+# test: drop partitions
+drop partitions from 0 to 50
+show partitions debug
+main
+# test: drop partitions (gap)
+insert 100
+insert 200
+insert 300
+insert 400
+show partitions debug
+main
+  100
+    min         100
+    max         110
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  200
+    min         200
+    max         210
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  300
+    min         300
+    max         310
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  400
+    min         400
+    max         410
+    storage     main
+    cloud       
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+show storages
+main
+  min                 100
+  max                 410
+  partitions          4
+  partitions in cloud 0
+  rows                4
+  rows_cached         4
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: drop partitions
+drop partitions from 0 to 500
+show partitions debug
+main
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+close
