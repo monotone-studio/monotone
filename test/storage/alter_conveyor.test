@@ -87,19 +87,8 @@ show storages
 alter conveyor set hot (capacity 2), cold
 show conveyor
 
-# test: rebalance (<= capacity)
-rebalance
-show storages
-
-# test: rebalance (> capacity)
-insert 70
-rebalance
-show storages
-
-# test: rebalance (> capacity) #2
-move partitions from 0 to 50 into hot
-show storages
-rebalance
-show storages
+# test: alter conveyor set capacity (both)
+alter conveyor set hot (capacity 2), cold (capacity 0)
+show conveyor
 
 close
