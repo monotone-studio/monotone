@@ -124,6 +124,21 @@ execute_checkpoint(Executable* self)
 }
 
 static void
+execute_service(Executable* self)
+{
+	auto engine = &self->main->engine;
+	Refresh refresh;
+	refresh_init(&refresh, engine);
+	Exception e;
+	if (try(&e)) {
+		engine_service(engine, &refresh, false);
+	}
+	refresh_free(&refresh);
+	if (catch(&e))
+		rethrow();
+}
+
+static void
 execute_rebalance(Executable* self)
 {
 	auto engine = &self->main->engine;
@@ -341,6 +356,7 @@ static Execute cmds[CMD_MAX] =
 	{ execute_show,                     true  },
 	{ execute_set,                      true  },
 	{ execute_checkpoint,               false },
+	{ execute_service,                  false },
 	{ execute_rebalance,                false },
 	{ execute_storage_create,           true  },
 	{ execute_storage_drop,             true  },
