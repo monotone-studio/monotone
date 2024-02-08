@@ -180,6 +180,13 @@ engine_download(Engine* self, uint64_t min,
 		return;
 	}
 
+	// partition exists locally
+	if (part_has(part, PART_FILE))
+	{
+		engine_unlock(self, ref, LOCK_SERVICE);
+		return;
+	}
+
 	// partition does not exists on cloud
 	if (! part_has(part, PART_FILE_CLOUD))
 	{
