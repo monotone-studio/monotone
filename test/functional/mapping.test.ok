@@ -34,6 +34,7 @@ main
     max         20
     storage     main
     cloud       
+    refresh     no
     on storage  no
     on cloud    no
     memtable_a  3 / 39
@@ -44,6 +45,7 @@ main
     max         30
     storage     main
     cloud       
+    refresh     no
     on storage  no
     on cloud    no
     memtable_a  2 / 26
@@ -119,6 +121,7 @@ main
     max         20
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -137,6 +140,7 @@ main
     max         30
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -176,6 +180,7 @@ main
     max         20
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -194,6 +199,7 @@ main
     max         30
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -212,6 +218,7 @@ main
     max         10
     storage     main
     cloud       
+    refresh     no
     on storage  no
     on cloud    no
     memtable_a  10 / 130
@@ -225,6 +232,7 @@ main
     max         20
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -243,6 +251,7 @@ main
     max         30
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -261,6 +270,7 @@ main
     max         10
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -309,6 +319,7 @@ main
     max         20
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -327,6 +338,7 @@ main
     max         30
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -345,6 +357,7 @@ main
     max         10
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -363,6 +376,7 @@ main
     max         4100
     storage     main
     cloud       
+    refresh     no
     on storage  no
     on cloud    no
     memtable_a  1 / 13
@@ -376,6 +390,7 @@ main
     max         20
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -394,6 +409,7 @@ main
     max         30
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -412,6 +428,7 @@ main
     max         10
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
@@ -430,6 +447,7 @@ main
     max         4100
     storage     main
     cloud       
+    refresh     no
     on storage  yes
     on cloud    no
     memtable_a  0 / 0
