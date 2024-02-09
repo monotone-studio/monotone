@@ -1,0 +1,93 @@
+#
+
+# test: open/close
+init
+set workers to 0
+set interval to 10
+set uuid to 'c14fb1d4-d1f7-5bf1-f256-4ad89bc47379'
+open
+files
+close
+
+# test: open
+init
+set workers to 0
+set interval to 10
+open
+show all
+show storages
+files
+
+# test: create storage
+create storage test (sync false)
+show storages
+
+# test: close/open
+close
+init
+open
+
+# test: ensure storage exists
+show storages
+
+# test: alter storage
+alter storage test set (compression 1)
+
+# test: close/open
+close
+init
+open
+
+# test: validate storage settings
+show storages
+
+# test: drop storage
+drop storage test
+show storages
+
+# test: close/open
+close
+init
+open
+
+# test: ensure storage does not exists
+show storages
+
+# test: create storage with cloud
+create storage test (cloud 'mock', sync false)
+show storages
+
+# test: close/open
+close
+init
+open
+
+# test: ensure storage exists
+show storages
+
+# test: drop storage
+drop storage test
+show storages
+
+# test: close/open
+close
+init
+open
+
+# test: ensure storage does not exists
+show storages
+
+# test: alter set conveyor
+alter conveyor set main (capacity 0)
+show conveyor
+
+# test: close/open
+close
+init
+open
+
+# test: ensure conveyor settings remain
+show conveyor
+show storages
+
+close
