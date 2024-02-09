@@ -102,4 +102,95 @@ files main
 show partitions debug
 select
 
+# test: drop partition
+drop partition 0
+drop partition 200
+drop partition 700
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
+# test: create storages
+create storage hot (sync false)
+create storage cold (sync false)
+alter conveyor set hot (capacity 2), cold
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate storages
+show storages
+show conveyor
+
+# test: create partition #1 (< capacity)
+insert 0
+refresh partition 0
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
+# test: create partition #2 (= capacity)
+insert 10
+refresh partition 10
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
+# test: create partition #3 (> capacity)
+insert 20
+refresh partition 20
+
+# test: rebalance
+rebalance
+show partitions debug
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
 close

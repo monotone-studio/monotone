@@ -661,4 +661,374 @@ select
 [202]
 [700, x]
 (eof)
+# test: drop partition
+drop partition 0
+drop partition 200
+drop partition 700
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+# test: validate partitions
+show partitions debug
+main
+select
+(eof)
+# test: create storages
+create storage hot (sync false)
+create storage cold (sync false)
+alter conveyor set hot (capacity 2), cold
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+# test: validate storages
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+hot
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+cold
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               ''
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+show conveyor
+hot (capacity 2) ⟶ cold ()
+# test: create partition #1 (< capacity)
+insert 0
+refresh partition 0
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+# test: validate partitions
+show partitions debug
+main
+hot
+  0
+    min         0
+    max         10
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             0
+        rows            1
+        offset          0
+        size            41
+cold
+select
+[0]
+(eof)
+# test: create partition #2 (= capacity)
+insert 10
+refresh partition 10
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+# test: validate partitions
+show partitions debug
+main
+hot
+  0
+    min         0
+    max         10
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             0
+        rows            1
+        offset          0
+        size            41
+  10
+    min         10
+    max         20
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+cold
+select
+[0]
+[10]
+(eof)
+# test: create partition #3 (> capacity)
+insert 20
+refresh partition 20
+# test: rebalance
+rebalance
+show partitions debug
+main
+hot
+  10
+    min         10
+    max         20
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+  20
+    min         20
+    max         30
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             20
+        max             20
+        rows            1
+        offset          0
+        size            41
+cold
+  0
+    min         0
+    max         10
+    storage     cold
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             0
+        rows            1
+        offset          0
+        size            41
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+# test: validate partitions
+show partitions debug
+main
+hot
+  10
+    min         10
+    max         20
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             10
+        max             10
+        rows            1
+        offset          0
+        size            41
+  20
+    min         20
+    max         30
+    storage     hot
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             20
+        max             20
+        rows            1
+        offset          0
+        size            41
+cold
+  0
+    min         0
+    max         10
+    storage     cold
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        208
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             0
+        rows            1
+        offset          0
+        size            41
+select
+[0]
+[10]
+[20]
+(eof)
 close
