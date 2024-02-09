@@ -1,0 +1,664 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: create partition
+insert 0
+insert 1
+insert 2
+insert 3
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+files main
+00000000000000000000
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+# test: validate partition
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: create partitions
+insert 200
+insert 201
+insert 202
+refresh partition 200
+insert 300
+insert 301
+insert 302
+refresh partition 300
+insert 700
+insert 701
+insert 702
+refresh partition 700
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+  200
+    min         200
+    max         210
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             200
+        max             202
+        rows            3
+        offset          0
+        size            75
+  300
+    min         300
+    max         310
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             300
+        max             302
+        rows            3
+        offset          0
+        size            75
+  700
+    min         700
+    max         710
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             700
+        max             702
+        rows            3
+        offset          0
+        size            75
+select
+[0]
+[1]
+[2]
+[3]
+[200]
+[201]
+[202]
+[300]
+[301]
+[302]
+[700]
+[701]
+[702]
+(eof)
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+00000000000000000200
+00000000000000000300
+00000000000000000700
+# test: validate partitions
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+  200
+    min         200
+    max         210
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             200
+        max             202
+        rows            3
+        offset          0
+        size            75
+  300
+    min         300
+    max         310
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             300
+        max             302
+        rows            3
+        offset          0
+        size            75
+  700
+    min         700
+    max         710
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             700
+        max             702
+        rows            3
+        offset          0
+        size            75
+select
+[0]
+[1]
+[2]
+[3]
+[200]
+[201]
+[202]
+[300]
+[301]
+[302]
+[700]
+[701]
+[702]
+(eof)
+# test: update and refresh partitions
+insert 300 x
+insert 301 x
+insert 302 x
+refresh partition 300
+insert 700 x
+delete 701
+delete 702
+refresh partition 700
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+00000000000000000200
+00000000000000000300
+00000000000000000700
+# test: validate partitions
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+  200
+    min         200
+    max         210
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             200
+        max             202
+        rows            3
+        offset          0
+        size            75
+  300
+    min         300
+    max         310
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        247
+    index
+      size                161
+      size_regions        78
+      size_regions_origin 78
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             300
+        max             302
+        rows            3
+        offset          0
+        size            78
+  700
+    min         700
+    max         710
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        211
+    index
+      size                161
+      size_regions        42
+      size_regions_origin 42
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             700
+        max             700
+        rows            1
+        offset          0
+        size            42
+select
+[0]
+[1]
+[2]
+[3]
+[200]
+[201]
+[202]
+[300, x]
+[301, x]
+[302, x]
+[700, x]
+(eof)
+# test: drop partition
+drop partition 300
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+  200
+    min         200
+    max         210
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             200
+        max             202
+        rows            3
+        offset          0
+        size            75
+  700
+    min         700
+    max         710
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        211
+    index
+      size                161
+      size_regions        42
+      size_regions_origin 42
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             700
+        max             700
+        rows            1
+        offset          0
+        size            42
+files main
+00000000000000000000
+00000000000000000200
+00000000000000000700
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+00000000000000000200
+00000000000000000700
+# test: validate partitions
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+  200
+    min         200
+    max         210
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             200
+        max             202
+        rows            3
+        offset          0
+        size            75
+  700
+    min         700
+    max         710
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        211
+    index
+      size                161
+      size_regions        42
+      size_regions_origin 42
+      regions             1
+      rows                1
+      lsn                 0
+      compression         0
+      region
+        min             700
+        max             700
+        rows            1
+        offset          0
+        size            42
+select
+[0]
+[1]
+[2]
+[3]
+[200]
+[201]
+[202]
+[700, x]
+(eof)
+close

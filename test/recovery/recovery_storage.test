@@ -1,0 +1,105 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+insert 3
+refresh partition 0
+show partitions debug
+files main
+select
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partition
+show partitions debug
+select
+
+# test: create partitions
+insert 200
+insert 201
+insert 202
+refresh partition 200
+
+insert 300
+insert 301
+insert 302
+refresh partition 300
+
+insert 700
+insert 701
+insert 702
+refresh partition 700
+
+show partitions debug
+select
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
+# test: update and refresh partitions
+insert 300 x
+insert 301 x
+insert 302 x
+refresh partition 300
+
+insert 700 x
+delete 701
+delete 702
+refresh partition 700
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
+# test: drop partition
+drop partition 300
+show partitions debug
+files main
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partitions
+show partitions debug
+select
+
+close
