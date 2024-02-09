@@ -165,7 +165,8 @@ part_create(Part* self, int state)
 		file_create(&file, path);
 		guard(close, file_close, &file);
 		file_write_buf(&file, &self->index_buf);
-		file_sync(&file);
+		if (self->source->sync)
+			file_sync(&file);
 		file_close(&file);
 		break;
 	}
