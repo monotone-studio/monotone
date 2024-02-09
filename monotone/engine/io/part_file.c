@@ -10,14 +10,39 @@
 #include <monotone_config.h>
 #include <monotone_io.h>
 
-void
-part_file_open(Part* self, bool read_index)
+static void
+part_path(Part* self, char* path, int state)
+{
+	switch (state) {
+	case PART:
+		id_path(&self->id, self->source, path);
+		break;
+	case PART_INCOMPLETE:
+		id_path_incomplete(&self->id, self->source, path);
+		break;
+	case PART_COMPLETE:
+		id_path_complete(&self->id, self->source, path);
+		break;
+	case PART_CLOUD:
+		id_path_cloud(&self->id, self->source, path);
+		break;
+	case PART_CLOUD_INCOMPLETE:
+		id_path_cloud_incomplete(&self->id, self->source, path);
+		break;
+	default:
+		abort();
+		break;
+	}
+}
+
+static void
+part_open_file(Part* self, bool read_index)
 {
 	// open data file and read index
 
-	// <source_path>/<min>.<id>
+	// <source_path>/<min>
 	char path[PATH_MAX];
-	id_path(&self->id, self->source, path);
+	part_path(self, path, PART);
 	file_open(&self->file, path);
 
 	if (unlikely(self->file.size < (sizeof(Index) + sizeof(IndexEof))))
@@ -67,49 +92,14 @@ part_file_open(Part* self, bool read_index)
 	}
 }
 
-void
-part_file_create(Part* self)
-{
-	// <source_path>/<min>.<id>.<id_parent>
-	char path[PATH_MAX];
-	id_path_incomplete(&self->id, self->source, path);
-	file_create(&self->file, path);
-}
-
-void
-part_file_delete(Part* self, bool complete)
-{
-	// <source_path>/<min>.<psn>
-	// <source_path>/<min>.<psn>.<id_parent>
-	char path[PATH_MAX];
-	if (complete)
-		id_path(&self->id, self->source, path);
-	else
-		id_path_incomplete(&self->id, self->source, path);
-	if (fs_exists("%s", path))
-		fs_unlink("%s", path);
-}
-
-void
-part_file_complete(Part* self)
-{
-	// rename file from incomplete to complete
-	char path[PATH_MAX];
-	char path_to[PATH_MAX];
-	id_path_incomplete(&self->id, self->source, path);
-	id_path(&self->id, self->source, path_to);
-	if (fs_exists("%s", path))
-		fs_rename(path, "%s", path_to);
-}
-
-void
-part_file_cloud_open(Part* self)
+static void
+part_open_file_cloud(Part* self)
 {
 	// open and read cloud file as index
 
-	// <source_path>/<min>.<id>.cloud
+	// <source_path>/<min>.cloud
 	char path[PATH_MAX];
-	id_path_cloud(&self->id, self->source, path);
+	part_path(self, path, PART_CLOUD);
 
 	File file;
 	file_init(&file);
@@ -139,44 +129,74 @@ part_file_cloud_open(Part* self)
 }
 
 void
-part_file_cloud_create(Part* self)
+part_open(Part* self, int state, bool read_index)
 {
-	// <source_path>/<min>.<id>.cloud.incomplete
-	char path[PATH_MAX];
-	id_path_cloud_incomplete(&self->id, self->source, path);
-
-	// create, write and sync incomplete cloud file
-	File file;
-	file_init(&file);
-	file_create(&file, path);
-	guard(close, file_close, &file);
-	file_write_buf(&file, &self->index_buf);
-	file_sync(&file);
-	file_close(&file);
+	switch (state) {
+	case PART:
+		part_open_file(self, read_index);
+		break;
+	case PART_CLOUD:
+		part_open_file_cloud(self);
+		break;
+	default:
+		abort();
+		break;
+	}
 }
 
 void
-part_file_cloud_delete(Part* self, bool complete)
+part_create(Part* self, int state)
 {
-	// <source_path>/<min>.<psn>.cloud
-	// <source_path>/<min>.<psn>.cloud.incomplete
+	// <source_path>/<min>.incomplete
+	// <source_path>/<min>.cloud.incomplete
 	char path[PATH_MAX];
-	if (complete)
-		id_path_cloud(&self->id, self->source, path);
-	else
-		id_path_cloud_incomplete(&self->id, self->source, path);
+	part_path(self, path, state);
+	switch (state) {
+	case PART_INCOMPLETE:
+	{
+		file_create(&self->file, path);
+		break;
+	}
+	case PART_CLOUD_INCOMPLETE:
+	{
+		// create, write and sync incomplete cloud file
+		File file;
+		file_init(&file);
+		file_create(&file, path);
+		guard(close, file_close, &file);
+		file_write_buf(&file, &self->index_buf);
+		file_sync(&file);
+		file_close(&file);
+		break;
+	}
+	default:
+		abort();
+		break;
+	}
+}
+
+void
+part_delete(Part* self, int state)
+{
+	// <source_path>/<min>
+	// <source_path>/<min>.incomplete
+	// <source_path>/<min>.complete
+	// <source_path>/<min>.cloud
+	// <source_path>/<min>.cloud.incomplete
+	char path[PATH_MAX];
+	part_path(self, path, state);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
 
 void
-part_file_cloud_complete(Part* self)
+part_rename(Part* self, int from, int to)
 {
-	// rename file from incomplete to complete
-	char path[PATH_MAX];
+	// rename file from one state to another
+	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
-	id_path_cloud_incomplete(&self->id, self->source, path);
-	id_path_cloud(&self->id, self->source, path_to);
-	if (fs_exists("%s", path))
-		fs_rename(path, "%s", path_to);
+	part_path(self, path_from, from);
+	part_path(self, path_to, to);
+	if (fs_exists("%s", path_from))
+		fs_rename(path_from, "%s", path_to);
 }

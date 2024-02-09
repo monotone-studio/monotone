@@ -10,11 +10,12 @@ typedef struct Part Part;
 
 enum
 {
-	PART_FILE_NONE             = 0,
-	PART_FILE                  = 1,
-	PART_FILE_INCOMPLETE       = 2,
-	PART_FILE_CLOUD            = 4,
-	PART_FILE_CLOUD_INCOMPLETE = 8
+	PART_NONE             = 0,
+	PART                  = 1,
+	PART_INCOMPLETE       = 2,
+	PART_COMPLETE         = 4,
+	PART_CLOUD            = 8,
+	PART_CLOUD_INCOMPLETE = 16
 };
 
 struct Part
@@ -40,7 +41,7 @@ part_allocate(Comparator* comparator, Source* source, Id* id)
 	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->id         = *id;
 	self->refresh    = false;
-	self->state      = PART_FILE_NONE;
+	self->state      = PART_NONE;
 	self->index      = NULL;
 	self->cloud      = NULL;
 	self->source     = source;
