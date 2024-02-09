@@ -69,6 +69,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 
 		// <min>
 		// <min>.incomplete
+		// <min>.complete
 		// <min>.cloud
 		// <min>.cloud.incomplete
 		uint64_t min;
@@ -104,29 +105,36 @@ engine_recover_validate(Engine* self, Storage* storage)
 	{
 		auto part = list_at(Part, link);
 
-		// remove incomplete cloud file
-		if (part_has(part, PART_CLOUD_INCOMPLETE))
-		{
-			// crash during upload
-			part_delete(part, PART_CLOUD_INCOMPLETE);
-			part_unset(part, PART_CLOUD_INCOMPLETE);
-		}
-
 		switch (part->state) {
 		case PART:
 		case PART | PART_CLOUD:
 		case PART_CLOUD:
-			// normal state
+			// normal states
 			break;
 
-		// crash recovery cases
+		// crash recovery cases (see refresh)
+
+		// crash case 1 (without parent)
+		case PART_INCOMPLETE:
+			storage_remove(storage, part);
+			part_delete(part, PART_INCOMPLETE);
+			part_free(part);
+			break;
+
+		// crash case 1 (with parent)
 		case PART | PART_INCOMPLETE:
-			// crash during refresh on the same storage
 			part_delete(part, PART_INCOMPLETE);
 			part_unset(part, PART_INCOMPLETE);
 			break;
 
-		case PART_INCOMPLETE:
+		// crash case 2
+		case PART | PART_COMPLETE:
+			part_delete(part, PART_COMPLETE);
+			part_unset(part, PART_COMPLETE);
+			break;
+
+		// crash case 3
+		case PART_COMPLETE:
 		{
 			// crash during refresh on the same storage or move
 
@@ -140,22 +148,33 @@ engine_recover_validate(Engine* self, Storage* storage)
 
 				// parent still exists, remove incomplete partition
 				storage_remove(storage, part);
-				part_delete(part, PART_INCOMPLETE);
+				part_delete(part, PART_COMPLETE);
 				part_free(part);
 				continue;
 			}
 
-			// rename
-			part_rename(part, PART_INCOMPLETE, PART);
-			part_unset(part, PART_INCOMPLETE);
+			// finilize
+			part_rename(part, PART_COMPLETE, PART);
+			part_unset(part, PART_COMPLETE);
 			part_set(part, PART);
 			break;
 		}
 
-		case PART_INCOMPLETE | PART_CLOUD:
+		// crash case 4
+		case PART_CLOUD | PART_INCOMPLETE:
 			// crash during download
+			//
+			// there is no complete state for download, cloud file not
+			// removed after download (only prior to refresh)
 			part_delete(part, PART_INCOMPLETE);
 			part_unset(part, PART_INCOMPLETE);
+			break;
+
+		// crash case 5
+		case PART | PART_CLOUD_INCOMPLETE:
+			// crash during upload
+			part_delete(part, PART_CLOUD_INCOMPLETE);
+			part_unset(part, PART_CLOUD_INCOMPLETE);
 			break;
 
 		default:
