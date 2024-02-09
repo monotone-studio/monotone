@@ -37,7 +37,7 @@ storage_stats(Storage* self, StorageStats* stats)
 	{
 		auto part = list_at(Part, link);
 
-		if (part_has(part, PART_FILE_CLOUD))
+		if (part_has(part, PART_CLOUD))
 			stats->partitions_in_cloud++;
 
 		// min/max

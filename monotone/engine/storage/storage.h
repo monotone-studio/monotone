@@ -118,8 +118,8 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 			buf_printf(buf, "    storage     %s\n", str_of(&part->source->name));
 			buf_printf(buf, "    cloud       %s\n", str_of(&part->source->cloud));
 			buf_printf(buf, "    refresh     %s\n", part->refresh ? "yes" : "no");
-			buf_printf(buf, "    on storage  %s\n", part_has(part, PART_FILE) ? "yes" : "no");
-			buf_printf(buf, "    on cloud    %s\n", part_has(part, PART_FILE_CLOUD) ? "yes" : "no");
+			buf_printf(buf, "    on storage  %s\n", part_has(part, PART) ? "yes" : "no");
+			buf_printf(buf, "    on cloud    %s\n", part_has(part, PART_CLOUD) ? "yes" : "no");
 			buf_printf(buf, "    memtable_a  %" PRIu64 " / %" PRIu64 "\n",
 			           part->memtable_a.count, part->memtable_a.size);
 			buf_printf(buf, "    memtable_b  %" PRIu64 " / %" PRIu64 "\n",
@@ -158,8 +158,8 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 			uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
 			buf_printf(buf, "   %20" PRIu64" %20" PRIu64 " file size: %" PRIu64 ", size_cached: %" PRIu64 ", on storage: %s, on cloud: %s\n",
 			           part->id.min, part->id.max, part->file.size, size_cached,
-			           part_has(part, PART_FILE) ? "yes": "no",
-			           part_has(part, PART_FILE_CLOUD) ? "yes": "no");
+			           part_has(part, PART) ? "yes": "no",
+			           part_has(part, PART_CLOUD) ? "yes": "no");
 		}
 	}
 }
