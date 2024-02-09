@@ -16,11 +16,13 @@ insert 2
 show storages
 show partitions debug
 select
+files main
 
 # test: refresh (refresh + upload + drop)
 refresh partition 0
 show partitions debug
 select
+files main
 
 # test: update
 insert 1 x
@@ -34,6 +36,7 @@ select
 refresh partition 0
 show partitions debug
 select
+files main
 
 # test: update
 insert 1 y
@@ -43,6 +46,7 @@ show partitions debug
 # test: download
 download partition 0
 show partitions debug
+files main
 
 # test: select (memtable + storage, cloud)
 select
@@ -51,5 +55,10 @@ select
 refresh partition 0
 show partitions debug
 select
+files main
+
+# test: drop
+drop partition 0
+files main
 
 close

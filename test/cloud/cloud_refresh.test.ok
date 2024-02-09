@@ -62,6 +62,8 @@ select
 [1]
 [2]
 (eof)
+files main
+mock
 # test: refresh (refresh + upload + drop)
 refresh partition 0
 show partitions debug
@@ -96,6 +98,9 @@ select
 [1]
 [2]
 (eof)
+files main
+00000000000000000000.cloud
+mock
 # test: update
 insert 1 x
 insert 2 x
@@ -166,6 +171,9 @@ select
 [1, x]
 [2, x]
 (eof)
+files main
+00000000000000000000.cloud
+mock
 # test: update
 insert 1 y
 insert 2 y
@@ -225,6 +233,10 @@ main
         rows            3
         offset          0
         size            77
+files main
+00000000000000000000
+00000000000000000000.cloud
+mock
 # test: select (memtable + storage, cloud)
 select
 [0]
@@ -265,4 +277,11 @@ select
 [1, y]
 [2, y]
 (eof)
+files main
+00000000000000000000.cloud
+mock
+# test: drop
+drop partition 0
+files main
+mock
 close
