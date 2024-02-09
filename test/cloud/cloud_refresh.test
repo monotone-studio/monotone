@@ -1,0 +1,55 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: alter storage set cloud
+alter storage main set (cloud 'mock', sync false)
+show storages
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages
+show partitions debug
+select
+
+# test: refresh (refresh + upload + drop)
+refresh partition 0
+show partitions debug
+select
+
+# test: update
+insert 1 x
+insert 2 x
+show partitions debug
+
+# test: select (memtable + cloud)
+select
+
+# test: refresh (download, drop, refresh, upload, drop)
+refresh partition 0
+show partitions debug
+select
+
+# test: update
+insert 1 y
+insert 2 y
+show partitions debug
+
+# test: download
+download partition 0
+show partitions debug
+
+# test: select (memtable + storage, cloud)
+select
+
+# test: refresh (drop, refresh, upload, drop)
+refresh partition 0
+show partitions debug
+select
+
+close

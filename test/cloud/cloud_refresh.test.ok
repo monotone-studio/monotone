@@ -1,0 +1,268 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: alter storage set cloud
+alter storage main set (cloud 'mock', sync false)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions in cloud 0
+  rows                0
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               'mock'
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages
+main
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                3
+  rows_cached         3
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               'mock'
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+select
+[0]
+[1]
+[2]
+(eof)
+# test: refresh (refresh + upload + drop)
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            75
+select
+[0]
+[1]
+[2]
+(eof)
+# test: update
+insert 1 x
+insert 2 x
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  2 / 28
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            75
+# test: select (memtable + cloud)
+select
+[0]
+[1, x]
+[2, x]
+(eof)
+# test: refresh (download, drop, refresh, upload, drop)
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                160
+      size_regions        77
+      size_regions_origin 77
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            77
+select
+[0]
+[1, x]
+[2, x]
+(eof)
+# test: update
+insert 1 y
+insert 2 y
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  2 / 28
+    memtable_b  0 / 0
+    file        0
+    index
+      size                160
+      size_regions        77
+      size_regions_origin 77
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            77
+# test: download
+download partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  2 / 28
+    memtable_b  0 / 0
+    file        245
+    index
+      size                160
+      size_regions        77
+      size_regions_origin 77
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            77
+# test: select (memtable + storage, cloud)
+select
+[0]
+[1, y]
+[2, y]
+(eof)
+# test: refresh (drop, refresh, upload, drop)
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                160
+      size_regions        77
+      size_regions_origin 77
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             2
+        rows            3
+        offset          0
+        size            77
+select
+[0]
+[1, y]
+[2, y]
+(eof)
+close
