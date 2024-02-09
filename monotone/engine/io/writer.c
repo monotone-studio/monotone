@@ -83,7 +83,7 @@ writer_start(Writer* self, Source* source, File* file)
 }
 
 void
-writer_stop(Writer*  self, Id* id, uint64_t lsn, bool sync)
+writer_stop(Writer* self, Id* id, uint64_t lsn, bool sync)
 {
 	if (! index_writer_started(&self->index_writer))
 		return;
