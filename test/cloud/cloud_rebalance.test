@@ -1,0 +1,46 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: create storages
+create storage hot (sync false)
+create storage cold (cloud 'mock', sync false)
+
+# test: alter conveyor set capacity
+alter conveyor set hot (capacity 2), cold
+show conveyor
+
+# test: create partition #1 (< capacity)
+insert 0
+show partitions debug
+
+# test: create partition #2 (= capacity)
+insert 10
+show partitions debug
+
+# test: create partition #3 (> capacity)
+insert 20
+show partitions debug
+
+# test: rebalance
+rebalance
+show partitions debug
+
+# test: create partitions (> capacity)
+insert 30
+insert 300
+insert 3000
+insert 30000
+insert 300000
+show partitions debug
+refresh partitions from 0 to 300010
+
+# test: rebalance
+rebalance
+show partitions debug
+select
+
+close

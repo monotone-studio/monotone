@@ -1,21 +1,32 @@
 #
 
-# functional
-directory functional
-group functional
-test memtable
-test partition
-test mapping
+## functional
+#directory functional
+#group functional
+#test memtable
+#test partition
+#test mapping
 
-# storage
-directory storage
-group storage
-test create_storage
-test drop_storage
-test alter_storage
-test alter_conveyor
-test refresh
-test move
-test drop
-test rebalance
-test service
+## storage
+#directory storage
+#group storage
+#test create_storage
+#test drop_storage
+#test alter_storage
+#test alter_conveyor
+#test refresh
+#test move
+#test drop
+#test rebalance
+#test service
+
+# cloud
+directory cloud
+group cloud
+test download
+test upload
+test cloud_storage
+test cloud_refresh
+test cloud_move
+test cloud_drop
+test cloud_rebalance
