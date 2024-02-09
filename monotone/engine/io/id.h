@@ -31,6 +31,14 @@ id_path_incomplete(Id* self, Source* source, char* path)
 }
 
 static inline void
+id_path_complete(Id* self, Source* source, char* path)
+{
+	// <source_path>/<min>.complete
+	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".complete",
+	               self->min);
+}
+
+static inline void
 id_path_cloud(Id* self, Source* source, char* path)
 {
 	// <source_path>/<min>.cloud
