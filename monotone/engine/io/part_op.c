@@ -29,23 +29,17 @@ part_upload(Part* self)
 	assert(part_has(self, PART));
 	assert(self->cloud);
 
-	Exception e;
-	if (try(&e))
-	{
-		// create incomplete cloud file (index dump)
-		part_create(self, PART_CLOUD_INCOMPLETE);
+	// in case previous attempt failed without crash
+	part_delete(self, PART_CLOUD_INCOMPLETE);
 
-		// upload partition file to the cloud
-		cloud_upload(self->cloud, &self->id);
+	// create incomplete cloud file (index dump)
+	part_create(self, PART_CLOUD_INCOMPLETE);
 
-		// rename partition cloud file as completed
-		part_rename(self, PART_CLOUD_INCOMPLETE, PART_CLOUD);
-	}
-	if (catch(&e))
-	{
-		part_delete(self, PART_CLOUD_INCOMPLETE);
-		rethrow();
-	}
+	// upload partition file to the cloud
+	cloud_upload(self->cloud, &self->id);
+
+	// rename partition cloud file as completed
+	part_rename(self, PART_CLOUD_INCOMPLETE, PART_CLOUD);
 }
 
 void
