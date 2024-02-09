@@ -161,6 +161,7 @@ refresh_end(Refresh* self)
 	self->memtable = NULL;
 
 	// recovery crash case 1
+	error_injection(error_refresh_1);
 
 	// remove and free old partition
 	file_close(&origin->file);
@@ -169,6 +170,7 @@ refresh_end(Refresh* self)
 	self->origin = NULL;
 
 	// recovery crash case 2
+	error_injection(error_refresh_2);
 
 	// rename new partition
 	part_file_complete(part);
