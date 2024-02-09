@@ -30,6 +30,8 @@ struct Config
 	Var  rows_written;
 	Var  rows_written_bytes;
 	// testing
+	Var  error_refresh_1;
+	Var  error_refresh_2;
 	Var  test_bool;
 	Var  test_int;
 	Var  test_string;

@@ -93,6 +93,8 @@ config_prepare(Config* self)
 		{ "rows_written",            VAR_INT,    VAR_E,                &self->rows_written,            NULL,        0                },
 		{ "rows_written_bytes",      VAR_INT,    VAR_E,                &self->rows_written_bytes,      NULL,        0                },
 		// testing
+		{ "error_refresh_1",         VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->error_refresh_1,         NULL,        false            },
+		{ "error_refresh_2",         VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->error_refresh_2,         NULL,        false            },
 		{ "test_bool",               VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->test_bool,               NULL,        false            },
 		{ "test_int",                VAR_INT,    VAR_H|VAR_R|VAR_E,    &self->test_int,                NULL,        0                },
 		{ "test_string",             VAR_STRING, VAR_H|VAR_R|VAR_E,    &self->test_string,             NULL,        0                },

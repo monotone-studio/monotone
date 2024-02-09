@@ -15,3 +15,6 @@
 
 // shared state
 #include "config/global.h"
+
+// debug
+#include "config/error_injection.h"
