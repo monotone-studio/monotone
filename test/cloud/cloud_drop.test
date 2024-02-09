@@ -1,0 +1,101 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: alter storage set cloud
+alter storage main set (cloud 'mock', sync false)
+show storages
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages
+show partitions debug
+select
+
+# test: drop (no files)
+drop partition 0
+show partitions debug
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages
+show partitions debug
+select
+
+# test: refresh (upload on cloud)
+refresh partition 0
+show partitions debug
+select
+
+# test: insert
+insert 1 x
+insert 2 x
+
+# test: drop on storage (not exists)
+drop partition 0 on storage
+show partitions debug
+select
+
+# test: drop on cloud
+drop partition 0 on cloud
+
+# test: partition remains
+show partitions debug
+select
+
+# test: drop
+drop partition 0
+show partitions debug
+select
+
+# test: insert
+insert 0 z
+insert 1 z
+insert 2 z
+
+# test: refresh and download
+refresh partition 0
+download partition 0
+show partitions debug
+select
+
+# test: drop (all files present)
+drop partition 0
+show partitions debug
+select
+
+# test: create partition
+service
+service
+
+insert 0
+insert 1
+insert 2
+show storages
+show partitions debug
+select
+
+# test: checkpoint
+checkpoint
+show partitions debug
+select
+
+# test: drop (still on service)
+drop partition 0
+show partitions debug
+select
+
+# test: service
+service
+service
+show partitions debug
+select
+
+close
