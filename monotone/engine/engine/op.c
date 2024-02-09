@@ -58,6 +58,12 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 				part_unset(part, PART_FILE);
 			}
 		}
+
+		if (part->state == PART_FILE_NONE)
+		{
+			part->index = NULL;
+			buf_reset(&part->index_buf);
+		}
 	}
 
 	ref_unlock(ref, LOCK_ACCESS);
