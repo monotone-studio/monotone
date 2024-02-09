@@ -58,7 +58,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 	}
 
 	// ensure partition is offloaded
-	if (part_has(ref->part, PART_FILE_CLOUD))
+	if (part_has(ref->part, PART_CLOUD))
 	{
 		engine_unlock(engine, ref, LOCK_SERVICE);
 		error("refresh: partition <%" PRIu64 "> must be dropped from cloud first", min);
@@ -146,6 +146,13 @@ refresh_apply(Refresh* self)
 	*part->memtable = *origin->memtable;
 	memtable_reuse(origin->memtable);
 
+	// this should be PART_INCOMPLETE until sync
+	// completed, but made this way in order to be
+	// available for access during the
+	// refresh process
+	part_unset(part, PART_INCOMPLETE);
+	part_set(part, PART);
+
 	ref_unlock(self->ref, LOCK_ACCESS);
 	mutex_unlock(&engine->lock);
 }
@@ -165,7 +172,7 @@ refresh_end(Refresh* self)
 
 	// remove and free old partition
 	file_close(&origin->file);
-	part_file_delete(origin, true);
+	part_delete(origin, PART);
 	part_free(origin);
 	self->origin = NULL;
 
@@ -173,7 +180,7 @@ refresh_end(Refresh* self)
 	error_injection(error_refresh_2);
 
 	// rename new partition
-	part_file_complete(part);
+	part_rename(part, PART_INCOMPLETE, PART);
 	self->part = NULL;
 }
 
