@@ -1,0 +1,151 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: case 1: crash before completion (no parent)
+insert 0
+insert 1
+insert 2
+insert 3
+set error_refresh_1 to true
+refresh partition 0
+files main
+close
+
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: case 1: crash before completion (with parent)
+insert 0
+insert 1
+insert 2
+insert 3
+refresh partition 0
+show partitions debug
+
+insert 0 x
+insert 1 x
+insert 2 x
+insert 3 x
+set error_refresh_1 to true
+refresh partition 0
+files main
+close
+
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+show partitions debug
+select
+
+# test: case 2: crash after completion
+set error_refresh_2 to true
+refresh partition 0
+files main
+close
+
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+show partitions debug
+select
+
+# test: case 3: crash after delete
+set error_refresh_3 to true
+refresh partition 0
+files main
+close
+
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+show partitions debug
+select
+
+# test: case 4: crash during download
+alter storage main set (cloud 'mock', sync false)
+show storages
+show partitions debug
+
+# upload and drop
+refresh partition 0
+files main
+
+set error_download to true
+download partition 0
+files main
+close
+
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+show partitions debug
+select
+
+# test: case 4: error during download (retry)
+set error_download to true
+download partition 0
+files main
+
+set error_download to false
+download partition 0
+files main
+
+select
+drop partition 0 on storage
+
+# test: case 5: crash during upload
+download partition 0
+show partitions debug
+
+# drop on cloud
+drop partition 0 on cloud
+show partitions debug
+
+set error_upload to true
+upload partition 0
+files main
+close
+
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+show partitions debug
+select
+
+# test: case 5: error during upload (retry)
+drop partition 0 on cloud
+
+set error_upload to true
+upload partition 0
+files main
+select
+
+set error_upload to false
+upload partition 0
+files main
+select
+
+close

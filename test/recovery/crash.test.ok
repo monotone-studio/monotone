@@ -1,0 +1,455 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: case 1: crash before completion (no parent)
+insert 0
+insert 1
+insert 2
+insert 3
+set error_refresh_1 to true
+refresh partition 0
+error: (engine/refresh.c:171) error injection: error_refresh_1
+files main
+00000000000000000000.incomplete
+close
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+# test: case 1: crash before completion (with parent)
+insert 0
+insert 1
+insert 2
+insert 3
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+insert 0 x
+insert 1 x
+insert 2 x
+insert 3 x
+set error_refresh_1 to true
+refresh partition 0
+error: (engine/refresh.c:171) error injection: error_refresh_1
+files main
+00000000000000000000
+00000000000000000000.incomplete
+close
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: case 2: crash after completion
+set error_refresh_2 to true
+refresh partition 0
+error: (engine/refresh.c:177) error injection: error_refresh_2
+files main
+00000000000000000000
+00000000000000000000.complete
+close
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: case 3: crash after delete
+set error_refresh_3 to true
+refresh partition 0
+error: (engine/refresh.c:186) error injection: error_refresh_3
+files main
+00000000000000000000.complete
+close
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: case 4: crash during download
+alter storage main set (cloud 'mock', sync false)
+show storages
+main
+  min                 0
+  max                 10
+  partitions          1
+  partitions in cloud 0
+  rows                4
+  rows_cached         0
+  size                0 Mb
+  size_uncompressed   0 Mb
+  size_cached         0 Mb
+  path                ''
+  cloud               'mock'
+  sync                false
+  crc                 false
+  compression         0
+  refresh_wm          41943040
+  region_size         131072
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+refresh partition 0
+files main
+00000000000000000000.cloud
+mock
+set error_download to true
+download partition 0
+error: (io/cloud_mock.c:73) error injection: error_download
+files main
+00000000000000000000.incomplete
+00000000000000000000.cloud
+mock
+close
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000.cloud
+mock
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: case 4: error during download (retry)
+set error_download to true
+download partition 0
+error: (io/cloud_mock.c:73) error injection: error_download
+files main
+00000000000000000000.incomplete
+00000000000000000000.cloud
+mock
+set error_download to false
+download partition 0
+files main
+00000000000000000000
+00000000000000000000.cloud
+mock
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+drop partition 0 on storage
+# test: case 5: crash during upload
+download partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+drop partition 0 on cloud
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+set error_upload to true
+upload partition 0
+error: (io/cloud_mock.c:97) error injection: error_upload
+files main
+00000000000000000000
+mock
+00000000000000000000.cloud.incomplete
+close
+# test: recover
+init
+set workers to 0
+set interval to 10
+open
+files main
+00000000000000000000
+mock
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       mock
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            4
+        offset          0
+        size            92
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+# test: case 5: error during upload (retry)
+drop partition 0 on cloud
+set error_upload to true
+upload partition 0
+error: (io/cloud_mock.c:97) error injection: error_upload
+files main
+00000000000000000000
+mock
+00000000000000000000.cloud.incomplete
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+set error_upload to false
+upload partition 0
+files main
+00000000000000000000
+00000000000000000000.cloud
+mock
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+close
