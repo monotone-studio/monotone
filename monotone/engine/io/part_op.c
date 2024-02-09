@@ -13,37 +13,37 @@
 void
 part_download(Part* self)
 {
-	assert(part_has(self, PART_FILE_CLOUD));
+	assert(part_has(self, PART_CLOUD));
 	assert(self->cloud);
 
 	// download partition file locally
 	cloud_download(self->cloud, &self->id);
 
 	// open
-	part_file_open(self, false);
+	part_open(self, PART, false);
 }
 
 void
 part_upload(Part* self)
 {
-	assert(part_has(self, PART_FILE));
+	assert(part_has(self, PART));
 	assert(self->cloud);
 
 	Exception e;
 	if (try(&e))
 	{
 		// create incomplete cloud file (index dump)
-		part_file_cloud_create(self);
+		part_create(self, PART_CLOUD_INCOMPLETE);
 
 		// upload partition file to the cloud
 		cloud_upload(self->cloud, &self->id);
 
 		// rename partition cloud file as completed
-		part_file_cloud_complete(self);
+		part_rename(self, PART_CLOUD_INCOMPLETE, PART_CLOUD);
 	}
 	if (catch(&e))
 	{
-		part_file_cloud_delete(self, false);
+		part_delete(self, PART_CLOUD_INCOMPLETE);
 		rethrow();
 	}
 }
@@ -56,7 +56,7 @@ part_offload(Part* self, bool from_storage)
 	{
 		// remove data file
 		file_close(&self->file);
-		part_file_delete(self, true);
+		part_delete(self, PART);
 		return;
 	}
 
@@ -64,7 +64,7 @@ part_offload(Part* self, bool from_storage)
 	assert(self->cloud);
 
 	// remove cloud file first
-	part_file_cloud_delete(self, true);
+	part_delete(self, PART_CLOUD);
 
 	// remove from cloud
 	cloud_remove(self->cloud, &self->id);

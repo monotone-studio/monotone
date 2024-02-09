@@ -41,13 +41,13 @@ reader_execute(Reader* self, Part* part, IndexRegion* index_region)
 	buf_reset(&self->buf);
 	buf_reset(&self->buf_uncompressed);
 
-	if (part_has(part, PART_FILE))
+	if (part_has(part, PART))
 	{
 		// read region data from file
 		file_pread_buf(&part->file, &self->buf, index_region->size,
 		               index_region->offset);
 	} else
-	if (part_has(part, PART_FILE_CLOUD))
+	if (part_has(part, PART_CLOUD))
 	{
 		// read region data from cloud
 		cloud_read(part->cloud, &part->id,
