@@ -32,6 +32,7 @@ struct Config
 	// testing
 	Var  error_refresh_1;
 	Var  error_refresh_2;
+	Var  error_refresh_3;
 	Var  test_bool;
 	Var  test_int;
 	Var  test_string;
