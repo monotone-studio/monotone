@@ -1,0 +1,69 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: alter storage set cloud
+alter storage main set (cloud 'mock', sync false)
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+insert 3
+refresh partition 0
+show partitions debug
+files main
+select
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partition
+show partitions debug
+select
+
+# test: download
+download partition 0
+show partitions debug
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partition
+show partitions debug
+select
+
+# test: update/refresh
+insert 2 z
+insert 3 z
+refresh partition 0
+
+# test: close/open
+close
+
+init
+set workers to 0
+set interval to 10
+open
+files main
+
+# test: validate partition
+show partitions debug
+select
+
+close
