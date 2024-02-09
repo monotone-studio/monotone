@@ -167,20 +167,26 @@ refresh_end(Refresh* self)
 	memtable_free(self->memtable);
 	self->memtable = NULL;
 
-	// recovery crash case 1
+	// crash case 1
 	error_injection(error_refresh_1);
 
-	// remove and free old partition
+	// step 1. rename new partition file as completed
+	part_rename(part, PART_INCOMPLETE, PART_COMPLETE);
+
+	// crash case 2
+	error_injection(error_refresh_2);
+
+	// step 2. remove old partition file
 	file_close(&origin->file);
 	part_delete(origin, PART);
 	part_free(origin);
 	self->origin = NULL;
 
-	// recovery crash case 2
-	error_injection(error_refresh_2);
+	// crash case 3
+	error_injection(error_refresh_3);
 
-	// rename new partition
-	part_rename(part, PART_INCOMPLETE, PART);
+	// step 3. rename new partition
+	part_rename(part, PART_COMPLETE, PART);
 	self->part = NULL;
 }
 
