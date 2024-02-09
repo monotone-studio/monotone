@@ -65,7 +65,10 @@ mock_download(Cloud* self, Id* id)
 	file_write_buf(&file, &buf);
 	file_close(&file);
 
-	// rename as completed
+	// crash case 4
+	error_injection(error_download);
+
+	// rename
 	id_path_incomplete(id, self->source, path_from);
 	id_path(id, self->source, path_to);
 	fs_rename(path_from, "%s", path_to);
@@ -85,6 +88,9 @@ mock_upload(Cloud* self, Id* id)
 	buf_init(&buf);
 	guard(guard, buf_free, &buf);
 	file_import(&buf, "%s", path_from);
+
+	// crash case 5
+	error_injection(error_upload);
 
 	// create mock file
 	File file;
