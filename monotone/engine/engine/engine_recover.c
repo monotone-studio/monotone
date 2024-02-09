@@ -145,6 +145,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 			// rename
 			part_file_complete(part);
 			part_unset(part, PART_FILE_INCOMPLETE);
+			part_set(part, PART_FILE);
 			break;
 		}
 
