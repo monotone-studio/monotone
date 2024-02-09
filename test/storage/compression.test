@@ -1,0 +1,43 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: create partition
+insert 0
+insert 1
+insert 3
+show partitions debug
+refresh partition 0
+select
+
+# test: alter storage set compression
+alter storage main set (compression 1)
+show partitions debug
+
+# test: refresh (compress)
+refresh partition 0
+show partitions debug
+select
+
+# test: alter storage set compression, crc
+alter storage main set (compression 1, crc true)
+show partitions debug
+
+# test: refresh
+refresh partition 0
+show partitions debug
+select
+
+# test: alter storage set crc
+alter storage main set (compression 0, crc true)
+show partitions debug
+
+# test: refresh
+refresh partition 0
+show partitions debug
+select
+
+close

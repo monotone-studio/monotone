@@ -1,0 +1,217 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: create partition
+insert 0
+insert 1
+insert 3
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+refresh partition 0
+select
+[0]
+[1]
+[3]
+(eof)
+# test: alter storage set compression
+alter storage main set (compression 1)
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            75
+# test: refresh (compress)
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        202
+    index
+      size                159
+      size_regions        35
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         1
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            35
+select
+[0]
+[1]
+[3]
+(eof)
+# test: alter storage set compression, crc
+alter storage main set (compression 1, crc true)
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        202
+    index
+      size                159
+      size_regions        35
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         1
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            35
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        202
+    index
+      size                159
+      size_regions        35
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         1
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            35
+select
+[0]
+[1]
+[3]
+(eof)
+# test: alter storage set crc
+alter storage main set (compression 0, crc true)
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        202
+    index
+      size                159
+      size_regions        35
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         1
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            35
+# test: refresh
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      rows                3
+      lsn                 0
+      compression         0
+      region
+        min             0
+        max             3
+        rows            3
+        offset          0
+        size            75
+select
+[0]
+[1]
+[3]
+(eof)
+close
