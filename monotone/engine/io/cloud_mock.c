@@ -57,6 +57,10 @@ mock_download(Cloud* self, Id* id)
 	guard(guard, buf_free, &buf);
 	file_import(&buf, "%s", path_from);
 
+	// in case previous attempt failed without crash
+	if (fs_exists("%s", path_to))
+		fs_unlink("%s", path_to);
+
 	// create incomplete file
 	File file;
 	file_init(&file);
