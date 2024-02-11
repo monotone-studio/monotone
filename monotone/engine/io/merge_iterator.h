@@ -18,7 +18,7 @@ struct MergeIteratorRef
 struct MergeIterator
 {
 	Iterator    iterator;
-	Row*        current;
+	Iterator*   current;
 	Buf         list;
 	int         list_count;
 	Comparator* comparator;
@@ -52,7 +52,9 @@ merge_iterator_has(MergeIterator* self)
 static inline Row*
 merge_iterator_at(MergeIterator* self)
 {
-	return self->current;
+	if (unlikely(self->current == NULL))
+		return NULL;
+	return iterator_at(self->current);
 }
 
 hot static inline void
@@ -70,6 +72,7 @@ merge_iterator_next(MergeIterator* self)
 	}
 	self->current = NULL;
 
+	Iterator* min_iterator = NULL;
 	Row* min = NULL;
 	for (int pos = 0; pos < self->list_count; pos++)
 	{
@@ -80,6 +83,7 @@ merge_iterator_next(MergeIterator* self)
 		if (min == NULL)
 		{
 			current->advance = true;
+			min_iterator = current->iterator;
 			min = row;
 			continue;
 		}
@@ -93,10 +97,11 @@ merge_iterator_next(MergeIterator* self)
 			for (int i = 0; i < self->list_count; i++)
 				list[i].advance = false;
 			current->advance = true;
-			min = row; 
+			min_iterator = current->iterator;
+			min = row;
 		}
 	}
-	self->current = min;
+	self->current = min_iterator;
 }
 
 static inline void
