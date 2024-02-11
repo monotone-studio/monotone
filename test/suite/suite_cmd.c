@@ -126,14 +126,24 @@ test_suite_cmd_init(TestSuite* self, char* arg)
 		return -1;
 	}
 
-	monotone_t* env = monotone_init(NULL, NULL);
+	auto env = monotone_init(NULL, NULL);
 	if (env == NULL) {
 		test_error(self, "line %d: init: monotone_init() failed",
 		           self->current_line);
 		return -1;
 	}
 
+	auto batch = monotone_batch(env);
+	if (batch == NULL)
+	{
+		test_error(self, "line %d: init: monotone_batch() failed",
+		           self->current_line);
+		monotone_free(env);
+		return -1;
+	}
+
 	self->env = env;
+	self->batch = batch;
 	return 0;
 }
 
@@ -172,8 +182,10 @@ test_suite_cmd_close(TestSuite* self, char* arg)
 		           self->current_line);
 		return -1;
 	}
+	monotone_free(self->batch);
 	monotone_free(self->env);
-	self->env = NULL;
+	self->batch = NULL;
+	self->env   = NULL;
 	return 0;
 }
 
@@ -209,7 +221,13 @@ test_suite_cmd_insert(TestSuite* self, char* arg)
 		.data = arg_value,
 		.data_size = arg_value ? strlen(arg_value) : 0
 	};
-	int rc = monotone_insert(self->env, &row);
+	int rc = monotone_insert(self->batch, &row);
+	if (rc == -1)
+	{
+		test_log_error(self);
+		return 0;
+	}
+	rc = monotone_write(self->batch);
 	if (rc == -1)
 		test_log_error(self);
 
@@ -241,7 +259,13 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 		.data = arg_value,
 		.data_size = arg_value ? strlen(arg_value) : 0
 	};
-	int rc = monotone_delete(self->env, &row);
+	int rc = monotone_delete(self->batch, &row);
+	if (rc == -1)
+	{
+		test_log_error(self);
+		return 0;
+	}
+	rc = monotone_write(self->batch);
 	if (rc == -1)
 		test_log_error(self);
 
