@@ -12,6 +12,27 @@
 #include <monotone_storage.h>
 #include <monotone_engine.h>
 
+hot void
+engine_insert(Engine* self, Log* log, uint64_t time,
+              void*   data,
+              int     data_size)
+{
+	unused(self);
+	auto op = log_add(log);
+	op->row = row_allocate(time, data, data_size);
+}
+
+hot void
+engine_delete(Engine* self, Log* log, uint64_t time,
+              void*   data,
+              int     data_size)
+{
+	unused(self);
+	auto op = log_add(log);
+	op->row = row_allocate(time, data, data_size);
+	op->row->is_delete = true;
+}
+
 hot static inline void
 engine_write_to(Engine* self, Ref* ref, Row* row)
 {
@@ -37,30 +58,32 @@ engine_write_to(Engine* self, Ref* ref, Row* row)
 }
 
 hot void
-engine_write(Engine* self, bool delete, uint64_t time,
-             void*   data,
-             int     data_size)
+engine_write(Engine* self, Log* log)
 {
-	// insert, replace or delete by key
+	// todo: rollback
 
-	// allocate row
-	auto row = row_allocate(time, data, data_size);
-	if (delete)
-		row->is_delete = true;
-
-	// get partition min interval
-	uint64_t min = row_interval_min(row);
-
-	// find or create partition
-	auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
-
-	// write
-	Exception e;
-	if (try(&e))
+	for (int pos = 0; pos < log->op_count; pos++)
 	{
-		engine_write_to(self, ref, row);
+		auto op = log_of(log, pos);
+		auto row = op->row;
+
+		// get partition min interval
+		uint64_t min = row_interval_min(row);
+
+		// find or create partition
+		auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
+
+		// write
+		Exception e;
+		if (try(&e))
+		{
+			engine_write_to(self, ref, row);
+		}
+		engine_unlock(self, ref, LOCK_ACCESS);
+
+		if (catch(&e))
+			rethrow();
 	}
-	engine_unlock(self, ref, LOCK_ACCESS);
-	if (catch(&e))
-		rethrow();
+
+	log_reset(log);
 }
