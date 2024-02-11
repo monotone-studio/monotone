@@ -16,15 +16,17 @@ memtable_init(Memtable*   self,
               int         size_split,
               Comparator* comparator)
 {
-	self->count       = 0;
-	self->count_pages = 0;
-	self->size        = 0;
-	self->size_page   = size_page;
-	self->size_split  = size_split;
-	self->comparator  = comparator;
-	self->lsn_min     = UINT64_MAX;
-	self->lsn_max     = 0;
+	self->count           = 0;
+	self->count_pages     = 0;
+	self->size            = 0;
+	self->size_page       = size_page;
+	self->size_split      = size_split;
+	self->comparator      = comparator;
+	self->lsn_min         = UINT64_MAX;
+	self->lsn_max         = 0;
+	self->iterators_count = 0;
 	rbtree_init(&self->tree);
+	list_init(&self->iterators);
 }
 
 static MemtablePage*
@@ -59,16 +61,8 @@ memtable_compare(Memtable* self, MemtablePage* page, Row* key)
 
 rbtree_free(memtable_truncate, memtable_page_free(memtable_page_of(n)))
 
-void
-memtable_free(Memtable* self)
-{
-	if (self->tree.root)
-		memtable_truncate(self->tree.root, NULL);
-	memtable_reuse(self);
-}
-
-void
-memtable_reuse(Memtable* self)
+static void
+memtable_reset(Memtable* self)
 {
 	self->count       = 0;
 	self->count_pages = 0;
@@ -76,6 +70,24 @@ memtable_reuse(Memtable* self)
 	self->lsn_min     = UINT64_MAX;
 	self->lsn_max     = 0;
 	rbtree_init(&self->tree);
+	list_init(&self->iterators);
+}
+
+void
+memtable_free(Memtable* self)
+{
+	if (self->tree.root)
+		memtable_truncate(self->tree.root, NULL);
+	memtable_reset(self);
+}
+
+void
+memtable_move(Memtable* self, Memtable* from)
+{
+	*self = *from;
+	assert(! from->iterators_count);
+	list_init(&self->iterators);
+	memtable_reset(from);
 }
 
 hot static inline
@@ -173,6 +185,17 @@ range_search(Ref self, RangeTree* tree, Ref key, bool* match)
 }
 #endif
 
+hot static inline void
+memtable_sync(Memtable* self, MemtablePage* page, MemtablePage* split, int pos)
+{
+	// sync iterators
+	list_foreach(&self->iterators)
+	{
+		auto it = list_at(MemtableIterator, link);
+		memtable_iterator_sync(it, page, split, pos);
+	}
+}
+
 hot static inline MemtablePage*
 memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 {
@@ -186,6 +209,10 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 		self->size -= row_size(prev);
 		self->size += row_size(row);
 		row_free(prev);
+
+		// update iterators
+		if (self->iterators_count > 0)
+			memtable_sync(self, page, NULL, pos);
 		return NULL;
 	}
 	if (pos < 0)
@@ -193,10 +220,10 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 
 	// split
 	MemtablePage* ref = page;
-	MemtablePage* r = NULL;
+	MemtablePage* l   = page;
+	MemtablePage* r   = NULL;
 	if (unlikely(page->rows_count == self->size_page))
 	{
-		auto l = page;
 		r = memtable_page_allocate(self);
 		l->rows_count = self->size_split;
 		r->rows_count = self->size_page - self->size_split;
@@ -216,6 +243,10 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 	ref->rows_count++;
 	self->count++;
 	self->size += row_size(row);
+
+	// update iterators
+	if (self->iterators_count > 0)
+		memtable_sync(self, l, r, pos);
 	return r;
 }
 

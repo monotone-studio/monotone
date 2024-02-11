@@ -15,12 +15,14 @@ struct MemtableIterator
 	MemtablePage* page;
 	int           page_pos;
 	Memtable*     memtable;
+	List          link;
 };
 
 static inline bool
 memtable_iterator_open(MemtableIterator* self,
                        Memtable*         memtable,
-                       Row*              key)
+                       Row*              key,
+                       bool              attach)
 {
 	self->current  = NULL;
 	self->page     = NULL;
@@ -36,6 +38,13 @@ memtable_iterator_open(MemtableIterator* self,
 		return false;
 	}
 	self->current = self->page->rows[self->page_pos];
+
+	// attach iterator to the memtable for updates
+	if (attach)
+	{
+		list_append(&memtable->iterators, &self->link);
+		memtable->iterators_count++;
+	}
 	return match;
 }
 
@@ -83,6 +92,20 @@ memtable_iterator_reset(MemtableIterator* self)
 	self->page_pos = 0;
 	self->page     = 0;
 	self->memtable = NULL;
+	list_init(&self->link);
+}
+
+static inline void
+memtable_iterator_close(MemtableIterator* self)
+{
+	// detach from memtable
+	if (! list_empty(&self->link))
+	{
+		list_unlink(&self->link);
+		self->memtable->iterators_count--;
+		assert(self->memtable->iterators_count >= 0);
+	}
+	memtable_iterator_reset(self);
 }
 
 static inline void
@@ -96,5 +119,40 @@ memtable_iterator_init(MemtableIterator* self)
 	it->has   = (IteratorHas)memtable_iterator_has;
 	it->at    = (IteratorAt)memtable_iterator_at;
 	it->next  = (IteratorNext)memtable_iterator_next;
-	it->close = NULL;
+	it->close = (IteratorClose)memtable_iterator_close;
+	list_init(&self->link);
+}
+
+static inline void
+memtable_iterator_sync(MemtableIterator* self,
+                       MemtablePage*     page,
+                       MemtablePage*     page_split,
+                       int               pos)
+{
+	if (self->page != page || !self->current)
+		return;
+
+	// replace
+	if (self->page_pos == pos)
+	{
+		// update current page row pointer on replace
+		self->current = self->page->rows[self->page_pos];
+		return;
+	}
+
+	// insert
+	if (page_split)
+	{
+		if (self->page_pos >= page->rows_count)
+		{
+			self->page = page_split;
+			self->page_pos = self->page_pos - page->rows_count;
+		}
+	}
+
+	// move position, if key was inserted before it
+	if (pos <= self->page_pos)
+		self->page_pos++;
+
+	self->current = self->page->rows[self->page_pos];
 }

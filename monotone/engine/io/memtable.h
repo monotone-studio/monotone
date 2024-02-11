@@ -27,11 +27,13 @@ struct Memtable
 	int         size_split;
 	uint64_t    lsn_min;
 	uint64_t    lsn_max;
+	List        iterators;
+	int         iterators_count;
 };
 
 void memtable_init(Memtable*, int, int, Comparator*);
 void memtable_free(Memtable*);
-void memtable_reuse(Memtable*);
+void memtable_move(Memtable*, Memtable*);
 void memtable_set(Memtable*, Row*);
 bool memtable_seek(Memtable*, Row*, MemtablePage**, int*);
 void memtable_follow(Memtable*, uint64_t);
