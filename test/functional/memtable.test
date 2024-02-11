@@ -139,4 +139,42 @@ select 3
 select 5
 select 8
 
+# test: create partition
+drop partition 0
+insert 1
+insert 2
+insert 4
+show partitions verbose
+
+# test: cursor
+cursor c 2
+read c
+
+# test: insert at cursor pos
+insert 2 xxx
+read c
+
+# test: insert before cursor pos
+insert 0 xxx
+read c
+
+# test: insert after cursor pos
+insert 3 xxx
+read c
+
+next c
+read c
+
+# test: delete at cursor pos
+delete 3 zzz
+read c
+
+next c
+read c
+
+# test: second cursor
+select
+
+cursor_close c
+
 close

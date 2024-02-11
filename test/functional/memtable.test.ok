@@ -281,4 +281,56 @@ select 5
 (eof)
 select 8
 (eof)
+# test: create partition
+drop partition 0
+insert 1
+insert 2
+insert 4
+show partitions verbose
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+# test: cursor
+cursor c 2
+read c
+[2]
+# test: insert at cursor pos
+insert 2 xxx
+read c
+[2, xxx]
+# test: insert before cursor pos
+insert 0 xxx
+read c
+[2, xxx]
+# test: insert after cursor pos
+insert 3 xxx
+read c
+[2, xxx]
+next c
+read c
+[3, xxx]
+# test: delete at cursor pos
+delete 3 zzz
+read c
+(eof)
+next c
+read c
+[4]
+# test: second cursor
+select
+[0, xxx]
+[1]
+[2, xxx]
+[4]
+(eof)
+cursor_close c
 close
