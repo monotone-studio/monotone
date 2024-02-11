@@ -142,9 +142,8 @@ refresh_apply(Refresh* self)
 	// add new partition to the storage
 	storage_add(self->storage, part);
 
-	// reuse memtable
-	*part->memtable = *origin->memtable;
-	memtable_reuse(origin->memtable);
+	// use active memtable on the new partition
+	memtable_move(part->memtable, origin->memtable);
 
 	// this should be PART_INCOMPLETE until sync
 	// completed, but made this way in order to be
