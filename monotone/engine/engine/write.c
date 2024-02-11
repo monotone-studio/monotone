@@ -56,48 +56,11 @@ engine_write(Engine* self, bool delete, uint64_t time,
 
 	// write
 	Exception e;
-	if (try(&e)) {
+	if (try(&e))
+	{
 		engine_write_to(self, ref, row);
 	}
 	engine_unlock(self, ref, LOCK_ACCESS);
 	if (catch(&e))
 		rethrow();
-}
-
-void
-engine_write_by(Engine*       self,
-                EngineCursor* cursor,
-                bool          delete,
-                uint64_t      time,
-                void*         data,
-                int           data_size)
-{
-	// update or delete by cursor
-	if (unlikely(! engine_cursor_has(cursor)))
-		error("cursor is not active");
-
-	Row* current = cursor->current;
-	Row* row     = NULL;
-	if (delete)
-	{
-		row = row_allocate(current->time, current->data, current->data_size);
-		row->is_delete = true;
-	} else
-	{
-		row = row_allocate(time, data, data_size);
-		if (unlikely(compare(self->comparator, row, current) != 0))
-		{
-			row_free(row);
-			error("key does not match cursor row");
-		}
-	}
-
-	// use cursor partition lock
-	engine_write_to(self, cursor->ref, row);
-
-	// update cursor
-	if (delete)
-		cursor->current = NULL;
-	else
-		cursor->current = row;
 }
