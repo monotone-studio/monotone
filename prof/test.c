@@ -183,6 +183,7 @@ cli(void)
 	env = monotone_init(NULL, NULL);
 	monotone_execute(env, "set log_to_stdout to true", NULL);
 	monotone_execute(env, "set workers to 3", NULL);
+	monotone_execute(env, "set wal_enable to false", NULL);
 
 	int rc;
 	rc = monotone_open(env, "./t");
@@ -190,6 +191,16 @@ cli(void)
 	{
 		printf("error: %s\n", monotone_error(env));
 		monotone_free(env);
+		return;
+	}
+
+	monotone_execute(env, "alter storage main set (compression 1, refresh_wm 0)", NULL);
+
+#if 0
+	rc = monotone_execute(env, "create storage if not exists hot (cloud 'mock', compression 1, sync true, refresh_wm 0)", NULL);
+	if (rc == -1)
+	{
+		printf("error: %s\n", monotone_error(env));
 		return;
 	}
 
@@ -205,13 +216,16 @@ cli(void)
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-	rc = monotone_execute(env, "alter conveyor hot (capacity 10), cold", NULL);
+	rc = monotone_execute(env, "alter conveyor set hot (capacity 10), cold", NULL);
 	/*rc = monotone_execute(env, "alter conveyor hot (capacity 10), cold", NULL);*/
+
+	rc = monotone_execute(env, "alter conveyor set hot", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
+#endif
 
 	for (;;)
 	{
