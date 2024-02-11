@@ -192,39 +192,6 @@ monotone_delete(monotone_t* self, monotone_row_t* row)
 	return rc;
 }
 
-hot MONOTONE_API int
-monotone_delete_by(monotone_cursor_t* self)
-{
-	monotone_enter(self->env);
-	int rc = 0;
-	Exception e;
-	if (try(&e)) {
-		engine_write_by(&self->env->main.engine, &self->cursor,
-		                true, 0, NULL, 0);
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-hot MONOTONE_API int
-monotone_update_by(monotone_cursor_t* self, monotone_row_t* row)
-{
-	monotone_enter(self->env);
-	int rc = 0;
-	Exception e;
-	if (try(&e)) {
-		engine_write_by(&self->env->main.engine, &self->cursor,
-		                false, row->time,
-		                row->data, row->data_size);
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
 hot MONOTONE_API monotone_cursor_t*
 monotone_cursor(monotone_t* self, monotone_row_t* row)
 {
@@ -268,11 +235,23 @@ monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 	if (try(&e))
 	{
 		auto at = engine_cursor_at(&self->cursor);
-		if (likely(at)) {
+		if (likely(at))
+		{
 			row->time      = at->time;
 			row->data_size = at->data_size;
 			row->data      = at->data;
 			rc = 1;
+
+			// this situation is possible on concurrent delete
+			// from the same thread
+			if (unlikely(at->is_delete))
+			{
+				row->time      = 0;
+				row->data_size = 0;
+				row->data      = NULL;
+				rc = 0;
+			}
+
 		} else {
 			rc = 0;
 		}

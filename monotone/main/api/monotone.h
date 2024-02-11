@@ -52,18 +52,12 @@ monotone_open(monotone_t*, const char* path);
 MONOTONE_API int
 monotone_execute(monotone_t*, const char* command, char** result);
 
-// insert, update, delete
+// insert, delete
 MONOTONE_API int
 monotone_insert(monotone_t*, monotone_row_t*);
 
 MONOTONE_API int
 monotone_delete(monotone_t*, monotone_row_t*);
-
-MONOTONE_API int
-monotone_delete_by(monotone_cursor_t*);
-
-MONOTONE_API int
-monotone_update_by(monotone_cursor_t*, monotone_row_t*);
 
 // cursor
 MONOTONE_API monotone_cursor_t*
