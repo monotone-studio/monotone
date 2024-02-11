@@ -27,12 +27,12 @@ part_cursor_open(PartCursor* self, Part* part, Row* row)
 	auto memtable = part_memtable(part, &memtable_prev);
 	if (memtable->count > 0)
 	{
-		memtable_iterator_open(&self->memtable_iterator_a, memtable, row);
+		memtable_iterator_open(&self->memtable_iterator_a, memtable, row, true);
 		merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_a.iterator);
 	}
 	if (memtable_prev->count > 0)
 	{
-		memtable_iterator_open(&self->memtable_iterator_b, memtable_prev, row);
+		memtable_iterator_open(&self->memtable_iterator_b, memtable_prev, row, false);
 		merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_b.iterator);
 	}
 
@@ -80,6 +80,14 @@ part_cursor_reset(PartCursor* self)
 	memtable_iterator_init(&self->memtable_iterator_a);
 	memtable_iterator_init(&self->memtable_iterator_b);
 	merge_iterator_reset(&self->merge_iterator);
+}
+
+static inline void
+part_cursor_close(PartCursor* self)
+{
+	memtable_iterator_close(&self->memtable_iterator_a);
+	memtable_iterator_close(&self->memtable_iterator_b);
+	part_cursor_reset(self);
 }
 
 static inline void

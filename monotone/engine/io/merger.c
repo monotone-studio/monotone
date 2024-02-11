@@ -88,7 +88,7 @@ merger_execute(Merger* self, MergerReq* req)
 	auto origin = req->origin;
 
 	// prepare memtable iterator
-	memtable_iterator_open(&self->memtable_iterator, req->memtable, NULL);
+	memtable_iterator_open(&self->memtable_iterator, req->memtable, NULL, false);
 
 	// prepare partition iterator
 	part_iterator_reset(&self->part_iterator);
