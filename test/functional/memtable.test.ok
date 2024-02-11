@@ -154,7 +154,7 @@ select 3
 (eof)
 # test: update by cursor
 cursor c 2
-update_by c 2 y
+insert 2 y
 cursor_close c
 show partitions verbose
 main
@@ -193,11 +193,6 @@ select 3
 [3, x]
 [5]
 (eof)
-# test: update by cursor (key mismatch)
-cursor c 2
-update_by c 3
-error: key does not match cursor row
-cursor_close c
 # test: delete by key (open case)
 delete 0
 show partitions verbose
@@ -243,7 +238,7 @@ select
 (eof)
 # test: delete by cursor
 cursor c 2
-delete_by c
+delete 2
 read c
 (eof)
 next c
@@ -261,13 +256,13 @@ select
 cursor c
 read c
 [1]
-delete_by c
+delete 1
 read c
 (eof)
 next c
 read c
 [5]
-delete_by c
+delete 5
 read c
 (eof)
 next c

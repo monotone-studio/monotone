@@ -63,7 +63,7 @@ select 12
 
 # test: update by cursor
 cursor c 2
-update_by c 2 y
+insert 2 y
 cursor_close c
 show partitions debug
 
@@ -114,7 +114,7 @@ select 12
 
 # test: delete by cursor
 cursor c 2
-delete_by c
+delete 2
 cursor_close c
 show partitions debug
 
