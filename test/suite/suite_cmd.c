@@ -249,88 +249,6 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 }
 
 static int
-test_suite_cmd_delete_by(TestSuite* self, char* arg)
-{
-	char* arg_name = test_arg(&arg);
-	if (arg_name == NULL)
-	{
-		test_error(self, "line %d: delete_by <cursor> expected",
-		           self->current_line);
-		return -1;
-	}
-
-	if (! self->env)
-	{
-		test_log(self, "error: env is not openned\n");
-		return 0;
-	}
-
-	auto cursor = test_cursor_find(self, arg_name);
-	if (! cursor)
-	{
-		test_error(self, "line %d: cursor not found",
-		           self->current_plan_line);
-		return -1;
-	}
-	if (cursor->cursor == NULL)
-		return -1;
-
-	int rc = monotone_delete_by(cursor->cursor);
-	if (rc == -1)
-		test_log_error(self);
-
-	return 0;
-}
-
-static int
-test_suite_cmd_update_by(TestSuite* self, char* arg)
-{
-	char* arg_name  = test_arg(&arg);
-	char* arg_time  = test_arg(&arg);
-	char* arg_value = test_arg(&arg);
-
-	if (arg_name == NULL)
-	{
-		test_error(self, "line %d: delete_by <cursor> <time> [value] expected",
-		           self->current_line);
-		return -1;
-	}
-
-	if (arg_time == NULL)
-	{
-		test_error(self, "line %d: delete_by <cursor> <time> [value] expected",
-		           self->current_line);
-		return -1;
-	}
-
-	if (! self->env)
-	{
-		test_log(self, "error: env is not openned\n");
-		return 0;
-	}
-
-	auto cursor = test_cursor_find(self, arg_name);
-	if (! cursor)
-	{
-		test_error(self, "line %d: cursor not found",
-		           self->current_plan_line);
-		return -1;
-	}
-
-	monotone_row_t row =
-	{
-		.time = strtoull(arg_time, NULL, 10),
-		.data = arg_value,
-		.data_size = arg_value ? strlen(arg_value) : 0
-	};
-	int rc = monotone_update_by(cursor->cursor, &row);
-	if (rc == -1)
-		test_log_error(self);
-
-	return 0;
-}
-
-static int
 test_suite_cmd_cursor(TestSuite* self, char* arg)
 {
 	char* arg_name  = test_arg(&arg);
@@ -555,9 +473,7 @@ static struct
 	{ "close",        5,  test_suite_cmd_close        },
 	{ "error",        5,  test_suite_cmd_error        },
 	{ "insert",       6,  test_suite_cmd_insert       },
-	{ "delete_by",    9,  test_suite_cmd_delete_by    },
 	{ "delete",       6,  test_suite_cmd_delete       },
-	{ "update_by",    9,  test_suite_cmd_update_by    },
 	{ "cursor_close", 12, test_suite_cmd_cursor_close },
 	{ "cursor",       6,  test_suite_cmd_cursor       },
 	{ "read",         4,  test_suite_cmd_read         },
