@@ -25,22 +25,38 @@ writer_main(void* arg)
 	for (int i = 0; i < metrics; i++)
 		data[i] = 0.345;
 
+	auto batch = monotone_batch(env);
+	if (! batch)
+		;
+
+	int batch_size = 10;
+
 	while (writer_run)
 	{
-		monotone_row_t row =
+		for (int i = 0; i < batch_size; i++)
 		{
-			.time = writer_seq++,
-			.data = data,
-			.data_size = sizeof(data)
-		};
+			monotone_row_t row =
+			{
+				.time = writer_seq++,
+				.data = data,
+				.data_size = sizeof(data)
+			};
+			int rc;
+			rc = monotone_insert(batch, &row);
+			if (rc == -1) {
+				// todo
+			}
+		}
 
 		int rc;
-		rc = monotone_insert(env, &row);
+		rc = monotone_write(batch);
 		if (rc == -1) {
 			// todo
 		}
+
 	}
 
+	monotone_free(batch);
 	return NULL;
 }
 
