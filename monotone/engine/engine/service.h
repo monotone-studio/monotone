@@ -12,6 +12,7 @@ typedef enum
 {
 	SERVICE_NONE,
 	SERVICE_SHUTDOWN,
+	SERVICE_ROTATE,
 	SERVICE_REBALANCE,
 	SERVICE_REFRESH
 } ServiceType;
@@ -22,6 +23,7 @@ struct Service
 	CondVar cond_var;
 	List    list;
 	int     list_count;
+	bool    rotate;
 	bool    rebalance;
 	bool    shutdown;
 };
@@ -31,6 +33,7 @@ service_init(Service* self)
 {
 	self->list_count = 0;
 	self->shutdown   = false;
+	self->rotate     = false;
 	self->rebalance  = false;
 	mutex_init(&self->lock);
 	cond_var_init(&self->cond_var);
@@ -55,6 +58,15 @@ service_shutdown(Service* self)
 	mutex_lock(&self->lock);
 	self->shutdown = true;
 	cond_var_broadcast(&self->cond_var);
+	mutex_unlock(&self->lock);
+}
+
+static inline void
+service_rotate(Service* self)
+{
+	mutex_lock(&self->lock);
+	self->rotate = true;
+	cond_var_signal(&self->cond_var);
 	mutex_unlock(&self->lock);
 }
 
@@ -89,6 +101,12 @@ service_next(Service* self, bool wait, ServiceReq** req)
 		if (unlikely(self->shutdown))
 		{
 			type = SERVICE_SHUTDOWN;
+			break;
+		}
+		if (unlikely(self->rotate))
+		{
+			self->rotate = false;
+			type = SERVICE_ROTATE;
 			break;
 		}
 		if (self->rebalance)
