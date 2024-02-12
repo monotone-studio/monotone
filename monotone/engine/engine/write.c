@@ -152,9 +152,8 @@ engine_write(Engine* self, Log* log)
 			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
 			op->ref = ref;
 
-			// update memtable
-			auto memtable = ref->part->memtable;
-			memtable_set(memtable, row);
+			// update memtable and save previous version
+			op->prev = memtable_set(ref->part->memtable, row);
 		}
 
 		// todo: wal write
