@@ -49,17 +49,29 @@ engine_delete(Engine* self, Log* log, uint64_t time,
 static void
 engine_rollback(Engine* self, Log* log)
 {
-	(void)self;
-	// todo: free rows, set prev rows back
-	//
-	//engine_unlock(self, ref, LOCK_ACCESS);
+	auto pos   = log_last(log);
+	auto first = log_first(log);
+	while (pos >= first)
+	{
+		if (pos->ref)
+		{
+			Ref* ref = pos->ref;
+			if (pos->prev)
+				memtable_set(ref->part->memtable, pos->prev);
+
+			engine_unlock(self, ref, LOCK_ACCESS);
+		}
+
+		row_free(pos->row);
+		pos--;
+	}
 	log_reset(log);
 }
 
 static void
 engine_commit(Engine* self, Log* log)
 {
-	auto pos = log_begin(log);
+	auto pos = log_first(log);
 	auto end = log_end(log);
 	while (pos < end)
 	{
@@ -94,7 +106,7 @@ engine_write(Engine* self, Log* log)
 	Exception e;
 	if (try(&e))
 	{
-		auto pos = log_begin(log);
+		auto pos = log_first(log);
 		auto end = log_end(log);
 		while (pos < end)
 		{
@@ -113,10 +125,16 @@ engine_write(Engine* self, Log* log)
 		}
 
 		// wal write
-		auto rotate_ready = wal_write(self->wal, log);
-		if (rotate_ready)
+		if (var_int_of(&config()->wal_enable))
 		{
-			// todo: service
+			// wal write error test case
+			error_injection(error_wal);
+
+			auto rotate_ready = wal_write(self->wal, log);
+			if (rotate_ready)
+			{
+				// todo: service
+			}
 		}
 	}
 
