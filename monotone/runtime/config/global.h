@@ -42,6 +42,31 @@ config_workers(void)
 	return var_int_of(&config()->workers);
 }
 
+// lsn
+static inline uint64_t
+config_lsn(void)
+{
+	return var_int_of(&config()->lsn);
+}
+
+static inline void
+config_lsn_set(uint64_t value)
+{
+	var_int_set(&config()->lsn, value);
+}
+
+static inline uint64_t
+config_lsn_next(void)
+{
+	return var_int_set_next(&config()->lsn);
+}
+
+static inline void
+config_lsn_follow(uint64_t value)
+{
+	var_int_follow(&config()->lsn, value);
+}
+
 // psn
 static inline uint64_t
 config_psn(void)

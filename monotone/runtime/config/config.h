@@ -22,7 +22,13 @@ struct Config
 	// engine
 	Var  interval;
 	Var  workers;
+	// wal
+	Var  wal_enable;
+	Var  wal_rotate_wm;
+	Var  wal_sync_on_rotate;
+	Var  wal_sync_on_write;
 	// state
+	Var  lsn;
 	Var  psn;
 	Var  storages;
 	Var  conveyor;

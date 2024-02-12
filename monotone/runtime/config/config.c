@@ -85,7 +85,13 @@ config_prepare(Config* self)
 		// engine
 		{ "interval",                VAR_INT,    VAR_C,                &self->interval,                NULL,        3000000          },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
+		// wal
+		{ "wal_enable",              VAR_BOOL,   VAR_C,                &self->wal_enable,              NULL,        true             },
+		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
+		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        false            },
+		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
 		// state
+		{ "lsn",                     VAR_INT,    VAR_E,                &self->lsn,                     NULL,        0                },
 		{ "psn",                     VAR_INT,    VAR_E,                &self->psn,                     NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
 		{ "conveyor",                VAR_DATA,   VAR_C|VAR_H,          &self->conveyor,                NULL,        0                },
