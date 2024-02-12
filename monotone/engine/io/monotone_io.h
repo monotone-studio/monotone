@@ -18,6 +18,7 @@
 // row
 #include "io/row.h"
 #include "io/comparator.h"
+#include "io/log_write.h"
 #include "io/log.h"
 
 // iterator
