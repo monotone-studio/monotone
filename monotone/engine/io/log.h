@@ -18,8 +18,9 @@ struct LogOp
 
 struct Log
 {
-	Buf op; 
-	int op_count;
+	Buf      op;
+	int      op_count;
+	uint64_t lsn;
 };
 
 static inline LogOp*
@@ -33,6 +34,7 @@ static inline void
 log_init(Log* self)
 {
 	self->op_count = 0;
+	self->lsn      = 0;
 	buf_init(&self->op);
 }
 
@@ -57,6 +59,7 @@ static inline void
 log_reset(Log* self)
 {
 	self->op_count = 0;
+	self->lsn      = 0;
 	buf_reset(&self->op);
 }
 
