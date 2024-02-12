@@ -88,7 +88,7 @@ config_prepare(Config* self)
 		// wal
 		{ "wal_enable",              VAR_BOOL,   VAR_C,                &self->wal_enable,              NULL,        true             },
 		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
-		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        false            },
+		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
 		// state
 		{ "lsn",                     VAR_INT,    VAR_E,                &self->lsn,                     NULL,        0                },
