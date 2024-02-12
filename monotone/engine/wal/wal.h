@@ -1,0 +1,24 @@
+#pragma once
+
+//
+// monotone
+//
+// time-series storage
+//
+
+typedef struct Wal Wal;
+
+struct Wal
+{
+	Mutex    lock;
+	WalId    list;
+	WalFile* current;
+};
+
+void wal_init(Wal*);
+void wal_free(Wal*);
+void wal_open(Wal*);
+void wal_rotate(Wal*);
+void wal_gc(Wal*, uint64_t);
+bool wal_write(Wal*, Log*);
+void wal_show(Wal*, Buf*);
