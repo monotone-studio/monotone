@@ -46,9 +46,15 @@ log_of(Log* self, int pos)
 }
 
 static inline LogOp*
-log_begin(Log* self)
+log_first(Log* self)
 {
 	return log_of(self, 0);
+}
+
+static inline LogOp*
+log_last(Log* self)
+{
+	return log_of(self, self->write.count - 1);
 }
 
 static inline LogOp*
@@ -60,7 +66,7 @@ log_end(Log* self)
 static inline void
 log_cleanup(Log* self)
 {
-	auto pos = log_begin(self);
+	auto pos = log_first(self);
 	auto end = log_end(self);
 	for (; pos < end; pos++)
 	{
