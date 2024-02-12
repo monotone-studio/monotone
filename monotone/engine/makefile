@@ -12,6 +12,7 @@ CFLAGS_INCLUDE = -I../runtime \
                  -I. \
                  -Iio \
                  -Istorage \
+                 -Iwal \
                  -Iengine
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-engine.a
@@ -24,6 +25,7 @@ OBJECTS        = \
                  io/merger.o \
                  storage/storage_mgr.o \
                  storage/conveyor.o \
+                 wal/wal.o \
                  engine/engine.o \
                  engine/engine_recover.o \
                  engine/write.o \

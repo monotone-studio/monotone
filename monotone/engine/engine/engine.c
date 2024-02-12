@@ -10,14 +10,17 @@
 #include <monotone_config.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
+#include <monotone_wal.h>
 #include <monotone_engine.h>
 
 void
 engine_init(Engine*     self,
             Comparator* comparator,
+            Wal*        wal,
             Service*    service,
             CloudMgr*   cloud_mgr)
 {
+	self->wal        = wal;
 	self->service    = service;
 	self->comparator = comparator;
 	mutex_init(&self->lock);

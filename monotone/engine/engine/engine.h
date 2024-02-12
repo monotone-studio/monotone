@@ -18,11 +18,12 @@ struct Engine
 	// objects
 	Conveyor    conveyor;
 	StorageMgr  storage_mgr;
+	Wal*        wal;
 	Service*    service;
 	Comparator* comparator;
 };
 
-void engine_init(Engine*, Comparator*, Service*, CloudMgr*);
+void engine_init(Engine*, Comparator*, Wal*, Service*, CloudMgr*);
 void engine_free(Engine*);
 void engine_open(Engine*);
 void engine_close(Engine*);
