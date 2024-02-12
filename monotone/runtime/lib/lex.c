@@ -49,6 +49,7 @@ static Keyword keywords[] =
 	{ KUPLOAD,     "upload",     6},
 	{ KVERBOSE,    "verbose",    7},
 	{ KDEBUG,      "debug",      5},
+	{ KWAL,        "wal",        3},
 	{ 0,            NULL,        0}
 };
 

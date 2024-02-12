@@ -48,7 +48,8 @@ enum
 	KDOWNLOAD,
 	KUPLOAD,
 	KVERBOSE,
-	KDEBUG
+	KDEBUG,
+	KWAL
 };
 
 struct Token
