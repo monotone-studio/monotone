@@ -27,7 +27,7 @@ interval                        10
 workers                         0
 wal_enable                      true
 wal_rotate_wm                   104857600
-wal_sync_on_rotate              false
+wal_sync_on_rotate              true
 wal_sync_on_write               false
 lsn                             0
 psn                             0
