@@ -34,6 +34,6 @@ struct Memtable
 void memtable_init(Memtable*, int, int, Comparator*);
 void memtable_free(Memtable*);
 void memtable_move(Memtable*, Memtable*);
-void memtable_set(Memtable*, Row*);
+Row* memtable_set(Memtable*, Row*);
 bool memtable_seek(Memtable*, Row*, MemtablePage**, int*);
 void memtable_follow(Memtable*, uint64_t);

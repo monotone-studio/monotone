@@ -196,8 +196,11 @@ memtable_sync(Memtable* self, MemtablePage* page, MemtablePage* split, int pos)
 	}
 }
 
-hot static inline MemtablePage*
-memtable_insert(Memtable* self, MemtablePage* page, Row* row)
+hot static inline Row*
+memtable_insert(Memtable*      self,
+                MemtablePage*  page,
+                MemtablePage** page_split,
+                Row*           row)
 {
 	bool match = false;
 	int pos = memtable_search(self, page, row, &match);
@@ -208,12 +211,12 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 		page->rows[pos] = row;
 		self->size -= row_size(prev);
 		self->size += row_size(row);
-		row_free(prev);
 
 		// update iterators
 		if (self->iterators_count > 0)
 			memtable_sync(self, page, NULL, pos);
-		return NULL;
+
+		return prev;
 	}
 	if (pos < 0)
 		pos = 0;
@@ -247,10 +250,12 @@ memtable_insert(Memtable* self, MemtablePage* page, Row* row)
 	// update iterators
 	if (self->iterators_count > 0)
 		memtable_sync(self, l, r, pos);
-	return r;
+
+	*page_split = r;
+	return NULL;
 }
 
-hot void
+hot Row*
 memtable_set(Memtable* self, Row* row)
 {
 	// create root page
@@ -263,20 +268,22 @@ memtable_set(Memtable* self, Row* row)
 		self->count_pages++;
 		self->count++;
 		self->size += row_size(row);
-		return;
+		return NULL;
 	}
 
 	// search page
 	auto page = memtable_search_page(self, row);
 
 	// insert into page
-	auto split = memtable_insert(self, page, row);
-	if (split)
+	MemtablePage* page_split = NULL;
+	auto prev = memtable_insert(self, page, &page_split, row);
+	if (page_split)
 	{
 		// update split page
-		rbtree_set(&self->tree, &page->node, -1, &split->node);
+		rbtree_set(&self->tree, &page->node, -1, &page_split->node);
 		self->count_pages++;
 	}
+	return prev;
 }
 
 hot bool
