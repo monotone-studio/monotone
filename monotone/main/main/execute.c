@@ -21,6 +21,9 @@ execute_show(Executable* self)
 	auto cmd = cmd_show_of(self->cmd);
 
 	switch (cmd->type) {
+	case SHOW_WAL:
+		wal_show(&self->main->wal, self->output);
+		break;
 	case SHOW_STORAGES:
 		storage_mgr_show(&self->main->engine.storage_mgr, NULL,
 		                  self->output);

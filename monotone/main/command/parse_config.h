@@ -11,6 +11,7 @@ typedef struct CmdSet  CmdSet;
 
 enum
 {
+	SHOW_WAL,
 	SHOW_STORAGES,
 	SHOW_PARTITIONS,
 	SHOW_CONVEYOR,

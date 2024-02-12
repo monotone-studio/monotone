@@ -22,6 +22,9 @@ parse_show(Lex* self)
 	Token tk;
 	lex_next(self, &tk);
 	switch (tk.id) {
+	case KWAL:
+		type = SHOW_WAL;
+		break;
 	case KSTORAGES:
 		type = SHOW_STORAGES;
 		break;
@@ -38,7 +41,7 @@ parse_show(Lex* self)
 		type = SHOW_NAME;
 		break;
 	default:
-		error("SHOW <STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
+		error("SHOW <WAL | STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
 	}
 
 	// [verbose]
