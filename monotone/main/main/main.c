@@ -10,6 +10,7 @@
 #include <monotone_config.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
+#include <monotone_wal.h>
 #include <monotone_engine.h>
 #include <monotone_command.h>
 #include <monotone_main.h>
@@ -72,7 +73,10 @@ main_init(Main* self)
 	cloud_mgr_init(&self->cloud_mgr);
 	cloud_mgr_register(&self->cloud_mgr, &self->cloud_mock.iface);
 
-	engine_init(&self->engine, &self->comparator, &self->service,
+	wal_init(&self->wal);
+	engine_init(&self->engine, &self->comparator,
+	            &self->wal,
+	            &self->service,
 	            &self->cloud_mgr);
 	worker_mgr_init(&self->worker_mgr);
 }
@@ -81,6 +85,7 @@ void
 main_free(Main* self)
 {
 	engine_free(&self->engine);
+	wal_free(&self->wal);
 	service_free(&self->service);
 	config_free(&self->config);
 	rwlock_free(&self->lock);
@@ -154,8 +159,13 @@ main_start(Main* self, const char* directory)
 
 	// todo: register cloud ifaces
 
-	// recover
+	// recover storages
 	engine_open(&self->engine);
+
+	// open wal and replay
+	wal_open(&self->wal);
+
+	// todo: replay
 
 	// start compaction workers
 	worker_mgr_start(&self->worker_mgr, &self->engine);

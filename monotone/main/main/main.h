@@ -12,6 +12,7 @@ struct Main
 {
 	Rwlock     lock;
 	Engine     engine;
+	Wal        wal;
 	Service    service;
 	WorkerMgr  worker_mgr;
 	CloudMgr   cloud_mgr;
