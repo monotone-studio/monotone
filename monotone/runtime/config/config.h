@@ -41,6 +41,7 @@ struct Config
 	Var  error_refresh_3;
 	Var  error_download;
 	Var  error_upload;
+	Var  error_wal;
 	Var  test_bool;
 	Var  test_int;
 	Var  test_string;
