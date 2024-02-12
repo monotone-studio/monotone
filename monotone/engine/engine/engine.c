@@ -65,12 +65,10 @@ engine_close(Engine* self)
 }
 
 static Slice*
-engine_create(Engine* self, uint64_t min, uint64_t max)
+engine_create(Engine* self, Slice* head, uint64_t min, uint64_t max)
 {
-	auto head = mapping_max(&self->mapping);
-
 	// create new reference
-	auto ref  = ref_allocate(min, max);
+	auto ref = ref_allocate(min, max);
 	guard(guard, ref_free, ref);
 
 	// create new partition
@@ -135,13 +133,17 @@ engine_lock(Engine* self, uint64_t min, LockType lock,
 	} else
 	{
 		// find partition = min
-		slice = mapping_match(&self->mapping, min);
+		auto head = mapping_max(&self->mapping);
+		if (likely(head && slice_in(head, min)))
+			slice = head;
+		else
+			slice = mapping_match(&self->mapping, min);
 		if (! slice)
 		{
 			if (! create_if_not_exists)
 				return NULL;
 			auto max = min + config_interval();
-			slice = engine_create(self, min, max);
+			slice = engine_create(self, head, min, max);
 		}
 	}
 
