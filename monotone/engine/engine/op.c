@@ -479,11 +479,29 @@ engine_service(Engine* self, Refresh* refresh, bool wait)
 	Exception e;
 	if (try(&e))
 	{
-		// always do rebalance first
-		engine_rebalance(self, refresh);
-
-		if (type == SERVICE_REFRESH)
-			engine_refresh(self, refresh, req->min, NULL, true);
+		switch (type) {
+		case SERVICE_ROTATE:
+		{
+			auto wm = var_int_of(&config()->wal_rotate_wm);
+			wal_rotate(self->wal, wm);
+			break;
+		}
+		case SERVICE_REBALANCE:
+		{
+			engine_rebalance(self, refresh);
+			break;
+		}
+		case SERVICE_REFRESH:
+		{
+			// do rebalance first
+			engine_rebalance(self, refresh);
+			if (type == SERVICE_REFRESH)
+				engine_refresh(self, refresh, req->min, NULL, true);
+			break;
+		}
+		default:
+			break;
+		}
 	}
 	if (catch(&e))
 	{ }

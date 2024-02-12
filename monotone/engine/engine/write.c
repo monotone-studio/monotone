@@ -131,10 +131,10 @@ engine_write(Engine* self, Log* log)
 			error_injection(error_wal);
 
 			auto rotate_ready = wal_write(self->wal, log);
+
+			// schedule wal rotation
 			if (rotate_ready)
-			{
-				// todo: service
-			}
+				service_rotate(self->service);
 		}
 	}
 
