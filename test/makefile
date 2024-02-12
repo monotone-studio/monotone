@@ -12,6 +12,7 @@ CFLAGS_INCLUDE  = -I. \
                   -I../monotone/engine \
                   -I../monotone/engine/io \
                   -I../monotone/engine/storage \
+                  -I../monotone/engine/wal \
                   -I../monotone/engine/engine \
                   -I../monotone/main \
                   -I../monotone/main/command \

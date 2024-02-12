@@ -29,7 +29,7 @@ writer_main(void* arg)
 	if (! batch)
 		;
 
-	int batch_size = 10;
+	int batch_size = 200;
 
 	while (writer_run)
 	{
