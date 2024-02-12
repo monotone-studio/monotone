@@ -133,7 +133,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
   20
     min         20
@@ -152,7 +152,7 @@ main
       size_regions_origin 58
       regions             1
       rows                2
-      lsn                 0
+      lsn                 5
       compression         0
 # test: select
 select
@@ -192,7 +192,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
   20
     min         20
@@ -211,7 +211,7 @@ main
       size_regions_origin 58
       regions             1
       rows                2
-      lsn                 0
+      lsn                 5
       compression         0
   0
     min         0
@@ -244,7 +244,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
   20
     min         20
@@ -263,7 +263,7 @@ main
       size_regions_origin 58
       regions             1
       rows                2
-      lsn                 0
+      lsn                 5
       compression         0
   0
     min         0
@@ -282,7 +282,7 @@ main
       size_regions_origin 266
       regions             4
       rows                10
-      lsn                 0
+      lsn                 15
       compression         0
 # test: select
 select
@@ -331,7 +331,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
   20
     min         20
@@ -350,7 +350,7 @@ main
       size_regions_origin 58
       regions             1
       rows                2
-      lsn                 0
+      lsn                 5
       compression         0
   0
     min         0
@@ -369,7 +369,7 @@ main
       size_regions_origin 266
       regions             4
       rows                10
-      lsn                 0
+      lsn                 15
       compression         0
   4090
     min         4090
@@ -402,7 +402,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
   20
     min         20
@@ -421,7 +421,7 @@ main
       size_regions_origin 58
       regions             1
       rows                2
-      lsn                 0
+      lsn                 5
       compression         0
   0
     min         0
@@ -440,7 +440,7 @@ main
       size_regions_origin 266
       regions             4
       rows                10
-      lsn                 0
+      lsn                 15
       compression         0
   4090
     min         4090
@@ -459,7 +459,7 @@ main
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 16
       compression         0
 files main
 00000000000000000000

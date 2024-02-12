@@ -46,7 +46,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
       region
         min             0
@@ -75,7 +75,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         1
       region
         min             0
@@ -109,7 +109,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         1
       region
         min             0
@@ -138,7 +138,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         1
       region
         min             0
@@ -172,7 +172,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         1
       region
         min             0
@@ -201,7 +201,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
       region
         min             0

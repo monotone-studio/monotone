@@ -142,7 +142,7 @@ test
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 1
       compression         0
 # test: drop storage (with partition)
 drop storage test

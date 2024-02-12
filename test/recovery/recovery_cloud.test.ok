@@ -29,7 +29,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -75,7 +75,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -110,7 +110,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -148,7 +148,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -195,7 +195,7 @@ main
       size_regions_origin 94
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0

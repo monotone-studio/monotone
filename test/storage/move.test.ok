@@ -218,7 +218,7 @@ test
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         0
       region
         min             0
@@ -243,7 +243,7 @@ test
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             10
@@ -268,7 +268,7 @@ test
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 5
       compression         0
       region
         min             20
@@ -293,7 +293,7 @@ test
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 6
       compression         0
       region
         min             30
@@ -318,7 +318,7 @@ test
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 7
       compression         0
       region
         min             40
@@ -394,7 +394,7 @@ main
       size_regions_origin 75
       regions             1
       rows                3
-      lsn                 0
+      lsn                 3
       compression         1
       region
         min             0
@@ -419,7 +419,7 @@ main
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 4
       compression         1
       region
         min             10
@@ -444,7 +444,7 @@ main
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 5
       compression         1
       region
         min             20
@@ -469,7 +469,7 @@ main
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 6
       compression         1
       region
         min             30
@@ -494,7 +494,7 @@ main
       size_regions_origin 41
       regions             1
       rows                1
-      lsn                 0
+      lsn                 7
       compression         1
       region
         min             40

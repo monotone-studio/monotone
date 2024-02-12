@@ -134,7 +134,7 @@ main
       size_regions_origin 126
       regions             1
       rows                6
-      lsn                 0
+      lsn                 6
       compression         0
       region
         min             0
@@ -190,7 +190,7 @@ main
       size_regions_origin 126
       regions             1
       rows                6
-      lsn                 0
+      lsn                 6
       compression         0
       region
         min             0
@@ -239,7 +239,7 @@ main
       size_regions_origin 126
       regions             1
       rows                6
-      lsn                 0
+      lsn                 6
       compression         1
       region
         min             0

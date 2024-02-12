@@ -9,7 +9,7 @@ insert 2
 insert 3
 set error_refresh_1 to true
 refresh partition 0
-error: (engine/refresh.c:170) error injection: error_refresh_1
+error: (engine/refresh.c:171) error injection: error_refresh_1
 files main
 00000000000000000000.incomplete
 close
@@ -44,7 +44,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -58,7 +58,7 @@ insert 2 x
 insert 3 x
 set error_refresh_1 to true
 refresh partition 0
-error: (engine/refresh.c:170) error injection: error_refresh_1
+error: (engine/refresh.c:171) error injection: error_refresh_1
 files main
 00000000000000000000
 00000000000000000000.incomplete
@@ -89,7 +89,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -106,7 +106,7 @@ select
 # test: case 2: crash after completion
 set error_refresh_2 to true
 refresh partition 0
-error: (engine/refresh.c:176) error injection: error_refresh_2
+error: (engine/refresh.c:177) error injection: error_refresh_2
 files main
 00000000000000000000
 00000000000000000000.complete
@@ -137,7 +137,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -154,7 +154,7 @@ select
 # test: case 3: crash after delete
 set error_refresh_3 to true
 refresh partition 0
-error: (engine/refresh.c:185) error injection: error_refresh_3
+error: (engine/refresh.c:186) error injection: error_refresh_3
 files main
 00000000000000000000.complete
 close
@@ -184,7 +184,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -237,7 +237,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -284,7 +284,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -340,7 +340,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -368,7 +368,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
@@ -411,7 +411,7 @@ main
       size_regions_origin 92
       regions             1
       rows                4
-      lsn                 0
+      lsn                 4
       compression         0
       region
         min             0
