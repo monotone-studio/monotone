@@ -34,10 +34,22 @@ wal_free(Wal* self)
 	mutex_free(&self->lock);
 }
 
+static inline bool
+wal_rotate_ready(Wal* self, uint64_t wm)
+{
+	return !self->current || self->current->file.size > wm;
+}
+
 void
-wal_rotate(Wal* self)
+wal_rotate(Wal* self, uint64_t wm)
 {
 	mutex_lock(&self->lock);
+	if (! wal_rotate_ready(self, wm))
+	{
+		mutex_unlock(&self->lock);
+		return;
+	}
+
 	uint64_t next_lsn = config_lsn() + 1;
 
 	// create new wal file
@@ -166,7 +178,7 @@ wal_open(Wal* self)
 		file_seek_to_end(&self->current->file);
 	} else
 	{
-		wal_rotate(self);
+		wal_rotate(self, 0);
 	}
 }
 
@@ -187,9 +199,8 @@ wal_write(Wal* self, Log* log)
 	config_lsn_set(log->write.lsn);
 
 	// return true if wal is ready to be rotated
-	auto rotate_ready =
-		self->current->file.size > var_int_of(&config()->wal_rotate_wm);
-	return rotate_ready;
+	auto wm = var_int_of(&config()->wal_rotate_wm);
+	return wal_rotate_ready(self, wm);
 }
 
 void

@@ -18,7 +18,7 @@ struct Wal
 void wal_init(Wal*);
 void wal_free(Wal*);
 void wal_open(Wal*);
-void wal_rotate(Wal*);
+void wal_rotate(Wal*, uint64_t);
 void wal_gc(Wal*, uint64_t);
 bool wal_write(Wal*, Log*);
 void wal_show(Wal*, Buf*);
