@@ -31,6 +31,12 @@ slice_init(Slice* self, uint64_t min, uint64_t max)
 	rbtree_init_node(&self->node);
 }
 
+always_inline static inline bool
+slice_in(Slice* self, uint64_t min)
+{
+	return self->min <= min && min < self->max;
+}
+
 static inline void
 mapping_init(Mapping* self, Comparator* comparator)
 {
