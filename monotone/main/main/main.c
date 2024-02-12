@@ -163,9 +163,11 @@ main_start(Main* self, const char* directory)
 	engine_open(&self->engine);
 
 	// open wal and replay
-	wal_open(&self->wal);
-
-	// todo: replay
+	if (var_int_of(&config()->wal_enable))
+	{
+		wal_open(&self->wal);
+		// todo: replay
+	}
 
 	// start compaction workers
 	worker_mgr_start(&self->worker_mgr, &self->engine);
