@@ -466,6 +466,42 @@ engine_checkpoint(Engine* self)
 	malloc_trim(0);
 }
 
+hot void
+engine_gc(Engine* self)
+{
+	if (! var_int_of(&config()->wal_enable))
+		return;
+
+	// take control shared lock
+	control_lock_shared();
+	guard(lock_guard, control_unlock_guard, NULL);
+
+	// get minimum lsn currently used by any memtable
+	uint64_t lsn_min = UINT64_MAX;
+	mutex_lock(&self->lock);
+
+	auto slice = mapping_min(&self->mapping);
+	while (slice)
+	{
+		auto ref = ref_of(slice);
+
+		uint64_t min_a = atomic_u64_of(&ref->part->memtable_a.lsn_min);
+		uint64_t min_b = atomic_u64_of(&ref->part->memtable_b.lsn_min);
+
+		if (min_a < lsn_min)
+			lsn_min = min_a;
+		if (min_b < lsn_min)
+			lsn_min = min_b;
+
+		slice = mapping_next(&self->mapping, slice);
+	}
+
+	mutex_unlock(&self->lock);
+
+	// garbage collect wals < lsn_min
+	wal_gc(self->wal, lsn_min);
+}
+
 bool
 engine_service(Engine* self, Refresh* refresh, bool wait)
 {
@@ -502,6 +538,9 @@ engine_service(Engine* self, Refresh* refresh, bool wait)
 		default:
 			break;
 		}
+
+		// garbage collect wals
+		engine_gc(self);
 	}
 	if (catch(&e))
 	{ }
