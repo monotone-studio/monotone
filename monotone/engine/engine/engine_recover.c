@@ -222,9 +222,10 @@ engine_recover(Engine* self)
 			else
 				abort();
 
-			// sync psn
+			// sync metrics
+			config_lsn_follow(part->index->lsn);
+			config_psn_follow(part->index->id.psn);
 			part->id.psn = part->index->id.psn;
-			config_psn_follow(part->id.psn);
 
 			// register partition reference
 			auto ref = ref_allocate(part->id.min, part->id.max);
