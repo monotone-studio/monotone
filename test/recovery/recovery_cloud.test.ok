@@ -195,7 +195,7 @@ main
       size_regions_origin 94
       regions             1
       rows                4
-      lsn                 4
+      lsn                 6
       compression         0
       region
         min             0
