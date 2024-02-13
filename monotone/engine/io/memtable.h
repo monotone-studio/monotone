@@ -25,8 +25,8 @@ struct Memtable
 	uint64_t    size;
 	int         size_page;
 	int         size_split;
-	uint64_t    lsn_min;
-	uint64_t    lsn_max;
+	atomic_u64  lsn_min;
+	atomic_u64  lsn_max;
 	List        iterators;
 	int         iterators_count;
 };

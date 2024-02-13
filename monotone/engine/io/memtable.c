@@ -312,8 +312,9 @@ memtable_seek(Memtable* self, Row* key, MemtablePage** page, int* pos)
 void
 memtable_follow(Memtable* self, uint64_t lsn)
 {
-	if (lsn < self->lsn_min)
-		self->lsn_min = lsn;
-	if (lsn > self->lsn_max)
-		self->lsn_max = lsn;
+	if (lsn < atomic_u64_of(&self->lsn_min))
+		atomic_u64_set(&self->lsn_min, lsn);
+
+	if (lsn > atomic_u64_of(&self->lsn_max))
+		atomic_u64_set(&self->lsn_max, lsn);
 }
