@@ -14,6 +14,7 @@ struct Writer
 	Iov          iov;
 	RegionWriter region_writer;
 	IndexWriter  index_writer;
+	Compression* compression;
 	Source*      source;
 };
 

@@ -13,8 +13,9 @@
 void
 writer_init(Writer* self)
 {
-	self->file   = NULL;
-	self->source = NULL;
+	self->file        = NULL;
+	self->compression = NULL;
+	self->source      = NULL;
 	iov_init(&self->iov);
 	region_writer_init(&self->region_writer);
 	index_writer_init(&self->index_writer);
@@ -31,6 +32,11 @@ writer_free(Writer* self)
 void
 writer_reset(Writer* self)
 {
+	if (self->compression)
+	{
+		compression_mgr_push(global()->compression_mgr, self->compression);
+		self->compression = NULL;
+	}
 	self->source = NULL;
 	iov_reset(&self->iov);
 	region_writer_reset(&self->region_writer);
@@ -49,7 +55,7 @@ static inline void
 writer_start_region(Writer* self)
 {
 	region_writer_reset(&self->region_writer);
-	region_writer_start(&self->region_writer, self->source->compression);
+	region_writer_start(&self->region_writer, self->compression);
 }
 
 hot static inline void
@@ -77,9 +83,15 @@ writer_start(Writer* self, Source* source, File* file)
 	self->source = source;
 	self->file   = file;
 
+	// get compression context
+	int compression_id = compression_mgr_of(&source->compression);
+	if (compression_id != COMPRESSION_NONE)
+		self->compression =
+			compression_mgr_pop(global()->compression_mgr, compression_id);
+
 	// start new index
 	index_writer_reset(&self->index_writer);
-	index_writer_start(&self->index_writer, source->compression, source->crc);
+	index_writer_start(&self->index_writer, compression_id, source->crc);
 }
 
 void
@@ -101,6 +113,12 @@ writer_stop(Writer* self, Id* id, uint64_t lsn, bool sync)
 	// sync
 	if (sync)
 		file_sync(self->file);
+
+	if (self->compression)
+	{
+		compression_mgr_push(global()->compression_mgr, self->compression);
+		self->compression = NULL;
+	}
 }
 
 void
