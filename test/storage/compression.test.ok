@@ -26,7 +26,7 @@ select
 [3]
 (eof)
 # test: alter storage set compression
-alter storage main set (compression 1)
+alter storage main set (compression 'zstd')
 show partitions debug
 main
   0
@@ -89,7 +89,7 @@ select
 [3]
 (eof)
 # test: alter storage set compression, crc
-alter storage main set (compression 1, crc true)
+alter storage main set (compression 'zstd', crc true)
 show partitions debug
 main
   0
@@ -152,7 +152,7 @@ select
 [3]
 (eof)
 # test: alter storage set crc
-alter storage main set (compression 0, crc true)
+alter storage main set (compression '', crc true)
 show partitions debug
 main
   0

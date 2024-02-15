@@ -74,6 +74,7 @@ drop storage test
 create storage test (compression
 create storage test (compression false
 create storage test (compression 1)
+create storage test (compression 'none')
 show storages
 drop storage test
 

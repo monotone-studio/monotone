@@ -62,7 +62,7 @@ show partitions debug
 select
 
 # test: set compression
-alter storage main set (compression 1)
+alter storage main set (compression 'zstd')
 
 # test: move partitions #2
 move partitions from 0 to 50 into main

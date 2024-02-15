@@ -19,7 +19,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: create storages
@@ -46,7 +46,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -63,7 +63,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -80,7 +80,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: rebalance #2 (< capacity)
@@ -101,7 +101,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -118,7 +118,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -135,7 +135,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: rebalance #3 (= capacity)
@@ -156,7 +156,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -173,7 +173,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -190,7 +190,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: rebalance #4 (> capacity)
@@ -210,7 +210,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -227,7 +227,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -244,7 +244,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 rebalance
@@ -263,7 +263,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -280,7 +280,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -297,7 +297,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: rebalance #5 (more then one, > capacity)
@@ -320,7 +320,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -337,7 +337,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -354,7 +354,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 rebalance
@@ -373,7 +373,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -390,7 +390,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -407,7 +407,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 select
@@ -439,7 +439,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -456,7 +456,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -473,7 +473,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 rebalance
@@ -492,7 +492,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -509,7 +509,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -526,7 +526,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter conveyor set capacity zero #2 (chain)
@@ -549,7 +549,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -566,7 +566,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -583,7 +583,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 rebalance
@@ -602,7 +602,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -619,7 +619,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -636,7 +636,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: rebalance #2 (auto drop)
@@ -657,7 +657,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -674,7 +674,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -691,7 +691,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: rebalance #3 (auto drop)
@@ -712,7 +712,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -729,7 +729,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -746,7 +746,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 select
@@ -771,7 +771,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -788,7 +788,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -805,7 +805,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 select

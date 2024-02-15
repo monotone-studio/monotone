@@ -37,7 +37,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: move partition (same storage)
@@ -57,7 +57,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: move partition
@@ -78,7 +78,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -95,7 +95,7 @@ test
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: select
@@ -124,7 +124,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -141,7 +141,7 @@ test
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: move partitions parsing
@@ -178,7 +178,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -195,7 +195,7 @@ test
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -337,7 +337,7 @@ select
 [40]
 (eof)
 # test: set compression
-alter storage main set (compression 1)
+alter storage main set (compression 'zstd')
 # test: move partitions #2
 move partitions from 0 to 50 into main
 show storages
@@ -355,7 +355,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 test
@@ -372,7 +372,7 @@ test
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug

@@ -53,7 +53,7 @@ show storages
 show partitions debug
 
 # test: set compression
-alter storage main set (compression 1)
+alter storage main set (compression 'zstd')
 
 # test: refresh (compress)
 refresh partition 0

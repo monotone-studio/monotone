@@ -18,7 +18,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show conveyor
@@ -40,7 +40,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: insert (more storages wo conveyor)
@@ -63,7 +63,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -80,7 +80,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -97,7 +97,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter conveyor parsing
@@ -132,7 +132,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -149,7 +149,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -166,7 +166,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: select
@@ -202,7 +202,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -219,7 +219,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: insert (primary changed)
@@ -239,7 +239,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -256,7 +256,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter conveyor set (storage does not exists)
@@ -282,7 +282,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -299,7 +299,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -316,7 +316,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 insert 50
@@ -339,7 +339,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -356,7 +356,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -373,7 +373,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot_swap
@@ -390,7 +390,7 @@ hot_swap
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 insert 60
@@ -409,7 +409,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -426,7 +426,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -443,7 +443,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot_swap
@@ -460,7 +460,7 @@ hot_swap
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: select
@@ -490,7 +490,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 cold
@@ -507,7 +507,7 @@ cold
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 hot
@@ -524,7 +524,7 @@ hot
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 alter conveyor set hot (capacity 2), cold

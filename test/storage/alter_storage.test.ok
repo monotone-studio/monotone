@@ -34,7 +34,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -51,7 +51,7 @@ test
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 alter storage test rename
@@ -79,7 +79,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test2
@@ -96,7 +96,7 @@ test2
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 drop storage test2
@@ -117,7 +117,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage rename main
@@ -138,7 +138,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage set
@@ -176,7 +176,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -193,7 +193,7 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 alter storage test set (sync true)
@@ -212,7 +212,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -229,7 +229,7 @@ test
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 alter storage test set (sync false, crc true)
@@ -248,7 +248,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -265,7 +265,7 @@ test
   cloud               ''
   sync                false
   crc                 true
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 close

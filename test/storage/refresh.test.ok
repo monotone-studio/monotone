@@ -35,7 +35,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: refresh (memtable)
@@ -55,7 +55,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: select (region)
@@ -83,7 +83,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: select (memtable + region)
@@ -112,7 +112,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -168,7 +168,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -199,7 +199,7 @@ main
         offset          0
         size            126
 # test: set compression
-alter storage main set (compression 1)
+alter storage main set (compression 'zstd')
 # test: refresh (compress)
 refresh partition 0
 show storages
@@ -217,7 +217,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -275,7 +275,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 # test: refresh partitions parsing
@@ -310,7 +310,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 # test: select
@@ -342,7 +342,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 # test: select
