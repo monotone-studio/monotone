@@ -10,9 +10,10 @@ typedef struct Global Global;
 
 struct Global
 {
-	Config*  config;
-	Control* control;
-	UuidMgr* uuid_mgr;
+	Config*         config;
+	Control*        control;
+	CompressionMgr* compression_mgr;
+	UuidMgr*        uuid_mgr;
 };
 
 #define global() ((Global*)mn_runtime.context->global)

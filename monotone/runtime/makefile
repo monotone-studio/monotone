@@ -19,7 +19,8 @@ OBJECTS        = \
                  lib/rbtree.o \
                  lib/crc.o \
                  lib/uuid.o \
-                 lib/compression.o \
+                 lib/compression_zstd.o \
+                 lib/compression_mgr.o \
                  lib/lex.o \
                  config/config.o
 $(LIB): clean $(OBJECTS)
