@@ -27,7 +27,7 @@ struct Source
 	Str     cloud;
 	bool    sync;
 	bool    crc;
-	int64_t compression;
+	Str     compression;
 	int64_t refresh_wm;
 	int64_t region_size;
 };
@@ -38,12 +38,12 @@ source_allocate(void)
 	auto self = (Source*)mn_malloc(sizeof(Source));
 	self->sync        = true;
 	self->crc         = false;
-	self->compression = COMPRESSION_OFF;
 	self->region_size = 128 * 1024;
 	self->refresh_wm  = 40 * 1024 * 1024;
 	str_init(&self->name);
 	str_init(&self->path);
 	str_init(&self->cloud);
+	str_init(&self->compression);
 	return self;
 }
 
@@ -53,6 +53,7 @@ source_free(Source* self)
 	str_free(&self->name);
 	str_free(&self->path);
 	str_free(&self->cloud);
+	str_free(&self->compression);
 	mn_free(self);
 }
 
@@ -90,9 +91,10 @@ source_set_crc(Source* self, bool value)
 }
 
 static inline void
-source_set_compression(Source* self, int value)
+source_set_compression(Source* self, Str* value)
 {
-	self->compression = value;
+	str_free(&self->compression);
+	str_copy(&self->compression, value);
 }
 
 static inline void
@@ -117,7 +119,7 @@ source_copy(Source* self)
 	source_set_cloud(copy, &self->cloud);
 	source_set_sync(copy, self->sync);
 	source_set_crc(copy, self->crc);
-	source_set_compression(copy, self->compression);
+	source_set_compression(copy, &self->compression);
 	source_set_refresh_wm(copy, self->refresh_wm);
 	source_set_region_size(copy, self->region_size);
 	return unguard(&copy_guard);
@@ -155,7 +157,7 @@ source_read(uint8_t** pos)
 
 	// compression
 	data_skip(pos);
-	data_read_integer(pos, &self->compression);
+	data_read_string_copy(pos, &self->compression);
 
 	// refresh_wm
 	data_skip(pos);
@@ -196,7 +198,7 @@ source_write(Source* self, Buf* buf)
 
 	// compression
 	encode_raw(buf, "compression", 11);
-	encode_integer(buf, self->compression);
+	encode_string(buf, &self->compression);
 
 	// refresh_wm
 	encode_raw(buf, "refresh_wm", 10);
@@ -226,7 +228,7 @@ source_alter(Source* self, Source* alter, int mask)
 		source_set_crc(self, alter->crc);
 
 	if (mask & SOURCE_COMPRESSION)
-		source_set_compression(self, alter->compression);
+		source_set_compression(self, &alter->compression);
 
 	if (mask & SOURCE_REFRESH_WM)
 		source_set_refresh_wm(self, alter->refresh_wm);
