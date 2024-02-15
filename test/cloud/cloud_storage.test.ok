@@ -22,7 +22,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -39,7 +39,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage set cloud none (no partitions)
@@ -59,7 +59,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -76,7 +76,7 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage set cloud (unknown)
@@ -99,7 +99,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -116,7 +116,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: create partition (no file)
@@ -151,7 +151,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -168,7 +168,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage set cloud none (no files)
@@ -188,7 +188,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -205,7 +205,7 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage set cloud
@@ -255,7 +255,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -272,7 +272,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage set cloud none #1 (exists on cloud)
@@ -293,7 +293,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -310,7 +310,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: download partition
@@ -330,7 +330,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -347,7 +347,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -396,7 +396,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -413,7 +413,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: drop partition from cloud
@@ -433,7 +433,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -450,7 +450,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -498,7 +498,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -515,7 +515,7 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -566,7 +566,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -583,7 +583,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -631,7 +631,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -648,7 +648,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -699,7 +699,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -716,7 +716,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug

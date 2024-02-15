@@ -21,7 +21,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 select
@@ -30,7 +30,7 @@ select
 [2]
 (eof)
 # test: create cloud storage
-create storage test (cloud 'mock', sync false, compression 1)
+create storage test (cloud 'mock', sync false, compression 'zstd')
 show storages
 main
   min                 0
@@ -46,7 +46,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -63,7 +63,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 # test: move to cloud
@@ -83,7 +83,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -100,7 +100,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -153,7 +153,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -170,7 +170,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 show partitions debug

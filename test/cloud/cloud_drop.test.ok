@@ -19,7 +19,7 @@ main
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: create partition
@@ -41,7 +41,7 @@ main
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -85,7 +85,7 @@ main
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
@@ -269,7 +269,7 @@ main
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 show partitions debug
