@@ -11,7 +11,7 @@ typedef struct IndexWriter IndexWriter;
 struct IndexWriter
 {
 	bool     crc;
-	int      compression;
+	int      compression_id;
 	Buf      meta;
 	Buf      data;
 	IndexEof eof;
@@ -20,8 +20,8 @@ struct IndexWriter
 static inline void
 index_writer_init(IndexWriter* self)
 {
-	self->crc         = false;
-	self->compression = COMPRESSION_OFF;
+	self->crc            = false;
+	self->compression_id = COMPRESSION_NONE;
 	buf_init(&self->meta);
 	buf_init(&self->data);
 }
@@ -36,8 +36,8 @@ index_writer_free(IndexWriter* self)
 static inline void
 index_writer_reset(IndexWriter* self)
 {
-	self->crc         = false;
-	self->compression = COMPRESSION_OFF;
+	self->crc            = false;
+	self->compression_id = COMPRESSION_NONE;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
 }
@@ -56,10 +56,10 @@ index_writer_started(IndexWriter* self)
 }
 
 static inline void
-index_writer_start(IndexWriter* self, int compression, bool crc)
+index_writer_start(IndexWriter* self, int compression_id, bool crc)
 {
-	self->crc         = crc;
-	self->compression = compression;
+	self->crc            = crc;
+	self->compression_id = compression_id;
 
 	// index header
 	buf_reserve(&self->meta, sizeof(Index));
@@ -74,7 +74,7 @@ index_writer_stop(IndexWriter* self, Id* id, uint64_t lsn)
 {
 	// prepare header
 	auto header = index_writer_header(self);
-	header->compression = self->compression;
+	header->compression = self->compression_id;
 	header->crc         = 0;
 	header->id          = *id;
 	header->lsn         = lsn;
@@ -111,10 +111,10 @@ index_writer_add(IndexWriter*  self,
 	buf_reserve(&self->data, sizeof(IndexRegion));
 
 	uint32_t size;
-	if (self->compression)
-		size = buf_size(&region_writer->compressed);
-	else
+	if (self->compression_id == COMPRESSION_NONE)
 		size = region->size;
+	else
+		size = buf_size(&region_writer->compressed);
 
 	uint32_t crc = 0;
 	if (self->crc)

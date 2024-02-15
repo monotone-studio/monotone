@@ -22,7 +22,7 @@ hot static inline bool
 part_iterator_open_region(PartIterator* self, Row* row)
 {
 	// read region from file
-	auto region = reader_execute(&self->reader, self->part, self->current);
+	auto region = reader_execute(&self->reader, self->current);
 
 	// prepare region iterator
 	region_iterator_reset(&self->region_iterator);
@@ -45,6 +45,7 @@ part_iterator_open(PartIterator* self, Part* part, Row* row)
 	if (self->current == NULL)
 		return false;
 
+	reader_open(&self->reader, part);
 	return part_iterator_open_region(self, row);
 }
 
@@ -87,6 +88,7 @@ part_iterator_next(PartIterator* self)
 static inline void
 part_iterator_free(PartIterator* self)
 {
+	reader_reset(&self->reader);
 	reader_free(&self->reader);
 }
 

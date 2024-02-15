@@ -10,16 +10,16 @@ typedef struct RegionWriter RegionWriter;
 
 struct RegionWriter
 {
-	int compression;
-	Buf meta;
-	Buf data;
-	Buf compressed;
+	Buf          meta;
+	Buf          data;
+	Buf          compressed;
+	Compression* compression;
 };
 
 static inline void
 region_writer_init(RegionWriter* self)
 {
-	self->compression = COMPRESSION_OFF;
+	self->compression = NULL;
 	buf_init(&self->meta);
 	buf_init(&self->data);
 	buf_init(&self->compressed);
@@ -36,7 +36,7 @@ region_writer_free(RegionWriter* self)
 static inline void
 region_writer_reset(RegionWriter* self)
 {
-	self->compression = COMPRESSION_OFF;
+	self->compression = NULL;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
@@ -62,7 +62,7 @@ region_writer_size(RegionWriter* self)
 }
 
 static inline void
-region_writer_start(RegionWriter* self, int compression)
+region_writer_start(RegionWriter* self, Compression* compression)
 {
 	self->compression = compression;
 
@@ -80,8 +80,8 @@ region_writer_stop(RegionWriter* self)
 	header->size = region_writer_size(self);
 
 	// compress region
-	if (compression_is_set(self->compression))
-		compression_compress(&self->compressed, self->compression,
+	if (self->compression)
+		compression_compress(self->compression, &self->compressed, 0,
 		                     &self->meta, &self->data);
 }
 
