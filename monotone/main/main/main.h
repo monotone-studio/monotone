@@ -10,21 +10,22 @@ typedef struct Main Main;
 
 struct Main
 {
-	Rwlock     lock;
-	Engine     engine;
-	Wal        wal;
-	Service    service;
-	WorkerMgr  worker_mgr;
-	CloudMgr   cloud_mgr;
-	CloudMock  cloud_mock;
-	Logger     logger;
-	UuidMgr    uuid_mgr;
-	Comparator comparator;
-	Error      error;
-	Context    context;
-	Control    control;
-	Config     config;
-	Global     global;
+	Rwlock         lock;
+	Engine         engine;
+	Wal            wal;
+	Service        service;
+	WorkerMgr      worker_mgr;
+	CloudMgr       cloud_mgr;
+	CloudMock      cloud_mock;
+	CompressionMgr compression_mgr;
+	UuidMgr        uuid_mgr;
+	Comparator     comparator;
+	Logger         logger;
+	Error          error;
+	Context        context;
+	Control        control;
+	Config         config;
+	Global         global;
 };
 
 void main_init(Main*);

@@ -50,9 +50,10 @@ main_init(Main* self)
 	control->arg         = self;
 
 	// global
-	self->global.config   = &self->config;
-	self->global.control  = &self->control;
-	self->global.uuid_mgr = &self->uuid_mgr;
+	self->global.config          = &self->config;
+	self->global.control         = &self->control;
+	self->global.compression_mgr = &self->compression_mgr;
+	self->global.uuid_mgr        = &self->uuid_mgr;
 
 	// runtime
 	self->context.error   = &self->error;
@@ -64,6 +65,7 @@ main_init(Main* self)
 	comparator_init(&self->comparator);
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
+	compression_mgr_init(&self->compression_mgr);
 	config_init(&self->config);
 
 	rwlock_init(&self->lock);
@@ -88,6 +90,7 @@ main_free(Main* self)
 	wal_free(&self->wal);
 	service_free(&self->service);
 	config_free(&self->config);
+	compression_mgr_free(&self->compression_mgr);
 	rwlock_free(&self->lock);
 }
 
@@ -96,6 +99,9 @@ main_prepare(Main* self)
 {
 	// set default configuration
 	config_prepare(&self->config);
+
+	// prepare compression manager
+	compression_mgr_create(&self->compression_mgr);
 }
 
 static void
