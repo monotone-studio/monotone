@@ -91,7 +91,8 @@ storage_stats_show(Storage* self, Buf* buf)
 	           str_of(&source->cloud));
 	buf_printf(buf, "  sync                %s\n", source->sync ? "true" : "false");
 	buf_printf(buf, "  crc                 %s\n", source->crc  ? "true" : "false");
-	buf_printf(buf, "  compression         %" PRIu64 "\n", source->compression);
+	buf_printf(buf, "  compression         %.*s\n", str_size(&source->compression),
+	           str_of(&source->compression));
 	buf_printf(buf, "  refresh_wm          %" PRIu64 "\n", source->refresh_wm);
 	buf_printf(buf, "  region_size         %" PRIu64 "\n", source->region_size);
 }
