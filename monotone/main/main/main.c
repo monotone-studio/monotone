@@ -99,9 +99,6 @@ main_prepare(Main* self)
 {
 	// set default configuration
 	config_prepare(&self->config);
-
-	// prepare compression manager
-	compression_mgr_create(&self->compression_mgr);
 }
 
 static void
