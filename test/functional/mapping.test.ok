@@ -18,7 +18,7 @@ main
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         60
 # test: create partitions
