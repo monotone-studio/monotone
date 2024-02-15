@@ -48,7 +48,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 files
@@ -73,7 +73,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -90,7 +90,7 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: close/open
@@ -113,7 +113,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -130,11 +130,11 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter storage
-alter storage test set (compression 1)
+alter storage test set (compression 'zstd')
 # test: close/open
 close
 init
@@ -155,7 +155,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -172,7 +172,7 @@ test
   cloud               ''
   sync                false
   crc                 false
-  compression         1
+  compression         zstd
   refresh_wm          41943040
   region_size         131072
 # test: drop storage
@@ -192,7 +192,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: close/open
@@ -215,7 +215,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: create storage with cloud
@@ -235,7 +235,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -252,7 +252,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: close/open
@@ -275,7 +275,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 test
@@ -292,7 +292,7 @@ test
   cloud               'mock'
   sync                false
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: drop storage
@@ -312,7 +312,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: close/open
@@ -335,7 +335,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 # test: alter set conveyor
@@ -364,7 +364,7 @@ main
   cloud               ''
   sync                true
   crc                 false
-  compression         0
+  compression         
   refresh_wm          41943040
   region_size         131072
 close

@@ -31,7 +31,7 @@ open
 show storages
 
 # test: alter storage
-alter storage test set (compression 1)
+alter storage test set (compression 'zstd')
 
 # test: close/open
 close
