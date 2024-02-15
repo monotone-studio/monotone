@@ -23,6 +23,9 @@
 
 // compression
 #include "lib/compression.h"
+#include "lib/compression_zstd.h"
+#include "lib/compression_cache.h"
+#include "lib/compression_mgr.h"
 
 // lex
 #include "lib/lex.h"
