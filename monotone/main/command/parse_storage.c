@@ -76,8 +76,14 @@ parse_storage_options(Lex* self, Source* config, char* command)
 		if (str_compare_raw(&name.string, "compression", 11))
 		{
 			// compression <int>
-			parse_int(self, &name, &config->compression);
+			parse_string(self, &name, &config->compression);
 			mask |= SOURCE_COMPRESSION;
+
+			// validate compression name
+			int compression_id = compression_mgr_of(&config->compression);
+			if (compression_id == -1)
+				error("unknown compression: %.*s", str_size(&config->compression),
+				      str_of(&config->compression));
 		} else
 		if (str_compare_raw(&name.string, "region_size", 11))
 		{
