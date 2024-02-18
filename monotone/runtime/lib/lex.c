@@ -50,6 +50,7 @@ static Keyword keywords[] =
 	{ KVERBOSE,    "verbose",    7},
 	{ KDEBUG,      "debug",      5},
 	{ KWAL,        "wal",        3},
+	{ KMEMORY,     "memory",     6},
 	{ 0,            NULL,        0}
 };
 

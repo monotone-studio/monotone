@@ -49,7 +49,8 @@ enum
 	KUPLOAD,
 	KVERBOSE,
 	KDEBUG,
-	KWAL
+	KWAL,
+	KMEMORY
 };
 
 struct Token
