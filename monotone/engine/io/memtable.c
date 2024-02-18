@@ -27,7 +27,7 @@ memtable_init(Memtable*   self,
 	self->iterators_count = 0;
 	rbtree_init(&self->tree);
 	list_init(&self->iterators);
-	heap_init(&self->heap, 2 * 1024 * 1024);
+	heap_init(&self->heap, global()->page_mgr);
 }
 
 static MemtablePage*
@@ -62,7 +62,7 @@ memtable_free(Memtable* self)
 	self->lsn_max     = 0;
 	rbtree_init(&self->tree);
 	list_init(&self->iterators);
-	heap_free(&self->heap);
+	heap_reset(&self->heap);
 }
 
 void
