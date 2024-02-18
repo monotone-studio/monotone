@@ -41,7 +41,7 @@ heap_reset(Heap* self)
 static inline size_t
 heap_used(Heap* self)
 {
-	return self->list_count * self->memory_mgr->page_size;
+	return self->list_count * (self->memory_mgr->page_size + sizeof(Page));
 }
 
 hot static inline void*

@@ -176,6 +176,7 @@ main_start(Main* self, const char* directory)
 	// start compaction workers
 	worker_mgr_start(&self->worker_mgr, &self->engine);
 
+	// done
 	var_int_set(&config()->online, true);
 }
 
