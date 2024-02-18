@@ -11,14 +11,14 @@ typedef struct StorageStats StorageStats;
 struct StorageStats
 {
 	uint64_t partitions;
-	uint64_t partitions_in_cloud;
+	uint64_t partitions_cloud;
 	uint64_t min;
 	uint64_t max;
 	uint64_t rows;
-	uint64_t rows_cached;
+	uint64_t rows_heap;
 	uint64_t size;
 	uint64_t size_uncompressed;
-	uint64_t size_cached;
+	uint64_t size_heap;
 };
 
 static inline void
@@ -38,7 +38,7 @@ storage_stats(Storage* self, StorageStats* stats)
 		auto part = list_at(Part, link);
 
 		if (part_has(part, PART_CLOUD))
-			stats->partitions_in_cloud++;
+			stats->partitions_cloud++;
 
 		// min/max
 		if (part->id.min < stats->min)
@@ -49,9 +49,9 @@ storage_stats(Storage* self, StorageStats* stats)
 		// rows
 		if (part->index)
 			stats->rows += part->index->rows;
-		uint64_t rows_cached = part->memtable_a.count + part->memtable_b.count;
-		stats->rows_cached += rows_cached;
-		stats->rows += rows_cached;
+		uint64_t rows_heap = part->memtable_a.count + part->memtable_b.count;
+		stats->rows_heap += rows_heap;
+		stats->rows += rows_heap;
 
 		// size
 		if (part->index)
@@ -59,9 +59,8 @@ storage_stats(Storage* self, StorageStats* stats)
 			stats->size += part->index->size_regions;
 			stats->size_uncompressed += part->index->size_regions_origin;
 		}
-		uint64_t size_cached = part->memtable_a.size + part->memtable_b.size;
-		stats->size_cached += size_cached;
-		stats->size += size_cached;
+		stats->size_heap += heap_used(&part->memtable_a.heap) +
+		                    heap_used(&part->memtable_b.heap);
 	}
 }
 
@@ -77,12 +76,21 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  min                 %" PRIu64 "\n", stats.min);
 	buf_printf(buf, "  max                 %" PRIu64 "\n", stats.max);
 	buf_printf(buf, "  partitions          %" PRIu64 "\n", stats.partitions);
-	buf_printf(buf, "  partitions in cloud %" PRIu64 "\n", stats.partitions_in_cloud);
+	buf_printf(buf, "  partitions_cloud    %" PRIu64 "\n", stats.partitions_cloud);
 	buf_printf(buf, "  rows                %" PRIu64 "\n", stats.rows);
-	buf_printf(buf, "  rows_cached         %" PRIu64 "\n", stats.rows_cached);
-	buf_printf(buf, "  size                %" PRIu64 " Mb\n", stats.size / 1024 / 1024);
-	buf_printf(buf, "  size_uncompressed   %" PRIu64 " Mb\n", stats.size_uncompressed / 1024 / 1024);
-	buf_printf(buf, "  size_cached         %" PRIu64 " Mb\n", stats.size_cached / 1024 / 1024);
+	buf_printf(buf, "  rows_heap           %" PRIu64 "\n", stats.rows_heap);
+
+	uint64_t size = stats.size / 1024 / 1024;
+	uint64_t size_uncompressed = stats.size_uncompressed / 1024 / 1024;
+	uint64_t size_heap = stats.size_heap / 1024 / 1024;
+
+	if (str_empty(&source->compression) || size == 0)
+		buf_printf(buf, "  size                %" PRIu64 " Mb\n", size);
+	else
+		buf_printf(buf, "  size                %" PRIu64 " Mb (%.1fx compression)\n",
+		           size, (float)size_uncompressed / (float)size);
+	buf_printf(buf, "  size_uncompressed   %" PRIu64 " Mb\n", size_uncompressed);
+	buf_printf(buf, "  size_heap           %" PRIu64 " Mb\n", size_heap);
 
 	// source
 	buf_printf(buf, "  path                '%.*s'\n", str_size(&source->path),
