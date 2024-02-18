@@ -22,7 +22,6 @@ struct Main
 	UuidMgr        uuid_mgr;
 	Comparator     comparator;
 	Logger         logger;
-	Error          error;
 	Context        context;
 	Control        control;
 	Config         config;

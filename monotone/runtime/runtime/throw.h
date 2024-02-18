@@ -18,7 +18,7 @@
 	exception_mgr_throw(&mn_runtime.exception_mgr)
 
 #define throw(fmt, ...) \
-	error_throw(mn_runtime.context->error, \
+	error_throw(&mn_runtime.error, \
 	            &mn_runtime.exception_mgr, \
 	            source_file, \
 	            source_function, \

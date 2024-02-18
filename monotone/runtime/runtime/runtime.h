@@ -11,7 +11,6 @@ typedef struct Runtime Runtime;
 
 struct Context
 {
-	Error*      error;
 	LogFunction log;
 	void*       log_arg;
 	void*       global;
@@ -20,6 +19,7 @@ struct Context
 struct Runtime
 {
 	ExceptionMgr exception_mgr;
+	Error        error;
 	Context*     context;
 };
 

@@ -31,7 +31,6 @@ struct monotone_cursor
 static inline void
 monotone_enter(monotone_t* self)
 {
-	error_reset(&self->main.error);
 	runtime_init(&self->main.context);
 }
 
@@ -112,7 +111,8 @@ monotone_free(void* ptr)
 MONOTONE_API const char*
 monotone_error(monotone_t* self)
 {
-	return self->main.error.text;
+	unused(self);
+	return mn_runtime.error.text;
 }
 
 hot MONOTONE_API uint64_t
