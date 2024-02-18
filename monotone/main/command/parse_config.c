@@ -22,6 +22,9 @@ parse_show(Lex* self)
 	Token tk;
 	lex_next(self, &tk);
 	switch (tk.id) {
+	case KMEMORY:
+		type = SHOW_MEMORY;
+		break;
 	case KWAL:
 		type = SHOW_WAL;
 		break;
@@ -41,7 +44,7 @@ parse_show(Lex* self)
 		type = SHOW_NAME;
 		break;
 	default:
-		error("SHOW <WAL | STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
+		error("SHOW <MEMORY | WAL | STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
 	}
 
 	// [verbose]

@@ -21,6 +21,9 @@ execute_show(Executable* self)
 	auto cmd = cmd_show_of(self->cmd);
 
 	switch (cmd->type) {
+	case SHOW_MEMORY:
+		memory_mgr_show(&self->main->memory_mgr, self->output);
+		break;
 	case SHOW_WAL:
 		wal_show(&self->main->wal, self->output);
 		break;
