@@ -12,6 +12,7 @@ struct Global
 {
 	Config*         config;
 	Control*        control;
+	PageMgr*        page_mgr;
 	CompressionMgr* compression_mgr;
 	UuidMgr*        uuid_mgr;
 };
