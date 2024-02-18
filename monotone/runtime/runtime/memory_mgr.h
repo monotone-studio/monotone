@@ -94,3 +94,22 @@ memory_mgr_push_list(MemoryMgr* self, Page* page, Page* page_tail, int count)
 	self->free_list_count += count;
 	spinlock_unlock(&self->lock);
 }
+
+static inline void
+memory_mgr_show(MemoryMgr* self, Buf* buf)
+{
+	spinlock_lock(&self->lock);
+	int pages      = self->count;
+	int pages_used = self->count - self->free_list_count;
+	int pages_free = self->free_list_count;
+	int page_size  = self->page_size + sizeof(Page);
+	spinlock_unlock(&self->lock);
+
+	buf_printf(buf, "pages       %d (%d Mb)\n", pages,
+	           (pages * page_size) / 1024 / 1024);
+	buf_printf(buf, "pages_used  %d (%d Mb)\n", pages_used,
+	           (pages_used * page_size) / 1024 / 1024);
+	buf_printf(buf, "pages_free  %d (%d Mb)\n", pages_free,
+	           (pages_free * page_size) / 1024 / 1024);
+	buf_printf(buf, "page_size   %d\n", page_size);
+}
