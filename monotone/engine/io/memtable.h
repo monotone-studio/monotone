@@ -29,6 +29,7 @@ struct Memtable
 	atomic_u64  lsn_max;
 	List        iterators;
 	int         iterators_count;
+	Heap        heap;
 };
 
 void memtable_init(Memtable*, int, int, Comparator*);

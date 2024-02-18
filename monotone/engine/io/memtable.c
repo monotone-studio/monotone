@@ -27,24 +27,17 @@ memtable_init(Memtable*   self,
 	self->iterators_count = 0;
 	rbtree_init(&self->tree);
 	list_init(&self->iterators);
+	heap_init(&self->heap, 2 * 1024 * 1024);
 }
 
 static MemtablePage*
 memtable_page_allocate(Memtable* self)
 {
 	MemtablePage* page;
-	page = mn_malloc(sizeof(MemtablePage) + self->size_page * sizeof(Row*));
+	page = heap_allocate(&self->heap, sizeof(MemtablePage) + self->size_page * sizeof(Row*));
 	page->rows_count = 0;
 	rbtree_init_node(&page->node);
 	return page;
-}
-
-static inline void
-memtable_page_free(MemtablePage* page)
-{
-	for (int i = 0; i< page->rows_count; i++)
-		row_free(page->rows[i]);
-	mn_free(page);
 }
 
 always_inline static inline MemtablePage*
@@ -59,10 +52,8 @@ memtable_compare(Memtable* self, MemtablePage* page, Row* key)
 	return compare(self->comparator, page->rows[0], key);
 }
 
-rbtree_free(memtable_truncate, memtable_page_free(memtable_page_of(n)))
-
-static void
-memtable_reset(Memtable* self)
+void
+memtable_free(Memtable* self)
 {
 	self->count       = 0;
 	self->count_pages = 0;
@@ -71,14 +62,7 @@ memtable_reset(Memtable* self)
 	self->lsn_max     = 0;
 	rbtree_init(&self->tree);
 	list_init(&self->iterators);
-}
-
-void
-memtable_free(Memtable* self)
-{
-	if (self->tree.root)
-		memtable_truncate(self->tree.root, NULL);
-	memtable_reset(self);
+	heap_free(&self->heap);
 }
 
 void
@@ -87,7 +71,13 @@ memtable_move(Memtable* self, Memtable* from)
 	*self = *from;
 	assert(! from->iterators_count);
 	list_init(&self->iterators);
-	memtable_reset(from);
+
+	from->count       = 0;
+	from->count_pages = 0;
+	from->size        = 0;
+	from->lsn_min     = UINT64_MAX;
+	from->lsn_max     = 0;
+	list_init(&from->iterators);
 }
 
 hot static inline
