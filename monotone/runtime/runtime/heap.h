@@ -38,6 +38,12 @@ heap_reset(Heap* self)
 	self->list_count = 0;
 }
 
+static inline size_t
+heap_used(Heap* self)
+{
+	return self->list_count * self->memory_mgr->page_size;
+}
+
 hot static inline void*
 heap_allocate(Heap* self, int size)
 {

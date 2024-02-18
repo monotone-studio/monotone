@@ -119,5 +119,5 @@ part_refresh_ready(Part* self)
 		return false;
 	if (! self->source->refresh_wm)
 		return false;
-	return self->memtable->size > (uint32_t)self->source->refresh_wm;
+	return heap_used(&self->memtable->heap) > (uint32_t)self->source->refresh_wm;
 }
