@@ -45,3 +45,6 @@
 
 // blob
 #include "runtime/blob.h"
+
+// heap
+#include "runtime/heap.h"
