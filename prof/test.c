@@ -17,6 +17,7 @@ static pthread_t    writer_id;
 static volatile int report_run;
 static pthread_t    report_id;
 
+#if 0
 static void*
 writer_main(void* arg)
 {
@@ -57,6 +58,39 @@ writer_main(void* arg)
 	}
 
 	monotone_free(batch);
+	return NULL;
+}
+#endif
+
+static void*
+writer_main(void* arg)
+{
+	const int metrics = 25;
+	float data[metrics]; // ~ 100 bytes
+	for (int i = 0; i < metrics; i++)
+		data[i] = 0.345;
+
+	int            batch_size = 200;
+	monotone_row_t batch[batch_size];
+
+	while (writer_run)
+	{
+		for (int i = 0; i < batch_size; i++)
+		{
+			auto row = &batch[i];
+			row->time      = writer_seq++;
+			row->data      = data;
+			row->data_size = sizeof(data);
+			row->remove    = false;
+		}
+
+		int rc;
+		rc = monotone_write(env, batch, batch_size);
+		if (rc == -1) {
+			// todo
+		}
+	}
+
 	return NULL;
 }
 
@@ -210,7 +244,7 @@ cli(void)
 		return;
 	}
 
-	monotone_execute(env, "alter storage main set (compression 1, refresh_wm 0)", NULL);
+	monotone_execute(env, "alter storage main set (compression 'zstd', refresh_wm 0)", NULL);
 
 #if 0
 	rc = monotone_execute(env, "create storage if not exists hot (cloud 'mock', compression 1, sync true, refresh_wm 0)", NULL);
