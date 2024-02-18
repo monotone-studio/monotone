@@ -13,39 +13,6 @@
 #include <monotone_wal.h>
 #include <monotone_engine.h>
 
-hot void
-engine_insert(Engine* self, Log* log, uint64_t time,
-              void*   data,
-              int     data_size)
-{
-	unused(self);
-
-	auto op  = log_add(log);
-	auto row = row_allocate(time, data, data_size);
-	log_set(log, op, row);
-
-	// update stats
-	var_int_add(&config()->rows_written, 1);
-	var_int_add(&config()->rows_written_bytes, row_size(op->row));
-}
-
-hot void
-engine_delete(Engine* self, Log* log, uint64_t time,
-              void*   data,
-              int     data_size)
-{
-	unused(self);
-
-	auto op  = log_add(log);
-	auto row = row_allocate(time, data, data_size);
-	row->is_delete = true;
-	log_set(log, op, row);
-
-	// update stats
-	var_int_add(&config()->rows_written, 1);
-	var_int_add(&config()->rows_written_bytes, row_size(op->row));
-}
-
 static void
 engine_rollback(Engine* self, Log* log)
 {
@@ -61,8 +28,6 @@ engine_rollback(Engine* self, Log* log)
 
 			engine_unlock(self, ref, LOCK_ACCESS);
 		}
-
-		row_free(pos->row);
 		pos--;
 	}
 	log_reset(log);
@@ -81,6 +46,10 @@ engine_commit(Engine* self, Log* log)
 			auto part = ref->part;
 			memtable_follow(ref->part->memtable, log->write.lsn);
 
+			// update stats
+			var_int_add(&config()->rows_written, 1);
+			var_int_add(&config()->rows_written_bytes, row_size(pos->row));
+
 			// schedule refresh
 			if (part_refresh_ready(part))
 			{
@@ -91,37 +60,38 @@ engine_commit(Engine* self, Log* log)
 			engine_unlock(self, ref, LOCK_ACCESS);
 		}
 
-		if (pos->prev)
-			row_free(pos->prev);
-
 		pos++;
 	}
 
 	log_reset(log);
 }
 
-hot void
-engine_write(Engine* self, Log* log)
+void
+engine_write(Engine* self, RowRef* rows, int count)
 {
+	Log log;
+	log_init(&log);
+
 	Exception e;
 	if (try(&e))
 	{
-		auto pos = log_first(log);
-		auto end = log_end(log);
-		while (pos < end)
+		for (int i = 0; i < count; i++)
 		{
-			auto row = pos->row;
-
-			// get partition min interval
-			uint64_t min = row_interval_min(row);
+			auto row_ref = &rows[i];
+			auto op = log_add(&log);
 
 			// find or create partition
+			uint64_t min = config_interval_of(row_ref->time);
 			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
-			pos->ref = ref;
+			op->ref = ref;
+			auto memtable = ref->part->memtable;
+
+			// allocate row using current memtables heap
+			auto row = row_allocate(&memtable->heap, row_ref);
+			log_set(&log, op, row);
 
 			// update memtable and save previous version
-			pos->prev = memtable_set(ref->part->memtable, row);
-			pos++;
+			op->prev = memtable_set(memtable, row);
 		}
 
 		// wal write
@@ -130,7 +100,7 @@ engine_write(Engine* self, Log* log)
 			// wal write error test case
 			error_injection(error_wal);
 
-			auto rotate_ready = wal_write(self->wal, log);
+			auto rotate_ready = wal_write(self->wal, &log);
 
 			// schedule wal rotation
 			if (rotate_ready)
@@ -140,9 +110,11 @@ engine_write(Engine* self, Log* log)
 
 	if (catch(&e))
 	{
-		engine_rollback(self, log);
+		engine_rollback(self, &log);
+		log_free(&log);
 		rethrow();
 	}
 
-	engine_commit(self, log);
+	engine_commit(self, &log);
+	log_free(&log);
 }
