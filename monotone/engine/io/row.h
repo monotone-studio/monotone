@@ -6,7 +6,16 @@
 // time-series storage
 //
 
-typedef struct Row Row;
+typedef struct RowRef RowRef;
+typedef struct Row    Row;
+
+struct RowRef
+{
+	uint64_t time;
+	void*    data;
+	size_t   data_size;
+	bool     remove;
+};
 
 struct Row
 {
@@ -17,23 +26,30 @@ struct Row
 	uint8_t  data[];
 } packed;
 
-hot static inline Row*
-row_init(Row* self, uint64_t time, uint8_t* data, int data_size)
+hot static inline void
+row_init(Row* self, RowRef* ref)
 {
-	self->time      = time;
-	self->is_delete = 0;
+	self->time      = ref->time;
+	self->is_delete = ref->remove;
 	self->flags     = 0;
-	self->data_size = data_size;
-	if (data)
-		memcpy(self->data, data, data_size);
-	return self;
+	self->data_size = ref->data_size;
+	if (ref->data)
+		memcpy(self->data, ref->data, ref->data_size);
 }
 
 static inline Row*
-row_allocate(uint64_t time, uint8_t* data, int data_size)
+row_allocate(Heap* heap, RowRef* ref)
 {
-	auto row = (Row*)mn_malloc(sizeof(Row) + data_size);
-	row_init(row, time, data, data_size);
+	auto row = (Row*)heap_allocate(heap, sizeof(Row) + ref->data_size);
+	row_init(row, ref);
+	return row;
+}
+
+static inline Row*
+row_malloc(RowRef* ref)
+{
+	auto row = (Row*)mn_malloc(sizeof(Row) + ref->data_size);
+	row_init(row, ref);
 	return row;
 }
 
