@@ -11,7 +11,6 @@
 enum
 {
 	MONOTONE_OBJ        = 0x3fb15941,
-	MONOTONE_OBJ_BATCH  = 0x08765feA,
 	MONOTONE_OBJ_CURSOR = 0x143BAF02,
 	MONOTONE_OBJ_FREED  = 0x0000dead
 };
@@ -20,13 +19,6 @@ struct monotone
 {
 	int  type;
 	Main main;
-};
-
-struct monotone_batch
-{
-	int              type;
-	Log              log;
-	struct monotone* env;
 };
 
 struct monotone_cursor
@@ -81,20 +73,6 @@ monotone_free(void* ptr)
 		{
 			main_stop(&self->main);
 			main_free(&self->main);
-		}
-		if (catch(&e))
-		{ }
-		break;
-	}
-	case MONOTONE_OBJ_BATCH:
-	{
-		monotone_batch_t* self = ptr;
-		monotone_t* env = self->env;
-		monotone_enter(env);
-		Exception e;
-		if (try(&e)) {
-			log_cleanup(&self->log);
-			log_free(&self->log);
 		}
 		if (catch(&e))
 		{ }
@@ -180,84 +158,14 @@ monotone_execute(monotone_t* self, const char* command, char** result)
 	return rc;
 }
 
-MONOTONE_API monotone_batch_t*
-monotone_batch(monotone_t* self)
+MONOTONE_API int
+monotone_write(monotone_t* self, monotone_row_t* rows, int count)
 {
 	monotone_enter(self);
-	monotone_batch_t* batch;
-	batch = malloc(sizeof(monotone_batch_t));
-	if (unlikely(batch == NULL))
-		return NULL;
-	batch->type = MONOTONE_OBJ_BATCH;
-	batch->env  = self;
-	log_init(&batch->log);
-	return batch;
-}
-
-MONOTONE_API int
-monotone_insert(monotone_batch_t* self, monotone_row_t* row)
-{
-	monotone_enter(self->env);
-	int rc;
+	int rc = 0;
 	Exception e;
 	if (try(&e)) {
-		engine_insert(&self->env->main.engine, &self->log,
-		              row->time,
-		              row->data,
-		              row->data_size);
-		rc = 0;
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-MONOTONE_API int
-monotone_delete(monotone_batch_t* self, monotone_row_t* row)
-{
-	monotone_enter(self->env);
-	int rc;
-	Exception e;
-	if (try(&e)) {
-		engine_delete(&self->env->main.engine, &self->log,
-		              row->time,
-		              row->data,
-		              row->data_size);
-		rc = 0;
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-MONOTONE_API int
-monotone_write(monotone_batch_t* self)
-{
-	monotone_enter(self->env);
-	int rc;
-	Exception e;
-	if (try(&e)) {
-		engine_write(&self->env->main.engine, &self->log);
-		rc = 0;
-	}
-	if (catch(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-MONOTONE_API int
-monotone_reset(monotone_batch_t* self)
-{
-	monotone_enter(self->env);
-	int rc;
-	Exception e;
-	if (try(&e)) {
-		log_cleanup(&self->log);
-		log_reset(&self->log);
-		rc = 0;
+		engine_write(&self->main.engine, (RowRef*)rows, count);
 	}
 	if (catch(&e)) {
 		rc = -1;
@@ -285,7 +193,7 @@ monotone_cursor(monotone_t* self, monotone_row_t* row)
 			engine_cursor_open(&cursor->cursor, &self->main.engine, NULL);
 		} else
 		{
-			auto key = row_allocate(row->time, row->data, row->data_size);
+			auto key = row_malloc((RowRef*)row);
 			guard(guard, row_free, key);
 			engine_cursor_open(&cursor->cursor, &self->main.engine, key);
 		}
