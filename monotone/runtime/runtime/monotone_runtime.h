@@ -47,4 +47,5 @@
 #include "runtime/blob.h"
 
 // heap
+#include "runtime/page_mgr.h"
 #include "runtime/heap.h"
