@@ -31,7 +31,7 @@
 #include "runtime/throw.h"
 #include "runtime/guard.h"
 
-// memory
+// allocator
 #include "runtime/allocator.h"
 #include "runtime/str.h"
 #include "runtime/buf.h"
@@ -46,6 +46,6 @@
 // blob
 #include "runtime/blob.h"
 
-// heap
-#include "runtime/page_mgr.h"
+// memory manager
+#include "runtime/memory_mgr.h"
 #include "runtime/heap.h"

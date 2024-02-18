@@ -6,8 +6,8 @@
 // time-series storage
 //
 
-typedef struct Page    Page;
-typedef struct PageMgr PageMgr;
+typedef struct Page      Page;
+typedef struct MemoryMgr MemoryMgr;
 
 struct Page
 {
@@ -16,25 +16,27 @@ struct Page
 	char  data[];
 };
 
-struct PageMgr
+struct MemoryMgr
 {
 	Spinlock lock;
-	int      page_size;
+	int      count;
 	Page*    free_list;
 	int      free_list_count;
+	int      page_size;
 };
 
 static inline void
-page_mgr_init(PageMgr* self, int page_size)
+memory_mgr_init(MemoryMgr* self, int page_size)
 {
-	self->page_size       = page_size - sizeof(Page);
+	self->count           = 0;
 	self->free_list       = NULL;
 	self->free_list_count = 0;
+	self->page_size       = page_size - sizeof(Page);
 	spinlock_init(&self->lock);
 }
 
 static inline void
-page_mgr_free(PageMgr* self)
+memory_mgr_free(MemoryMgr* self)
 {
 	auto page = self->free_list;
 	while (page)
@@ -48,7 +50,7 @@ page_mgr_free(PageMgr* self)
 }
 
 static inline Page*
-page_mgr_pop(PageMgr* self)
+memory_mgr_pop(MemoryMgr* self)
 {
 	spinlock_lock(&self->lock);
 	if (likely(self->free_list))
@@ -62,6 +64,7 @@ page_mgr_pop(PageMgr* self)
 		page->next = NULL;
 		return page;
 	}
+	self->count++;
 	spinlock_unlock(&self->lock);
 
 	Page* page;
@@ -74,7 +77,7 @@ page_mgr_pop(PageMgr* self)
 }
 
 static inline void
-page_mgr_push(PageMgr* self, Page* page)
+memory_mgr_push(MemoryMgr* self, Page* page)
 {
 	spinlock_lock(&self->lock);
 	self->free_list = page;
@@ -83,7 +86,7 @@ page_mgr_push(PageMgr* self, Page* page)
 }
 
 static inline void
-page_mgr_push_list(PageMgr* self, Page* page, Page* page_tail, int count)
+memory_mgr_push_list(MemoryMgr* self, Page* page, Page* page_tail, int count)
 {
 	spinlock_lock(&self->lock);
 	page_tail->next = self->free_list;
