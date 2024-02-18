@@ -205,12 +205,12 @@ main
   min                 0
   max                 10
   partitions          1
-  partitions in cloud 0
+  partitions_cloud    0
   rows                4
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               'mock'
   sync                false

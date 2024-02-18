@@ -9,12 +9,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -36,12 +36,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -53,12 +53,12 @@ hot
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -70,12 +70,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -91,12 +91,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -108,12 +108,12 @@ hot
   min                 0
   max                 10
   partitions          1
-  partitions in cloud 0
+  partitions_cloud    0
   rows                1
-  rows_cached         1
+  rows_heap           1
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           2 Mb
   path                ''
   cloud               ''
   sync                true
@@ -125,12 +125,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -146,12 +146,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -163,12 +163,12 @@ hot
   min                 0
   max                 20
   partitions          2
-  partitions in cloud 0
+  partitions_cloud    0
   rows                2
-  rows_cached         2
+  rows_heap           2
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           4 Mb
   path                ''
   cloud               ''
   sync                true
@@ -180,12 +180,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -200,12 +200,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -217,12 +217,12 @@ hot
   min                 0
   max                 30
   partitions          3
-  partitions in cloud 0
+  partitions_cloud    0
   rows                3
-  rows_cached         3
+  rows_heap           3
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           6 Mb
   path                ''
   cloud               ''
   sync                true
@@ -234,12 +234,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -253,12 +253,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -270,12 +270,12 @@ hot
   min                 10
   max                 30
   partitions          2
-  partitions in cloud 0
+  partitions_cloud    0
   rows                2
-  rows_cached         2
+  rows_heap           2
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           4 Mb
   path                ''
   cloud               ''
   sync                true
@@ -287,12 +287,12 @@ cold
   min                 0
   max                 10
   partitions          1
-  partitions in cloud 0
+  partitions_cloud    0
   rows                1
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -310,12 +310,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -327,12 +327,12 @@ hot
   min                 10
   max                 610
   partitions          6
-  partitions in cloud 0
+  partitions_cloud    0
   rows                6
-  rows_cached         6
+  rows_heap           6
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           12 Mb
   path                ''
   cloud               ''
   sync                true
@@ -344,12 +344,12 @@ cold
   min                 0
   max                 10
   partitions          1
-  partitions in cloud 0
+  partitions_cloud    0
   rows                1
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -363,12 +363,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -380,12 +380,12 @@ hot
   min                 500
   max                 610
   partitions          2
-  partitions in cloud 0
+  partitions_cloud    0
   rows                2
-  rows_cached         2
+  rows_heap           2
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           4 Mb
   path                ''
   cloud               ''
   sync                true
@@ -397,12 +397,12 @@ cold
   min                 0
   max                 50
   partitions          5
-  partitions in cloud 0
+  partitions_cloud    0
   rows                5
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -429,12 +429,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -446,12 +446,12 @@ hot
   min                 500
   max                 610
   partitions          2
-  partitions in cloud 0
+  partitions_cloud    0
   rows                2
-  rows_cached         2
+  rows_heap           2
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           4 Mb
   path                ''
   cloud               ''
   sync                true
@@ -463,12 +463,12 @@ cold
   min                 0
   max                 50
   partitions          5
-  partitions in cloud 0
+  partitions_cloud    0
   rows                5
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -482,12 +482,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -499,12 +499,12 @@ hot
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -516,12 +516,12 @@ cold
   min                 0
   max                 50
   partitions          5
-  partitions in cloud 0
+  partitions_cloud    0
   rows                5
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -539,12 +539,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -556,12 +556,12 @@ hot
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -573,12 +573,12 @@ cold
   min                 0
   max                 50
   partitions          5
-  partitions in cloud 0
+  partitions_cloud    0
   rows                5
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -592,12 +592,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -609,12 +609,12 @@ hot
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -626,12 +626,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -647,12 +647,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -664,12 +664,12 @@ hot
   min                 0
   max                 10
   partitions          1
-  partitions in cloud 0
+  partitions_cloud    0
   rows                1
-  rows_cached         1
+  rows_heap           1
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           2 Mb
   path                ''
   cloud               ''
   sync                true
@@ -681,12 +681,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -702,12 +702,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -719,12 +719,12 @@ hot
   min                 0
   max                 20
   partitions          2
-  partitions in cloud 0
+  partitions_cloud    0
   rows                2
-  rows_cached         2
+  rows_heap           2
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           4 Mb
   path                ''
   cloud               ''
   sync                true
@@ -736,12 +736,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -761,12 +761,12 @@ main
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
@@ -778,12 +778,12 @@ hot
   min                 10
   max                 30
   partitions          2
-  partitions in cloud 0
+  partitions_cloud    0
   rows                2
-  rows_cached         2
+  rows_heap           2
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           4 Mb
   path                ''
   cloud               ''
   sync                true
@@ -795,12 +795,12 @@ cold
   min                 18446744073709551615
   max                 0
   partitions          0
-  partitions in cloud 0
+  partitions_cloud    0
   rows                0
-  rows_cached         0
+  rows_heap           0
   size                0 Mb
   size_uncompressed   0 Mb
-  size_cached         0 Mb
+  size_heap           0 Mb
   path                ''
   cloud               ''
   sync                true
