@@ -37,6 +37,12 @@ config_interval(void)
 	return var_int_of(&config()->interval);
 }
 
+static inline uint64_t
+config_interval_of(uint64_t time)
+{
+	return time - (time % config_interval());
+}
+
 static inline int
 config_workers(void)
 {
