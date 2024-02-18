@@ -27,7 +27,7 @@ memtable_init(Memtable*   self,
 	self->iterators_count = 0;
 	rbtree_init(&self->tree);
 	list_init(&self->iterators);
-	heap_init(&self->heap, global()->page_mgr);
+	heap_init(&self->heap, global()->memory_mgr);
 }
 
 static MemtablePage*

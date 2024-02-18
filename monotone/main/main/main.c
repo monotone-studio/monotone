@@ -52,7 +52,7 @@ main_init(Main* self)
 	// global
 	self->global.config          = &self->config;
 	self->global.control         = &self->control;
-	self->global.page_mgr        = &self->page_mgr;
+	self->global.memory_mgr      = &self->memory_mgr;
 	self->global.compression_mgr = &self->compression_mgr;
 	self->global.uuid_mgr        = &self->uuid_mgr;
 
@@ -64,7 +64,7 @@ main_init(Main* self)
 	comparator_init(&self->comparator);
 	logger_init(&self->logger);
 	uuid_mgr_init(&self->uuid_mgr);
-	page_mgr_init(&self->page_mgr, 2 * 1024 * 1024);
+	memory_mgr_init(&self->memory_mgr, 2 * 1024 * 1024);
 	compression_mgr_init(&self->compression_mgr);
 	config_init(&self->config);
 
@@ -91,7 +91,7 @@ main_free(Main* self)
 	service_free(&self->service);
 	config_free(&self->config);
 	compression_mgr_free(&self->compression_mgr);
-	page_mgr_free(&self->page_mgr);
+	memory_mgr_free(&self->memory_mgr);
 	rwlock_free(&self->lock);
 }
 
