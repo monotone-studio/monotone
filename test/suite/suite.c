@@ -469,7 +469,6 @@ test_suite_init(TestSuite* self)
 	self->current                  = NULL;
 	self->current_group            = NULL;
 	self->env                      = NULL;
-	self->batch                    = NULL;
 	self->list_cursor_count        = 0;
 
 	self->option_result_dir        = NULL;

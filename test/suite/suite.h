@@ -37,30 +37,29 @@ struct TestCursor
 
 struct TestSuite
 {
-	void*             dlhandle;
-	char*             current_test_options;
-	char*             current_test;
-	FILE*             current_test_result;
-	int               current_test_ok_exists;
-	char*             current_test_ok_file;
-	char*             current_test_result_file;
-	int               current_test_started;
-	int               current_line;
-	int               current_plan_line;
-	TestGroup*        current_group;
-	Test*             current;
-	monotone_t*       env;
-	monotone_batch_t* batch;
-	int               list_cursor_count;
-	List              list_cursor;
-	char*             option_test_dir;
-	char*             option_result_dir;
-	char*             option_plan_file;
-	char*             option_test;
-	char*             option_group;
-	int               option_fix;
-	List              list_test;
-	List              list_group;
+	void*       dlhandle;
+	char*       current_test_options;
+	char*       current_test;
+	FILE*       current_test_result;
+	int         current_test_ok_exists;
+	char*       current_test_ok_file;
+	char*       current_test_result_file;
+	int         current_test_started;
+	int         current_line;
+	int         current_plan_line;
+	TestGroup*  current_group;
+	Test*       current;
+	monotone_t* env;
+	int         list_cursor_count;
+	List        list_cursor;
+	char*       option_test_dir;
+	char*       option_result_dir;
+	char*       option_plan_file;
+	char*       option_test;
+	char*       option_group;
+	int         option_fix;
+	List        list_test;
+	List        list_group;
 };
 
 void test_suite_init(TestSuite*);
