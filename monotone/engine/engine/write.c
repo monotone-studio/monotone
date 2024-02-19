@@ -105,6 +105,10 @@ engine_write(Engine* self, RowRef* rows, int count)
 			// schedule wal rotation
 			if (rotate_ready)
 				service_rotate(self->service);
+		} else
+		{
+			// assign next lsn
+			log.write.lsn = config_lsn_next();
 		}
 	}
 
