@@ -16,4 +16,5 @@
 #include "command/parse_storage.h"
 #include "command/parse_conveyor.h"
 #include "command/parse_partition.h"
+#include "command/parse_debug.h"
 #include "command/parse.h"

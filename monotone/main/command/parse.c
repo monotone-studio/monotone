@@ -34,6 +34,12 @@ parse(Lex* self)
 		cmd = parse_show(self);
 		break;
 	}
+	case KDEBUG:
+	{
+		// DEBUG command
+		cmd = parse_debug(self);
+		break;
+	}
 	case KCHECKPOINT:
 	{
 		// CHECKPOINT
