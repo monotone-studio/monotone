@@ -25,6 +25,7 @@ OBJECTS        = \
                  command/parse_storage.o \
                  command/parse_conveyor.o \
                  command/parse_partition.o \
+                 command/parse_debug.o \
                  command/parse.o \
                  main/main.o \
                  main/execute.o \

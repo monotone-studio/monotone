@@ -125,6 +125,40 @@ execute_set(Executable* self)
 }
 
 static void
+execute_debug(Executable* self)
+{
+	auto cmd = cmd_debug_of(self->cmd);
+	switch (cmd->command) {
+	case DEBUG_WAL_CREATE:
+		wal_rotate(&self->main->wal, 0);
+		break;
+	case DEBUG_WAL_GC:
+		engine_gc(&self->main->engine);
+		break;
+	case DEBUG_WAL_READ:
+	{
+		WalCursor cursor;
+		wal_cursor_init(&cursor);
+		guard(cursor_guard, wal_cursor_close, &cursor);
+		wal_cursor_open(&cursor, &self->main->wal, 0);
+		for (;;)
+		{
+			if (! wal_cursor_next(&cursor))
+				break;
+			auto write = wal_cursor_at(&cursor);
+			buf_printf(self->output, "[%" PRIu64 ", %d, %d, %d]\n", write->lsn,
+			           write->type,
+			           write->count, write->size);
+		}
+		break;
+	}
+	case DEBUG_MEMORY_GC:
+		memory_mgr_reset(&self->main->memory_mgr);
+		break;
+	}
+}
+
+static void
 execute_checkpoint(Executable* self)
 {
 	engine_checkpoint(&self->main->engine);
@@ -362,6 +396,7 @@ static Execute cmds[CMD_MAX] =
 	{ NULL,                             false },
 	{ execute_show,                     true  },
 	{ execute_set,                      true  },
+	{ execute_debug,                    false },
 	{ execute_checkpoint,               false },
 	{ execute_service,                  false },
 	{ execute_rebalance,                false },
