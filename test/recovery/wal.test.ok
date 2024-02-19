@@ -265,4 +265,91 @@ select
 [3]
 [4]
 (eof)
+# test: error during wal write
+set error_wal to true
+insert 5
+error: (engine/write.c:105) error injection: error_wal
+set error_wal to false
+# test: select
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 4
+      compression         0
+      region
+        min             1
+        max             4
+        rows            4
+        offset          0
+        size            92
+show wal
+lsn     4
+lsn_min 4
+files   1
+select
+[1]
+[2]
+[3]
+[4]
+(eof)
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: select
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 4
+      compression         0
+      region
+        min             1
+        max             4
+        rows            4
+        offset          0
+        size            92
+show wal
+lsn     4
+lsn_min 4
+files   1
+select
+[1]
+[2]
+[3]
+[4]
+(eof)
 close

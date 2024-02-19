@@ -128,4 +128,27 @@ show partitions debug
 show wal
 select
 
+# test: error during wal write
+set error_wal to true
+insert 5
+set error_wal to false
+
+# test: select
+show partitions debug
+show wal
+select
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: select
+show partitions debug
+show wal
+select
+
 close
