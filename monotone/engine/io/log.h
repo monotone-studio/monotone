@@ -86,22 +86,33 @@ log_reset(Log* self)
 hot static inline LogOp*
 log_add(Log* self)
 {
-	// add log write header before the first entry
-	if (self->write.count == 0)
-		iov_add(&self->iov, &self->write, sizeof(self->write));
 	buf_reserve(&self->op, sizeof(LogOp));
 	auto op = (LogOp*)self->op.position;
 	op->row  = NULL;
 	op->prev = NULL;
 	op->ref  = NULL;
+	self->write.count++;
 	buf_advance(&self->op, sizeof(LogOp));
 	return op;
 }
 
 hot static inline void
-log_set(Log* self, LogOp* op, Row* row)
+log_add_row(Log* self, LogOp* op, Row* row)
 {
-	op->row = row;
-	log_write_add(&self->write, row);
+	// add log write header before the first entry
+	if (self->write.count == 1)
+	{
+		iov_add(&self->iov, &self->write, sizeof(self->write));
+		self->write.size += sizeof(LogWrite);
+	}
 	iov_add(&self->iov, row, row_size(row));
+	op->row = row;
+	self->write.size += row_size(row);
+}
+
+hot static inline void
+log_pushback(Log* self)
+{
+	self->write.count--;
+	buf_truncate(&self->op, sizeof(LogOp));
 }
