@@ -26,6 +26,18 @@ struct Row
 	uint8_t  data[];
 } packed;
 
+always_inline hot static inline int
+row_size(Row* self)
+{
+	return sizeof(Row) + self->data_size;
+}
+
+always_inline hot static inline uint64_t
+row_interval_min(Row* self)
+{
+	return self->time - (self->time % config_interval());
+}
+
 hot static inline void
 row_init(Row* self, RowRef* ref)
 {
@@ -46,6 +58,14 @@ row_allocate(Heap* heap, RowRef* ref)
 }
 
 static inline Row*
+row_copy(Heap* heap, Row* src)
+{
+	auto row = (Row*)heap_allocate(heap, row_size(src));
+	memcpy(row, src, row_size(src));
+	return row;
+}
+
+static inline Row*
 row_malloc(RowRef* ref)
 {
 	auto row = (Row*)mn_malloc(sizeof(Row) + ref->data_size);
@@ -57,16 +77,4 @@ always_inline static inline void
 row_free(Row* self)
 {
 	mn_free(self);
-}
-
-always_inline hot static inline int
-row_size(Row* self)
-{
-	return sizeof(Row) + self->data_size;
-}
-
-always_inline hot static inline uint64_t
-row_interval_min(Row* self)
-{
-	return self->time - (self->time % config_interval());
 }
