@@ -36,6 +36,25 @@ memory_mgr_init(MemoryMgr* self, int page_size)
 }
 
 static inline void
+memory_mgr_reset(MemoryMgr* self)
+{
+	spinlock_lock(&self->lock);
+	auto page = self->free_list;
+	self->count          -= self->free_list_count;
+	self->free_list       = NULL;
+	self->free_list_count = 0;
+	spinlock_unlock(&self->lock);
+
+	page = self->free_list;
+	while (page)
+	{
+		auto next = page->next;
+		vfs_munmap(page, sizeof(Page) + self->page_size);
+		page = next;
+	}
+}
+
+static inline void
 memory_mgr_free(MemoryMgr* self)
 {
 	auto page = self->free_list;
@@ -47,6 +66,8 @@ memory_mgr_free(MemoryMgr* self)
 	}
 	self->free_list       = NULL;
 	self->free_list_count = 0;
+
+	spinlock_free(&self->lock);
 }
 
 static inline Page*
