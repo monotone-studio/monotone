@@ -276,6 +276,40 @@ memtable_set(Memtable* self, Row* row)
 	return prev;
 }
 
+void
+memtable_unset(Memtable* self, Row* row)
+{
+	assert(self->count_pages > 0);
+
+	// search page
+	auto page = memtable_search_page(self, row);
+
+	// remove existing key from a page
+	bool match = false;
+	int pos = memtable_search(self, page, row, &match);
+	if (! match)
+		return;
+
+	// remove row from the page
+	auto prev = page->rows[pos];
+	page->rows[pos] = NULL;
+	self->size -= row_size(prev);
+	self->count--;
+	page->rows_count--;
+
+	// remove page, if it becomes empty
+	if (page->rows_count == 0)
+	{
+		rbtree_remove(&self->tree, &page->node);
+		self->count_pages--;
+	} else
+	{
+		int size = (page->rows_count - pos) * sizeof(Row*);
+		if (size > 0)
+			memmove(&page->rows[pos], &page->rows[pos + 1], size);
+	}
+}
+
 hot bool
 memtable_seek(Memtable* self, Row* key, MemtablePage** page, int* pos)
 {

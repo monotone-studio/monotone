@@ -36,5 +36,6 @@ void memtable_init(Memtable*, int, int, Comparator*);
 void memtable_free(Memtable*);
 void memtable_move(Memtable*, Memtable*);
 Row* memtable_set(Memtable*, Row*);
+void memtable_unset(Memtable*, Row*);
 bool memtable_seek(Memtable*, Row*, MemtablePage**, int*);
 void memtable_follow(Memtable*, uint64_t);
