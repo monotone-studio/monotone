@@ -23,13 +23,10 @@ engine_rollback(Engine* self, Log* log)
 		if (pos->ref)
 		{
 			Ref* ref = pos->ref;
-			if (pos->prev) {
+			if (pos->prev)
 				memtable_set(ref->part->memtable, pos->prev);
-			} else
-			{
-				// instead of updating memtable, mark previous row as deleted
-				pos->row->is_delete = true;
-			}
+			else
+				memtable_unset(ref->part->memtable, pos->row);
 			engine_unlock(self, ref, LOCK_ACCESS);
 		}
 		pos--;
