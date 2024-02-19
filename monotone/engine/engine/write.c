@@ -161,6 +161,9 @@ engine_replay(Engine* self, LogWrite* write)
 			// update memtable and save previous version
 			op->prev = memtable_set(memtable, row);
 		}
+
+		// assign lsn
+		log.write.lsn = write->lsn;
 	}
 
 	if (catch(&e))
