@@ -88,7 +88,7 @@ engine_write(Engine* self, RowRef* rows, int count)
 
 			// allocate row using current memtables heap
 			auto row = row_allocate(&memtable->heap, row_ref);
-			log_set(&log, op, row);
+			log_add_row(&log, op, row);
 
 			// update memtable and save previous version
 			op->prev = memtable_set(memtable, row);
@@ -117,4 +117,57 @@ engine_write(Engine* self, RowRef* rows, int count)
 
 	engine_commit(self, &log);
 	log_free(&log);
+}
+
+void
+engine_replay(Engine* self, LogWrite* write)
+{
+	Log log;
+	log_init(&log);
+
+	Exception e;
+	if (try(&e))
+	{
+		auto pos = log_write_first(write);
+		for (; pos; pos = log_write_next(write, pos))
+		{
+			auto op = log_add(&log);
+
+			// find or create partition
+			uint64_t min = config_interval_of(pos->time);
+			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
+			auto part = ref->part;
+
+			// skip if partition is a newer then write lsn
+			if (part->index && (part->index->lsn >= write->lsn))
+			{
+				engine_unlock(self, ref, LOCK_ACCESS);
+				log_pushback(&log);
+				continue;
+			}
+
+			// set log reference lock
+			op->ref = ref;
+
+			// copy row using current memtables heap
+			auto memtable = part->memtable;
+			auto row = row_copy(&memtable->heap, pos);
+			log_add_row(&log, op, row);
+
+			// update memtable and save previous version
+			op->prev = memtable_set(memtable, row);
+		}
+	}
+
+	if (catch(&e))
+	{
+		engine_rollback(self, &log);
+		log_free(&log);
+		rethrow();
+	}
+
+	engine_commit(self, &log);
+	log_free(&log);
+
+	config_lsn_follow(write->lsn);
 }
