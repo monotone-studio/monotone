@@ -128,9 +128,20 @@ show partitions debug
 show wal
 select
 
-# test: error during wal write
+# test: wal write error
 set error_wal to true
 insert 5
+
+# test: wal write error #2
+insert 4 xxx
+set error_wal to false
+
+# test: wal write error #3
+insert 8 zzz
+select
+
+set error_wal to true
+insert 4 xxx
 set error_wal to false
 
 # test: select

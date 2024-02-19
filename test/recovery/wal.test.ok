@@ -265,10 +265,26 @@ select
 [3]
 [4]
 (eof)
-# test: error during wal write
+# test: wal write error
 set error_wal to true
 insert 5
-error: (engine/write.c:105) error injection: error_wal
+error: (engine/write.c:102) error injection: error_wal
+# test: wal write error #2
+insert 4 xxx
+error: (engine/write.c:102) error injection: error_wal
+set error_wal to false
+# test: wal write error #3
+insert 8 zzz
+select
+[1]
+[2]
+[3]
+[4]
+[8, zzz]
+(eof)
+set error_wal to true
+insert 4 xxx
+error: (engine/write.c:102) error injection: error_wal
 set error_wal to false
 # test: select
 show partitions debug
@@ -281,7 +297,7 @@ main
     refresh     no
     on storage  yes
     on cloud    no
-    memtable_a  1 / 13
+    memtable_a  1 / 16
     memtable_b  0 / 0
     file        259
     index
@@ -299,7 +315,7 @@ main
         offset          0
         size            92
 show wal
-lsn     4
+lsn     5
 lsn_min 4
 files   1
 select
@@ -307,6 +323,7 @@ select
 [2]
 [3]
 [4]
+[8, zzz]
 (eof)
 # test: restart
 close
@@ -325,7 +342,7 @@ main
     refresh     no
     on storage  yes
     on cloud    no
-    memtable_a  0 / 0
+    memtable_a  1 / 16
     memtable_b  0 / 0
     file        259
     index
@@ -343,7 +360,7 @@ main
         offset          0
         size            92
 show wal
-lsn     4
+lsn     5
 lsn_min 4
 files   1
 select
@@ -351,5 +368,6 @@ select
 [2]
 [3]
 [4]
+[8, zzz]
 (eof)
 close
