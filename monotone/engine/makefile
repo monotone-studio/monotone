@@ -26,6 +26,7 @@ OBJECTS        = \
                  storage/storage_mgr.o \
                  storage/conveyor.o \
                  wal/wal.o \
+                 wal/wal_cursor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
                  engine/write.o \
