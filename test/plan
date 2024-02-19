@@ -35,7 +35,8 @@ test cloud_rebalance
 # recovery
 directory recovery
 group recovery
+test wal
 test recovery_config
 test recovery_storage
 test recovery_cloud
-#test crash
+test crash

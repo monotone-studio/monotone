@@ -1,0 +1,131 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: create wal on start
+show wal
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+show wal
+
+# test: insert
+insert 1
+
+show lsn
+show wal
+debug 'wal_read'
+
+insert 2
+
+show lsn
+show wal
+debug 'wal_read'
+
+insert 3
+
+show lsn
+show wal
+debug 'wal_read'
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+show lsn
+show wal
+debug 'wal_read'
+
+# test: select
+select
+
+# test: create wal
+debug 'wal_create'
+show wal
+
+# test: restart (empty wal file)
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: select
+show wal
+select
+
+# test: insert #2
+insert 4
+
+show lsn
+show wal
+debug 'wal_read'
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: select
+show wal
+select
+
+# test: gc (still in heap)
+debug 'wal_gc'
+show wal
+
+# test: refresh
+show partitions debug
+refresh partition 0
+show partitions debug
+show wal
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: ensure no heap used
+show partitions debug
+
+# test: select
+select
+
+# test: gc
+debug 'wal_gc'
+show wal
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: select
+show partitions debug
+show wal
+select
+
+close

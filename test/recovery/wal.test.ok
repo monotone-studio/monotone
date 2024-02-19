@@ -1,0 +1,268 @@
+init
+set workers to 0
+set interval to 10
+open
+# test: create wal on start
+show wal
+lsn     0
+lsn_min 1
+files   1
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+show wal
+lsn     0
+lsn_min 1
+files   1
+# test: insert
+insert 1
+show lsn
+1
+show wal
+lsn     1
+lsn_min 1
+files   1
+debug 'wal_read'
+[1, 0, 1, 30]
+insert 2
+show lsn
+2
+show wal
+lsn     2
+lsn_min 1
+files   1
+debug 'wal_read'
+[1, 0, 1, 30]
+[2, 0, 1, 30]
+insert 3
+show lsn
+3
+show wal
+lsn     3
+lsn_min 1
+files   1
+debug 'wal_read'
+[1, 0, 1, 30]
+[2, 0, 1, 30]
+[3, 0, 1, 30]
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+show lsn
+3
+show wal
+lsn     3
+lsn_min 1
+files   1
+debug 'wal_read'
+[1, 0, 1, 30]
+[2, 0, 1, 30]
+[3, 0, 1, 30]
+# test: select
+select
+[1]
+[2]
+[3]
+(eof)
+# test: create wal
+debug 'wal_create'
+show wal
+lsn     3
+lsn_min 1
+files   2
+# test: restart (empty wal file)
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: select
+show wal
+lsn     3
+lsn_min 1
+files   2
+select
+[1]
+[2]
+[3]
+(eof)
+# test: insert #2
+insert 4
+show lsn
+4
+show wal
+lsn     4
+lsn_min 1
+files   2
+debug 'wal_read'
+[1, 0, 1, 30]
+[2, 0, 1, 30]
+[3, 0, 1, 30]
+[4, 0, 1, 30]
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: select
+show wal
+lsn     4
+lsn_min 1
+files   2
+select
+[1]
+[2]
+[3]
+[4]
+(eof)
+# test: gc (still in heap)
+debug 'wal_gc'
+show wal
+lsn     4
+lsn_min 1
+files   2
+# test: refresh
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  4 / 52
+    memtable_b  0 / 0
+    file        0
+refresh partition 0
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 4
+      compression         0
+      region
+        min             1
+        max             4
+        rows            4
+        offset          0
+        size            92
+show wal
+lsn     4
+lsn_min 1
+files   2
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: ensure no heap used
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 4
+      compression         0
+      region
+        min             1
+        max             4
+        rows            4
+        offset          0
+        size            92
+# test: select
+select
+[1]
+[2]
+[3]
+[4]
+(eof)
+# test: gc
+debug 'wal_gc'
+show wal
+lsn     4
+lsn_min 4
+files   1
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: select
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      rows                4
+      lsn                 4
+      compression         0
+      region
+        min             1
+        max             4
+        rows            4
+        offset          0
+        size            92
+show wal
+lsn     4
+lsn_min 4
+files   1
+select
+[1]
+[2]
+[3]
+[4]
+(eof)
+close
