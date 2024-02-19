@@ -76,7 +76,7 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 
 	// check for eof
 	if (wal_file_eof(self, offset, sizeof(LogWrite)))
-		return true;
+		return false;
 
 	// read header
 	uint32_t size_header = sizeof(LogWrite);
@@ -86,11 +86,11 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 
 	// check for eof
 	if (wal_file_eof(self, offset, size))
-		return true;
+		return false;
 
 	// read body
 	uint32_t size_data;
 	size_data = size - size_header;
 	file_pread_buf(&self->file, buf, size_data, offset + size_header);
-	return false;
+	return true;
 }
