@@ -3,6 +3,7 @@
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 
 # test: create partition
@@ -21,6 +22,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -53,6 +55,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -77,6 +80,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -95,6 +99,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -113,6 +118,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -131,6 +137,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -148,6 +155,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -165,6 +173,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -186,6 +195,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 

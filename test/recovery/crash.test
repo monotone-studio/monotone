@@ -3,6 +3,7 @@
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 
 # test: case 1: crash before completion (no parent)
@@ -19,6 +20,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 
@@ -43,6 +45,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 show partitions debug
@@ -58,6 +61,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 show partitions debug
@@ -73,6 +77,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 show partitions debug
@@ -96,6 +101,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 show partitions debug
@@ -130,6 +136,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 show partitions debug

@@ -1,6 +1,7 @@
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 # test: case 1: crash before completion (no parent)
 insert 0
@@ -17,6 +18,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 # test: case 1: crash before completion (with parent)
@@ -67,6 +69,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 00000000000000000000
@@ -115,6 +118,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 00000000000000000000
@@ -162,6 +166,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 00000000000000000000
@@ -261,6 +266,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 00000000000000000000.cloud
@@ -388,6 +394,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files main
 00000000000000000000
