@@ -145,6 +145,32 @@ main_deploy(Main* self, Str* directory)
 	}
 }
 
+static void
+main_replay(Main* self)
+{
+	WalCursor cursor;
+	wal_cursor_init(&cursor);
+	guard(cursor_guard, wal_cursor_close, &cursor);
+
+	wal_cursor_open(&cursor, &self->wal, 0);
+	uint64_t total = 0;
+	for (;;)
+	{
+		if (! wal_cursor_next(&cursor))
+			break;
+
+		// LOG_WRITE
+		auto write = wal_cursor_at(&cursor);
+		if (write->type != LOG_WRITE)
+			error("recover: unrecognized operation: %d", write->type);
+		engine_replay(&self->engine, write);
+
+		total += write->count;
+	}
+	log("wal: %.1f million records processed",
+	    total / 1000000.0);
+}
+
 void
 main_start(Main* self, const char* directory)
 {
@@ -170,7 +196,7 @@ main_start(Main* self, const char* directory)
 	if (var_int_of(&config()->wal_enable))
 	{
 		wal_open(&self->wal);
-		// todo: replay
+		main_replay(self);
 	}
 
 	// start compaction workers
