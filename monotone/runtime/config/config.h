@@ -20,6 +20,7 @@ struct Config
 	Var  log_to_file;
 	Var  log_to_stdout;
 	// engine
+	Var  serial;
 	Var  interval;
 	Var  workers;
 	// wal
@@ -28,6 +29,7 @@ struct Config
 	Var  wal_sync_on_rotate;
 	Var  wal_sync_on_write;
 	// state
+	Var  ssn;
 	Var  lsn;
 	Var  psn;
 	Var  storages;

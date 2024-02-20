@@ -32,6 +32,12 @@ config_online(void)
 	return var_int_of(&config()->online);
 }
 
+static inline bool
+config_serial(void)
+{
+	return var_int_of(&config()->serial);
+}
+
 static inline uint64_t
 config_interval(void)
 {
@@ -48,6 +54,31 @@ static inline int
 config_workers(void)
 {
 	return var_int_of(&config()->workers);
+}
+
+// ssn
+static inline uint64_t
+config_ssn(void)
+{
+	return var_int_of(&config()->ssn);
+}
+
+static inline void
+config_ssn_set(uint64_t value)
+{
+	var_int_set(&config()->ssn, value);
+}
+
+static inline uint64_t
+config_ssn_next(void)
+{
+	return var_int_set_next(&config()->ssn);
+}
+
+static inline void
+config_ssn_follow(uint64_t value)
+{
+	var_int_follow(&config()->ssn, value);
 }
 
 // lsn

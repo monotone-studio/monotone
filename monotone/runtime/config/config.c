@@ -83,6 +83,7 @@ config_prepare(Config* self)
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
 		{ "log_to_stdout",           VAR_BOOL,   VAR_C,                &self->log_to_stdout,           NULL,        false            },
 		// engine
+		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
 		{ "interval",                VAR_INT,    VAR_C,                &self->interval,                NULL,        3000000          },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
 		// wal
@@ -91,6 +92,7 @@ config_prepare(Config* self)
 		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
 		// state
+		{ "ssn",                     VAR_INT,    VAR_E|VAR_R,          &self->ssn,                     NULL,        0                },
 		{ "lsn",                     VAR_INT,    VAR_E,                &self->lsn,                     NULL,        0                },
 		{ "psn",                     VAR_INT,    VAR_E,                &self->psn,                     NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
