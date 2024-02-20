@@ -290,7 +290,7 @@ test_suite_cmd_cursor(TestSuite* self, char* arg)
 		key = &row;
 	}
 
-	cursor->cursor = monotone_cursor(self->env, key);
+	cursor->cursor = monotone_cursor(self->env, NULL, key);
 	if (cursor->cursor == NULL)
 		test_log_error(self);
 
@@ -429,7 +429,7 @@ test_suite_cmd_select(TestSuite* self, char* arg)
 		key = &row;
 	}
 
-	auto cursor = monotone_cursor(self->env, key);
+	auto cursor = monotone_cursor(self->env, NULL, key);
 	if (cursor == NULL)
 	{
 		test_log_error(self);

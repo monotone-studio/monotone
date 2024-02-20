@@ -17,51 +17,6 @@ static pthread_t    writer_id;
 static volatile int report_run;
 static pthread_t    report_id;
 
-#if 0
-static void*
-writer_main(void* arg)
-{
-	const int metrics = 25;
-	float data[metrics]; // ~ 100 bytes
-	for (int i = 0; i < metrics; i++)
-		data[i] = 0.345;
-
-	auto batch = monotone_batch(env);
-	if (! batch)
-		;
-
-	int batch_size = 200;
-
-	while (writer_run)
-	{
-		for (int i = 0; i < batch_size; i++)
-		{
-			monotone_row_t row =
-			{
-				.time = writer_seq++,
-				.data = data,
-				.data_size = sizeof(data)
-			};
-			int rc;
-			rc = monotone_insert(batch, &row);
-			if (rc == -1) {
-				// todo
-			}
-		}
-
-		int rc;
-		rc = monotone_write(batch);
-		if (rc == -1) {
-			// todo
-		}
-
-	}
-
-	monotone_free(batch);
-	return NULL;
-}
-#endif
-
 static void*
 writer_main(void* arg)
 {
@@ -193,7 +148,7 @@ gettime(void)
 static void
 scan(void)
 {
-	auto cursor = monotone_cursor(env, NULL);
+	auto cursor = monotone_cursor(env, NULL, NULL);
 
 	uint64_t start = gettime();
 
@@ -233,7 +188,7 @@ cli(void)
 	env = monotone_init(NULL, NULL);
 	monotone_execute(env, "set log_to_stdout to true", NULL);
 	monotone_execute(env, "set workers to 3", NULL);
-	monotone_execute(env, "set wal_enable to false", NULL);
+	/*monotone_execute(env, "set wal_enable to false", NULL);*/
 
 	int rc;
 	rc = monotone_open(env, "./t");
@@ -247,34 +202,37 @@ cli(void)
 	monotone_execute(env, "alter storage main set (compression 'zstd', refresh_wm 0)", NULL);
 
 #if 0
-	rc = monotone_execute(env, "create storage if not exists hot (cloud 'mock', compression 1, sync true, refresh_wm 0)", NULL);
+	/*
+	rc = monotone_execute(env, "create storage if not exists hot (cloud 'mock', compression 1, refresh_wm 0)", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
+	*/
 
-	rc = monotone_execute(env, "create storage if not exists hot (compression 1, sync true, refresh_wm 0)", NULL);
+	rc = monotone_execute(env, "create storage if not exists hot (compression 'zstd', refresh_wm 0)", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-	rc = monotone_execute(env, "create storage if not exists cold (compression 1, sync true)", NULL);
+	rc = monotone_execute(env, "create storage if not exists cold (compression 'zstd', cloud 'mock')", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
 	rc = monotone_execute(env, "alter conveyor set hot (capacity 10), cold", NULL);
-	/*rc = monotone_execute(env, "alter conveyor hot (capacity 10), cold", NULL);*/
 
+#if 0
 	rc = monotone_execute(env, "alter conveyor set hot", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
+#endif
 #endif
 
 	for (;;)

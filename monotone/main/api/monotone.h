@@ -59,7 +59,7 @@ monotone_write(monotone_t*, monotone_row_t*, int count);
 
 // cursor
 MONOTONE_API monotone_cursor_t*
-monotone_cursor(monotone_t*, monotone_row_t*);
+monotone_cursor(monotone_t*, const char* options, monotone_row_t*);
 
 MONOTONE_API int
 monotone_read(monotone_cursor_t*, monotone_row_t*);

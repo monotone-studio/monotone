@@ -174,8 +174,9 @@ monotone_write(monotone_t* self, monotone_row_t* rows, int count)
 }
 
 hot MONOTONE_API monotone_cursor_t*
-monotone_cursor(monotone_t* self, monotone_row_t* row)
+monotone_cursor(monotone_t* self, const char* options, monotone_row_t* row)
 {
+	unused(options);
 	monotone_enter(self);
 
 	monotone_cursor_t* cursor;
