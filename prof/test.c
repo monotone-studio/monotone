@@ -11,7 +11,6 @@
 static monotone_t*  env;
 
 static volatile int writer_run;
-static uint64_t     writer_seq;
 static pthread_t    writer_id;
 
 static volatile int report_run;
@@ -33,7 +32,7 @@ writer_main(void* arg)
 		for (int i = 0; i < batch_size; i++)
 		{
 			auto row = &batch[i];
-			row->time      = writer_seq++;
+			row->time      = 0;
 			row->data      = data;
 			row->data_size = sizeof(data);
 			row->remove    = false;
@@ -187,6 +186,7 @@ cli(void)
 {
 	env = monotone_init(NULL, NULL);
 	monotone_execute(env, "set log_to_stdout to true", NULL);
+	monotone_execute(env, "set serial to true", NULL);
 	monotone_execute(env, "set workers to 3", NULL);
 	/*monotone_execute(env, "set wal_enable to false", NULL);*/
 
