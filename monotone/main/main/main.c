@@ -96,8 +96,12 @@ main_free(Main* self)
 }
 
 void
-main_prepare(Main* self)
+main_prepare(Main* self, Compare compare, void* compare_arg)
 {
+	auto comparator = &self->comparator;
+	comparator->compare     = compare;
+	comparator->compare_arg = compare_arg;
+
 	// set default configuration
 	config_prepare(&self->config);
 }

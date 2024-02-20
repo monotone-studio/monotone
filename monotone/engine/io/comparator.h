@@ -8,7 +8,7 @@
 
 typedef struct Comparator Comparator;
 
-typedef int (*Compare)(void*, int, void*, int, void*);
+typedef int (*Compare)(RowRef*, RowRef*, void*);
 
 struct Comparator
 {
@@ -32,20 +32,19 @@ compare(Comparator* self, Row* a, Row* b)
 		return diff;
 	if (! self->compare)
 		return 0;
-	return self->compare(a->data, a->data_size,
-	                     b->data, b->data_size,
-	                     self->compare_arg);
-#if 0
-	// compare by time first
-	if (a->time < b->time)
-		return -1;
-	if (a->time > b->time)
-		return 1;
-	// compare data
-	if (! self->compare)
-		return 0;
-	return self->compare(a->data, a->data_size,
-	                     b->data, b->data_size,
-	                     self->compare_arg);
-#endif
+	RowRef l =
+	{
+		.time      = a->time,
+		.data_size = a->data_size,
+		.data      = a->data,
+		.remove    = a->is_delete
+	};
+	RowRef r =
+	{
+		.time      = b->time,
+		.data_size = b->data_size,
+		.data      = b->data,
+		.remove    = b->is_delete
+	};
+	return self->compare(&l, &r, self->compare_arg);
 }

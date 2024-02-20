@@ -47,9 +47,7 @@ monotone_init(monotone_compare_t compare, void* compare_arg)
 	Exception e;
 	if (try(&e))
 	{
-		(void)compare;
-		(void)compare_arg;
-		main_prepare(&self->main);
+		main_prepare(&self->main, (Compare)compare, compare_arg);
 	}
 	if (catch(&e)) {
 		main_free(&self->main);
@@ -120,7 +118,7 @@ monotone_now(monotone_t* self)
 {
 	unused(self);
 	struct timespec t;
-	clock_gettime(CLOCK_MONOTONIC, &t);
+	clock_gettime(CLOCK_REALTIME, &t);
 	uint64_t time_ns = t.tv_sec * (uint64_t)1e9 + t.tv_nsec;
 	// us
 	return time_ns / 1000;

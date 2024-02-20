@@ -30,6 +30,6 @@ struct Main
 
 void main_init(Main*);
 void main_free(Main*);
-void main_prepare(Main*);
+void main_prepare(Main*, Compare, void*);
 void main_start(Main*, const char*);
 void main_stop(Main*);

@@ -21,9 +21,9 @@ typedef struct monotone        monotone_t;
 typedef struct monotone_cursor monotone_cursor_t;
 typedef struct monotone_row    monotone_row_t;
 
-typedef int64_t (*monotone_compare_t)(uint64_t l_time, void* l,
-                                      uint64_t r_time, void* r,
-                                      void*    arg);
+typedef int64_t (*monotone_compare_t)(monotone_row_t*,
+                                      monotone_row_t*,
+                                      void*);
 
 struct monotone_row
 {
