@@ -787,7 +787,7 @@ main
       size_regions_origin 225
       regions             3
       events              9
-      lsn                 28
+      lsn                 29
       compression         0
       region
         min             1
@@ -909,7 +909,7 @@ main
       size_regions_origin 225
       regions             3
       events              9
-      lsn                 28
+      lsn                 29
       compression         0
       region
         min             1
@@ -1060,7 +1060,7 @@ main
       size_regions_origin 229
       regions             3
       events              9
-      lsn                 32
+      lsn                 33
       compression         0
       region
         min             1
@@ -1139,7 +1139,7 @@ main
       size_regions_origin 118
       regions             2
       events              4
-      lsn                 38
+      lsn                 39
       compression         0
       region
         min             1

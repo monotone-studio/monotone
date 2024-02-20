@@ -371,4 +371,73 @@ select
 [4]
 [8, zzz]
 (eof)
+# test: insert
+insert 7
+insert 8
+insert 9
+# test: select
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        259
+    index
+      size                159
+      size_regions        92
+      size_regions_origin 92
+      regions             1
+      events              4
+      lsn                 4
+      compression         0
+      region
+        min             1
+        max             4
+        events          4
+        offset          0
+        size            92
+show wal
+lsn     8
+lsn_min 4
+files   1
+select
+[1]
+[2]
+[3]
+[4]
+[7]
+[8]
+[9]
+(eof)
+# test: drop partition
+drop partition 0
+show partitions debug
+main
+select
+(eof)
+debug "wal_read"
+[4, 0, 1, 30]
+[5, 0, 1, 33]
+[6, 0, 1, 30]
+[7, 0, 1, 30]
+[8, 0, 1, 30]
+[9, 1, 0, 25]
+# test: restart
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: ensure partition drop
+show partitions debug
+main
+select
+(eof)
 close

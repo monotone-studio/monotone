@@ -163,4 +163,33 @@ show partitions debug
 show wal
 select
 
+# test: insert
+insert 7
+insert 8
+insert 9
+
+# test: select
+show partitions debug
+show wal
+select
+
+# test: drop partition
+drop partition 0
+show partitions debug
+select
+
+debug "wal_read"
+
+# test: restart
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: ensure partition drop
+show partitions debug
+select
+
 close

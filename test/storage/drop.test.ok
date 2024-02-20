@@ -62,7 +62,7 @@ main
       size_regions_origin 75
       regions             1
       events              3
-      lsn                 6
+      lsn                 7
       compression         0
       region
         min             0
