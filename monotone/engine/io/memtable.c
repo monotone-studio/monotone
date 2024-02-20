@@ -310,6 +310,16 @@ memtable_unset(Memtable* self, Row* row)
 	}
 }
 
+Row*
+memtable_max(Memtable* self)
+{
+	if (self->count_pages == 0)
+		return NULL;
+	auto last = rbtree_max(&self->tree);
+	auto page = container_of(last, MemtablePage, node);
+	return page->rows[page->rows_count - 1];
+}
+
 hot bool
 memtable_seek(Memtable* self, Row* key, MemtablePage** page, int* pos)
 {
