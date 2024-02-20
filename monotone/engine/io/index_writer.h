@@ -101,7 +101,7 @@ index_writer_add(IndexWriter*  self,
                  uint64_t      region_offset)
 {
 	auto region = region_writer_header(region_writer);
-	assert(region->rows > 0);
+	assert(region->events > 0);
 
 	// write region offset
 	uint32_t offset = buf_size(&self->data);
@@ -125,29 +125,29 @@ index_writer_add(IndexWriter*  self,
 	ref->size         = size;
 	ref->size_key_min = 0;
 	ref->size_key_max = 0;
-	ref->rows         = region->rows;
+	ref->events       = region->events;
 	ref->crc          = crc;
 	memset(ref->reserved, 0, sizeof(ref->reserved));
 	buf_advance(&self->data, sizeof(IndexRegion));
 
 	// copy min/max keys
 	auto min = region_writer_min(region_writer);
-	buf_write(&self->data, min, row_size(min));
+	buf_write(&self->data, min, event_size(min));
 
 	auto max = region_writer_max(region_writer);
-	buf_write(&self->data, max, row_size(max));
+	buf_write(&self->data, max, event_size(max));
 
 	ref = (IndexRegion*)(self->data.start + offset);
-	ref->size_key_min = row_size(min);
-	ref->size_key_max = row_size(max);
+	ref->size_key_min = event_size(min);
+	ref->size_key_max = event_size(max);
 
 	// update header
 	auto header = index_writer_header(self);
 	header->regions++;
-	header->rows += region->rows;
+	header->events += region->events;
 	header->size += sizeof(uint32_t) + sizeof(IndexRegion) +
-	                row_size(min) +
-	                row_size(max);
+	                event_size(min) +
+	                event_size(max);
 	header->size_regions += size;
 	header->size_regions_origin += region->size;
 }

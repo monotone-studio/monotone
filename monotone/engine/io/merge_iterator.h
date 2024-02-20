@@ -49,7 +49,7 @@ merge_iterator_has(MergeIterator* self)
 	return self->current != NULL;
 }
 
-static inline Row*
+static inline Event*
 merge_iterator_at(MergeIterator* self)
 {
 	if (unlikely(self->current == NULL))
@@ -73,7 +73,7 @@ merge_iterator_next(MergeIterator* self)
 	self->current = NULL;
 
 	Iterator* min_iterator = NULL;
-	Row* min = NULL;
+	Event* min = NULL;
 	for (int pos = 0; pos < self->list_count; pos++)
 	{
 		auto current = &list[pos];

@@ -19,7 +19,7 @@ struct PartIterator
 };
 
 hot static inline bool
-part_iterator_open_region(PartIterator* self, Row* row)
+part_iterator_open_region(PartIterator* self, Event* event)
 {
 	// read region from file
 	auto region = reader_execute(&self->reader, self->current);
@@ -28,25 +28,25 @@ part_iterator_open_region(PartIterator* self, Row* row)
 	region_iterator_reset(&self->region_iterator);
 	return region_iterator_open(&self->region_iterator, region,
 	                             self->part->comparator,
-	                             row);
+	                             event);
 }
 
 hot static inline bool
-part_iterator_open(PartIterator* self, Part* part, Row* row)
+part_iterator_open(PartIterator* self, Part* part, Event* event)
 {
 	self->part    = part;
 	self->current = NULL;
 
 	region_iterator_init(&self->region_iterator);
 	index_iterator_init(&self->index_iterator);
-	index_iterator_open(&self->index_iterator, part->index, part->comparator, row);
+	index_iterator_open(&self->index_iterator, part->index, part->comparator, event);
 
 	self->current = index_iterator_at(&self->index_iterator);
 	if (self->current == NULL)
 		return false;
 
 	reader_open(&self->reader, part);
-	return part_iterator_open_region(self, row);
+	return part_iterator_open_region(self, event);
 }
 
 hot static inline bool
@@ -55,7 +55,7 @@ part_iterator_has(PartIterator* self)
 	return region_iterator_has(&self->region_iterator);
 }
 
-hot static inline Row*
+hot static inline Event*
 part_iterator_at(PartIterator* self)
 {
 	return region_iterator_at(&self->region_iterator);

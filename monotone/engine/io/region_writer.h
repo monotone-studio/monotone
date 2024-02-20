@@ -86,40 +86,40 @@ region_writer_stop(RegionWriter* self)
 }
 
 static inline void
-region_writer_add(RegionWriter* self, Row* row)
+region_writer_add(RegionWriter* self, Event* event)
 {
 	// write data offset
 	uint32_t offset = buf_size(&self->data);
 	buf_write(&self->meta, &offset, sizeof(offset));
 
 	// copy data
-	uint32_t size = row_size(row);
-	buf_write(&self->data, row, size);
+	uint32_t size = event_size(event);
+	buf_write(&self->data, event, size);
 
 	// update header
 	auto header = region_writer_header(self);
-	header->rows++;
+	header->events++;
 }
 
-static inline Row*
+static inline Event*
 region_writer_min(RegionWriter* self)
 {
-	return (Row*)self->data.start;
+	return (Event*)self->data.start;
 }
 
-static inline Row*
+static inline Event*
 region_writer_max(RegionWriter* self)
 {
 	auto header = region_writer_header(self);
-	assert(header->rows > 0);
+	assert(header->events > 0);
 	auto offset = (uint32_t*)(self->meta.start + sizeof(Region));
-	return (Row*)(self->data.start + offset[header->rows - 1]);
+	return (Event*)(self->data.start + offset[header->events - 1]);
 }
 
-static inline Row*
+static inline Event*
 region_writer_last(RegionWriter* self)
 {
-	if (region_writer_header(self)->rows == 0)
+	if (region_writer_header(self)->events == 0)
 		return NULL;
 
 	return region_writer_max(self);

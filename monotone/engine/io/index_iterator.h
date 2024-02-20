@@ -26,14 +26,14 @@ index_iterator_init(IndexIterator* self)
 }
 
 hot static inline int
-index_iterator_search(IndexIterator* self, Row* row)
+index_iterator_search(IndexIterator* self, Event* event)
 {
 	int begin = 0;
 	int end   = self->index->regions - 1;
 	while (begin != end)
 	{
 		int mid = begin + (end - begin) / 2;
-		if (compare(self->comparator, index_region_max(self->index, mid), row) < 0)
+		if (compare(self->comparator, index_region_max(self->index, mid), event) < 0)
 			begin = mid + 1;
 		else
 			end = mid;
@@ -47,7 +47,7 @@ hot static inline void
 index_iterator_open(IndexIterator* self,
                     Index*         index,
                     Comparator*    comparator,
-                    Row*           row)
+                    Event*         event)
 {
 	self->index      = index;
 	self->current    = NULL;
@@ -56,14 +56,14 @@ index_iterator_open(IndexIterator* self,
 	if (unlikely(index == NULL || index->regions == 0))
 		return;
 
-	if (row == NULL) {
+	if (event == NULL) {
 		self->current = index_get(index, 0);
 		return;
 	}
 
-	self->pos = index_iterator_search(self, row);
+	self->pos = index_iterator_search(self, event);
 	int rc;
-	rc = compare(comparator, index_region_max(index, self->pos), row);
+	rc = compare(comparator, index_region_max(index, self->pos), event);
 	if (rc < 0)
 		self->pos++;
 	if (unlikely(self->pos >= (int)index->regions))

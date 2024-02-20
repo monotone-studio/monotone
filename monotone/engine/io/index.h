@@ -19,7 +19,7 @@ struct IndexRegion
 	uint32_t size_origin;
 	uint32_t size_key_min;
 	uint32_t size_key_max;
-	uint32_t rows;
+	uint32_t events;
 	uint32_t crc;
 	uint32_t reserved[4];
 } packed;
@@ -32,7 +32,7 @@ struct Index
 	uint64_t size_regions;
 	uint64_t size_regions_origin;
 	uint32_t regions;
-	uint64_t rows;
+	uint64_t events;
 	uint64_t lsn;
 	uint8_t  compression;
 	uint32_t reserved[4];
@@ -53,31 +53,31 @@ index_get(Index* self, int pos)
 	auto start  = (char*)self + sizeof(Index);
 	auto offset = (uint32_t*)start;
 	return (IndexRegion*)(start + (sizeof(uint32_t) * self->regions) +
-	        offset[pos]);
+	                      offset[pos]);
 }
 
-static inline Row*
+static inline Event*
 index_region_min(Index* self, int pos)
 {
 	auto region = index_get(self, pos);
-	return (Row*)((char*)region + sizeof(IndexRegion));
+	return (Event*)((char*)region + sizeof(IndexRegion));
 }
 
-static inline Row*
+static inline Event*
 index_region_max(Index* self, int pos)
 {
 	auto region = index_get(self, pos);
-	return (Row*)((char*)region + sizeof(IndexRegion) +
-	              region->size_key_min);
+	return (Event*)((char*)region + sizeof(IndexRegion) +
+	                region->size_key_min);
 }
 
-static inline Row*
+static inline Event*
 index_min(Index* self)
 {
 	return index_region_min(self, 0);
 }
 
-static inline Row*
+static inline Event*
 index_max(Index* self)
 {
 	return index_region_max(self, self->regions - 1);

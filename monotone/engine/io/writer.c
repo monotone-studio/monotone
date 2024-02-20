@@ -122,7 +122,7 @@ writer_stop(Writer* self, Id* id, uint64_t lsn, bool sync)
 }
 
 void
-writer_add(Writer* self, Row* row)
+writer_add(Writer* self, Event* event)
 {
 	if (unlikely(writer_is_region_limit(self)))
 	{
@@ -133,6 +133,6 @@ writer_add(Writer* self, Row* row)
 		writer_start_region(self);
 	}
 
-	// add next row to the region
-	region_writer_add(&self->region_writer, row);
+	// add next event to the region
+	region_writer_add(&self->region_writer, event);
 }

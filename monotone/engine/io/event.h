@@ -6,10 +6,10 @@
 // time-series storage
 //
 
-typedef struct RowRef RowRef;
-typedef struct Row    Row;
+typedef struct EventRef EventRef;
+typedef struct Event    Event;
 
-struct RowRef
+struct EventRef
 {
 	uint64_t time;
 	void*    data;
@@ -17,7 +17,7 @@ struct RowRef
 	bool     remove;
 };
 
-struct Row
+struct Event
 {
 	uint64_t time;
 	uint8_t  is_delete:1;
@@ -27,19 +27,19 @@ struct Row
 } packed;
 
 always_inline hot static inline int
-row_size(Row* self)
+event_size(Event* self)
 {
-	return sizeof(Row) + self->data_size;
+	return sizeof(Event) + self->data_size;
 }
 
 always_inline hot static inline uint64_t
-row_interval_min(Row* self)
+event_interval_min(Event* self)
 {
 	return self->time - (self->time % config_interval());
 }
 
 hot static inline void
-row_init(Row* self, RowRef* ref)
+event_init(Event* self, EventRef* ref)
 {
 	self->time      = ref->time;
 	self->is_delete = ref->remove;
@@ -49,32 +49,32 @@ row_init(Row* self, RowRef* ref)
 		memcpy(self->data, ref->data, ref->data_size);
 }
 
-static inline Row*
-row_allocate(Heap* heap, RowRef* ref)
+static inline Event*
+event_allocate(Heap* heap, EventRef* ref)
 {
-	auto row = (Row*)heap_allocate(heap, sizeof(Row) + ref->data_size);
-	row_init(row, ref);
-	return row;
+	auto event = (Event*)heap_allocate(heap, sizeof(Event) + ref->data_size);
+	event_init(event, ref);
+	return event;
 }
 
-static inline Row*
-row_copy(Heap* heap, Row* src)
+static inline Event*
+event_copy(Heap* heap, Event* src)
 {
-	auto row = (Row*)heap_allocate(heap, row_size(src));
-	memcpy(row, src, row_size(src));
-	return row;
+	auto event = (Event*)heap_allocate(heap, event_size(src));
+	memcpy(event, src, event_size(src));
+	return event;
 }
 
-static inline Row*
-row_malloc(RowRef* ref)
+static inline Event*
+event_malloc(EventRef* ref)
 {
-	auto row = (Row*)mn_malloc(sizeof(Row) + ref->data_size);
-	row_init(row, ref);
-	return row;
+	auto event = (Event*)mn_malloc(sizeof(Event) + ref->data_size);
+	event_init(event, ref);
+	return event;
 }
 
 always_inline static inline void
-row_free(Row* self)
+event_free(Event* self)
 {
 	mn_free(self);
 }

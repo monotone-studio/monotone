@@ -11,7 +11,7 @@ typedef struct MemtableIterator MemtableIterator;
 struct MemtableIterator
 {
 	Iterator      iterator;
-	Row*          current;
+	Event*        current;
 	MemtablePage* page;
 	int           page_pos;
 	Memtable*     memtable;
@@ -21,7 +21,7 @@ struct MemtableIterator
 static inline bool
 memtable_iterator_open(MemtableIterator* self,
                        Memtable*         memtable,
-                       Row*              key,
+                       Event*            key,
                        bool              attach)
 {
 	self->current  = NULL;
@@ -31,13 +31,13 @@ memtable_iterator_open(MemtableIterator* self,
 	if (unlikely(self->memtable->count == 0))
 		return false;
 	bool match = memtable_seek(memtable, key, &self->page, &self->page_pos);
-	if (self->page_pos >= self->page->rows_count)
+	if (self->page_pos >= self->page->events_count)
 	{
 		self->page     = NULL;
 		self->page_pos = 0;
 		return false;
 	}
-	self->current = self->page->rows[self->page_pos];
+	self->current = self->page->events[self->page_pos];
 
 	// attach iterator to the memtable for updates
 	if (attach)
@@ -54,7 +54,7 @@ memtable_iterator_has(MemtableIterator* self)
 	return self->current != NULL;
 }
 
-static inline Row*
+static inline Event*
 memtable_iterator_at(MemtableIterator* self)
 {
 	return self->current;
@@ -67,9 +67,9 @@ memtable_iterator_next(MemtableIterator* self)
 		return;
 
 	self->current = NULL;
-	if (likely((self->page_pos + 1) < self->page->rows_count))
+	if (likely((self->page_pos + 1) < self->page->events_count))
 	{
-		self->current = self->page->rows[++self->page_pos];
+		self->current = self->page->events[++self->page_pos];
 		return;
 	}
 
@@ -82,7 +82,7 @@ memtable_iterator_next(MemtableIterator* self)
 		return;
 
 	self->page = container_of(next, MemtablePage, node);
-	self->current = self->page->rows[0];
+	self->current = self->page->events[0];
 }
 
 static inline void
@@ -135,18 +135,18 @@ memtable_iterator_sync(MemtableIterator* self,
 	// replace
 	if (self->page_pos == pos)
 	{
-		// update current page row pointer on replace
-		self->current = self->page->rows[self->page_pos];
+		// update current page event pointer on replace
+		self->current = self->page->events[self->page_pos];
 		return;
 	}
 
 	// insert
 	if (page_split)
 	{
-		if (self->page_pos >= page->rows_count)
+		if (self->page_pos >= page->events_count)
 		{
 			self->page = page_split;
-			self->page_pos = self->page_pos - page->rows_count;
+			self->page_pos = self->page_pos - page->events_count;
 		}
 	}
 
@@ -154,5 +154,5 @@ memtable_iterator_sync(MemtableIterator* self,
 	if (pos <= self->page_pos)
 		self->page_pos++;
 
-	self->current = self->page->rows[self->page_pos];
+	self->current = self->page->events[self->page_pos];
 }

@@ -18,7 +18,7 @@ struct PartCursor
 };
 
 hot static inline void
-part_cursor_open(PartCursor* self, Part* part, Row* row)
+part_cursor_open(PartCursor* self, Part* part, Event* event)
 {
 	self->part = part;
 
@@ -27,17 +27,17 @@ part_cursor_open(PartCursor* self, Part* part, Row* row)
 	auto memtable = part_memtable(part, &memtable_prev);
 	if (memtable->count > 0)
 	{
-		memtable_iterator_open(&self->memtable_iterator_a, memtable, row, true);
+		memtable_iterator_open(&self->memtable_iterator_a, memtable, event, true);
 		merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_a.iterator);
 	}
 	if (memtable_prev->count > 0)
 	{
-		memtable_iterator_open(&self->memtable_iterator_b, memtable_prev, row, false);
+		memtable_iterator_open(&self->memtable_iterator_b, memtable_prev, event, false);
 		merge_iterator_add(&self->merge_iterator, &self->memtable_iterator_b.iterator);
 	}
 
 	// open part iterator
-	part_iterator_open(&self->part_iterator, part, row);
+	part_iterator_open(&self->part_iterator, part, event);
 	merge_iterator_add(&self->merge_iterator, &self->part_iterator.iterator);
 
 	// open merge iterator
@@ -50,7 +50,7 @@ part_cursor_has(PartCursor* self)
 	return merge_iterator_has(&self->merge_iterator);
 }
 
-hot static inline Row*
+hot static inline Event*
 part_cursor_at(PartCursor* self)
 {
 	return merge_iterator_at(&self->merge_iterator);

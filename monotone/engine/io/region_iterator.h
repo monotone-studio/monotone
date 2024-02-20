@@ -13,14 +13,14 @@ struct RegionIterator
 	Iterator    iterator;
 	Region*     region;
 	int         pos;
-	Row*        current;
+	Event*      current;
 	Comparator* comparator;
 };
 
 hot static inline void
 region_iterator_set_pos(RegionIterator* self, int pos)
 {
-	if (unlikely(pos < 0 || pos >= (int)self->region->rows))
+	if (unlikely(pos < 0 || pos >= (int)self->region->events))
 	{
 		self->current = NULL;
 		self->pos = 0;
@@ -31,22 +31,22 @@ region_iterator_set_pos(RegionIterator* self, int pos)
 }
 
 always_inline hot static inline int
-region_iterator_compare(RegionIterator* self, int pos, Row* row)
+region_iterator_compare(RegionIterator* self, int pos, Event* event)
 {
 	auto current = region_get(self->region, pos);
-	return compare(self->comparator, current, row);
+	return compare(self->comparator, current, event);
 }
 
 hot static inline int
-region_iterator_search(RegionIterator* self, Row* row, bool* match)
+region_iterator_search(RegionIterator* self, Event* event, bool* match)
 {
 	int min = 0;
 	int mid = 0;
-	int max = self->region->rows - 1;
+	int max = self->region->events - 1;
 	while (max >= min)
 	{
 		mid = min + (max - min) / 2;
-		int rc = region_iterator_compare(self, mid, row);
+		int rc = region_iterator_compare(self, mid, event);
 		if (rc < 0) {
 			min = mid + 1;
 		} else
@@ -64,18 +64,18 @@ hot static inline bool
 region_iterator_open(RegionIterator* self,
                      Region*         region,
                      Comparator*     comparator,
-                     Row*            row)
+                     Event*          event)
 {
 	self->region     = region;
 	self->pos        = 0;
 	self->current    = NULL;
 	self->comparator = comparator;
-	if (unlikely(self->region->rows == 0))
+	if (unlikely(self->region->events == 0))
 		return false;
 	bool match = false;
 	int pos;
-	if (row)
-		pos = region_iterator_search(self, row, &match);
+	if (event)
+		pos = region_iterator_search(self, event, &match);
 	else
 		pos = 0;
 	region_iterator_set_pos(self, pos);
@@ -88,7 +88,7 @@ region_iterator_has(RegionIterator* self)
 	return self->current != NULL;
 }
 
-static inline Row*
+static inline Event*
 region_iterator_at(RegionIterator* self)
 {
 	return self->current;

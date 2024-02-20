@@ -58,15 +58,15 @@ merger_write(Merger* self, MergerReq* req)
 	writer_start(writer, req->source, &self->part->file);
 	for (;;)
 	{
-		auto row = merge_iterator_at(it);
-		if (unlikely(row == NULL))
+		auto event = merge_iterator_at(it);
+		if (unlikely(event == NULL))
 			break;
-		if (row->is_delete)
+		if (event->is_delete)
 		{
 			merge_iterator_next(it);
 			continue;
 		}
-		writer_add(writer, row);
+		writer_add(writer, event);
 		merge_iterator_next(it);
 	}
 

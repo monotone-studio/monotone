@@ -39,18 +39,18 @@ log_write_reset(LogWrite* self)
 	self->size  = 0;
 }
 
-static inline Row*
+static inline Event*
 log_write_first(LogWrite* self)
 {
-	return (Row*)((uintptr_t)self + sizeof(*self));
+	return (Event*)((uintptr_t)self + sizeof(*self));
 }
 
-static inline Row*
-log_write_next(LogWrite* self, Row* at)
+static inline Event*
+log_write_next(LogWrite* self, Event* at)
 {
-	auto next = (uintptr_t)at + row_size(at);
+	auto next = (uintptr_t)at + event_size(at);
 	auto eof  = (uintptr_t)self + self->size;
 	if (next >= eof)
 		return NULL;
-	return (Row*)next;
+	return (Event*)next;
 }

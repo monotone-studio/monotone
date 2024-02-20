@@ -8,7 +8,7 @@
 
 typedef struct Comparator Comparator;
 
-typedef int (*Compare)(RowRef*, RowRef*, void*);
+typedef int (*Compare)(EventRef*, EventRef*, void*);
 
 struct Comparator
 {
@@ -24,7 +24,7 @@ comparator_init(Comparator* self)
 }
 
 hot static inline int64_t
-compare(Comparator* self, Row* a, Row* b)
+compare(Comparator* self, Event* a, Event* b)
 {
 	// compare by time first
 	int64_t diff = a->time - b->time;
@@ -32,14 +32,14 @@ compare(Comparator* self, Row* a, Row* b)
 		return diff;
 	if (! self->compare)
 		return 0;
-	RowRef l =
+	EventRef l =
 	{
 		.time      = a->time,
 		.data_size = a->data_size,
 		.data      = a->data,
 		.remove    = a->is_delete
 	};
-	RowRef r =
+	EventRef r =
 	{
 		.time      = b->time,
 		.data_size = b->data_size,

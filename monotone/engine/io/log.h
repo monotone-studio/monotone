@@ -11,9 +11,9 @@ typedef struct Log   Log;
 
 struct LogOp
 {
-	Row*  row;
-	Row*  prev;
-	void* ref;
+	Event* event;
+	Event* prev;
+	void*  ref;
 };
 
 struct Log
@@ -70,8 +70,8 @@ log_cleanup(Log* self)
 	auto end = log_end(self);
 	for (; pos < end; pos++)
 	{
-		if (pos->row)
-			row_free(pos->row);
+		if (pos->event)
+			event_free(pos->event);
 	}
 }
 
@@ -88,16 +88,16 @@ log_add(Log* self)
 {
 	buf_reserve(&self->op, sizeof(LogOp));
 	auto op = (LogOp*)self->op.position;
-	op->row  = NULL;
-	op->prev = NULL;
-	op->ref  = NULL;
+	op->event = NULL;
+	op->prev  = NULL;
+	op->ref   = NULL;
 	self->write.count++;
 	buf_advance(&self->op, sizeof(LogOp));
 	return op;
 }
 
 hot static inline void
-log_add_row(Log* self, LogOp* op, Row* row)
+log_add_event(Log* self, LogOp* op, Event* event)
 {
 	// add log write header before the first entry
 	if (self->write.count == 1)
@@ -105,9 +105,9 @@ log_add_row(Log* self, LogOp* op, Row* row)
 		iov_add(&self->iov, &self->write, sizeof(self->write));
 		self->write.size += sizeof(LogWrite);
 	}
-	iov_add(&self->iov, row, row_size(row));
-	op->row = row;
-	self->write.size += row_size(row);
+	iov_add(&self->iov, event, event_size(event));
+	op->event = event;
+	self->write.size += event_size(event);
 }
 
 hot static inline void

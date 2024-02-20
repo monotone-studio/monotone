@@ -15,8 +15,8 @@
 #include "io/cloud_mgr.h"
 #include "io/cloud_mock.h"
 
-// row
-#include "io/row.h"
+// event
+#include "io/event.h"
 #include "io/comparator.h"
 #include "io/log_write.h"
 #include "io/log.h"

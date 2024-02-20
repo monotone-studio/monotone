@@ -12,8 +12,8 @@ typedef struct Memtable     Memtable;
 struct MemtablePage
 {
 	RbtreeNode node;
-	int        rows_count;
-	Row*       rows[];
+	int        events_count;
+	Event*     events[];
 };
 
 struct Memtable
@@ -32,11 +32,11 @@ struct Memtable
 	Heap        heap;
 };
 
-void memtable_init(Memtable*, int, int, Comparator*);
-void memtable_free(Memtable*);
-void memtable_move(Memtable*, Memtable*);
-Row* memtable_set(Memtable*, Row*);
-void memtable_unset(Memtable*, Row*);
-Row* memtable_max(Memtable*);
-bool memtable_seek(Memtable*, Row*, MemtablePage**, int*);
-void memtable_follow(Memtable*, uint64_t);
+void   memtable_init(Memtable*, int, int, Comparator*);
+void   memtable_free(Memtable*);
+void   memtable_move(Memtable*, Memtable*);
+Event* memtable_set(Memtable*, Event*);
+void   memtable_unset(Memtable*, Event*);
+Event* memtable_max(Memtable*);
+bool   memtable_seek(Memtable*, Event*, MemtablePage**, int*);
+void   memtable_follow(Memtable*, uint64_t);

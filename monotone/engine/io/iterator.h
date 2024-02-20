@@ -9,7 +9,7 @@
 typedef struct Iterator Iterator;
 
 typedef bool (*IteratorHas)(Iterator*);
-typedef Row* (*IteratorAt)(Iterator*);
+typedef Event* (*IteratorAt)(Iterator*);
 typedef void (*IteratorNext)(Iterator*);
 typedef void (*IteratorClose)(Iterator*);
 
@@ -27,7 +27,7 @@ iterator_has(Iterator* self)
 	return self->has(self);
 }
 
-static inline Row*
+static inline Event*
 iterator_at(Iterator* self)
 {
 	return self->at(self);
