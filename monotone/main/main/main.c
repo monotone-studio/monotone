@@ -193,6 +193,10 @@ main_start(Main* self, const char* directory)
 
 	// todo: register cloud ifaces
 
+	// unset comparator for serial mode
+	if (config_serial())
+		comparator_init(&self->comparator);
+
 	// recover storages
 	engine_open(&self->engine);
 
@@ -202,6 +206,10 @@ main_start(Main* self, const char* directory)
 		wal_open(&self->wal);
 		main_replay(self);
 	}
+
+	// restore serial number
+	if (config_serial())
+		engine_set_serial(&self->engine);
 
 	// start compaction workers
 	worker_mgr_start(&self->worker_mgr, &self->engine);
