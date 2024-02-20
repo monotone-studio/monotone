@@ -187,12 +187,12 @@ test_suite_cmd_error(TestSuite* self, char* arg)
 static int
 test_suite_cmd_insert(TestSuite* self, char* arg)
 {
-	char* arg_time  = test_arg(&arg);
+	char* arg_id    = test_arg(&arg);
 	char* arg_value = test_arg(&arg);
 
-	if (arg_time == NULL)
+	if (arg_id == NULL)
 	{
-		test_error(self, "line %d: insert <time> [value] expected",
+		test_error(self, "line %d: insert <id> [value] expected",
 		           self->current_line);
 		return -1;
 	}
@@ -203,14 +203,14 @@ test_suite_cmd_insert(TestSuite* self, char* arg)
 		return 0;
 	}
 
-	monotone_row_t row =
+	monotone_event_t event =
 	{
-		.time = strtoull(arg_time, NULL, 10),
+		.id   = strtoull(arg_id, NULL, 10),
 		.data = arg_value,
 		.data_size = arg_value ? strlen(arg_value) : 0,
 		.remove = false
 	};
-	int rc = monotone_write(self->env, &row, 1);
+	int rc = monotone_write(self->env, &event, 1);
 	if (rc == -1)
 		test_log_error(self);
 
@@ -220,12 +220,12 @@ test_suite_cmd_insert(TestSuite* self, char* arg)
 static int
 test_suite_cmd_delete(TestSuite* self, char* arg)
 {
-	char* arg_time  = test_arg(&arg);
+	char* arg_id    = test_arg(&arg);
 	char* arg_value = test_arg(&arg);
 
-	if (arg_time == NULL)
+	if (arg_id == NULL)
 	{
-		test_error(self, "line %d: insert <time> [value] expected",
+		test_error(self, "line %d: insert <id> [value] expected",
 		           self->current_line);
 		return -1;
 	}
@@ -236,14 +236,14 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 		return 0;
 	}
 
-	monotone_row_t row =
+	monotone_event_t event =
 	{
-		.time = strtoull(arg_time, NULL, 10),
+		.id = strtoull(arg_id, NULL, 10),
 		.data = arg_value,
 		.data_size = arg_value ? strlen(arg_value) : 0,
 		.remove = true
 	};
-	int rc = monotone_write(self->env, &row, 1);
+	int rc = monotone_write(self->env, &event, 1);
 	if (rc == -1)
 		test_log_error(self);
 
@@ -254,12 +254,12 @@ static int
 test_suite_cmd_cursor(TestSuite* self, char* arg)
 {
 	char* arg_name  = test_arg(&arg);
-	char* arg_time  = test_arg(&arg);
+	char* arg_id    = test_arg(&arg);
 	char* arg_value = test_arg(&arg);
 
 	if (arg_name == NULL)
 	{
-		test_error(self, "line %d: cursor <name> <time> [value] expected",
+		test_error(self, "line %d: cursor <name> <id> [value] expected",
 		           self->current_line);
 		return -1;
 	}
@@ -280,14 +280,14 @@ test_suite_cmd_cursor(TestSuite* self, char* arg)
 
 	cursor = test_cursor_new(self, arg_name);
 
-	monotone_row_t* key = NULL;
-	monotone_row_t  row;
-	if (arg_time)
+	monotone_event_t* key = NULL;
+	monotone_event_t  event;
+	if (arg_id)
 	{
-		row.time = strtoull(arg_time, NULL, 10);
-		row.data = arg_value;
-		row.data_size = arg_value ? strlen(arg_value) : 0;
-		key = &row;
+		event.id   = strtoull(arg_id, NULL, 10);
+		event.data = arg_value;
+		event.data_size = arg_value ? strlen(arg_value) : 0;
+		key = &event;
 	}
 
 	cursor->cursor = monotone_cursor(self->env, NULL, key);
@@ -353,17 +353,17 @@ test_suite_cmd_read(TestSuite* self, char* arg)
 	if (cursor->cursor == NULL)
 		return -1;
 
-	monotone_row_t row;
-	int rc = monotone_read(cursor->cursor, &row);
+	monotone_event_t event;
+	int rc = monotone_read(cursor->cursor, &event);
 	if (rc == 0)
 	{
 		test_log(self, "(eof)\n");
 	} else
 	{
-		if (row.data_size > 0)
-			test_log(self, "[%" PRIu64 ", %.*s]\n", row.time, row.data_size, row.data);
+		if (event.data_size > 0)
+			test_log(self, "[%" PRIu64 ", %.*s]\n", event.id, event.data_size, event.data);
 		else
-			test_log(self, "[%" PRIu64 "]\n", row.time);
+			test_log(self, "[%" PRIu64 "]\n", event.id);
 	}
 	return 0;
 }
@@ -410,7 +410,7 @@ test_suite_cmd_next(TestSuite* self, char* arg)
 static int
 test_suite_cmd_select(TestSuite* self, char* arg)
 {
-	char* arg_time  = test_arg(&arg);
+	char* arg_id    = test_arg(&arg);
 	char* arg_value = test_arg(&arg);
 
 	if (! self->env)
@@ -419,14 +419,14 @@ test_suite_cmd_select(TestSuite* self, char* arg)
 		return 0;
 	}
 
-	monotone_row_t* key = NULL;
-	monotone_row_t  row;
-	if (arg_time)
+	monotone_event_t* key = NULL;
+	monotone_event_t  event;
+	if (arg_id)
 	{
-		row.time = strtoull(arg_time, NULL, 10);
-		row.data = arg_value;
-		row.data_size = arg_value ? strlen(arg_value) : 0;
-		key = &row;
+		event.id   = strtoull(arg_id, NULL, 10);
+		event.data = arg_value;
+		event.data_size = arg_value ? strlen(arg_value) : 0;
+		key = &event;
 	}
 
 	auto cursor = monotone_cursor(self->env, NULL, key);
@@ -436,12 +436,12 @@ test_suite_cmd_select(TestSuite* self, char* arg)
 		return 0;
 	}
 
-	while (monotone_read(cursor, &row))
+	while (monotone_read(cursor, &event))
 	{
-		if (row.data_size > 0)
-			test_log(self, "[%" PRIu64 ", %.*s]\n", row.time, row.data_size, row.data);
+		if (event.data_size > 0)
+			test_log(self, "[%" PRIu64 ", %.*s]\n", event.id, event.data_size, event.data);
 		else
-			test_log(self, "[%" PRIu64 "]\n", row.time);
+			test_log(self, "[%" PRIu64 "]\n", event.id);
 
 		int rc = monotone_next(cursor);
 		if (rc == -1)
