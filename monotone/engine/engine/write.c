@@ -79,6 +79,12 @@ engine_write(Engine* self, RowRef* rows, int count)
 		for (int i = 0; i < count; i++)
 		{
 			auto row_ref = &rows[i];
+
+			// set serial
+			if (config_serial())
+				row_ref->time = config_ssn_next();
+
+			// prepare log record
 			auto op = log_add(&log);
 
 			// find or create partition

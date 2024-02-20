@@ -27,5 +27,6 @@ void engine_init(Engine*, Comparator*, Wal*, Service*, CloudMgr*);
 void engine_free(Engine*);
 void engine_open(Engine*);
 void engine_close(Engine*);
+void engine_set_serial(Engine*);
 Ref* engine_lock(Engine*, uint64_t, LockType, bool, bool);
 void engine_unlock(Engine*, Ref*, LockType);

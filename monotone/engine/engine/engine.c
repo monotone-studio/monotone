@@ -67,6 +67,29 @@ engine_close(Engine* self)
 	}
 }
 
+void
+engine_set_serial(Engine* self)
+{
+	auto slice = mapping_max(&self->mapping);
+	if (! slice)
+		return;
+	auto ref  = ref_of(slice);
+	auto part = ref->part;
+
+	uint64_t serial = 0;
+	if (part->index)
+	{
+		auto max = index_max(part->index);
+		serial = max->time;
+	}
+
+	auto max = memtable_max(part->memtable);
+	if (max && max->time > serial)
+		serial = max->time;
+
+	config_ssn_set(serial);
+}
+
 static Slice*
 engine_create(Engine* self, Slice* head, uint64_t min, uint64_t max)
 {
