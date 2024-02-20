@@ -113,6 +113,20 @@ engine_drop_reference(Engine* self, uint64_t min)
 
 	// free
 	ref_free(ref);
+
+	// wal write
+	if (var_int_of(&config()->wal_enable))
+	{
+		LogDrop drop;
+		log_drop_init(&drop);
+		drop.id = min;
+		auto rotate_ready = wal_write_op(self->wal, &drop.write);
+
+		// schedule wal rotation
+		if (rotate_ready)
+			service_rotate(self->service);
+	}
+
 	return true;
 }
 

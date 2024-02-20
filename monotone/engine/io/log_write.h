@@ -10,7 +10,8 @@ typedef struct LogWrite LogWrite;
 
 enum
 {
-	LOG_WRITE
+	LOG_WRITE,
+	LOG_DROP
 };
 
 struct LogWrite

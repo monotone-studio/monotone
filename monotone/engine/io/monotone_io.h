@@ -19,6 +19,7 @@
 #include "io/event.h"
 #include "io/comparator.h"
 #include "io/log_write.h"
+#include "io/log_drop.h"
 #include "io/log.h"
 
 // iterator
