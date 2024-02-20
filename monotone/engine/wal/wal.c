@@ -191,11 +191,31 @@ wal_write(Wal* self, Log* log)
 	log->write.lsn = config_lsn() + 1;
 
 	// write wal file
-	wal_file_write(self->current, iov_pointer(&log->iov),
-	               log->iov.iov_count);
+	wal_file_writev(self->current, iov_pointer(&log->iov),
+	                log->iov.iov_count);
 
 	// set lsn
 	config_lsn_set(log->write.lsn);
+
+	// return true if wal is ready to be rotated
+	auto wm = var_int_of(&config()->wal_rotate_wm);
+	return wal_rotate_ready(self, wm);
+}
+
+hot bool
+wal_write_op(Wal* self, LogWrite* write)
+{
+	mutex_lock(&self->lock);
+	guard(unlock, mutex_unlock, &self->lock);
+
+	// assign next lsn
+	write->lsn = config_lsn() + 1;
+
+	// write wal file
+	wal_file_write(self->current, write, write->size);
+
+	// set lsn
+	config_lsn_set(write->lsn);
 
 	// return true if wal is ready to be rotated
 	auto wm = var_int_of(&config()->wal_rotate_wm);

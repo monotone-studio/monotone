@@ -56,7 +56,15 @@ wal_file_close(WalFile* self)
 }
 
 static inline void
-wal_file_write(WalFile* self, struct iovec* iov, int iovc)
+wal_file_write(WalFile* self, void* data, int data_size)
+{
+	file_write(&self->file, data, data_size);
+	if (var_int_of(&config()->wal_sync_on_write))
+		file_sync(&self->file);
+}
+
+static inline void
+wal_file_writev(WalFile* self, struct iovec* iov, int iovc)
 {
 	file_writev(&self->file, iov, iovc);
 	if (var_int_of(&config()->wal_sync_on_write))
