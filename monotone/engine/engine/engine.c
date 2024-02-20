@@ -76,16 +76,24 @@ engine_set_serial(Engine* self)
 	auto ref  = ref_of(slice);
 	auto part = ref->part;
 
+	bool     serial_set = false;
 	uint64_t serial = 0;
 	if (part->index)
 	{
 		auto max = index_max(part->index);
 		serial = max->time;
+		serial_set = true;
 	}
 
 	auto max = memtable_max(part->memtable);
-	if (max && max->time > serial)
+	if (max && max->time >= serial)
+	{
 		serial = max->time;
+		serial_set = true;
+	}
+
+	if (serial_set)
+		serial++;
 
 	config_ssn_set(serial);
 }
