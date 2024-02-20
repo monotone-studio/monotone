@@ -133,7 +133,7 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 				buf_printf(buf, "      size_regions        %" PRIu64 "\n", index->size_regions);
 				buf_printf(buf, "      size_regions_origin %" PRIu64 "\n", index->size_regions_origin);
 				buf_printf(buf, "      regions             %" PRIu32 "\n", index->regions);
-				buf_printf(buf, "      rows                %" PRIu64 "\n", index->rows);
+				buf_printf(buf, "      events              %" PRIu64 "\n", index->events);
 				buf_printf(buf, "      lsn                 %" PRIu64 "\n", index->lsn);
 				buf_printf(buf, "      compression         %" PRIu8  "\n", index->compression);
 				if (debug)
@@ -146,7 +146,7 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 						buf_printf(buf, "      region\n");
 						buf_printf(buf, "        min             %" PRIu64 "\n", min->time);
 						buf_printf(buf, "        max             %" PRIu64 "\n", max->time);
-						buf_printf(buf, "        rows            %" PRIu32 "\n", region->rows);
+						buf_printf(buf, "        events          %" PRIu32 "\n", region->events);
 						buf_printf(buf, "        offset          %" PRIu32 "\n", region->offset);
 						buf_printf(buf, "        size            %" PRIu32 "\n", region->size);
 					}

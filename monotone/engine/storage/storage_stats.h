@@ -14,8 +14,8 @@ struct StorageStats
 	uint64_t partitions_cloud;
 	uint64_t min;
 	uint64_t max;
-	uint64_t rows;
-	uint64_t rows_heap;
+	uint64_t events;
+	uint64_t events_heap;
 	uint64_t size;
 	uint64_t size_uncompressed;
 	uint64_t size_heap;
@@ -46,12 +46,12 @@ storage_stats(Storage* self, StorageStats* stats)
 		if (part->id.max > stats->max)
 			stats->max = part->id.max;
 
-		// rows
+		// events
 		if (part->index)
-			stats->rows += part->index->rows;
-		uint64_t rows_heap = part->memtable_a.count + part->memtable_b.count;
-		stats->rows_heap += rows_heap;
-		stats->rows += rows_heap;
+			stats->events += part->index->events;
+		uint64_t events_heap = part->memtable_a.count + part->memtable_b.count;
+		stats->events_heap += events_heap;
+		stats->events += events_heap;
 
 		// size
 		if (part->index)
@@ -77,8 +77,8 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  max                 %" PRIu64 "\n", stats.max);
 	buf_printf(buf, "  partitions          %" PRIu64 "\n", stats.partitions);
 	buf_printf(buf, "  partitions_cloud    %" PRIu64 "\n", stats.partitions_cloud);
-	buf_printf(buf, "  rows                %" PRIu64 "\n", stats.rows);
-	buf_printf(buf, "  rows_heap           %" PRIu64 "\n", stats.rows_heap);
+	buf_printf(buf, "  events              %" PRIu64 "\n", stats.events);
+	buf_printf(buf, "  events_heap         %" PRIu64 "\n", stats.events_heap);
 
 	uint64_t size = stats.size / 1024 / 1024;
 	uint64_t size_uncompressed = stats.size_uncompressed / 1024 / 1024;
