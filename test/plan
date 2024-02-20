@@ -6,7 +6,7 @@ group functional
 test memtable
 test partition
 test mapping
-#test serial
+test serial
 
 # storage
 directory storage
@@ -40,4 +40,5 @@ test wal
 test recovery_config
 test recovery_storage
 test recovery_cloud
+test recovery_serial
 test crash
