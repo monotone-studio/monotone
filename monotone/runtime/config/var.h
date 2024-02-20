@@ -84,11 +84,15 @@ var_int_add(Var* self, uint64_t value)
 }
 
 static inline uint64_t
+var_int_set_inc(Var* self)
+{
+	return atomic_u64_inc(&self->integer);
+}
+
+static inline uint64_t
 var_int_set_next(Var* self)
 {
-	uint64_t value;
-	value = atomic_u64_inc(&self->integer);
-	return value + 1;
+	return var_int_set_inc(self) + 1;
 }
 
 static inline void

@@ -72,7 +72,7 @@ config_ssn_set(uint64_t value)
 static inline uint64_t
 config_ssn_next(void)
 {
-	return var_int_set_next(&config()->ssn);
+	return var_int_set_inc(&config()->ssn);
 }
 
 static inline void
