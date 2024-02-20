@@ -19,13 +19,13 @@ extern "C" {
 
 typedef struct monotone        monotone_t;
 typedef struct monotone_cursor monotone_cursor_t;
-typedef struct monotone_row    monotone_row_t;
+typedef struct monotone_event  monotone_event_t;
 
-typedef int64_t (*monotone_compare_t)(monotone_row_t*,
-                                      monotone_row_t*,
+typedef int64_t (*monotone_compare_t)(monotone_event_t*,
+                                      monotone_event_t*,
                                       void*);
 
-struct monotone_row
+struct monotone_event
 {
 	uint64_t time;
 	void*    data;
@@ -55,14 +55,14 @@ monotone_execute(monotone_t*, const char* command, char** result);
 
 // batch write
 MONOTONE_API int
-monotone_write(monotone_t*, monotone_row_t*, int count);
+monotone_write(monotone_t*, monotone_event_t*, int count);
 
 // cursor
 MONOTONE_API monotone_cursor_t*
-monotone_cursor(monotone_t*, const char* options, monotone_row_t*);
+monotone_cursor(monotone_t*, const char* options, monotone_event_t*);
 
 MONOTONE_API int
-monotone_read(monotone_cursor_t*, monotone_row_t*);
+monotone_read(monotone_cursor_t*, monotone_event_t*);
 
 MONOTONE_API int
 monotone_next(monotone_cursor_t*);

@@ -157,13 +157,13 @@ monotone_execute(monotone_t* self, const char* command, char** result)
 }
 
 MONOTONE_API int
-monotone_write(monotone_t* self, monotone_row_t* rows, int count)
+monotone_write(monotone_t* self, monotone_event_t* events, int count)
 {
 	monotone_enter(self);
 	int rc = 0;
 	Exception e;
 	if (try(&e)) {
-		engine_write(&self->main.engine, (RowRef*)rows, count);
+		engine_write(&self->main.engine, (EventArg*)events, count);
 	}
 	if (catch(&e)) {
 		rc = -1;
@@ -172,7 +172,7 @@ monotone_write(monotone_t* self, monotone_row_t* rows, int count)
 }
 
 hot MONOTONE_API monotone_cursor_t*
-monotone_cursor(monotone_t* self, const char* options, monotone_row_t* row)
+monotone_cursor(monotone_t* self, const char* options, monotone_event_t* key)
 {
 	unused(options);
 	monotone_enter(self);
@@ -188,13 +188,13 @@ monotone_cursor(monotone_t* self, const char* options, monotone_row_t* row)
 	Exception e;
 	if (try(&e))
 	{
-		if (row == NULL) {
+		if (key == NULL) {
 			engine_cursor_open(&cursor->cursor, &self->main.engine, NULL);
 		} else
 		{
-			auto key = row_malloc((RowRef*)row);
-			guard(guard, row_free, key);
-			engine_cursor_open(&cursor->cursor, &self->main.engine, key);
+			auto copy = event_malloc((EventArg*)key);
+			guard(guard, event_free, copy);
+			engine_cursor_open(&cursor->cursor, &self->main.engine, copy);
 		}
 		engine_cursor_skip_deletes(&cursor->cursor);
 	}
@@ -207,7 +207,7 @@ monotone_cursor(monotone_t* self, const char* options, monotone_row_t* row)
 }
 
 hot MONOTONE_API int
-monotone_read(monotone_cursor_t* self, monotone_row_t* row)
+monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 {
 	monotone_enter(self->env);
 	int rc;
@@ -217,18 +217,18 @@ monotone_read(monotone_cursor_t* self, monotone_row_t* row)
 		auto at = engine_cursor_at(&self->cursor);
 		if (likely(at))
 		{
-			row->time      = at->time;
-			row->data_size = at->data_size;
-			row->data      = at->data;
+			event->time      = at->time;
+			event->data_size = at->data_size;
+			event->data      = at->data;
 			rc = 1;
 
 			// this situation is possible on concurrent delete
 			// from the same thread
 			if (unlikely(at->is_delete))
 			{
-				row->time      = 0;
-				row->data_size = 0;
-				row->data      = NULL;
+				event->time      = 0;
+				event->data_size = 0;
+				event->data      = NULL;
 				rc = 0;
 			}
 
