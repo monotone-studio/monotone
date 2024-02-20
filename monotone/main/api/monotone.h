@@ -18,8 +18,8 @@ extern "C" {
 #define MONOTONE_API __attribute__((visibility("default")))
 
 typedef struct monotone        monotone_t;
-typedef struct monotone_cursor monotone_cursor_t;
 typedef struct monotone_event  monotone_event_t;
+typedef struct monotone_cursor monotone_cursor_t;
 
 typedef int64_t (*monotone_compare_t)(monotone_event_t*,
                                       monotone_event_t*,
@@ -43,7 +43,6 @@ monotone_free(void*);
 MONOTONE_API const char*
 monotone_error(monotone_t*);
 
-// main
 MONOTONE_API int
 monotone_open(monotone_t*, const char* path);
 
