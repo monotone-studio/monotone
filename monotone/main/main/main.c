@@ -163,11 +163,23 @@ main_replay(Main* self)
 		if (! wal_cursor_next(&cursor))
 			break;
 
-		// LOG_WRITE
+		// replay operation
 		auto write = wal_cursor_at(&cursor);
-		if (write->type != LOG_WRITE)
-			error("recover: unrecognized operation: %d", write->type);
-		engine_write_replay(&self->engine, write);
+		switch (write->type) {
+		case LOG_WRITE:
+			engine_write_replay(&self->engine, write);
+			break;
+		case LOG_DROP:
+		{
+			auto drop = (LogDrop*)write;
+			engine_drop(&self->engine, drop->id, true, PART|PART_CLOUD);
+			break;
+		}
+		default:
+			error("wal: unrecognized operation: %d (lsn: %" PRIu64 ")",
+			      write->type, write->lsn);
+			break;
+		}
 
 		total += write->count;
 	}
