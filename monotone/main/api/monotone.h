@@ -43,9 +43,6 @@ monotone_free(void*);
 MONOTONE_API const char*
 monotone_error(monotone_t*);
 
-MONOTONE_API uint64_t
-monotone_now(monotone_t*);
-
 // main
 MONOTONE_API int
 monotone_open(monotone_t*, const char* path);

@@ -113,17 +113,6 @@ monotone_error(monotone_t* self)
 	return mn_runtime.error.text;
 }
 
-hot MONOTONE_API uint64_t
-monotone_now(monotone_t* self)
-{
-	unused(self);
-	struct timespec t;
-	clock_gettime(CLOCK_REALTIME, &t);
-	uint64_t time_ns = t.tv_sec * (uint64_t)1e9 + t.tv_nsec;
-	// us
-	return time_ns / 1000;
-}
-
 MONOTONE_API int
 monotone_open(monotone_t* self, const char* directory)
 {
