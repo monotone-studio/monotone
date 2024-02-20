@@ -34,7 +34,7 @@ engine_rollback(Engine* self, Log* log)
 	log_reset(log);
 }
 
-static void
+hot static void
 engine_commit(Engine* self, Log* log)
 {
 	auto pos = log_first(log);
@@ -67,7 +67,7 @@ engine_commit(Engine* self, Log* log)
 	log_reset(log);
 }
 
-void
+hot void
 engine_write(Engine* self, EventArg* events, int count)
 {
 	Log log;
@@ -131,7 +131,7 @@ engine_write(Engine* self, EventArg* events, int count)
 }
 
 void
-engine_replay(Engine* self, LogWrite* write)
+engine_write_replay(Engine* self, LogWrite* write)
 {
 	Log log;
 	log_init(&log);

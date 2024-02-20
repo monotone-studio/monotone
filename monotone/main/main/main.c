@@ -167,7 +167,7 @@ main_replay(Main* self)
 		auto write = wal_cursor_at(&cursor);
 		if (write->type != LOG_WRITE)
 			error("recover: unrecognized operation: %d", write->type);
-		engine_replay(&self->engine, write);
+		engine_write_replay(&self->engine, write);
 
 		total += write->count;
 	}

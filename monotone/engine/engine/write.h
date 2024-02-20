@@ -7,4 +7,4 @@
 //
 
 void engine_write(Engine*, EventArg*, int);
-void engine_replay(Engine*, LogWrite*);
+void engine_write_replay(Engine*, LogWrite*);
