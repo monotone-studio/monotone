@@ -5,4 +5,43 @@ set workers to 0
 set interval to 10
 open
 
+# test: serial enabled by default
+show serial
+
+# test: start from zero
+show ssn
+
+# test: insert
+insert 0
+
+# test: select
+show ssn
+select
+
+# test: insert
+insert 0
+insert 0
+insert 0
+insert 0
+insert 0
+insert 0
+insert 0
+
+# test: select
+show ssn
+select
+
+# test: set ssn
+set ssn to 0
+show ssn
+
+# test: insert
+insert 0 xxx
+insert 0 xxx
+insert 0 xxx
+
+# test: select
+show ssn
+select
+
 close
