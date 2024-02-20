@@ -144,8 +144,8 @@ storage_show_partitions(Storage* self, Buf* buf, bool verbose, bool debug)
 						auto min = index_region_min(index, i);
 						auto max = index_region_max(index, i);
 						buf_printf(buf, "      region\n");
-						buf_printf(buf, "        min             %" PRIu64 "\n", min->time);
-						buf_printf(buf, "        max             %" PRIu64 "\n", max->time);
+						buf_printf(buf, "        min             %" PRIu64 "\n", min->id);
+						buf_printf(buf, "        max             %" PRIu64 "\n", max->id);
 						buf_printf(buf, "        events          %" PRIu32 "\n", region->events);
 						buf_printf(buf, "        offset          %" PRIu32 "\n", region->offset);
 						buf_printf(buf, "        size            %" PRIu32 "\n", region->size);

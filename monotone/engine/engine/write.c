@@ -78,23 +78,23 @@ engine_write(Engine* self, EventArg* events, int count)
 	{
 		for (int i = 0; i < count; i++)
 		{
-			auto event_arg = &events[i];
+			auto arg = &events[i];
 
 			// set serial
 			if (config_serial())
-				event_arg->time = config_ssn_next();
+				arg->id = config_ssn_next();
 
 			// prepare log record
 			auto op = log_add(&log);
 
 			// find or create partition
-			uint64_t min = config_interval_of(event_arg->time);
+			uint64_t min = config_interval_of(arg->id);
 			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
 			op->ref = ref;
 			auto memtable = ref->part->memtable;
 
 			// allocate event using current memtables heap
-			auto event = event_allocate(&memtable->heap, event_arg);
+			auto event = event_allocate(&memtable->heap, arg);
 			log_add_event(&log, op, event);
 
 			// update memtable and save previous version
@@ -145,7 +145,7 @@ engine_replay(Engine* self, LogWrite* write)
 			auto op = log_add(&log);
 
 			// find or create partition
-			uint64_t min = config_interval_of(pos->time);
+			uint64_t min = config_interval_of(pos->id);
 			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
 			auto part = ref->part;
 

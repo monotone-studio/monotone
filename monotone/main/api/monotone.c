@@ -217,7 +217,7 @@ monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 		auto at = engine_cursor_at(&self->cursor);
 		if (likely(at))
 		{
-			event->time      = at->time;
+			event->id        = at->id;
 			event->data_size = at->data_size;
 			event->data      = at->data;
 			rc = 1;
@@ -226,7 +226,7 @@ monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 			// from the same thread
 			if (unlikely(at->is_delete))
 			{
-				event->time      = 0;
+				event->id        = 0;
 				event->data_size = 0;
 				event->data      = NULL;
 				rc = 0;

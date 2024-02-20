@@ -81,14 +81,14 @@ engine_set_serial(Engine* self)
 	if (part->index)
 	{
 		auto max = index_max(part->index);
-		serial = max->time;
+		serial = max->id;
 		serial_set = true;
 	}
 
 	auto max = memtable_max(part->memtable);
-	if (max && max->time >= serial)
+	if (max && max->id >= serial)
 	{
-		serial = max->time;
+		serial = max->id;
 		serial_set = true;
 	}
 

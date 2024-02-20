@@ -26,22 +26,22 @@ comparator_init(Comparator* self)
 hot static inline int64_t
 compare(Comparator* self, Event* a, Event* b)
 {
-	// compare by time first
-	int64_t diff = a->time - b->time;
+	// compare by id first
+	int64_t diff = a->id - b->id;
 	if (likely(diff != 0))
 		return diff;
 	if (! self->compare)
 		return 0;
 	EventArg l =
 	{
-		.time      = a->time,
+		.id        = a->id,
 		.data_size = a->data_size,
 		.data      = a->data,
 		.remove    = a->is_delete
 	};
 	EventArg r =
 	{
-		.time      = b->time,
+		.id        = b->id,
 		.data_size = b->data_size,
 		.data      = b->data,
 		.remove    = b->is_delete

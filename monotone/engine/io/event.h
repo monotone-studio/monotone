@@ -11,7 +11,7 @@ typedef struct Event    Event;
 
 struct EventArg
 {
-	uint64_t time;
+	uint64_t id;
 	void*    data;
 	size_t   data_size;
 	bool     remove;
@@ -19,7 +19,7 @@ struct EventArg
 
 struct Event
 {
-	uint64_t time;
+	uint64_t id;
 	uint8_t  is_delete:1;
 	uint8_t  flags:7;
 	uint32_t data_size;
@@ -35,13 +35,13 @@ event_size(Event* self)
 always_inline hot static inline uint64_t
 event_interval_min(Event* self)
 {
-	return self->time - (self->time % config_interval());
+	return self->id - (self->id % config_interval());
 }
 
 hot static inline void
 event_init(Event* self, EventArg* arg)
 {
-	self->time      = arg->time;
+	self->id        = arg->id;
 	self->is_delete = arg->remove;
 	self->flags     = 0;
 	self->data_size = arg->data_size;

@@ -27,7 +27,7 @@ typedef int64_t (*monotone_compare_t)(monotone_event_t*,
 
 struct monotone_event
 {
-	uint64_t time;
+	uint64_t id;
 	void*    data;
 	size_t   data_size;
 	bool     remove;
