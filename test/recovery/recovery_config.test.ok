@@ -3,6 +3,7 @@ init
 set workers to 0
 set interval to 10
 set uuid to 'c14fb1d4-d1f7-5bf1-f256-4ad89bc47379'
+set serial to false
 open
 files
 wal
@@ -23,12 +24,14 @@ directory                       _output
 log_enable                      true
 log_to_file                     true
 log_to_stdout                   false
+serial                          false
 interval                        10
 workers                         0
 wal_enable                      true
 wal_rotate_wm                   104857600
 wal_sync_on_rotate              true
 wal_sync_on_write               false
+ssn                             0
 lsn                             0
 psn                             0
 rows_written                    0

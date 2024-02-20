@@ -1,6 +1,7 @@
 init
 set workers to 0
 set interval to 10
+set serial to false
 open
 # test: create partition
 insert 0

@@ -1,0 +1,8 @@
+#
+
+init
+set workers to 0
+set interval to 10
+open
+
+close

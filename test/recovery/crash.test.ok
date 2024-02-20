@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set wal_enable to false
+set serial to false
 open
 # test: case 1: crash before completion (no parent)
 insert 0

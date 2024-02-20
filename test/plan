@@ -6,6 +6,7 @@ group functional
 test memtable
 test partition
 test mapping
+#test serial
 
 # storage
 directory storage

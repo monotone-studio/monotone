@@ -1,6 +1,7 @@
 init
 set workers to 0
 set interval to 10
+set serial to false
 open
 # test: create wal on start
 show wal
@@ -268,10 +269,10 @@ select
 # test: wal write error
 set error_wal to true
 insert 5
-error: (engine/write.c:102) error injection: error_wal
+error: (engine/write.c:108) error injection: error_wal
 # test: wal write error #2
 insert 4 xxx
-error: (engine/write.c:102) error injection: error_wal
+error: (engine/write.c:108) error injection: error_wal
 set error_wal to false
 # test: wal write error #3
 insert 8 zzz
@@ -284,7 +285,7 @@ select
 (eof)
 set error_wal to true
 insert 4 xxx
-error: (engine/write.c:102) error injection: error_wal
+error: (engine/write.c:108) error injection: error_wal
 set error_wal to false
 # test: select
 show partitions debug
