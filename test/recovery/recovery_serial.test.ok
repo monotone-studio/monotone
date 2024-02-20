@@ -1,0 +1,128 @@
+init
+set workers to 0
+set interval to 10
+set serial to true
+open
+# test: restart (no records)
+show ssn
+0
+close
+init
+set workers to 0
+set interval to 10
+open
+show ssn
+0
+# test: create partition/insert
+insert 0
+# test: select
+show ssn
+1
+select
+[0]
+(eof)
+# test: restart (restore from wal)
+close
+init
+set workers to 0
+set interval to 10
+open
+show ssn
+1
+select
+[0]
+(eof)
+# test: insert
+insert 0
+# test: select
+show ssn
+2
+select
+[0]
+[1]
+(eof)
+# test: refresh/gc
+refresh partition 0
+debug "wal_create"
+debug "wal_gc"
+debug "wal_read"
+show wal
+lsn     2
+lsn_min 3
+files   1
+show partitions debug
+main
+  0
+    min         0
+    max         10
+    storage     main
+    cloud       
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        225
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      rows                2
+      lsn                 2
+      compression         0
+      region
+        min             0
+        max             1
+        rows            2
+        offset          0
+        size            58
+# test: restart (restore from partition)
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: select
+show ssn
+2
+select
+[0]
+[1]
+(eof)
+# test: insert
+insert 0
+# test: select
+show ssn
+3
+select
+[0]
+[1]
+[2]
+(eof)
+# test: restart (restore from partition and wal)
+close
+init
+set workers to 0
+set interval to 10
+open
+# test: select
+show ssn
+3
+select
+[0]
+[1]
+[2]
+(eof)
+# test: insert
+insert 0
+# test: select
+show ssn
+4
+select
+[0]
+[1]
+[2]
+[3]
+(eof)
+close

@@ -1,0 +1,93 @@
+#
+
+init
+set workers to 0
+set interval to 10
+set serial to true
+open
+
+# test: restart (no records)
+show ssn
+
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+show ssn
+
+# test: create partition/insert
+insert 0
+
+# test: select
+show ssn
+select
+
+# test: restart (restore from wal)
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+show ssn
+select
+
+# test: insert
+insert 0
+
+# test: select
+show ssn
+select
+
+# test: refresh/gc
+refresh partition 0
+debug "wal_create"
+debug "wal_gc"
+debug "wal_read"
+show wal
+
+show partitions debug
+
+# test: restart (restore from partition)
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: select
+show ssn
+select
+
+# test: insert
+insert 0
+
+# test: select
+show ssn
+select
+
+# test: restart (restore from partition and wal)
+close
+
+init
+set workers to 0
+set interval to 10
+open
+
+# test: select
+show ssn
+select
+
+# test: insert
+insert 0
+
+# test: select
+show ssn
+select
+
+close
