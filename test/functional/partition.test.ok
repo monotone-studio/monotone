@@ -10,8 +10,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -60,13 +60,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             5
-        rows            4
+        events          4
         offset          0
         size            92
 files main
@@ -121,13 +121,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             5
-        rows            4
+        events          4
         offset          0
         size            92
 # test: select (memtable + region)
@@ -177,13 +177,13 @@ main
       size_regions        111
       size_regions_origin 111
       regions             1
-      rows                5
+      events              5
       lsn                 6
       compression         0
       region
         min             0
         max             5
-        rows            5
+        events          5
         offset          0
         size            111
 # test: select (region)
@@ -235,13 +235,13 @@ main
       size_regions        111
       size_regions_origin 111
       regions             1
-      rows                5
+      events              5
       lsn                 6
       compression         0
       region
         min             0
         max             5
-        rows            5
+        events          5
         offset          0
         size            111
 # test: select (memtable + region)
@@ -291,13 +291,13 @@ main
       size_regions        112
       size_regions_origin 112
       regions             1
-      rows                5
+      events              5
       lsn                 7
       compression         0
       region
         min             0
         max             5
-        rows            5
+        events          5
         offset          0
         size            112
 # test: select (region)
@@ -348,13 +348,13 @@ main
       size_regions        112
       size_regions_origin 112
       regions             1
-      rows                5
+      events              5
       lsn                 7
       compression         0
       region
         min             0
         max             5
-        rows            5
+        events          5
         offset          0
         size            112
 # test: select (memtable + region)
@@ -400,13 +400,13 @@ main
       size_regions        77
       size_regions_origin 77
       regions             1
-      rows                3
+      events              3
       lsn                 9
       compression         0
       region
         min             2
         max             5
-        rows            3
+        events          3
         offset          0
         size            77
 # test: select (region)
@@ -454,13 +454,13 @@ main
       size_regions        77
       size_regions_origin 77
       regions             1
-      rows                3
+      events              3
       lsn                 9
       compression         0
       region
         min             2
         max             5
-        rows            3
+        events          3
         offset          0
         size            77
 # test: select (memtable + region)
@@ -503,13 +503,13 @@ main
       size_regions        59
       size_regions_origin 59
       regions             1
-      rows                2
+      events              2
       lsn                 10
       compression         0
       region
         min             3
         max             5
-        rows            2
+        events          2
         offset          0
         size            59
 # test: select (region)
@@ -553,13 +553,13 @@ main
       size_regions        59
       size_regions_origin 59
       regions             1
-      rows                2
+      events              2
       lsn                 10
       compression         0
       region
         min             3
         max             5
-        rows            2
+        events          2
         offset          0
         size            59
 # test: select (memtable + region)
@@ -585,7 +585,7 @@ main
       size_regions        0
       size_regions_origin 0
       regions             0
-      rows                0
+      events              0
       lsn                 12
       compression         0
 # test: select (empty region)
@@ -614,7 +614,7 @@ main
       size_regions        0
       size_regions_origin 0
       regions             0
-      rows                0
+      events              0
       lsn                 12
       compression         0
 # test: select (memtable + region)
@@ -644,13 +644,13 @@ main
       size_regions        96
       size_regions_origin 96
       regions             1
-      rows                4
+      events              4
       lsn                 16
       compression         0
       region
         min             1
         max             5
-        rows            4
+        events          4
         offset          0
         size            96
 # test: select (region)
@@ -682,13 +682,13 @@ main
       size_regions        96
       size_regions_origin 96
       regions             1
-      rows                4
+      events              4
       lsn                 16
       compression         0
       region
         min             1
         max             5
-        rows            4
+        events          4
         offset          0
         size            96
 # test: select (memtable + region)
@@ -718,13 +718,13 @@ main
       size_regions        96
       size_regions_origin 96
       regions             1
-      rows                4
+      events              4
       lsn                 19
       compression         0
       region
         min             1
         max             5
-        rows            4
+        events          4
         offset          0
         size            96
 # test: select (region)
@@ -745,8 +745,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -786,25 +786,25 @@ main
       size_regions        225
       size_regions_origin 225
       regions             3
-      rows                9
+      events              9
       lsn                 28
       compression         0
       region
         min             1
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
       region
         min             4
         max             6
-        rows            3
+        events          3
         offset          75
         size            75
       region
         min             7
         max             9
-        rows            3
+        events          3
         offset          150
         size            75
 # test: select (regions)
@@ -908,25 +908,25 @@ main
       size_regions        225
       size_regions_origin 225
       regions             3
-      rows                9
+      events              9
       lsn                 28
       compression         0
       region
         min             1
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
       region
         min             4
         max             6
-        rows            3
+        events          3
         offset          75
         size            75
       region
         min             7
         max             9
-        rows            3
+        events          3
         offset          150
         size            75
   10
@@ -1059,25 +1059,25 @@ main
       size_regions        229
       size_regions_origin 229
       regions             3
-      rows                9
+      events              9
       lsn                 32
       compression         0
       region
         min             1
         max             3
-        rows            3
+        events          3
         offset          0
         size            76
       region
         min             4
         max             6
-        rows            3
+        events          3
         offset          76
         size            77
       region
         min             7
         max             9
-        rows            3
+        events          3
         offset          153
         size            76
 # test: select (regions)
@@ -1138,19 +1138,19 @@ main
       size_regions        118
       size_regions_origin 118
       regions             2
-      rows                4
+      events              4
       lsn                 38
       compression         0
       region
         min             1
         max             3
-        rows            3
+        events          3
         offset          0
         size            76
       region
         min             4
         max             4
-        rows            1
+        events          1
         offset          76
         size            42
 # test: select (regions)

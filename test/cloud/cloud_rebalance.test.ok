@@ -138,13 +138,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
 # test: create partitions (> capacity)
@@ -250,13 +250,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
 refresh partitions from 0 to 300010
@@ -281,13 +281,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 7
       compression         0
       region
         min             30000
         max             30000
-        rows            1
+        events          1
         offset          0
         size            41
   300000
@@ -306,13 +306,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 8
       compression         0
       region
         min             300000
         max             300000
-        rows            1
+        events          1
         offset          0
         size            41
 cold
@@ -332,13 +332,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
   10
@@ -357,13 +357,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -382,13 +382,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
   30
@@ -407,13 +407,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 4
       compression         0
       region
         min             30
         max             30
-        rows            1
+        events          1
         offset          0
         size            41
   300
@@ -432,13 +432,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 5
       compression         0
       region
         min             300
         max             300
-        rows            1
+        events          1
         offset          0
         size            41
   3000
@@ -457,13 +457,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 6
       compression         0
       region
         min             3000
         max             3000
-        rows            1
+        events          1
         offset          0
         size            41
 select

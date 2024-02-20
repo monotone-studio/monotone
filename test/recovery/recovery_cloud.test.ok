@@ -29,13 +29,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 files main
@@ -75,13 +75,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -110,13 +110,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 # test: close/open
@@ -148,13 +148,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -195,13 +195,13 @@ main
       size_regions        94
       size_regions_origin 94
       regions             1
-      rows                4
+      events              4
       lsn                 6
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            94
 select

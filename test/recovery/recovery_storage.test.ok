@@ -28,13 +28,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 files main
@@ -73,13 +73,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -119,13 +119,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
   200
@@ -144,13 +144,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 7
       compression         0
       region
         min             200
         max             202
-        rows            3
+        events          3
         offset          0
         size            75
   300
@@ -169,13 +169,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 10
       compression         0
       region
         min             300
         max             302
-        rows            3
+        events          3
         offset          0
         size            75
   700
@@ -194,13 +194,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 13
       compression         0
       region
         min             700
         max             702
-        rows            3
+        events          3
         offset          0
         size            75
 select
@@ -249,13 +249,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
   200
@@ -274,13 +274,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 7
       compression         0
       region
         min             200
         max             202
-        rows            3
+        events          3
         offset          0
         size            75
   300
@@ -299,13 +299,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 10
       compression         0
       region
         min             300
         max             302
-        rows            3
+        events          3
         offset          0
         size            75
   700
@@ -324,13 +324,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 13
       compression         0
       region
         min             700
         max             702
-        rows            3
+        events          3
         offset          0
         size            75
 select
@@ -388,13 +388,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
   200
@@ -413,13 +413,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 7
       compression         0
       region
         min             200
         max             202
-        rows            3
+        events          3
         offset          0
         size            75
   300
@@ -438,13 +438,13 @@ main
       size_regions        78
       size_regions_origin 78
       regions             1
-      rows                3
+      events              3
       lsn                 16
       compression         0
       region
         min             300
         max             302
-        rows            3
+        events          3
         offset          0
         size            78
   700
@@ -463,13 +463,13 @@ main
       size_regions        42
       size_regions_origin 42
       regions             1
-      rows                1
+      events              1
       lsn                 19
       compression         0
       region
         min             700
         max             700
-        rows            1
+        events          1
         offset          0
         size            42
 select
@@ -505,13 +505,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
   200
@@ -530,13 +530,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 7
       compression         0
       region
         min             200
         max             202
-        rows            3
+        events          3
         offset          0
         size            75
   700
@@ -555,13 +555,13 @@ main
       size_regions        42
       size_regions_origin 42
       regions             1
-      rows                1
+      events              1
       lsn                 19
       compression         0
       region
         min             700
         max             700
-        rows            1
+        events          1
         offset          0
         size            42
 files main
@@ -598,13 +598,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
   200
@@ -623,13 +623,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 7
       compression         0
       region
         min             200
         max             202
-        rows            3
+        events          3
         offset          0
         size            75
   700
@@ -648,13 +648,13 @@ main
       size_regions        42
       size_regions_origin 42
       regions             1
-      rows                1
+      events              1
       lsn                 19
       compression         0
       region
         min             700
         max             700
-        rows            1
+        events          1
         offset          0
         size            42
 select
@@ -703,8 +703,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -720,8 +720,8 @@ hot
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -737,8 +737,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -782,13 +782,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
 cold
@@ -826,13 +826,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
   10
@@ -851,13 +851,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
 cold
@@ -889,13 +889,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -914,13 +914,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
 cold
@@ -940,13 +940,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
 # test: close/open
@@ -977,13 +977,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -1002,13 +1002,13 @@ hot
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
 cold
@@ -1028,13 +1028,13 @@ cold
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 1
       compression         0
       region
         min             0
         max             0
-        rows            1
+        events          1
         offset          0
         size            41
 select

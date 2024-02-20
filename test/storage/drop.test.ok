@@ -61,13 +61,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 6
       compression         0
       region
         min             0
         max             2
-        rows            3
+        events          3
         offset          0
         size            75
 # test: drop #2
@@ -80,8 +80,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -219,8 +219,8 @@ main
   max                 410
   partitions          4
   partitions_cloud    0
-  rows                4
-  rows_heap           4
+  events              4
+  events_heap         4
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           8 Mb
@@ -241,8 +241,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb

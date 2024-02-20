@@ -46,13 +46,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 insert 0 x
@@ -92,13 +92,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -141,13 +141,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -189,13 +189,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -212,8 +212,8 @@ main
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                4
-  rows_heap           0
+  events              4
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -242,13 +242,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 refresh partition 0
@@ -290,13 +290,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select
@@ -346,13 +346,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 drop partition 0 on cloud
@@ -374,13 +374,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 set error_upload to true
@@ -418,13 +418,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            4
+        events          4
         offset          0
         size            92
 select

@@ -162,13 +162,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             4
-        rows            4
+        events          4
         offset          0
         size            92
 show wal
@@ -200,13 +200,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             4
-        rows            4
+        events          4
         offset          0
         size            92
 # test: select
@@ -247,13 +247,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             4
-        rows            4
+        events          4
         offset          0
         size            92
 show wal
@@ -306,13 +306,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             4
-        rows            4
+        events          4
         offset          0
         size            92
 show wal
@@ -351,13 +351,13 @@ main
       size_regions        92
       size_regions_origin 92
       regions             1
-      rows                4
+      events              4
       lsn                 4
       compression         0
       region
         min             1
         max             4
-        rows            4
+        events          4
         offset          0
         size            92
 show wal

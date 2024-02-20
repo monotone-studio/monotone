@@ -10,8 +10,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -32,8 +32,8 @@ main
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                1
-  rows_heap           1
+  events              1
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -55,8 +55,8 @@ main
   max                 40
   partitions          2
   partitions_cloud    0
-  rows                2
-  rows_heap           2
+  events              2
+  events_heap         2
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           4 Mb
@@ -72,8 +72,8 @@ hot
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -89,8 +89,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -124,8 +124,8 @@ main
   max                 40
   partitions          2
   partitions_cloud    0
-  rows                2
-  rows_heap           2
+  events              2
+  events_heap         2
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           4 Mb
@@ -141,8 +141,8 @@ hot
   max                 50
   partitions          1
   partitions_cloud    0
-  rows                1
-  rows_heap           1
+  events              1
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -158,8 +158,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -194,8 +194,8 @@ main
   max                 40
   partitions          2
   partitions_cloud    0
-  rows                2
-  rows_heap           2
+  events              2
+  events_heap         2
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           4 Mb
@@ -211,8 +211,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -231,8 +231,8 @@ main
   max                 50
   partitions          3
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           6 Mb
@@ -248,8 +248,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -274,8 +274,8 @@ main
   max                 50
   partitions          3
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           6 Mb
@@ -291,8 +291,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -308,8 +308,8 @@ hot
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -331,8 +331,8 @@ main
   max                 50
   partitions          3
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           6 Mb
@@ -348,8 +348,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -365,8 +365,8 @@ hot
   max                 60
   partitions          1
   partitions_cloud    0
-  rows                1
-  rows_heap           1
+  events              1
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -382,8 +382,8 @@ hot_swap
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -401,8 +401,8 @@ main
   max                 50
   partitions          3
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           6 Mb
@@ -418,8 +418,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -435,8 +435,8 @@ hot
   max                 60
   partitions          1
   partitions_cloud    0
-  rows                1
-  rows_heap           1
+  events              1
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -452,8 +452,8 @@ hot_swap
   max                 70
   partitions          1
   partitions_cloud    0
-  rows                1
-  rows_heap           1
+  events              1
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -482,8 +482,8 @@ main
   max                 50
   partitions          3
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           6 Mb
@@ -499,8 +499,8 @@ cold
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -516,8 +516,8 @@ hot
   max                 70
   partitions          2
   partitions_cloud    0
-  rows                2
-  rows_heap           1
+  events              2
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb

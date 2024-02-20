@@ -10,8 +10,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -133,7 +133,7 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
   20
@@ -152,7 +152,7 @@ main
       size_regions        58
       size_regions_origin 58
       regions             1
-      rows                2
+      events              2
       lsn                 5
       compression         0
 # test: select
@@ -192,7 +192,7 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
   20
@@ -211,7 +211,7 @@ main
       size_regions        58
       size_regions_origin 58
       regions             1
-      rows                2
+      events              2
       lsn                 5
       compression         0
   0
@@ -244,7 +244,7 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
   20
@@ -263,7 +263,7 @@ main
       size_regions        58
       size_regions_origin 58
       regions             1
-      rows                2
+      events              2
       lsn                 5
       compression         0
   0
@@ -282,7 +282,7 @@ main
       size_regions        266
       size_regions_origin 266
       regions             4
-      rows                10
+      events              10
       lsn                 15
       compression         0
 # test: select
@@ -331,7 +331,7 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
   20
@@ -350,7 +350,7 @@ main
       size_regions        58
       size_regions_origin 58
       regions             1
-      rows                2
+      events              2
       lsn                 5
       compression         0
   0
@@ -369,7 +369,7 @@ main
       size_regions        266
       size_regions_origin 266
       regions             4
-      rows                10
+      events              10
       lsn                 15
       compression         0
   4090
@@ -402,7 +402,7 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
   20
@@ -421,7 +421,7 @@ main
       size_regions        58
       size_regions_origin 58
       regions             1
-      rows                2
+      events              2
       lsn                 5
       compression         0
   0
@@ -440,7 +440,7 @@ main
       size_regions        266
       size_regions_origin 266
       regions             4
-      rows                10
+      events              10
       lsn                 15
       compression         0
   4090
@@ -459,7 +459,7 @@ main
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 16
       compression         0
 files main

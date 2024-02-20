@@ -33,8 +33,8 @@ main
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                1
-  rows_heap           1
+  events              1
+  events_heap         1
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -50,8 +50,8 @@ test
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -184,13 +184,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
 select
@@ -241,13 +241,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
 # test: download
@@ -293,13 +293,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
 select
@@ -350,13 +350,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
 select
@@ -407,13 +407,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
 select
@@ -454,13 +454,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -479,13 +479,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
 # test: drop partitions on cloud
@@ -520,13 +520,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -545,13 +545,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
 # test: upload partitions parsing
@@ -607,13 +607,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -632,13 +632,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
 # test: upload partitions #2
@@ -673,13 +673,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 2
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -698,13 +698,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 3
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
 select

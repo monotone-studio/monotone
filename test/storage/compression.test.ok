@@ -46,13 +46,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
 # test: refresh (compress)
@@ -75,13 +75,13 @@ main
       size_regions        35
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         1
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            35
 select
@@ -109,13 +109,13 @@ main
       size_regions        35
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         1
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            35
 # test: refresh
@@ -138,13 +138,13 @@ main
       size_regions        35
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         1
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            35
 select
@@ -172,13 +172,13 @@ main
       size_regions        35
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         1
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            35
 # test: refresh
@@ -201,13 +201,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
 select

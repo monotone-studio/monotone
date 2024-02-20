@@ -68,13 +68,13 @@ main
       size_regions        58
       size_regions_origin 58
       regions             1
-      rows                2
+      events              2
       lsn                 2
       compression         0
       region
         min             0
         max             1
-        rows            2
+        events          2
         offset          0
         size            58
 # test: restart (restore from partition)

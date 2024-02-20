@@ -69,13 +69,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
 # test: service #2 (noop)
@@ -98,13 +98,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
 select
@@ -133,13 +133,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
 insert 0 xxx
@@ -161,13 +161,13 @@ main
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            75
 # test: service #1 (refresh)
@@ -190,13 +190,13 @@ main
       size_regions        78
       size_regions_origin 78
       regions             1
-      rows                3
+      events              3
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            78
 # test: service #2 (noop)
@@ -219,13 +219,13 @@ main
       size_regions        78
       size_regions_origin 78
       regions             1
-      rows                3
+      events              3
       lsn                 4
       compression         0
       region
         min             0
         max             3
-        rows            3
+        events          3
         offset          0
         size            78
 select

@@ -29,8 +29,8 @@ main
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -49,8 +49,8 @@ main
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                3
-  rows_heap           3
+  events              3
+  events_heap         3
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           2 Mb
@@ -70,8 +70,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -87,8 +87,8 @@ test
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                3
-  rows_heap           0
+  events              3
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -116,8 +116,8 @@ main
   max                 50
   partitions          4
   partitions_cloud    0
-  rows                4
-  rows_heap           4
+  events              4
+  events_heap         4
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           8 Mb
@@ -133,8 +133,8 @@ test
   max                 10
   partitions          1
   partitions_cloud    0
-  rows                3
-  rows_heap           0
+  events              3
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -170,8 +170,8 @@ main
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -187,8 +187,8 @@ test
   max                 50
   partitions          5
   partitions_cloud    0
-  rows                7
-  rows_heap           0
+  events              7
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -218,13 +218,13 @@ test
       size_regions        75
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         0
       region
         min             0
         max             2
-        rows            3
+        events          3
         offset          0
         size            75
   10
@@ -243,13 +243,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 4
       compression         0
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            41
   20
@@ -268,13 +268,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 5
       compression         0
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            41
   30
@@ -293,13 +293,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 6
       compression         0
       region
         min             30
         max             30
-        rows            1
+        events          1
         offset          0
         size            41
   40
@@ -318,13 +318,13 @@ test
       size_regions        41
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 7
       compression         0
       region
         min             40
         max             40
-        rows            1
+        events          1
         offset          0
         size            41
 # test: select
@@ -347,8 +347,8 @@ main
   max                 50
   partitions          5
   partitions_cloud    0
-  rows                7
-  rows_heap           0
+  events              7
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -364,8 +364,8 @@ test
   max                 0
   partitions          0
   partitions_cloud    0
-  rows                0
-  rows_heap           0
+  events              0
+  events_heap         0
   size                0 Mb
   size_uncompressed   0 Mb
   size_heap           0 Mb
@@ -394,13 +394,13 @@ main
       size_regions        35
       size_regions_origin 75
       regions             1
-      rows                3
+      events              3
       lsn                 3
       compression         1
       region
         min             0
         max             2
-        rows            3
+        events          3
         offset          0
         size            35
   10
@@ -419,13 +419,13 @@ main
       size_regions        25
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 4
       compression         1
       region
         min             10
         max             10
-        rows            1
+        events          1
         offset          0
         size            25
   20
@@ -444,13 +444,13 @@ main
       size_regions        25
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 5
       compression         1
       region
         min             20
         max             20
-        rows            1
+        events          1
         offset          0
         size            25
   30
@@ -469,13 +469,13 @@ main
       size_regions        25
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 6
       compression         1
       region
         min             30
         max             30
-        rows            1
+        events          1
         offset          0
         size            25
   40
@@ -494,13 +494,13 @@ main
       size_regions        25
       size_regions_origin 41
       regions             1
-      rows                1
+      events              1
       lsn                 7
       compression         1
       region
         min             40
         max             40
-        rows            1
+        events          1
         offset          0
         size            25
 test
