@@ -24,18 +24,18 @@ writer_main(void* arg)
 	for (int i = 0; i < metrics; i++)
 		data[i] = 0.345;
 
-	int            batch_size = 200;
-	monotone_row_t batch[batch_size];
+	int              batch_size = 200;
+	monotone_event_t batch[batch_size];
 
 	while (writer_run)
 	{
 		for (int i = 0; i < batch_size; i++)
 		{
-			auto row = &batch[i];
-			row->time      = 0;
-			row->data      = data;
-			row->data_size = sizeof(data);
-			row->remove    = false;
+			auto ev = &batch[i];
+			ev->id        = 0;
+			ev->data      = data;
+			ev->data_size = sizeof(data);
+			ev->remove    = false;
 		}
 
 		int rc;
@@ -52,10 +52,10 @@ static atomic_u64 last_written;
 static atomic_u64 last_written_bytes;
 
 static inline void
-report_rows(uint64_t* rows_written, uint64_t* rows_written_bytes)
+report_events(uint64_t* events_written, uint64_t* events_written_bytes)
 {
 	char* result = NULL;
-	int rc = monotone_execute(env, "show rows_written", &result);
+	int rc = monotone_execute(env, "show events_written", &result);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
@@ -63,10 +63,10 @@ report_rows(uint64_t* rows_written, uint64_t* rows_written_bytes)
 	}
 	if (result)
 	{
-		*rows_written = strtoull(result, NULL, 10);
+		*events_written = strtoull(result, NULL, 10);
 		free(result);
 	}
-	rc = monotone_execute(env, "show rows_written_bytes", &result);
+	rc = monotone_execute(env, "show events_written_bytes", &result);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
@@ -74,7 +74,7 @@ report_rows(uint64_t* rows_written, uint64_t* rows_written_bytes)
 	}
 	if (result)
 	{
-		*rows_written_bytes = strtoull(result, NULL, 10);
+		*events_written_bytes = strtoull(result, NULL, 10);
 		free(result);
 	}
 }
@@ -82,9 +82,9 @@ report_rows(uint64_t* rows_written, uint64_t* rows_written_bytes)
 static void
 report_print(void)
 {
-	uint64_t rows_written = 0;
-	uint64_t rows_written_bytes = 0;
-	report_rows(&rows_written, &rows_written_bytes);
+	uint64_t events_written = 0;
+	uint64_t events_written_bytes = 0;
+	report_events(&events_written, &events_written_bytes);
 
 	char* result = NULL;
 	int rc = monotone_execute(env, "show storages", &result);
@@ -100,8 +100,8 @@ report_print(void)
 	}
 
 	/*
-	uint64_t sec = rows_written_bytes - last_written_bytes;
-	printf("rows                %" PRIu64 "\n", rows);
+	uint64_t sec = events_written_bytes - last_written_bytes;
+	printf("events                %" PRIu64 "\n", events);
 	printf("partitions          %" PRIu64 "\n", partitions);
 	printf("size                %" PRIu64 " Gb\n", size / 1024 / 1024 / 1024);
 	printf("  min               %" PRIu64 " Gb\n", (size + sec * 60) / 1024 / 1024 / 1024);
@@ -114,12 +114,12 @@ report_print(void)
 
 	printf("\n");
 	printf("write: %d rps (%.2f Mbs) %.2fM metrics/sec\n",
-	       (int)(rows_written - last_written),
-	       (rows_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
-	       (float)((int)((rows_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t))) / 1000000.0 );
+	       (int)(events_written - last_written),
+	       (events_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
+	       (float)((int)((events_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t))) / 1000000.0 );
 
-	last_written = rows_written;
-	last_written_bytes = rows_written_bytes;
+	last_written = events_written;
+	last_written_bytes = events_written_bytes;
 }
 
 static void*
@@ -154,11 +154,11 @@ scan(void)
 	uint64_t n = 0;
 	uint64_t size = 0;
 
-	monotone_row_t row;
-	while (monotone_read(cursor, &row))
+	monotone_event_t event;
+	while (monotone_read(cursor, &event))
 	{
 		n++;
-		size += sizeof(uint64_t) + row.data_size;
+		size += sizeof(uint64_t) + event.data_size;
 
 		int rc = monotone_next(cursor);
 		if (rc == -1)
@@ -176,7 +176,7 @@ scan(void)
 	printf("%f rps\n", rps);
 	printf("%f mbs\n", bps / 1024 / 1024);
 
-	printf("rows: %d\n", (int)n);
+	printf("events: %d\n", (int)n);
 
 	monotone_free(cursor);
 }
