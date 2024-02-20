@@ -35,8 +35,8 @@ struct Config
 	Var  storages;
 	Var  conveyor;
 	// stats
-	Var  rows_written;
-	Var  rows_written_bytes;
+	Var  events_written;
+	Var  events_written_bytes;
 	// testing
 	Var  error_refresh_1;
 	Var  error_refresh_2;
