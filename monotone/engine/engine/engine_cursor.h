@@ -16,7 +16,7 @@ struct EngineCursor
 };
 
 hot static inline void
-engine_cursor_open_part(EngineCursor* self, uint64_t min, Row* key)
+engine_cursor_open_part(EngineCursor* self, uint64_t min, Event* key)
 {
 	auto engine = self->engine;
 
@@ -33,7 +33,7 @@ hot static inline void
 engine_cursor_next(EngineCursor*);
 
 hot static inline void
-engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
+engine_cursor_open(EngineCursor* self, Engine* engine, Event* key)
 {
 	self->ref    = NULL;
 	self->engine = engine;
@@ -41,7 +41,7 @@ engine_cursor_open(EngineCursor* self, Engine* engine, Row* key)
 	// find partition
 	uint64_t min = 0;
 	if (key)
-		min = row_interval_min(key);
+		min = event_interval_min(key);
 
 	engine_cursor_open_part(self, min, key);
 
@@ -69,7 +69,7 @@ engine_cursor_close(EngineCursor* self)
 	part_cursor_free(&self->cursor);
 }
 
-hot static inline Row*
+hot static inline Event*
 engine_cursor_at(EngineCursor* self)
 {
 	return part_cursor_at(&self->cursor);

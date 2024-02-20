@@ -26,7 +26,7 @@ engine_rollback(Engine* self, Log* log)
 			if (pos->prev)
 				memtable_set(ref->part->memtable, pos->prev);
 			else
-				memtable_unset(ref->part->memtable, pos->row);
+				memtable_unset(ref->part->memtable, pos->event);
 			engine_unlock(self, ref, LOCK_ACCESS);
 		}
 		pos--;
@@ -48,8 +48,8 @@ engine_commit(Engine* self, Log* log)
 			memtable_follow(ref->part->memtable, log->write.lsn);
 
 			// update stats
-			var_int_add(&config()->rows_written, 1);
-			var_int_add(&config()->rows_written_bytes, row_size(pos->row));
+			var_int_add(&config()->events_written, 1);
+			var_int_add(&config()->events_written_bytes, event_size(pos->event));
 
 			// schedule refresh
 			if (part_refresh_ready(part))
@@ -68,7 +68,7 @@ engine_commit(Engine* self, Log* log)
 }
 
 void
-engine_write(Engine* self, RowRef* rows, int count)
+engine_write(Engine* self, EventArg* events, int count)
 {
 	Log log;
 	log_init(&log);
@@ -78,27 +78,27 @@ engine_write(Engine* self, RowRef* rows, int count)
 	{
 		for (int i = 0; i < count; i++)
 		{
-			auto row_ref = &rows[i];
+			auto event_arg = &events[i];
 
 			// set serial
 			if (config_serial())
-				row_ref->time = config_ssn_next();
+				event_arg->time = config_ssn_next();
 
 			// prepare log record
 			auto op = log_add(&log);
 
 			// find or create partition
-			uint64_t min = config_interval_of(row_ref->time);
+			uint64_t min = config_interval_of(event_arg->time);
 			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
 			op->ref = ref;
 			auto memtable = ref->part->memtable;
 
-			// allocate row using current memtables heap
-			auto row = row_allocate(&memtable->heap, row_ref);
-			log_add_row(&log, op, row);
+			// allocate event using current memtables heap
+			auto event = event_allocate(&memtable->heap, event_arg);
+			log_add_event(&log, op, event);
 
 			// update memtable and save previous version
-			op->prev = memtable_set(memtable, row);
+			op->prev = memtable_set(memtable, event);
 		}
 
 		// wal write
@@ -160,13 +160,13 @@ engine_replay(Engine* self, LogWrite* write)
 			// set log reference lock
 			op->ref = ref;
 
-			// copy row using current memtables heap
+			// copy event using current memtables heap
 			auto memtable = part->memtable;
-			auto row = row_copy(&memtable->heap, pos);
-			log_add_row(&log, op, row);
+			auto event = event_copy(&memtable->heap, pos);
+			log_add_event(&log, op, event);
 
 			// update memtable and save previous version
-			op->prev = memtable_set(memtable, row);
+			op->prev = memtable_set(memtable, event);
 		}
 
 		// assign lsn
