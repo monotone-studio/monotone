@@ -8,7 +8,7 @@
 
 typedef struct Comparator Comparator;
 
-typedef int (*Compare)(EventRef*, EventRef*, void*);
+typedef int (*Compare)(EventArg*, EventArg*, void*);
 
 struct Comparator
 {
@@ -32,14 +32,14 @@ compare(Comparator* self, Event* a, Event* b)
 		return diff;
 	if (! self->compare)
 		return 0;
-	EventRef l =
+	EventArg l =
 	{
 		.time      = a->time,
 		.data_size = a->data_size,
 		.data      = a->data,
 		.remove    = a->is_delete
 	};
-	EventRef r =
+	EventArg r =
 	{
 		.time      = b->time,
 		.data_size = b->data_size,

@@ -6,10 +6,10 @@
 // time-series storage
 //
 
-typedef struct EventRef EventRef;
+typedef struct EventArg EventArg;
 typedef struct Event    Event;
 
-struct EventRef
+struct EventArg
 {
 	uint64_t time;
 	void*    data;
@@ -39,21 +39,21 @@ event_interval_min(Event* self)
 }
 
 hot static inline void
-event_init(Event* self, EventRef* ref)
+event_init(Event* self, EventArg* arg)
 {
-	self->time      = ref->time;
-	self->is_delete = ref->remove;
+	self->time      = arg->time;
+	self->is_delete = arg->remove;
 	self->flags     = 0;
-	self->data_size = ref->data_size;
-	if (ref->data)
-		memcpy(self->data, ref->data, ref->data_size);
+	self->data_size = arg->data_size;
+	if (arg->data)
+		memcpy(self->data, arg->data, arg->data_size);
 }
 
 static inline Event*
-event_allocate(Heap* heap, EventRef* ref)
+event_allocate(Heap* heap, EventArg* arg)
 {
-	auto event = (Event*)heap_allocate(heap, sizeof(Event) + ref->data_size);
-	event_init(event, ref);
+	auto event = (Event*)heap_allocate(heap, sizeof(Event) + arg->data_size);
+	event_init(event, arg);
 	return event;
 }
 
@@ -66,10 +66,10 @@ event_copy(Heap* heap, Event* src)
 }
 
 static inline Event*
-event_malloc(EventRef* ref)
+event_malloc(EventArg* arg)
 {
-	auto event = (Event*)mn_malloc(sizeof(Event) + ref->data_size);
-	event_init(event, ref);
+	auto event = (Event*)mn_malloc(sizeof(Event) + arg->data_size);
+	event_init(event, arg);
 	return event;
 }
 
