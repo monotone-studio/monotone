@@ -392,22 +392,32 @@ engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 	}
 }
 
-static inline Part*
-engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
+static inline bool
+engine_rebalance_ready(Tier* tier)
 {
-	bool rebalance = false;
-
-	// rebalance by partitions number
+	// rebalance by partitions
 	if (tier->config->partitions != INT64_MAX)
 		if (tier->storage->list_count > tier->config->partitions)
-			rebalance = true;
+			return true;
 
 	// rebalance by size
 	if (tier->config->size != INT64_MAX)
 		if (tier->storage->size > tier->config->size)
-			rebalance = true;
+			return true;
 
-	if (! rebalance)
+	// rebalance by events
+	if (tier->config->events != INT64_MAX)
+		if (tier->storage->events > tier->config->events)
+			return true;
+
+	return false;
+}
+
+static inline Part*
+engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
+{
+	// check if tier needs to be rebalanced
+	if (! engine_rebalance_ready(tier))
 		return NULL;
 
 	// get oldest partition (by psn)
