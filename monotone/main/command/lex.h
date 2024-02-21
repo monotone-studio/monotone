@@ -12,13 +12,32 @@ typedef struct Lex   Lex;
 enum
 {
 	KEOF,
+	// values
 	KREAL,
 	KINT,
 	KSTRING,
 	KNAME,
-	// keywords
 	KTRUE,
 	KFALSE,
+	// modificators
+	KUSEC,
+	KMSEC,
+	KSEC,
+	KMIN,
+	KHOUR,
+	KDAY,
+	KWEEK,
+	KMONTH,
+	KYEAR,
+	KKB,
+	KKIB,
+	KMB,
+	KMIB,
+	KGB,
+	KGIB,
+	KTB,
+	KTIB,
+	// keywowrds
 	KRESET,
 	KSET,
 	KTO,

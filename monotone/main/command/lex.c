@@ -7,6 +7,12 @@
 
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
+#include <monotone_config.h>
+#include <monotone_io.h>
+#include <monotone_storage.h>
+#include <monotone_wal.h>
+#include <monotone_engine.h>
+#include <monotone_command.h>
 
 typedef struct
 {
@@ -17,41 +23,76 @@ typedef struct
 
 static Keyword keywords[] =
 {
-	{ KTRUE,       "true",       4},
-	{ KFALSE,      "false",      5},
-	{ KSET,        "set",        3},
-	{ KRESET,      "reset",      5},
-	{ KTO,         "to",         2},
-	{ KSHOW,       "show",       4},
-	{ KALL,        "all",        3},
-	{ KCHECKPOINT, "checkpoint", 10},
-	{ KSERVICE,    "service",    7},
-	{ KCREATE,     "create",     6},
-	{ KSTORAGE,    "storage",    7},
-	{ KSTORAGES,   "storages",   8},
-	{ KPARTITION,  "partition",  9},
-	{ KPARTITIONS, "partitions", 10},
-	{ KIF,         "if",         2},
-	{ KNOT,        "not",        3},
-	{ KEXISTS,     "exists",     6},
-	{ KDROP,       "drop"  ,     4},
-	{ KCONVEYOR,   "conveyor",   8},
-	{ KALTER,      "alter",      5},
-	{ KRENAME,     "rename",     6},
-	{ KMOVE,       "move",       4},
-	{ KFROM,       "from",       4},
-	{ KINTO,       "into",       4},
-	{ KREFRESH,    "refresh",    7},
-	{ KREBALANCE,  "rebalance",  9},
-	{ KON,         "on",         2},
-	{ KCLOUD,      "cloud",      5},
-	{ KDOWNLOAD,   "download",   8},
-	{ KUPLOAD,     "upload",     6},
-	{ KVERBOSE,    "verbose",    7},
-	{ KDEBUG,      "debug",      5},
-	{ KWAL,        "wal",        3},
-	{ KMEMORY,     "memory",     6},
-	{ 0,            NULL,        0}
+	// boolean
+	{ KTRUE,       "true",         4},
+	{ KFALSE,      "false",        5},
+	// time modificators
+	{ KUSEC,       "us",           2},
+	{ KUSEC,       "microsecond",  11},
+	{ KUSEC,       "microseconds", 12},
+	{ KMSEC,       "ms",           2},
+	{ KMSEC,       "millisecond",  11},
+	{ KMSEC,       "milliseconds", 12},
+	{ KSEC,        "sec",          3},
+	{ KSEC,        "second",       6},
+	{ KSEC,        "seconds",      7},
+	{ KMIN,        "min",          2},
+	{ KMIN,        "minute",       6},
+	{ KMIN,        "minutes",      7},
+	{ KHOUR,       "hr",           2},
+	{ KHOUR,       "hour",         4},
+	{ KHOUR,       "hours",        5},
+	{ KDAY,        "day",          3},
+	{ KDAY,        "days",         4},
+	{ KWEEK,       "week",         4},
+	{ KWEEK,       "weeks",        5},
+	{ KMONTH,      "month",        5},
+	{ KMONTH,      "months",       6},
+	{ KYEAR,       "year",         4},
+	{ KYEAR,       "years",        5},
+	// size modificators
+	{ KKB,         "kb",           2},
+	{ KKIB,        "kib",          3},
+	{ KMB,         "mb",           2},
+	{ KMIB,        "mib",          3},
+	{ KGB,         "gb",           2},
+	{ KGIB,        "gib",          3},
+	{ KTB,         "tb",           2},
+	{ KTIB,        "tib",          3},
+	// keywords
+	{ KSET,        "set",          3},
+	{ KRESET,      "reset",        5},
+	{ KTO,         "to",           2},
+	{ KSHOW,       "show",         4},
+	{ KALL,        "all",          3},
+	{ KCHECKPOINT, "checkpoint",   10},
+	{ KSERVICE,    "service",      7},
+	{ KCREATE,     "create",       6},
+	{ KSTORAGE,    "storage",      7},
+	{ KSTORAGES,   "storages",     8},
+	{ KPARTITION,  "partition",    9},
+	{ KPARTITIONS, "partitions",   10},
+	{ KIF,         "if",           2},
+	{ KNOT,        "not",          3},
+	{ KEXISTS,     "exists",       6},
+	{ KDROP,       "drop"  ,       4},
+	{ KCONVEYOR,   "conveyor",     8},
+	{ KALTER,      "alter",        5},
+	{ KRENAME,     "rename",       6},
+	{ KMOVE,       "move",         4},
+	{ KFROM,       "from",         4},
+	{ KINTO,       "into",         4},
+	{ KREFRESH,    "refresh",      7},
+	{ KREBALANCE,  "rebalance",    9},
+	{ KON,         "on",           2},
+	{ KCLOUD,      "cloud",        5},
+	{ KDOWNLOAD,   "download",     8},
+	{ KUPLOAD,     "upload",       6},
+	{ KVERBOSE,    "verbose",      7},
+	{ KDEBUG,      "debug",        5},
+	{ KWAL,        "wal",          3},
+	{ KMEMORY,     "memory",       6},
+	{ 0,            NULL,          0}
 };
 
 void
@@ -74,6 +115,71 @@ void
 lex_keywords(Lex* self, bool on)
 {
 	self->keywords = on;
+}
+
+static void
+lex_integer_mod(Lex* self, Token* value)
+{
+	Token tk;
+	lex_next(self, &tk);
+	switch (tk.id) {
+	// time (convert to microseconds)
+	case KUSEC:
+		// do nothing (default resolution)
+		break;
+	case KMSEC:
+		value->integer *= 1000ULL;
+		break;
+	case KSEC:
+		value->integer *= 1000ULL * 1000;
+		break;
+	case KMIN:
+		value->integer *= 60ULL * 1000 * 1000;
+		break;
+	case KHOUR:
+		value->integer *= 60ULL * 60 * 1000 * 1000;
+		break;
+	case KDAY:
+		value->integer *= 24ULL * 60 * 60 * 1000 * 1000;
+		break;
+	case KWEEK:
+		value->integer *= 7ULL * 24 * 60 * 60 * 1000 * 1000;
+		break;
+	case KMONTH:
+		value->integer *= 30ULL * 7 * 24 * 60 * 60 * 1000 * 1000;
+		break;
+	case KYEAR:
+		value->integer *= 12ULL * 30 * 7 * 24 * 60 * 60 * 1000 * 1000;
+		break;
+	// units
+	case KKB:
+		value->integer *= 1000ULL;
+		break;
+	case KKIB:
+		value->integer *= 1024ULL;
+		break;
+	case KMB:
+		value->integer *= 1000ULL * 1000;
+		break;
+	case KMIB:
+		value->integer *= 1024ULL * 1024;
+		break;
+	case KGB:
+		value->integer *= 1000ULL * 1000 * 1000;
+		break;
+	case KGIB:
+		value->integer *= 1024ULL * 1024 * 1024;
+		break;
+	case KTB:
+		value->integer *= 1000ULL * 1000 * 1000 * 1000;
+		break;
+	case KTIB:
+		value->integer *= 1024ULL * 1024 * 1024 * 1024;
+		break;
+	default:
+		lex_push(self, &tk);
+		break;
+	}
 }
 
 void
@@ -135,6 +241,9 @@ lex_next(Lex* self, Token* tk)
 			tk->integer = (tk->integer * 10) + *self->pos - '0';
 			self->pos++;
 		}
+
+		// apply value modificator, if any
+		lex_integer_mod(self, tk);
 		return;
 
 reread_as_float:
@@ -174,7 +283,7 @@ reread_as_float:
 		{
 			if (keyword->name_size != str_size(&tk->string))
 				continue;
-			if (str_compare_raw(&tk->string, keyword->name, keyword->name_size))
+			if (str_compare_case(&tk->string, keyword->name, keyword->name_size))
 			{
 				tk->id = keyword->id;
 				break;

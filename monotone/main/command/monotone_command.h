@@ -6,6 +6,9 @@
 // time-series storage
 //
 
+// lex
+#include "command/lex.h"
+
 // command
 #include "command/cmd.h"
 

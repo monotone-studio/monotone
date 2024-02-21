@@ -21,6 +21,7 @@ CFLAGS_INCLUDE = -I../runtime \
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-main.a
 OBJECTS        = \
+                 command/lex.o \
                  command/parse_config.o \
                  command/parse_storage.o \
                  command/parse_conveyor.o \
