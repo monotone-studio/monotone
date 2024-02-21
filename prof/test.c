@@ -113,7 +113,7 @@ report_print(void)
 	*/
 
 	printf("\n");
-	printf("write: %d rps (%.2f Mbs) %.2fM metrics/sec\n",
+	printf("write: %d rps (%.2fM) %.2f million metrics/sec\n",
 	       (int)(events_written - last_written),
 	       (events_written_bytes - last_written_bytes)  / 1024.0 / 1024.0,
 	       (float)((int)((events_written_bytes - last_written_bytes - sizeof(uint64_t)) / sizeof(uint32_t))) / 1000000.0 );
@@ -199,7 +199,7 @@ cli(void)
 		return;
 	}
 
-	monotone_execute(env, "alter storage main set (compression 'zstd', refresh_wm 0)", NULL);
+	monotone_execute(env, "alter storage main set (compression 'zstd', refresh_wm 0kB)", NULL);
 
 #if 0
 	/*
@@ -223,16 +223,16 @@ cli(void)
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-	rc = monotone_execute(env, "alter conveyor set hot (capacity 10), cold", NULL);
+	rc = monotone_execute(env, "alter pipeline set main (partitions 10), cold", NULL);
 
-#if 0
-	rc = monotone_execute(env, "alter conveyor set hot", NULL);
+	rc = monotone_execute(env, "alter pipeline set main (partitions 10)", NULL);
+
+	/*rc = monotone_execute(env, "alter pipeline set main", NULL);*/
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-#endif
 #endif
 
 	for (;;)
