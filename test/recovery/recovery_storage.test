@@ -130,7 +130,7 @@ select
 # test: create storages
 create storage hot (sync false)
 create storage cold (sync false)
-alter conveyor set hot (capacity 2), cold
+alter pipeline set hot (capacity 2), cold
 
 # test: close/open
 close
@@ -144,7 +144,7 @@ files main
 
 # test: validate storages
 show storages
-show conveyor
+show pipeline
 
 # test: create partition #1 (< capacity)
 insert 0

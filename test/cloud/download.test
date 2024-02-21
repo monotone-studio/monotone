@@ -30,7 +30,7 @@ download partition 0 if cloud
 # test: create storage with cloud
 create storage test (cloud 'mock', sync false)
 show storages
-alter conveyor set test
+alter pipeline set test
 
 # test: create partitions
 insert 10

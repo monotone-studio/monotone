@@ -5,7 +5,7 @@ set serial to false
 open
 # test: alter storage parsing
 alter
-error: ALTER <STORAGE|CONVEYOR> expected
+error: ALTER <STORAGE|PIPELINE> expected
 alter storage
 error: ALTER STORAGE <name> expected
 alter storage if

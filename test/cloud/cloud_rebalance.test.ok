@@ -6,9 +6,9 @@ open
 # test: create storages
 create storage hot (sync false)
 create storage cold (cloud 'mock', sync false)
-# test: alter conveyor set capacity
-alter conveyor set hot (capacity 2), cold
-show conveyor
+# test: alter pipeline set capacity
+alter pipeline set hot (capacity 2), cold
+show pipeline
 hot (capacity 2) ⟶ cold ()
 # test: create partition #1 (< capacity)
 insert 0

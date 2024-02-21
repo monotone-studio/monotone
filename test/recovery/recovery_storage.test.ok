@@ -687,7 +687,7 @@ select
 # test: create storages
 create storage hot (sync false)
 create storage cold (sync false)
-alter conveyor set hot (capacity 2), cold
+alter pipeline set hot (capacity 2), cold
 # test: close/open
 close
 init
@@ -749,7 +749,7 @@ cold
   compression         
   refresh_wm          41943040
   region_size         131072
-show conveyor
+show pipeline
 hot (capacity 2) ⟶ cold ()
 # test: create partition #1 (< capacity)
 insert 0

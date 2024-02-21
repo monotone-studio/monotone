@@ -6,7 +6,7 @@ set interval to 10
 set serial to false
 open
 
-# test: rebalance (no conveyor set)
+# test: rebalance (no pipeline set)
 rebalance
 show storages
 
@@ -14,9 +14,9 @@ show storages
 create storage hot
 create storage cold
 
-# test: alter conveyor set capacity
-alter conveyor set hot (capacity 2), cold
-show conveyor
+# test: alter pipeline set capacity
+alter pipeline set hot (capacity 2), cold
+show pipeline
 
 # test: rebalance #1 (no partitions, <= capacity)
 rebalance
@@ -49,18 +49,18 @@ show storages
 
 select
 
-# test: alter conveyor set capacity zero
-alter conveyor set hot (capacity 0)
-show conveyor
+# test: alter pipeline set capacity zero
+alter pipeline set hot (capacity 0)
+show pipeline
 
 # test: rebalance (auto drop)
 show storages
 rebalance
 show storages
 
-# test: alter conveyor set capacity zero #2 (chain)
-alter conveyor set hot (capacity 2), cold (capacity 0)
-show conveyor
+# test: alter pipeline set capacity zero #2 (chain)
+alter pipeline set hot (capacity 2), cold (capacity 0)
+show pipeline
 
 # test: rebalance #1 (auto drop existing)
 show storages

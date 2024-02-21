@@ -6,31 +6,31 @@ set interval to 10
 set serial to false
 open
 
-# test: conveyor is not set by default
+# test: pipeline is not set by default
 show storages
-show conveyor
+show pipeline
 
 # test: insert (main only)
 insert 0 x
 show storages
 
-# test: insert (more storages wo conveyor)
+# test: insert (more storages wo pipeline)
 create storage hot
 create storage cold
 insert 0 y
 insert 30 y
 show storages
 
-# test: alter conveyor parsing
+# test: alter pipeline parsing
 alter
-alter conveyor
-alter conveyor abc
-alter conveyor set
-alter conveyor set 123
+alter pipeline
+alter pipeline abc
+alter pipeline set
+alter pipeline set 123
 
-# test: alter conveyor set
-alter conveyor set hot
-show conveyor
+# test: alter pipeline set
+alter pipeline set hot
+show pipeline
 
 # test: insert (primary changed)
 insert 40 z
@@ -39,12 +39,12 @@ show storages
 # test: select
 select
 
-# test: drop storage (with conveyor dependency)
+# test: drop storage (with pipeline dependency)
 drop storage hot
 
-# test: alter conveyor reset
-alter conveyor reset
-show conveyor
+# test: alter pipeline reset
+alter pipeline reset
+show pipeline
 
 # test: drop storage #2
 drop storage hot
@@ -56,20 +56,20 @@ show storages
 insert 40 v
 show storages
 
-# test: alter conveyor set (storage does not exists)
-alter conveyor set undef
+# test: alter pipeline set (storage does not exists)
+alter pipeline set undef
 
-# test: alter conveyor set (hot swap)
+# test: alter pipeline set (hot swap)
 create storage hot
-alter conveyor set hot
-show conveyor
+alter pipeline set hot
+show pipeline
 
 show storages
 insert 50
 
 create storage hot_swap
-alter conveyor set hot_swap
-show conveyor
+alter pipeline set hot_swap
+show pipeline
 show storages
 
 insert 60
@@ -78,18 +78,18 @@ show storages
 # test: select
 select
 
-# test: alter conveyor set capacity (chain)
+# test: alter pipeline set capacity (chain)
 move partition 60 into hot
-alter conveyor reset
+alter pipeline reset
 drop storage hot_swap
 
 show storages
 
-alter conveyor set hot (capacity 2), cold
-show conveyor
+alter pipeline set hot (capacity 2), cold
+show pipeline
 
-# test: alter conveyor set capacity (both)
-alter conveyor set hot (capacity 2), cold (capacity 0)
-show conveyor
+# test: alter pipeline set capacity (both)
+alter pipeline set hot (capacity 2), cold (capacity 0)
+show pipeline
 
 close

@@ -78,17 +78,17 @@ open
 # test: ensure storage does not exists
 show storages
 
-# test: alter set conveyor
-alter conveyor set main (capacity 0)
-show conveyor
+# test: alter set pipeline
+alter pipeline set main (capacity 0)
+show pipeline
 
 # test: close/open
 close
 init
 open
 
-# test: ensure conveyor settings remain
-show conveyor
+# test: ensure pipeline settings remain
+show pipeline
 show storages
 
 close

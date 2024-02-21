@@ -14,7 +14,7 @@ group storage
 test create_storage
 test drop_storage
 test alter_storage
-test alter_conveyor
+test alter_pipeline
 test refresh
 test move
 test drop

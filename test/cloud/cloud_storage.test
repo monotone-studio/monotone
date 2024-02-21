@@ -25,7 +25,7 @@ alter storage test set (cloud 'mock')
 show storages
 
 # test: create partition (no file)
-alter conveyor set test
+alter pipeline set test
 insert 0
 show partitions debug
 show storages

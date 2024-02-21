@@ -62,7 +62,7 @@ test
   compression         
   refresh_wm          41943040
   region_size         131072
-alter conveyor set test
+alter pipeline set test
 # test: create partitions
 insert 10
 insert 20
