@@ -21,7 +21,6 @@ OBJECTS        = \
                  lib/uuid.o \
                  lib/compression_zstd.o \
                  lib/compression_mgr.o \
-                 lib/lex.o \
                  config/config.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
