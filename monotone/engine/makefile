@@ -24,7 +24,7 @@ OBJECTS        = \
                  io/writer.o \
                  io/merger.o \
                  storage/storage_mgr.o \
-                 storage/conveyor.o \
+                 storage/pipeline.o \
                  wal/wal.o \
                  wal/wal_cursor.o \
                  engine/engine.o \
