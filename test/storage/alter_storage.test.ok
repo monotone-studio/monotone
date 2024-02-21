@@ -28,9 +28,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -45,9 +45,9 @@ test
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -73,9 +73,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -90,9 +90,9 @@ test2
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -111,9 +111,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -132,9 +132,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -170,9 +170,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -187,9 +187,9 @@ test
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                false
@@ -206,9 +206,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -223,9 +223,9 @@ test
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -242,9 +242,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -259,9 +259,9 @@ test
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                false

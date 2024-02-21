@@ -12,9 +12,9 @@ main
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -34,9 +34,9 @@ main
   partitions_cloud    0
   events              1
   events_heap         1
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           2 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
   path                ''
   cloud               ''
   sync                true
@@ -57,9 +57,9 @@ main
   partitions_cloud    0
   events              2
   events_heap         2
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           4 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           4M
   path                ''
   cloud               ''
   sync                true
@@ -74,9 +74,9 @@ hot
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -91,9 +91,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -126,9 +126,9 @@ main
   partitions_cloud    0
   events              2
   events_heap         2
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           4 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           4M
   path                ''
   cloud               ''
   sync                true
@@ -143,9 +143,9 @@ hot
   partitions_cloud    0
   events              1
   events_heap         1
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           2 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
   path                ''
   cloud               ''
   sync                true
@@ -160,9 +160,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -196,9 +196,9 @@ main
   partitions_cloud    0
   events              2
   events_heap         2
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           4 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           4M
   path                ''
   cloud               ''
   sync                true
@@ -213,9 +213,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -233,9 +233,9 @@ main
   partitions_cloud    0
   events              3
   events_heap         3
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           6 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           6M
   path                ''
   cloud               ''
   sync                true
@@ -250,9 +250,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -276,9 +276,9 @@ main
   partitions_cloud    0
   events              3
   events_heap         3
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           6 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           6M
   path                ''
   cloud               ''
   sync                true
@@ -293,9 +293,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -310,9 +310,9 @@ hot
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -333,9 +333,9 @@ main
   partitions_cloud    0
   events              3
   events_heap         3
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           6 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           6M
   path                ''
   cloud               ''
   sync                true
@@ -350,9 +350,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -367,9 +367,9 @@ hot
   partitions_cloud    0
   events              1
   events_heap         1
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           2 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
   path                ''
   cloud               ''
   sync                true
@@ -384,9 +384,9 @@ hot_swap
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -403,9 +403,9 @@ main
   partitions_cloud    0
   events              3
   events_heap         3
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           6 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           6M
   path                ''
   cloud               ''
   sync                true
@@ -420,9 +420,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -437,9 +437,9 @@ hot
   partitions_cloud    0
   events              1
   events_heap         1
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           2 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
   path                ''
   cloud               ''
   sync                true
@@ -454,9 +454,9 @@ hot_swap
   partitions_cloud    0
   events              1
   events_heap         1
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           2 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
   path                ''
   cloud               ''
   sync                true
@@ -484,9 +484,9 @@ main
   partitions_cloud    0
   events              3
   events_heap         3
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           6 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           6M
   path                ''
   cloud               ''
   sync                true
@@ -501,9 +501,9 @@ cold
   partitions_cloud    0
   events              0
   events_heap         0
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           0 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
   path                ''
   cloud               ''
   sync                true
@@ -518,9 +518,9 @@ hot
   partitions_cloud    0
   events              2
   events_heap         1
-  size                0 Mb
-  size_uncompressed   0 Mb
-  size_heap           2 Mb
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
   path                ''
   cloud               ''
   sync                true
