@@ -14,31 +14,31 @@ show storages
 create storage hot
 create storage cold
 
-# test: alter pipeline set capacity
-alter pipeline set hot (capacity 2), cold
+# test: alter pipeline set partitions
+alter pipeline set hot (partitions 2), cold
 show pipeline
 
-# test: rebalance #1 (no partitions, <= capacity)
+# test: rebalance #1 (empty, <= partitions)
 rebalance
 show storages
 
-# test: rebalance #2 (< capacity)
+# test: rebalance #2 (< partitions)
 insert 0
 rebalance
 show storages
 
-# test: rebalance #3 (= capacity)
+# test: rebalance #3 (= partitions)
 insert 10
 rebalance
 show storages
 
-# test: rebalance #4 (> capacity)
+# test: rebalance #4 (> partitions)
 insert 20
 show storages
 rebalance
 show storages
 
-# test: rebalance #5 (more then one, > capacity)
+# test: rebalance #5 (more then one, > partitions)
 insert 30
 insert 40
 insert 500
@@ -49,8 +49,8 @@ show storages
 
 select
 
-# test: alter pipeline set capacity zero
-alter pipeline set hot (capacity 0)
+# test: alter pipeline set partitions zero
+alter pipeline set hot (partitions 0)
 show pipeline
 
 # test: rebalance (auto drop)
@@ -58,8 +58,8 @@ show storages
 rebalance
 show storages
 
-# test: alter pipeline set capacity zero #2 (chain)
-alter pipeline set hot (capacity 2), cold (capacity 0)
+# test: alter pipeline set partitions zero #2 (chain)
+alter pipeline set hot (partitions 2), cold (partitions 0)
 show pipeline
 
 # test: rebalance #1 (auto drop existing)

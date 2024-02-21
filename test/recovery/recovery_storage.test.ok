@@ -687,7 +687,7 @@ select
 # test: create storages
 create storage hot (sync false)
 create storage cold (sync false)
-alter pipeline set hot (capacity 2), cold
+alter pipeline set hot (partitions 2), cold
 # test: close/open
 close
 init
@@ -750,8 +750,8 @@ cold
   refresh_wm          41943040
   region_size         131072
 show pipeline
-hot (capacity 2) ⟶ cold ()
-# test: create partition #1 (< capacity)
+hot (partitions 2) ⟶ cold ()
+# test: create partition #1 (< partitions)
 insert 0
 refresh partition 0
 # test: close/open
@@ -795,7 +795,7 @@ cold
 select
 [0]
 (eof)
-# test: create partition #2 (= capacity)
+# test: create partition #2 (= partitions)
 insert 10
 refresh partition 10
 # test: close/open
@@ -865,7 +865,7 @@ select
 [0]
 [10]
 (eof)
-# test: create partition #3 (> capacity)
+# test: create partition #3 (> partitions)
 insert 20
 refresh partition 20
 # test: rebalance

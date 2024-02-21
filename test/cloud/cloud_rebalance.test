@@ -10,19 +10,19 @@ open
 create storage hot (sync false)
 create storage cold (cloud 'mock', sync false)
 
-# test: alter pipeline set capacity
-alter pipeline set hot (capacity 2), cold
+# test: alter pipeline set partitions
+alter pipeline set hot (partitions 2), cold
 show pipeline
 
-# test: create partition #1 (< capacity)
+# test: create partition #1 (< partitions)
 insert 0
 show partitions debug
 
-# test: create partition #2 (= capacity)
+# test: create partition #2 (= partitions)
 insert 10
 show partitions debug
 
-# test: create partition #3 (> capacity)
+# test: create partition #3 (> partitions)
 insert 20
 show partitions debug
 
@@ -30,7 +30,7 @@ show partitions debug
 rebalance
 show partitions debug
 
-# test: create partitions (> capacity)
+# test: create partitions (> partitions)
 insert 30
 insert 300
 insert 3000

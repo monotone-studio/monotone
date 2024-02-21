@@ -64,14 +64,23 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 		for (;;)
 		{
 			// name
-			if (! lex_if(self, KNAME, &name))
+			lex_next(self, &name);
+			switch (name.id) {
+			case KPARTITIONS:
+				name.id = KNAME;
+				break;
+			case KNAME:
+				break;
+			default:
 				error("ALTER PIPELINE SET name (<name> value) expected");
+				break;
+			}
 
 			// value
-			if (str_compare_raw(&name.string, "capacity", 8))
+			if (str_compare_raw(&name.string, "partitions", 10))
 			{
-				// capacity <int>
-				parse_int(self, &name, &config->capacity);
+				// partitions <int>
+				parse_int(self, &name, &config->partitions);
 			} else
 			{
 				error("ALTER PIPELINE: unknown option %.*s", str_size(&name.string),

@@ -79,7 +79,7 @@ open
 show storages
 
 # test: alter set pipeline
-alter pipeline set main (capacity 0)
+alter pipeline set main (partitions 0)
 show pipeline
 
 # test: close/open

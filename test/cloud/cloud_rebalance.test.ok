@@ -6,11 +6,11 @@ open
 # test: create storages
 create storage hot (sync false)
 create storage cold (cloud 'mock', sync false)
-# test: alter pipeline set capacity
-alter pipeline set hot (capacity 2), cold
+# test: alter pipeline set partitions
+alter pipeline set hot (partitions 2), cold
 show pipeline
-hot (capacity 2) ⟶ cold ()
-# test: create partition #1 (< capacity)
+hot (partitions 2) ⟶ cold ()
+# test: create partition #1 (< partitions)
 insert 0
 show partitions debug
 main
@@ -27,7 +27,7 @@ hot
     memtable_b  0 / 0
     file        0
 cold
-# test: create partition #2 (= capacity)
+# test: create partition #2 (= partitions)
 insert 10
 show partitions debug
 main
@@ -55,7 +55,7 @@ hot
     memtable_b  0 / 0
     file        0
 cold
-# test: create partition #3 (> capacity)
+# test: create partition #3 (> partitions)
 insert 20
 show partitions debug
 main
@@ -147,7 +147,7 @@ cold
         events          1
         offset          0
         size            41
-# test: create partitions (> capacity)
+# test: create partitions (> partitions)
 insert 30
 insert 300
 insert 3000

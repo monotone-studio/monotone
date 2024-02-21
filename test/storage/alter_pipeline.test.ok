@@ -472,7 +472,7 @@ select
 [50]
 [60]
 (eof)
-# test: alter pipeline set capacity (chain)
+# test: alter pipeline set partitions (chain)
 move partition 60 into hot
 alter pipeline reset
 drop storage hot_swap
@@ -528,11 +528,11 @@ hot
   compression         
   refresh_wm          41943040
   region_size         131072
-alter pipeline set hot (capacity 2), cold
+alter pipeline set hot (partitions 2), cold
 show pipeline
-hot (capacity 2) ⟶ cold ()
-# test: alter pipeline set capacity (both)
-alter pipeline set hot (capacity 2), cold (capacity 0)
+hot (partitions 2) ⟶ cold ()
+# test: alter pipeline set partitions (both)
+alter pipeline set hot (partitions 2), cold (partitions 0)
 show pipeline
-hot (capacity 2) ⟶ cold (capacity 0)
+hot (partitions 2) ⟶ cold (partitions 0)
 close

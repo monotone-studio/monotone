@@ -78,18 +78,18 @@ show storages
 # test: select
 select
 
-# test: alter pipeline set capacity (chain)
+# test: alter pipeline set partitions (chain)
 move partition 60 into hot
 alter pipeline reset
 drop storage hot_swap
 
 show storages
 
-alter pipeline set hot (capacity 2), cold
+alter pipeline set hot (partitions 2), cold
 show pipeline
 
-# test: alter pipeline set capacity (both)
-alter pipeline set hot (capacity 2), cold (capacity 0)
+# test: alter pipeline set partitions (both)
+alter pipeline set hot (partitions 2), cold (partitions 0)
 show pipeline
 
 close

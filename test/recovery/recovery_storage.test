@@ -130,7 +130,7 @@ select
 # test: create storages
 create storage hot (sync false)
 create storage cold (sync false)
-alter pipeline set hot (capacity 2), cold
+alter pipeline set hot (partitions 2), cold
 
 # test: close/open
 close
@@ -146,7 +146,7 @@ files main
 show storages
 show pipeline
 
-# test: create partition #1 (< capacity)
+# test: create partition #1 (< partitions)
 insert 0
 refresh partition 0
 
@@ -164,7 +164,7 @@ files main
 show partitions debug
 select
 
-# test: create partition #2 (= capacity)
+# test: create partition #2 (= partitions)
 insert 10
 refresh partition 10
 
@@ -182,7 +182,7 @@ files main
 show partitions debug
 select
 
-# test: create partition #3 (> capacity)
+# test: create partition #3 (> partitions)
 insert 20
 refresh partition 20
 
