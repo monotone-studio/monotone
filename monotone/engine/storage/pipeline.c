@@ -12,7 +12,7 @@
 #include <monotone_storage.h>
 
 void
-conveyor_init(Conveyor* self, StorageMgr* storage_mgr)
+pipeline_init(Pipeline* self, StorageMgr* storage_mgr)
 {
 	self->storage_mgr = storage_mgr;
 	self->list_count  = 0;
@@ -20,7 +20,7 @@ conveyor_init(Conveyor* self, StorageMgr* storage_mgr)
 }
 
 static inline void
-conveyor_reset(Conveyor* self)
+pipeline_reset(Pipeline* self)
 {
 	list_foreach_safe(&self->list)
 	{
@@ -32,13 +32,13 @@ conveyor_reset(Conveyor* self)
 }
 
 void
-conveyor_free(Conveyor* self)
+pipeline_free(Pipeline* self)
 {
-	conveyor_reset(self);
+	pipeline_reset(self);
 }
 
 static inline void
-conveyor_save(Conveyor* self)
+pipeline_save(Pipeline* self)
 {
 	Buf buf;
 	buf_init(&buf);
@@ -53,13 +53,13 @@ conveyor_save(Conveyor* self)
 	}
 
 	// update state
-	var_data_set_buf(&config()->conveyor, &buf);
+	var_data_set_buf(&config()->pipeline, &buf);
 }
 
 void
-conveyor_open(Conveyor* self)
+pipeline_open(Pipeline* self)
 {
-	auto var = &config()->conveyor;
+	auto var = &config()->pipeline;
 	if (! var_data_is_set(var))
 		return;
 	auto pos = var_data_of(var);
@@ -85,13 +85,13 @@ conveyor_open(Conveyor* self)
 }
 
 bool
-conveyor_empty(Conveyor* self)
+pipeline_empty(Pipeline* self)
 {
 	return !self->list_count;
 }
 
 void
-conveyor_alter(Conveyor* self, List* configs)
+pipeline_alter(Pipeline* self, List* configs)
 {
 	List list;
 	list_init(&list);
@@ -117,7 +117,7 @@ conveyor_alter(Conveyor* self, List* configs)
 		rethrow();
 	}
 
-	conveyor_reset(self);
+	pipeline_reset(self);
 
 	list_foreach_safe(&list)
 	{
@@ -127,11 +127,11 @@ conveyor_alter(Conveyor* self, List* configs)
 		self->list_count++;
 	}
 
-	conveyor_save(self);
+	pipeline_save(self);
 }
 
 void
-conveyor_rename(Conveyor* self, Str* storage, Str* storage_new)
+pipeline_rename(Pipeline* self, Str* storage, Str* storage_new)
 {
 	list_foreach_safe(&self->list)
 	{
@@ -139,14 +139,14 @@ conveyor_rename(Conveyor* self, Str* storage, Str* storage_new)
 		if (str_compare(&tier->config->name, storage))
 		{
 			tier_config_set_name(tier->config, storage_new);
-			conveyor_save(self);
+			pipeline_save(self);
 			break;
 		}
 	}
 }
 
 void
-conveyor_print(Conveyor* self, Buf* buf)
+pipeline_print(Pipeline* self, Buf* buf)
 {
 	bool first = true;
 	list_foreach(&self->list)
@@ -165,9 +165,9 @@ conveyor_print(Conveyor* self, Buf* buf)
 }
 
 Tier*
-conveyor_primary(Conveyor* self)
+pipeline_primary(Pipeline* self)
 {
-	if (conveyor_empty(self))
+	if (pipeline_empty(self))
 		return NULL;
 	auto first = container_of(self->list.next, Tier, link);
 	return first;

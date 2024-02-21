@@ -15,5 +15,5 @@
 #include "storage/tier_config.h"
 #include "storage/tier.h"
 
-// conveyor
-#include "storage/conveyor.h"
+// pipeline
+#include "storage/pipeline.h"

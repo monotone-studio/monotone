@@ -6,20 +6,20 @@
 // time-series storage
 //
 
-typedef struct Conveyor Conveyor;
+typedef struct Pipeline Pipeline;
 
-struct Conveyor
+struct Pipeline
 {
 	List        list;
 	int         list_count;
 	StorageMgr* storage_mgr;
 };
 
-void  conveyor_init(Conveyor*, StorageMgr*);
-void  conveyor_free(Conveyor*);
-void  conveyor_open(Conveyor*);
-bool  conveyor_empty(Conveyor*);
-void  conveyor_alter(Conveyor*, List*);
-void  conveyor_rename(Conveyor*, Str*, Str*);
-void  conveyor_print(Conveyor*, Buf*);
-Tier* conveyor_primary(Conveyor*);
+void  pipeline_init(Pipeline*, StorageMgr*);
+void  pipeline_free(Pipeline*);
+void  pipeline_open(Pipeline*);
+bool  pipeline_empty(Pipeline*);
+void  pipeline_alter(Pipeline*, List*);
+void  pipeline_rename(Pipeline*, Str*, Str*);
+void  pipeline_print(Pipeline*, Buf*);
+Tier* pipeline_primary(Pipeline*);
