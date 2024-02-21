@@ -87,6 +87,11 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 				// size <int>
 				parse_int(self, &name, &config->size);
 			} else
+			if (str_compare_raw(&name.string, "events", 6))
+			{
+				// events <int>
+				parse_int(self, &name, &config->events);
+			} else
 			{
 				error("ALTER PIPELINE: unknown option %.*s", str_size(&name.string),
 				      str_of(&name.string));
