@@ -148,18 +148,32 @@ pipeline_rename(Pipeline* self, Str* storage, Str* storage_new)
 void
 pipeline_print(Pipeline* self, Buf* buf)
 {
-	bool first = true;
+	bool first_tier = true;
 	list_foreach(&self->list)
 	{
 		auto tier = list_at(Tier, link);
-		if (! first)
+		if (! first_tier)
 			buf_printf(buf, " ⟶ ");
 		buf_printf(buf, "%.*s (", str_size(&tier->config->name),
 		           str_of(&tier->config->name));
+
+		bool first = true;
 		if (tier->config->partitions != INT64_MAX)
+		{
 			buf_printf(buf, "partitions %" PRIi64, tier->config->partitions);
+			first = false;
+		}
+
+		if (tier->config->size != INT64_MAX)
+		{
+			if (! first)
+				buf_printf(buf, ", ");
+			buf_printf(buf, "size %" PRIi64, tier->config->size);
+			first = false;
+		}
+
 		buf_printf(buf, ")");
-		first = false;
+		first_tier = false;
 	}
 	buf_printf(buf, "\n");
 }
