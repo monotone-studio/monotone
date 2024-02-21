@@ -27,7 +27,7 @@ engine_init(Engine*     self,
 	cond_var_init(&self->cond_var);
 	mapping_init(&self->mapping, comparator);
 	storage_mgr_init(&self->storage_mgr, cloud_mgr);
-	conveyor_init(&self->conveyor, &self->storage_mgr);
+	pipeline_init(&self->pipeline, &self->storage_mgr);
 }
 
 void
@@ -35,7 +35,7 @@ engine_free(Engine* self)
 {
 	mutex_free(&self->lock);
 	cond_var_free(&self->cond_var);
-	conveyor_free(&self->conveyor);
+	pipeline_free(&self->pipeline);
 	storage_mgr_free(&self->storage_mgr);
 }
 
@@ -46,8 +46,8 @@ engine_open(Engine* self)
 	storage_mgr_open(&self->storage_mgr);
 	storage_mgr_create_system(&self->storage_mgr);
 
-	// recover conveyor
-	conveyor_open(&self->conveyor);
+	// recover pipeline
+	pipeline_open(&self->pipeline);
 
 	// recover partitions
 	engine_recover(self);
@@ -120,14 +120,14 @@ engine_create(Engine* self, Slice* head, uint64_t min, uint64_t max)
 
 	// match primary storage
 	Storage* storage = NULL;
-	Tier*    primary = conveyor_primary(&self->conveyor);
+	Tier*    primary = pipeline_primary(&self->pipeline);
 	if (primary)
 	{
-		// first storage according to the conveyor order
+		// first storage according to the pipeline order
 		storage = primary->storage;
 	} else
 	{
-		// conveyor is not set, using main storage
+		// pipeline is not set, using main storage
 		storage = storage_mgr_first(&self->storage_mgr);
 	}
 	storage_add(storage, part);
@@ -135,7 +135,7 @@ engine_create(Engine* self, Slice* head, uint64_t min, uint64_t max)
 	unguard(&guard);
 
 	// schedule rebalance
-	if (! conveyor_empty(&self->conveyor))
+	if (! pipeline_empty(&self->pipeline))
 		service_rebalance(self->service);
 
 	// schedule refresh for previous head

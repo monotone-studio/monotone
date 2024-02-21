@@ -16,7 +16,7 @@ struct Engine
 	// partition mapping
 	Mapping     mapping;
 	// objects
-	Conveyor    conveyor;
+	Pipeline    pipeline;
 	StorageMgr  storage_mgr;
 	Wal*        wal;
 	Service*    service;

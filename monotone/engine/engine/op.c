@@ -396,7 +396,7 @@ engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 	auto oldest = storage_oldest(tier->storage);
 
 	// schedule partition drop
-	if (list_is_last(&self->conveyor.list, &tier->link))
+	if (list_is_last(&self->pipeline.list, &tier->link))
 		return oldest;
 
 	// schedule partition move to the next tier storage
@@ -412,12 +412,12 @@ engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
 	control_lock_shared();
 	guard(lock_guard, control_unlock_guard, NULL);
 
-	if (conveyor_empty(&self->conveyor))
+	if (pipeline_empty(&self->pipeline))
 		return false;
 
 	mutex_lock(&self->lock);
 
-	list_foreach(&self->conveyor.list)
+	list_foreach(&self->pipeline.list)
 	{
 		auto tier = list_at(Tier, link);
 		auto part = engine_rebalance_tier(self, tier, storage);
