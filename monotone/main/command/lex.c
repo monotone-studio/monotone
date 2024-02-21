@@ -53,12 +53,16 @@ static Keyword keywords[] =
 	// size modificators
 	{ KKB,         "kb",           2},
 	{ KKIB,        "kib",          3},
+	{ KKIB,        "k",            1},
 	{ KMB,         "mb",           2},
 	{ KMIB,        "mib",          3},
+	{ KMIB,        "m",            1},
 	{ KGB,         "gb",           2},
 	{ KGIB,        "gib",          3},
+	{ KGIB,        "g",            1},
 	{ KTB,         "tb",           2},
 	{ KTIB,        "tib",          3},
+	{ KTIB,        "t",            1},
 	// keywords
 	{ KSET,        "set",          3},
 	{ KRESET,      "reset",        5},
