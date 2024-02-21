@@ -183,6 +183,15 @@ pipeline_print(Pipeline* self, Buf* buf)
 			first = false;
 		}
 
+		// interval
+		if (tier->config->interval != INT64_MAX)
+		{
+			if (! first)
+				buf_printf(buf, ", ");
+			buf_printf(buf, "interval %" PRIi64, tier->config->interval);
+			first = false;
+		}
+
 		buf_printf(buf, ")");
 		first_tier = false;
 	}

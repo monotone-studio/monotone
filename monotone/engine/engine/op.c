@@ -410,6 +410,12 @@ engine_rebalance_ready(Tier* tier)
 		if (tier->storage->events > tier->config->events)
 			return true;
 
+	// rebalance by interval
+	if (tier->config->interval != INT64_MAX)
+		if ((tier->storage->list_count * config_interval()) >
+		     (uint64_t)tier->config->interval)
+			return true;
+
 	return false;
 }
 
