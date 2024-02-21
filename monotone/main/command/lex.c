@@ -80,7 +80,7 @@ static Keyword keywords[] =
 	{ KNOT,        "not",          3},
 	{ KEXISTS,     "exists",       6},
 	{ KDROP,       "drop"  ,       4},
-	{ KCONVEYOR,   "conveyor",     8},
+	{ KPIPELINE,   "pipeline",     8},
 	{ KALTER,      "alter",        5},
 	{ KRENAME,     "rename",       6},
 	{ KMOVE,       "move",         4},

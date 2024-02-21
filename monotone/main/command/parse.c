@@ -84,14 +84,14 @@ parse(Lex* self)
 	}
 	case KALTER:
 	{
-		// ALTER STORAGE | CONVEYOR
+		// ALTER STORAGE | PIPELINE
 		if (lex_if(self, KSTORAGE, NULL))
 			cmd = parse_storage_alter(self);
 		else
-		if (lex_if(self, KCONVEYOR, NULL))
-			cmd = parse_conveyor_alter(self);
+		if (lex_if(self, KPIPELINE, NULL))
+			cmd = parse_pipeline_alter(self);
 		else
-			error("ALTER <STORAGE|CONVEYOR> expected");
+			error("ALTER <STORAGE|PIPELINE> expected");
 		break;
 	}
 	case KMOVE:

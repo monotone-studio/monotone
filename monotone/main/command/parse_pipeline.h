@@ -3,28 +3,28 @@
 //
 // monotone
 //
-// time-series conveyor
+// time-series pipeline
 //
 
-typedef struct CmdConveyorAlter CmdConveyorAlter;
+typedef struct CmdPipelineAlter CmdPipelineAlter;
 
-struct CmdConveyorAlter
+struct CmdPipelineAlter
 {
 	Cmd  cmd;
 	List list;
 	int  list_count;
 };
 
-static inline CmdConveyorAlter*
-cmd_conveyor_alter_of(Cmd* self)
+static inline CmdPipelineAlter*
+cmd_pipeline_alter_of(Cmd* self)
 {
-	return (CmdConveyorAlter*)self;
+	return (CmdPipelineAlter*)self;
 }
 
 static inline void
-cmd_conveyor_alter_free(Cmd* self)
+cmd_pipeline_alter_free(Cmd* self)
 {
-	auto cmd = cmd_conveyor_alter_of(self);
+	auto cmd = cmd_pipeline_alter_of(self);
 	list_foreach_safe(&cmd->list)
 	{
 		auto config = list_at(TierConfig, link);
@@ -32,11 +32,11 @@ cmd_conveyor_alter_free(Cmd* self)
 	}
 }
 
-static inline CmdConveyorAlter*
-cmd_conveyor_alter_allocate(void)
+static inline CmdPipelineAlter*
+cmd_pipeline_alter_allocate(void)
 {
-	CmdConveyorAlter* self;
-	self = cmd_allocate(CMD_CONVEYOR_ALTER, cmd_conveyor_alter_free,
+	CmdPipelineAlter* self;
+	self = cmd_allocate(CMD_PIPELINE_ALTER, cmd_pipeline_alter_free,
 	                    sizeof(*self));
 	self->list_count = 0;
 	list_init(&self->list);
@@ -44,10 +44,10 @@ cmd_conveyor_alter_allocate(void)
 }
 
 static inline void
-cmd_conveyor_alter_add(CmdConveyorAlter* self, TierConfig* config)
+cmd_pipeline_alter_add(CmdPipelineAlter* self, TierConfig* config)
 {
 	list_append(&self->list, &config->link);
 	self->list_count++;
 }
 
-Cmd* parse_conveyor_alter(Lex*);
+Cmd* parse_pipeline_alter(Lex*);

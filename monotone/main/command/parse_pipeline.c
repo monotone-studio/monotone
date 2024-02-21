@@ -15,9 +15,9 @@
 #include <monotone_command.h>
 
 static void
-parse_conveyor_set(Lex* self, Cmd* arg)
+parse_pipeline_set(Lex* self, Cmd* arg)
 {
-	auto cmd = cmd_conveyor_alter_of(arg);
+	auto cmd = cmd_pipeline_alter_of(arg);
 
 	// storage [(options]), ...]
 	for (;;)
@@ -25,7 +25,7 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 		// storage name
 		Token name;
 		if (! lex_if(self, KNAME, &name))
-			error("ALTER CONVEYOR SET <storage name> expected");
+			error("ALTER PIPELINE SET <storage name> expected");
 
 		// create tier config
 		auto config = tier_config_allocate();
@@ -36,7 +36,7 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 		if (lex_if(self, ',', NULL))
 		{
 			unguard(&guard);
-			cmd_conveyor_alter_add(cmd, config);
+			cmd_pipeline_alter_add(cmd, config);
 			continue;
 		}
 
@@ -44,19 +44,19 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 		if (lex_if(self, KEOF, NULL))
 		{
 			unguard(&guard);
-			cmd_conveyor_alter_add(cmd, config);
+			cmd_pipeline_alter_add(cmd, config);
 			break;
 		}
 
 		// (
 		if (! lex_if(self, '(', NULL))
-			error("ALTER CONVEYOR SET name <(> expected");
+			error("ALTER PIPELINE SET name <(> expected");
 
 		// [)]
 		if (lex_if(self, ')', NULL))
 		{
 			unguard(&guard);
-			cmd_conveyor_alter_add(cmd, config);
+			cmd_pipeline_alter_add(cmd, config);
 			continue;
 		}
 
@@ -65,7 +65,7 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 		{
 			// name
 			if (! lex_if(self, KNAME, &name))
-				error("ALTER CONVEYOR SET name (<name> value) expected");
+				error("ALTER PIPELINE SET name (<name> value) expected");
 
 			// value
 			if (str_compare_raw(&name.string, "capacity", 8))
@@ -74,7 +74,7 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 				parse_int(self, &name, &config->capacity);
 			} else
 			{
-				error("ALTER CONVEYOR: unknown option %.*s", str_size(&name.string),
+				error("ALTER PIPELINE: unknown option %.*s", str_size(&name.string),
 				      str_of(&name.string));
 			}
 
@@ -84,12 +84,12 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 
 			// )
 			if (! lex_if(self, ')', NULL))
-				error("ALTER CONVEYOR SET name (...<)> expected");
+				error("ALTER PIPELINE SET name (...<)> expected");
 
 			break;
 		}
 		unguard(&guard);
-		cmd_conveyor_alter_add(cmd, config);
+		cmd_pipeline_alter_add(cmd, config);
 
 		// ,
 		if (lex_if(self, ',', NULL))
@@ -99,16 +99,16 @@ parse_conveyor_set(Lex* self, Cmd* arg)
 		if (lex_if(self, KEOF, NULL))
 			break;
 
-		error("ALTER CONVEYOR SET name() <,> expected");
+		error("ALTER PIPELINE SET name() <,> expected");
 	}
 }
 
 Cmd*
-parse_conveyor_alter(Lex* self)
+parse_pipeline_alter(Lex* self)
 {
-	// ALTER CONVEYOR RESET
-	// ALTER CONVEYOR SET storage_name (tier_options) [, ...]
-	auto cmd = cmd_conveyor_alter_allocate();
+	// ALTER PIPELINE RESET
+	// ALTER PIPELINE SET storage_name (tier_options) [, ...]
+	auto cmd = cmd_pipeline_alter_allocate();
 	guard(guard, cmd_free, &cmd->cmd);
 
 	// RESET | SET
@@ -117,10 +117,10 @@ parse_conveyor_alter(Lex* self)
 	} else
 	{
 		if (! lex_if(self, KSET, NULL))
-			error("ALTER CONVEYOR <SET | RESET> expected");
+			error("ALTER PIPELINE <SET | RESET> expected");
 
 		// SET storage (options), ...
-		parse_conveyor_set(self, &cmd->cmd);
+		parse_pipeline_set(self, &cmd->cmd);
 	}
 
 	unguard(&guard);

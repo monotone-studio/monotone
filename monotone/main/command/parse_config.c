@@ -34,8 +34,8 @@ parse_show(Lex* self)
 	case KPARTITIONS:
 		type = SHOW_PARTITIONS;
 		break;
-	case KCONVEYOR:
-		type = SHOW_CONVEYOR;
+	case KPIPELINE:
+		type = SHOW_PIPELINE;
 		break;
 	case KALL:
 		type = SHOW_ALL;
@@ -44,7 +44,7 @@ parse_show(Lex* self)
 		type = SHOW_NAME;
 		break;
 	default:
-		error("SHOW <MEMORY | WAL | STORAGES | PARTITIONS | CONVEYOR | ALL | NAME>");
+		error("SHOW <MEMORY | WAL | STORAGES | PARTITIONS | PIPELINE | ALL | NAME>");
 	}
 
 	// [verbose]
