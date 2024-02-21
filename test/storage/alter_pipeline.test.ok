@@ -535,4 +535,16 @@ hot (partitions 2) ⟶ cold ()
 alter pipeline set hot (partitions 2), cold (partitions 0)
 show pipeline
 hot (partitions 2) ⟶ cold (partitions 0)
+# test: alter pipeline set events
+alter pipeline set hot (events 100)
+show pipeline
+hot (events 100)
+# test: alter pipeline set partitions, size
+alter pipeline set hot (partitions 2, size 100MiB)
+show pipeline
+hot (partitions 2, size 104857600)
+# test: alter pipeline set interval
+alter pipeline set hot (interval 1day)
+show pipeline
+hot (interval 86400000000)
 close
