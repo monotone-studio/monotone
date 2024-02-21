@@ -37,6 +37,7 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 	// get access lock
 	mutex_lock(&self->lock);
 	ref_lock(ref, LOCK_ACCESS);
+	mutex_unlock(&self->lock);
 
 	// delete partition file on storage or cloud
 	Exception e;
@@ -62,11 +63,16 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 
 		if (part->state == PART_NONE)
 		{
+			// unset storage metrics before droping the reference
+			auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
+			storage_remove_metrics(storage, part);
+
 			part->index = NULL;
 			buf_reset(&part->index_buf);
 		}
 	}
 
+	mutex_lock(&self->lock);
 	ref_unlock(ref, LOCK_ACCESS);
 	mutex_unlock(&self->lock);
 
@@ -389,7 +395,19 @@ engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 static inline Part*
 engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 {
-	if (tier->storage->list_count <= tier->config->partitions)
+	bool rebalance = false;
+
+	// rebalance by partitions number
+	if (tier->config->partitions != INT64_MAX)
+		if (tier->storage->list_count > tier->config->partitions)
+			rebalance = true;
+
+	// rebalance by size
+	if (tier->config->size != INT64_MAX)
+		if (tier->storage->size > tier->config->size)
+			rebalance = true;
+
+	if (! rebalance)
 		return NULL;
 
 	// get oldest partition (by psn)

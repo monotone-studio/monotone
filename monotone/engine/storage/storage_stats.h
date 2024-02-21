@@ -83,7 +83,6 @@ storage_stats_show(Storage* self, Buf* buf)
 	uint64_t size = stats.size / 1024 / 1024;
 	uint64_t size_uncompressed = stats.size_uncompressed / 1024 / 1024;
 	uint64_t size_heap = stats.size_heap / 1024 / 1024;
-
 	if (str_empty(&source->compression) || size == 0)
 		buf_printf(buf, "  size                %" PRIu64 "M\n", size);
 	else

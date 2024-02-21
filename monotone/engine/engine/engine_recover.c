@@ -222,6 +222,9 @@ engine_recover(Engine* self)
 			else
 				abort();
 
+			// add metrics after open
+			storage_add_metrics(storage, part);
+
 			// sync metrics
 			config_lsn_follow(part->index->lsn);
 			config_psn_follow(part->index->id.psn);
