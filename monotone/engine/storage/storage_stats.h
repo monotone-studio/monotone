@@ -85,12 +85,12 @@ storage_stats_show(Storage* self, Buf* buf)
 	uint64_t size_heap = stats.size_heap / 1024 / 1024;
 
 	if (str_empty(&source->compression) || size == 0)
-		buf_printf(buf, "  size                %" PRIu64 " Mb\n", size);
+		buf_printf(buf, "  size                %" PRIu64 " MiB\n", size);
 	else
-		buf_printf(buf, "  size                %" PRIu64 " Mb (%.1fx compression)\n",
+		buf_printf(buf, "  size                %" PRIu64 " MiB (%.1fx compression)\n",
 		           size, (float)size_uncompressed / (float)size);
-	buf_printf(buf, "  size_uncompressed   %" PRIu64 " Mb\n", size_uncompressed);
-	buf_printf(buf, "  size_heap           %" PRIu64 " Mb\n", size_heap);
+	buf_printf(buf, "  size_uncompressed   %" PRIu64 " MiB\n", size_uncompressed);
+	buf_printf(buf, "  size_heap           %" PRIu64 " MiB\n", size_heap);
 
 	// source
 	buf_printf(buf, "  path                '%.*s'\n", str_size(&source->path),
