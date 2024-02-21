@@ -36,8 +36,8 @@ execute_show(Executable* self)
 		                            self->output,
 		                            cmd->verbose, cmd->debug);
 		break;
-	case SHOW_CONVEYOR:
-		conveyor_print(&self->main->engine.conveyor, self->output);
+	case SHOW_PIPELINE:
+		pipeline_print(&self->main->engine.pipeline, self->output);
 		break;
 	case SHOW_ALL:
 		config_print(config(), self->output);
@@ -239,7 +239,7 @@ execute_storage_alter(Executable* self)
 		storage_mgr_rename(&engine->storage_mgr, &cmd->name.string,
 		                   &cmd->name_new.string,
 		                    cmd->if_exists);
-		conveyor_rename(&engine->conveyor, &cmd->name.string,
+		pipeline_rename(&engine->pipeline, &cmd->name.string,
 		                &cmd->name_new.string);
 	}
 
@@ -248,12 +248,12 @@ execute_storage_alter(Executable* self)
 }
 
 static void
-execute_conveyor_alter(Executable* self)
+execute_pipeline_alter(Executable* self)
 {
-	auto cmd = cmd_conveyor_alter_of(self->cmd);
+	auto cmd = cmd_pipeline_alter_of(self->cmd);
 
-	// alter conveyor
-	conveyor_alter(&self->main->engine.conveyor, &cmd->list);
+	// alter pipeline
+	pipeline_alter(&self->main->engine.pipeline, &cmd->list);
 
 	// rewrite config file
 	control_save_config();
@@ -403,7 +403,7 @@ static Execute cmds[CMD_MAX] =
 	{ execute_storage_create,           true  },
 	{ execute_storage_drop,             true  },
 	{ execute_storage_alter,            true  },
-	{ execute_conveyor_alter,           true  },
+	{ execute_pipeline_alter,           true  },
 	{ execute_partition_drop,           false },
 	{ execute_partition_drop_range,     false },
 	{ execute_partition_move,           false },

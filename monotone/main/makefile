@@ -24,7 +24,7 @@ OBJECTS        = \
                  command/lex.o \
                  command/parse_config.o \
                  command/parse_storage.o \
-                 command/parse_conveyor.o \
+                 command/parse_pipeline.o \
                  command/parse_partition.o \
                  command/parse_debug.o \
                  command/parse.o \
