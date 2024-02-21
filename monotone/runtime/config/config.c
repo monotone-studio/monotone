@@ -96,7 +96,7 @@ config_prepare(Config* self)
 		{ "lsn",                     VAR_INT,    VAR_E,                &self->lsn,                     NULL,        0                },
 		{ "psn",                     VAR_INT,    VAR_E,                &self->psn,                     NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
-		{ "conveyor",                VAR_DATA,   VAR_C|VAR_H,          &self->conveyor,                NULL,        0                },
+		{ "pipeline",                VAR_DATA,   VAR_C|VAR_H,          &self->pipeline,                NULL,        0                },
 		// stats
 		{ "events_written",          VAR_INT,    VAR_E,                &self->events_written,          NULL,        0                },
 		{ "events_written_bytes",    VAR_INT,    VAR_E,                &self->events_written_bytes,    NULL,        0                },

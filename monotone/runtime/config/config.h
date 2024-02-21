@@ -33,7 +33,7 @@ struct Config
 	Var  lsn;
 	Var  psn;
 	Var  storages;
-	Var  conveyor;
+	Var  pipeline;
 	// stats
 	Var  events_written;
 	Var  events_written_bytes;
