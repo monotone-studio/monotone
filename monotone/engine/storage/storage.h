@@ -13,6 +13,8 @@ struct Storage
 	List    list;
 	int     list_count;
 	int     refs;
+	int64_t size;
+	int64_t events;
 	Cloud*  cloud;
 	Source* source;
 	List    link;
@@ -35,6 +37,8 @@ storage_allocate(Source* source)
 	self->cloud      = NULL;
 	self->source     = NULL;
 	self->refs       = 0;
+	self->size       = 0;
+	self->events     = 0;
 	self->list_count = 0;
 	list_init(&self->list);
 	guard(self_guard, storage_free, self);
@@ -56,10 +60,29 @@ storage_unref(Storage* self)
 }
 
 static inline void
+storage_add_metrics(Storage* self, Part* part)
+{
+	if (! part->index)
+		return;
+	self->size += part->index->size_regions;
+	self->events += part->index->events;
+}
+
+static inline void
+storage_remove_metrics(Storage* self, Part* part)
+{
+	if (! part->index)
+		return;
+	self->size -= part->index->size_regions;
+	self->events -= part->index->events;
+}
+
+static inline void
 storage_add(Storage* self, Part* part)
 {
 	list_append(&self->list, &part->link);
 	self->list_count++;
+	storage_add_metrics(self, part);
 	part_set_cloud(part, self->cloud);
 }
 
@@ -70,6 +93,7 @@ storage_remove(Storage* self, Part* part)
 	list_unlink(&part->link);
 	self->list_count--;
 	part_set_cloud(part, NULL);
+	storage_remove_metrics(self, part);
 }
 
 hot static inline Part*
