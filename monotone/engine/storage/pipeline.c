@@ -156,8 +156,8 @@ pipeline_print(Pipeline* self, Buf* buf)
 			buf_printf(buf, " ⟶ ");
 		buf_printf(buf, "%.*s (", str_size(&tier->config->name),
 		           str_of(&tier->config->name));
-		if (tier->config->capacity != INT64_MAX)
-			buf_printf(buf, "capacity %" PRIi64, tier->config->capacity);
+		if (tier->config->partitions != INT64_MAX)
+			buf_printf(buf, "partitions %" PRIi64, tier->config->partitions);
 		buf_printf(buf, ")");
 		first = false;
 	}

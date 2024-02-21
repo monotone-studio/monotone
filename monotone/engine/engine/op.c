@@ -389,7 +389,7 @@ engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 static inline Part*
 engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 {
-	if (tier->storage->list_count <= tier->config->capacity)
+	if (tier->storage->list_count <= tier->config->partitions)
 		return NULL;
 
 	// get oldest partition (by psn)
