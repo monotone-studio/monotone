@@ -93,6 +93,12 @@ str_u8(Str* self)
 }
 
 static inline bool
+str_compare_case(Str* self, const void* string, int size)
+{
+	return str_size(self) == size && !strncasecmp(self->pos, string, size);
+}
+
+static inline bool
 str_compare_raw(Str* self, const void* string, int size)
 {
 	return str_size(self) == size && !memcmp(self->pos, string, size);
