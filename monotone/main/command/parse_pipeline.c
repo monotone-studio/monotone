@@ -82,6 +82,11 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 				// partitions <int>
 				parse_int(self, &name, &config->partitions);
 			} else
+			if (str_compare_raw(&name.string, "size", 4))
+			{
+				// size <int>
+				parse_int(self, &name, &config->size);
+			} else
 			{
 				error("ALTER PIPELINE: unknown option %.*s", str_size(&name.string),
 				      str_of(&name.string));
