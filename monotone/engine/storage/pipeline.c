@@ -157,6 +157,7 @@ pipeline_print(Pipeline* self, Buf* buf)
 		buf_printf(buf, "%.*s (", str_size(&tier->config->name),
 		           str_of(&tier->config->name));
 
+		// partitions
 		bool first = true;
 		if (tier->config->partitions != INT64_MAX)
 		{
@@ -164,11 +165,21 @@ pipeline_print(Pipeline* self, Buf* buf)
 			first = false;
 		}
 
+		// size
 		if (tier->config->size != INT64_MAX)
 		{
 			if (! first)
 				buf_printf(buf, ", ");
 			buf_printf(buf, "size %" PRIi64, tier->config->size);
+			first = false;
+		}
+
+		// events
+		if (tier->config->events != INT64_MAX)
+		{
+			if (! first)
+				buf_printf(buf, ", ");
+			buf_printf(buf, "events %" PRIi64, tier->config->events);
 			first = false;
 		}
 
