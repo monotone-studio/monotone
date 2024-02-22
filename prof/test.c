@@ -32,7 +32,7 @@ writer_main(void* arg)
 		for (int i = 0; i < batch_size; i++)
 		{
 			auto ev = &batch[i];
-			ev->id        = 0;
+			ev->id        = UINT64_MAX;
 			ev->data      = data;
 			ev->data_size = sizeof(data);
 			ev->remove    = false;
@@ -226,14 +226,14 @@ cli(void)
 	rc = monotone_execute(env, "alter pipeline set main (partitions 10), cold", NULL);
 
 	rc = monotone_execute(env, "alter pipeline set main (partitions 10)", NULL);
+#endif
 
-	/*rc = monotone_execute(env, "alter pipeline set main", NULL);*/
+	rc = monotone_execute(env, "alter pipeline set main (interval 10000000)", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-#endif
 
 	for (;;)
 	{
