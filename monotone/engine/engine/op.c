@@ -510,8 +510,6 @@ engine_checkpoint(Engine* self)
 		}
 		slice = mapping_next(&self->mapping, slice);
 	}
-
-	malloc_trim(0);
 }
 
 hot void
