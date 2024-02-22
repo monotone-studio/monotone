@@ -393,7 +393,7 @@ engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 }
 
 static inline bool
-engine_rebalance_ready(Tier* tier)
+engine_rebalance_tier_ready(Tier* tier)
 {
 	// rebalance by partitions
 	if (tier->config->partitions != INT64_MAX)
@@ -423,7 +423,7 @@ static inline Part*
 engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 {
 	// check if tier needs to be rebalanced
-	if (! engine_rebalance_ready(tier))
+	if (! engine_rebalance_tier_ready(tier))
 		return NULL;
 
 	// get oldest partition (by psn)

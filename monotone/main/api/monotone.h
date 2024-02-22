@@ -14,6 +14,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #define MONOTONE_API __attribute__((visibility("default")))
 

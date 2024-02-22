@@ -152,7 +152,7 @@ mapping_match(Mapping* self, uint64_t min)
 	if (self->tree_count == 0)
 		return NULL;
 	auto slice = mapping_seek(self, min);
-	if (slice->min <= min && min < slice->max)
+	if (slice_in(slice, min))
 		return slice;
 	return NULL;
 }
