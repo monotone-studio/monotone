@@ -18,9 +18,8 @@ struct Slice
 
 struct Mapping
 {
-	Rbtree      tree;
-	int         tree_count;
-	Comparator* comparator;
+	Rbtree tree;
+	int    tree_count;
 };
 
 static inline void
@@ -38,10 +37,9 @@ slice_in(Slice* self, uint64_t min)
 }
 
 static inline void
-mapping_init(Mapping* self, Comparator* comparator)
+mapping_init(Mapping* self)
 {
 	self->tree_count = 0;
-	self->comparator = comparator;
 	rbtree_init(&self->tree);
 }
 
@@ -85,7 +83,7 @@ mapping_add(Mapping* self, Slice* slice)
 {
 	RbtreeNode* node;
 	int rc;
-	rc = mapping_find(&self->tree, self->comparator, &slice->min, &node);
+	rc = mapping_find(&self->tree, NULL, &slice->min, &node);
 	if (rc == 0 && node)
 		assert(0);
 	rbtree_set(&self->tree, node, rc, &slice->node);
@@ -129,7 +127,7 @@ mapping_seek(Mapping* self, uint64_t min)
 {
 	// slice[n].min >= key && key < slice[n + 1].min
 	RbtreeNode* node = NULL;
-	mapping_find(&self->tree, self->comparator, &min, &node);
+	mapping_find(&self->tree, NULL, &min, &node);
 	assert(node != NULL);
 	return mapping_of(node);
 }

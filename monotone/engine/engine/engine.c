@@ -25,7 +25,7 @@ engine_init(Engine*     self,
 	self->comparator = comparator;
 	mutex_init(&self->lock);
 	cond_var_init(&self->cond_var);
-	mapping_init(&self->mapping, comparator);
+	mapping_init(&self->mapping);
 	storage_mgr_init(&self->storage_mgr, cloud_mgr);
 	pipeline_init(&self->pipeline, &self->storage_mgr);
 }
