@@ -9,7 +9,7 @@ true
 show ssn
 0
 # test: insert
-insert 0
+insert -1
 # test: select
 show ssn
 1
@@ -17,13 +17,13 @@ select
 [0]
 (eof)
 # test: insert
-insert 0
-insert 0
-insert 0
-insert 0
-insert 0
-insert 0
-insert 0
+insert -1
+insert -1
+insert -1
+insert -1
+insert -1
+insert -1
+insert -1
 # test: select
 show ssn
 8
@@ -42,9 +42,9 @@ set ssn to 0
 show ssn
 0
 # test: insert
-insert 0 xxx
-insert 0 xxx
-insert 0 xxx
+insert -1 xxx
+insert -1 xxx
+insert -1 xxx
 # test: select
 show ssn
 3

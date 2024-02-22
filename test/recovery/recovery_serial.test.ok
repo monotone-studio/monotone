@@ -14,7 +14,7 @@ open
 show ssn
 0
 # test: create partition/insert
-insert 0
+insert -1
 # test: select
 show ssn
 1
@@ -33,7 +33,7 @@ select
 [0]
 (eof)
 # test: insert
-insert 0
+insert -1
 # test: select
 show ssn
 2
@@ -91,7 +91,7 @@ select
 [1]
 (eof)
 # test: insert
-insert 0
+insert -1
 # test: select
 show ssn
 3
@@ -115,7 +115,7 @@ select
 [2]
 (eof)
 # test: insert
-insert 0
+insert -1
 # test: select
 show ssn
 4

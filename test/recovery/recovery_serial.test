@@ -19,7 +19,7 @@ open
 show ssn
 
 # test: create partition/insert
-insert 0
+insert -1
 
 # test: select
 show ssn
@@ -37,7 +37,7 @@ show ssn
 select
 
 # test: insert
-insert 0
+insert -1
 
 # test: select
 show ssn
@@ -65,7 +65,7 @@ show ssn
 select
 
 # test: insert
-insert 0
+insert -1
 
 # test: select
 show ssn
@@ -84,7 +84,7 @@ show ssn
 select
 
 # test: insert
-insert 0
+insert -1
 
 # test: select
 show ssn
