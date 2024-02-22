@@ -14,6 +14,23 @@
 #include <monotone_engine.h>
 #include <malloc.h>
 
+static inline bool
+engine_foreach(Engine* self, uint64_t* min, uint64_t* min_next, uint64_t max)
+{
+	// get next reference >= min and < max
+	auto ref = engine_lock(self, *min, LOCK_ACCESS, true, false);
+	if (ref == NULL)
+		return false;
+	uint64_t ref_min = ref->slice.min;
+	uint64_t ref_max = ref->slice.max;
+	engine_unlock(self, ref, LOCK_ACCESS);
+	if (ref_min >= max)
+		return false;
+	*min = ref_min;
+	*min_next = ref_max;
+	return true;
+}
+
 static bool
 engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int mask)
 {
@@ -166,22 +183,9 @@ engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
 void
 engine_drop_range(Engine* self, uint64_t min, uint64_t max, int mask)
 {
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_drop(self, ref_min, true, mask);
-		min = ref_max;
-	}
+	uint64_t next;
+	for (; engine_foreach(self, &min, &next, max); min = next)
+		engine_drop(self, min, true, mask);
 }
 
 void
@@ -248,22 +252,9 @@ engine_download(Engine* self, uint64_t min,
 void
 engine_download_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
 {
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_download(self, ref_min, true, if_cloud);
-		min = ref_max;
-	}
+	uint64_t next;
+	for (; engine_foreach(self, &min, &next, max); min = next)
+		engine_download(self, min, true, if_cloud);
 }
 
 void
@@ -331,22 +322,9 @@ engine_upload(Engine* self, uint64_t min,
 void
 engine_upload_range(Engine* self, uint64_t min, uint64_t max, bool if_cloud)
 {
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_upload(self, ref_min, true, if_cloud);
-		min = ref_max;
-	}
+	uint64_t next;
+	for (; engine_foreach(self, &min, &next, max); min = next)
+		engine_upload(self, min, true, if_cloud);
 }
 
 void
@@ -374,22 +352,9 @@ void
 engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
                      Str* storage)
 {
-	for (;;)
-	{
-		// get next ref >= min
-		auto ref = engine_lock(self, min, LOCK_ACCESS, true, false);
-		if (ref == NULL)
-			return;
-		uint64_t ref_min = ref->slice.min;
-		uint64_t ref_max = ref->slice.max;
-		engine_unlock(self, ref, LOCK_ACCESS);
-
-		if (ref_min >= max)
-			return;
-
-		engine_refresh(self, refresh, ref_min, storage, true);
-		min = ref_max;
-	}
+	uint64_t next;
+	for (; engine_foreach(self, &min, &next, max); min = next)
+		engine_refresh(self, refresh, min, storage, true);
 }
 
 static inline bool
