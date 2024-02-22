@@ -57,7 +57,7 @@ mapping_min(Mapping* self)
 	if (self->tree_count == 0)
 		return NULL;
 	auto min = rbtree_min(&self->tree);
-	return container_of(min, Slice, node);
+	return mapping_of(min);
 }
 
 static inline Slice*
@@ -66,7 +66,7 @@ mapping_max(Mapping* self)
 	if (self->tree_count == 0)
 		return NULL;
 	auto max = rbtree_max(&self->tree);
-	return container_of(max, Slice, node);
+	return mapping_of(max);
 }
 
 always_inline static inline int
@@ -131,7 +131,7 @@ mapping_seek(Mapping* self, uint64_t min)
 	RbtreeNode* node = NULL;
 	mapping_find(&self->tree, self->comparator, &min, &node);
 	assert(node != NULL);
-	return container_of(node, Slice, node);
+	return mapping_of(node);
 }
 
 hot static inline Slice*
