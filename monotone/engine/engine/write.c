@@ -81,7 +81,7 @@ engine_write(Engine* self, EventArg* events, int count)
 			auto arg = &events[i];
 
 			// set serial
-			if (config_serial())
+			if (arg->id == UINT64_MAX && config_serial())
 				arg->id = config_ssn_next();
 
 			// prepare log record
