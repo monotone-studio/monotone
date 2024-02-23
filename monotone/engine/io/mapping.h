@@ -67,12 +67,10 @@ mapping_max(Mapping* self)
 	return mapping_of(max);
 }
 
-always_inline static inline int
+always_inline static inline int64_t
 mapping_compare(uint64_t a, uint64_t b)
 {
-	if (a == b)
-		return 0;
-	return (a > b) ? 1 : -1;
+	return (int64_t)a - (int64_t)b;
 }
 
 hot static inline
