@@ -32,7 +32,7 @@ Where data management, administration and monitoring is done by using SQL-style 
 
 ## Automatic Range Partitioning
 
-Automatically partition data by range or time intervals (min/max). Create partitions on write.
+Automatically partition data by range or time intervals (min/max). Transparently create partitions on write.
 Support partitions in past and future.
 
 Each partition has in-memory storage associated with partition file. Eventually in-memory storage
@@ -79,8 +79,8 @@ primary and store newly created partitions.
 ## Data Tiering
 
 Understand Hot and Cold data by creating data policies involving several storages.
-Define pipeline to specify where partitions are created first and when they need to be
-moved or dropped. All done automatically or manually, if necessary.
+Define pipeline to specify where partitions are created first and when they needed to be
+moved or dropped. All done automatically or manually.
 
 *Example.*
 
@@ -133,5 +133,4 @@ Performance numbers we achieved so far:
     6-10 million events write / second (~ 100 bytes per event)
     20-30 million events read / second (up to ~ 2GiB per second)
 
-After successful write data immediately available for further
-read without delay.
+After successful write data immediately available for further read without delay.
