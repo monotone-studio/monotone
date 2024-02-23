@@ -129,7 +129,7 @@ UPLOAD PARTITIONS FROM <min> TO <max>
 By keeping storage embedded within your application it is possible to achieve lowest latency and get much higher performance
 comparing to a dedicated server solutions.
 
-Performance numbers we achieved so far:
+Performance numbers we achieved so far (single instance):
 
     150+ million metrics write / second (~ 600+ MiB per second, 4 bytes per metric)
     6-10 million events write / second (~ 100 bytes per event)
