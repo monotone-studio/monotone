@@ -19,13 +19,18 @@ Made to match following requirements:
   - Store data on top of S3
   - Understand Hot and Cold data patterns
 
-Event is a pair of a serial id (or time) + raw data (plus additional key, if necessary).
+## API
+
+Monotone provides simple API, which we tried to make intuitive and future-proof.
+
+Insert (and replace/delete) is done in batches using key-value style approach using raw data.
+Where data management, administration and monitoring is done by using SQL-style DDL commands.
 
 *API ⇨*  [monotone.h](monotone/main/api/monotone.h)
 
 ## Automatic Range Partitioning
 
-Automatically partition data by range or time interval on write.
+Automatically partition data by range or time intervals (min/max). Create partitions on write.
 Support partitions in past and future.
 
 Automatically or manually update (refresh) partitions on disk or cloud after being updated:
@@ -63,7 +68,8 @@ ALTER STORAGE <name> SET <name> TO <value>
 ALTER STORAGE <name> RENAME TO <name>
 ```
 
-Extend storage space by adding additional storages online.
+Extend storage space by adding additional storages online. Set which storage will become
+primary and store newly created partitions.
 
 ## Data Tiering
 
