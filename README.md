@@ -1,31 +1,32 @@
-# monotone.
 
-Store sequential data locally or in a cloud with seamless access directly within your application.
+![image description](.github/logo.png)
 
 *API ⇨*  [monotone.h](monotone/main/api/monotone.h)
 
----
+### Storage for Sequential data and IoT
 
-### Embeddable Cloud-Native Storage for Events and time-series data
+We designed modern embeddable storage from groundup specifically for sequential workloads, such as append write and range scans.
+Storage architecture is inspired by log-structured design and implements custom made memory-disk hybrid engine.
 
-We designed modern embeddable key-value storage from groundup specifically for sequential workloads, such as append write and range scans. Storage architecture is inspired by log-structured design and implements custom made memory-disk hybrid engine.
-
-Made to match typical IoT requirements:
+Made to match following requirements:
 
   - Collect and process events in large volumes serially or by time (auto-increment by default)
   - Write events as fast as possible
-  - Delete or Replace events by primary key when necessary (but rarely or never needed)
-  - Read events in time or serially as fast as possible
-  - Efficiently manage large volumes of data using partitions
+  - Delete or Update events by primary key when necessary (but rarely or never needed)
+  - Read events by time or serially as fast as possible
+  - Efficiently store and manage large volumes of data using partitions
   - Efficiently compress data
+  - Transparently update partitions or recompress data without blocking writers and readers
   - Extend disk space without downtime by plugging additional storages or by using S3
   - Understand Hot and Cold data patterns
 
+Event is a pair of a serial id (or time) + raw data (plus additional key, if necessary).
+
 ### Automatic Range Partitioning
 
-Automatically partition data by range or time interval.
+Automatically partition data by range or time interval on write.
 
-Automatically or manually update (refresh) partitions on disk or cloud:
+Automatically or manually update (refresh) partitions on disk or cloud after being updated:
 
 ```
 REFRESH PARTITION [IF EXISTS] <min>
@@ -38,17 +39,38 @@ MOVE PARTITION [IF EXISTS] <min> INTO <storage>
 MOVE PARTITIONS FROM <min> to <max> INTO <storage>
 ```
 
-Drop one or more partition:
+Drop one or more partitions:
 ```
 DROP PARTITION [IF EXISTS] <min> [ON STORAGE | ON CLOUD]
 DROP PARTITIONS FROM <min> TO <max> [ON STORAGE | ON CLOUD]
 ```
 
-### Transparent Compression and Recompression
+### Transparent Compression
 
 ### Scalable Compaction
 
+### Storages
+
+Use logical storages to store data on different storage devices or apply different settings,
+such as compression.
+
+```
+CREATE [IF NOT EXISTS] STORAGE <name> (<options>)
+DROP STORAGE [IF EXISTS] <name>
+ALTER STORAGE <name> SET <name> TO <value>
+ALTER STORAGE <name> RENAME TO <name>
+```
+
+Extend storage space by adding additional storages online.
+
 ### Understand Hot and Cold data
+
+Example: apply different storage settings for each storage individually:
+
+```
+CREATE STORAGE hot (path '/mnt/ssd_nvme', compression 'lz4')
+CREATE STORAGE cold (path '/mnt/hdd', compression 'zstd')
+```
 
 ### Bottomless Storage
 
