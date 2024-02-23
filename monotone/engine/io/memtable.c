@@ -77,7 +77,9 @@ memtable_move(Memtable* self, Memtable* from)
 	from->size        = 0;
 	from->lsn_min     = UINT64_MAX;
 	from->lsn_max     = 0;
+	rbtree_init(&from->tree);
 	list_init(&from->iterators);
+	heap_init(&from->heap, global()->memory_mgr);
 }
 
 hot static inline
