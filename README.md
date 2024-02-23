@@ -48,11 +48,12 @@ DROP PARTITIONS FROM <min> TO <max> [ON STORAGE | ON CLOUD]
 
 ## Transparent Compression
 
-## Scalable Compaction
+Compress or recompress partitions automatically on refresh. Everything is done transparently
+without blocking readers or writers of the original partition.
 
 ## Storages
 
-Use logical storages to store data on different storage devices or apply different settings,
+Use logical storages to store data on different storage devices and apply different settings,
 such as compression.
 
 ```
@@ -64,27 +65,62 @@ ALTER STORAGE <name> RENAME TO <name>
 
 Extend storage space by adding additional storages online.
 
-### Understand Hot and Cold data
+## Data Tiering
 
-Example: apply different storage settings for each storage individually:
+Understand Hot and Cold data by creating data policies involving several storages.
+Define pipeline to specify where partitions are created first and when they need to be
+moved or dropped. All done automatically or manually, if necessary.
+
+*Example.*
+
+Create and keep all new partitions on NVME storage for short duration of time for a faster write
+and read. Automatically move partitions to colder storage when hot storage reaches its limit.
+Automatically delete older partitions from cold storage, when it reaches its limit.
+Use different compression settings.
 
 ```
 CREATE STORAGE hot (path '/mnt/ssd_nvme', compression 'lz4')
 CREATE STORAGE cold (path '/mnt/hdd', compression 'zstd')
+
+ALTER PIPELINE hot (size 10G), cold (size 100G)
 ```
 
-### Bottomless Storage
+## Bottomless Storage
 
-### Performance
+Associate storages with cloud for extensive storage. Transparently access partitions on cloud.
+Automate partitions lifecycle for cloud using data pipeline.
+
+```
+CREATE STORAGE hot (path '/mnt/ssd_nvme', compression 'lz4')
+CREATE STORAGE cold (cloud 's3', compression 'zstd')
+
+ALTER PIPELINE hot (interval 1day), cold
+```
+
+Automatically or manually handle updates by reuploading partitions to cloud.
+
+Download partitions:
+```
+DOWNLOAD PARTITION [IF EXISTS] <min>
+DOWNLOAD PARTITIONS FROM <min> TO <max>
+```
+
+Upload partitions:
+```
+UPLOAD PARTITION [if exists] <min>
+UPLOAD PARTITIONS FROM <min> TO <max>
+```
+
+## Performance
 
 By keeping storage embeddable within your application it is possible to achieve lowest latency and get much higher performance
 comparing to a dedicated server solutions.
 
-Typical performance numbers to expect:
+Performance numbers we achieved so far:
 
-    150M+ metrics / second (~ 600+ MiB per second, 4 bytes per metric)
-    10M+ events write / second
-    30M+ events read / second (up to ~ 2GiB per second)
+    150+ million metrics write / second (~ 600+ MiB per second, 4 bytes per metric)
+    6-10 million events write / second (~ 100 bytes per event)
+    20-30 million events read / second (up to ~ 2GiB per second)
 
 After successful write data immediately available for further
 read without delay.
