@@ -4,7 +4,9 @@
 ## Storage for Sequential data and IoT
 
 We designed modern embeddable data storage from groundup specifically for sequential workloads, such as append write and range scans.
+
 Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
+Range scans optimized for reduced IO and never do more then 1 request at time to a underlying storage device or a cloud service.
 
 Made to match following requirements:
 
@@ -32,6 +34,9 @@ Where data management, administration and monitoring is done by using SQL-style 
 
 Automatically partition data by range or time intervals (min/max). Create partitions on write.
 Support partitions in past and future.
+
+Each partition has in-memory storage associated with partition file. Eventually in-memory storage
+and partition file merged together (refresh).
 
 Automatically or manually update (refresh) partitions on disk or cloud after being updated:
 ```
@@ -130,5 +135,3 @@ Performance numbers we achieved so far:
 
 After successful write data immediately available for further
 read without delay.
-
-Range scans optimized for reduced IO and never do more then 1 request at time to a underlying storage device or a cloud service.
