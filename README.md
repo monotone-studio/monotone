@@ -120,7 +120,7 @@ DOWNLOAD PARTITIONS FROM <min> TO <max>
 
 Upload partitions:
 ```
-UPLOAD PARTITION [if exists] <min>
+UPLOAD PARTITION [IF EXISTS] <min>
 UPLOAD PARTITIONS FROM <min> TO <max>
 ```
 
@@ -134,4 +134,3 @@ Performance numbers we achieved so far:
     150+ million metrics write / second (~ 600+ MiB per second, 4 bytes per metric)
     6-10 million events write / second (~ 100 bytes per event)
     20-30 million events read / second (up to ~ 2GiB per second)
-
