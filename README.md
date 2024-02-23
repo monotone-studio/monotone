@@ -63,7 +63,7 @@ without blocking readers or writers of the original partition.
 
 ## Storages
 
-Use logical storages to store data on different storage devices and apply different settings,
+Create logical storages to store data on different storage devices and apply different settings,
 such as compression.
 
 ```
