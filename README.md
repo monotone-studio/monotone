@@ -126,7 +126,7 @@ UPLOAD PARTITIONS FROM <min> TO <max>
 
 ## Performance
 
-By keeping storage embeddable within your application it is possible to achieve lowest latency and get much higher performance
+By keeping storage embedded within your application it is possible to achieve lowest latency and get much higher performance
 comparing to a dedicated server solutions.
 
 Performance numbers we achieved so far:
