@@ -144,7 +144,7 @@ and partition file merged together. This is done manually or in background by a 
 Compaction is multi-threaaded and scalable. Each partition file has index of regions, which contains of min/max keys of each region
 and its file position. This index is kept in memory.
 
-Partition refresh does not block readers and writers. Partition can be updated or readed while being refreshed at the same time without
+Partition refresh does not block readers and writers. Partitions can be updated or readed while being refreshed at the same time without
 blocking. This is implemented by switching partition to the second in-memory storage and done in a several short locking stages.
 
 In memory storage (memtable) implemented using T-tree style data structure to reduce pointer overhead and increase data locality.
@@ -157,10 +157,13 @@ does more then 1 read at time to a underlying storage device or a cloud service 
 index is kept in memory. Each cursor is doing merge join between partition file region and one (or two) in-memory storages.
 
 Write operations never require disk access and done in-memory (with optional use of WAL for persistency).
-After successful write data immediately available for further read without delay.
+After successful write, data immediately available for further read without delay.
+Write is done in batches and transactional (atomical). Batching is mostly necessary to increase performance when using WAL.
 
-Storage designed to work in multi-threaded applications. Locking is done per partition. It is possible to read and write to
-different partitions without blocking each other.
+Storage does not implement any kind of MVCC or Snapshot Isolation. This is done consciously to avoid problems with unavoidable
+necessity of the garbage collection (VACUUM). Locking is done per partition instead, which is more inline with the common usage patterns.
+It is possible to read and write to different partitions without blocking each other.
+Storage designed to work in multi-threaded applications. 
 
 Overall design follows ideas from Sophia and PostgreSQL (Timescale), addopted for IoT and sequential data
 storage/access patterns.
