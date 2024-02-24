@@ -120,6 +120,8 @@ UPLOAD PARTITION [IF EXISTS] <min>
 UPLOAD PARTITIONS FROM <min> TO <max>
 ```
 
+Move partitions between local storage and cloud. Move partitions between different cloud services.
+
 ## Performance
 
 By keeping storage embedded within your application it is possible to achieve lowest latency and get much higher performance
