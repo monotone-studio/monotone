@@ -164,7 +164,7 @@ without affecting other threads. Futhermore, the allocator optimized for using L
 
 Range scans optimized for reduced IO and the idea that it can work on top of cloud. Unlike typical B-tree or LSM trees, Monotone storage never
 does more then 1 read at time to a underlying storage device or a cloud service when using cursors. This is possible to do, because region
-index is kept in memory. In other words, Access is always O(1) in terms of disk seeks for sorted data.
+index is kept in memory.
 Each cursor is doing merge join between partition file region and in-memory storages
 (one or two in case of the parallel refresh).
 
