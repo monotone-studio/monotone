@@ -16,7 +16,7 @@ Made to match following requirements:
   - Efficiently compress data
   - Transparently update partitions or recompress data without blocking writers and readers
   - Extend disk space without downtime by plugging additional storages
-  - Store data on top of S3
+  - Transparently work on top of S3
   - Understand Hot and Cold data patterns
 
 ## API
