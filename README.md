@@ -38,7 +38,7 @@ Support partitions in past and future.
 Each partition has in-memory storage associated with partition file. Eventually in-memory storage
 and partition file merged together (refresh).
 
-Automatically or manually update (refresh) partitions on disk or cloud after being updated:
+Automatically or manually refresh partitions on disk or cloud after being updated:
 ```
 REFRESH PARTITION [IF EXISTS] <min>
 REFRESH PARTITIONS FROM <min> TO <max>
@@ -84,13 +84,13 @@ moved or dropped. All done automatically or manually.
 
 *Example.*
 
-Create and keep all new partitions on NVME storage for short duration of time for a faster write
-and read. Automatically move partitions to colder storage when hot storage reaches its limit.
+Create and keep all new partitions on SSD storage for short duration of time for a faster refresh and read.
+Automatically move partitions to cold HDD storage when hot storage reaches its limit.
 Automatically delete older partitions from cold storage, when it reaches its limit.
 Use different compression settings.
 
 ```
-CREATE STORAGE hot (path '/mnt/ssd_nvme', compression 'lz4')
+CREATE STORAGE hot (path '/mnt/ssd', compression 'lz4')
 CREATE STORAGE cold (path '/mnt/hdd', compression 'zstd')
 
 ALTER PIPELINE hot (size 10G), cold (size 100G)
