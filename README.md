@@ -172,7 +172,7 @@ Write operations never require disk access and done in-memory (with optional use
 After successful write, data immediately available for further read without delay. Any written event can be deleted or updated in the future (same as in a typical key-value storage).
 Write is done in batches and transactional (atomical). Batching is mostly necessary to increase performance when using WAL.
 Write never succeded unless data written to WAL. It is also possible to disable WAL to have higher performance. If it is not critical to lose latest updates,
-which were yet not refreshed and synced with disk.
+which were yet not refreshed and synced with disk. Write-ahead logs are automatically deleted when data are saved to partitions.
 
 Storage does not implement any kind of MVCC or Snapshot Isolation. This is done consciously to avoid problems with unavoidable
 necessity for garbage collection (VACUUM). Locking is done per partition instead, which is more inline with the common usage patterns.
