@@ -4,11 +4,7 @@
 ## Storage for Sequential data and IoT
 
 We designed modern embeddable data storage from groundup specifically for sequential workloads, such as append write and range scans.
-
 Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
-Write operations never require disk access and done in-memory (with optional additional of WAL for persistency).
-After successful write data immediately available for further read without delay.
-Range scans optimized for reduced IO and never do more then 1 request at time to a underlying storage device or a cloud service.
 
 Made to match following requirements:
 
@@ -101,7 +97,7 @@ ALTER PIPELINE hot (size 10G), cold (size 100G)
 ## Bottomless Storage
 
 Associate storages with cloud for extensive storage. Transparently access partitions on cloud.
-Automate partitions lifecycle for cloud using data pipeline.
+Automate partitions lifecycle for cloud using Pipeline.
 
 ```
 CREATE STORAGE hot (path '/mnt/ssd_nvme', compression 'lz4')
@@ -129,8 +125,42 @@ UPLOAD PARTITIONS FROM <min> TO <max>
 By keeping storage embedded within your application it is possible to achieve lowest latency and get much higher performance
 comparing to a dedicated server solutions.
 
-Performance numbers we achieved so far (single instance):
+Performance numbers we achieved so far (single instance, single thread operations):
 
     150+ million metrics write / second (~ 600+ MiB per second, 4 bytes per metric)
     6-10 million events write / second (~ 100 bytes per event)
     20-30 million events read / second (up to ~ 2GiB per second)
+
+## Architecture
+
+Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
+Data stored in sorted partition files. Partitions never overlap. Whole database can be seen as a 64bit range sparse array of events.
+
+Each partition file contains a number of sorted regions. Regions represent a sorted list of events, variable in size and compressed (~150KiB).
+Region size can affect compression efficiently and reduce number of requests required to fulfill a scan.
+
+Each partition has ordered in-memory storage associated with partition file. Eventually in-memory storage
+and partition file merged together. This is done manually or in background by a pool of workers.
+Compaction is multi-threaaded and scalable. Each partition file has index of regions, which contains of min/max keys of each region
+and its file position. This index is kept in memory.
+
+Partition refresh does not block readers and writers. Partition can be updated or readed while being refreshed at the same time without
+blocking. This is implemented by switching partition to the second in-memory storage and done in a several short locking stages.
+
+In memory storage (memtable) implemented using T-tree style data structure to reduce pointer overhead and increase data locality.
+Each partition is using custom made allocator context optimized for sequential write and atomic free of large memory regions. 
+This solves problem of memory fragmentation of malloc, greately improves data locality and allows multi-threaded compaction to work
+without memory locking other threads. Futhermore, the allocator optimized for using Linux Huge Pages by design (but not mandatory).
+
+Range scans optimized for reduced IO and the idea that it can work on top of cloud. Unlike B-tree or LSM trees, Monotone storage never
+does more then 1 read at time to a underlying storage device or a cloud service when using cursors. This is possible to do, because region
+index is kept in memory. Each cursor is doing merge join between partition file region and one (or two) in-memory storages.
+
+Write operations never require disk access and done in-memory (with optional use of WAL for persistency).
+After successful write data immediately available for further read without delay.
+
+Storage designed to work in multi-threaded applications. Locking is done per partition. It is possible to read and write to
+different partitions without blocking each other.
+
+Overall design follows ideas from Sophia and PostgreSQL (Timescale), addopted for IoT and sequential data
+storage/access patterns.
