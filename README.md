@@ -5,7 +5,6 @@
 
 We designed modern embeddable data storage from groundup specifically for sequential workloads, such as append write and range scans.
 Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
-Read more about [Monotone Architecture](ARCHITECTURE.md).
 
 Made to match following requirements:
 
@@ -19,6 +18,8 @@ Made to match following requirements:
   - Extend disk space without downtime by plugging additional storages
   - Transparently work on top of S3
   - Understand Hot and Cold data patterns
+
+Read more about [Monotone Architecture](ARCHITECTURE.md).
 
 ## API
 
