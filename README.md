@@ -19,7 +19,7 @@ Made to match following requirements:
   - Transparently work on top of S3
   - Understand Hot and Cold data patterns
 
-Read more about [Monotone Architecture](ARCHITECTURE.md).
+Learn more about [Architecture](ARCHITECTURE.md).
 
 ## API
 
