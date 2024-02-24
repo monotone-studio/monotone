@@ -1,3 +1,5 @@
+![image description](.github/architecture.png)
+
 ## Architecture
 
 Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
