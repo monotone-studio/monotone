@@ -73,7 +73,7 @@ reader_execute(Reader* self, IndexRegion* index_region)
 	if (part_has(part, PART_CLOUD))
 	{
 		// read region data from cloud
-		cloud_read(part->cloud, &part->id,
+		cloud_read(part->cloud, part->source, &part->id,
 		           &self->buf,
 		           index_region->size,
 		           index_region->offset);

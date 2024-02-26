@@ -8,6 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
+#include <monotone_cloud.h>
 #include <monotone_io.h>
 
 void
@@ -17,7 +18,7 @@ part_download(Part* self)
 	assert(self->cloud);
 
 	// download partition file locally
-	cloud_download(self->cloud, &self->id);
+	cloud_download(self->cloud, self->source, &self->id);
 
 	// open
 	part_open(self, PART, false);
@@ -36,7 +37,7 @@ part_upload(Part* self)
 	part_create(self, PART_CLOUD_INCOMPLETE);
 
 	// upload partition file to the cloud
-	cloud_upload(self->cloud, &self->id);
+	cloud_upload(self->cloud, self->source, &self->id);
 
 	// rename partition cloud file as completed
 	part_rename(self, PART_CLOUD_INCOMPLETE, PART_CLOUD);
@@ -61,5 +62,5 @@ part_offload(Part* self, bool from_storage)
 	part_delete(self, PART_CLOUD);
 
 	// remove from cloud
-	cloud_remove(self->cloud, &self->id);
+	cloud_remove(self->cloud, self->source, &self->id);
 }
