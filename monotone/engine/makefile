@@ -10,6 +10,7 @@ CFLAGS_INCLUDE = -I../runtime \
                  -I../runtime/lib \
                  -I../runtime/config \
                  -I. \
+                 -Icloud \
                  -Iio \
                  -Istorage \
                  -Iwal \
@@ -17,7 +18,8 @@ CFLAGS_INCLUDE = -I../runtime \
 CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-engine.a
 OBJECTS        = \
-                 io/cloud_mock.o \
+                 cloud/cloud_mgr.o \
+                 cloud/cloud_mock.o \
                  io/memtable.o \
                  io/part_file.o \
                  io/part_op.o \
