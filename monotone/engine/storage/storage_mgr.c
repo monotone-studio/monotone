@@ -8,6 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
+#include <monotone_cloud.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
 
@@ -95,15 +96,16 @@ storage_set_cloud(StorageMgr* self, Storage* storage)
 	if (str_empty(&source->cloud))
 		return;
 
-	auto cloud_if = cloud_mgr_find(self->cloud_mgr, &source->cloud);
-	if (! cloud_if)
-		error("storage '%.*s': cloud interface '%.*s' does not exists",
+	auto cloud = cloud_mgr_find(self->cloud_mgr, &source->cloud);
+	if (! cloud)
+		error("storage '%.*s': cloud '%.*s' does not exists",
 		      str_size(&source->name),
 		      str_of(&source->name),
 		      str_size(&source->cloud),
 		      str_of(&source->cloud));
 
-	storage->cloud = cloud_create(cloud_if, storage->source);
+	storage->cloud = cloud;
+	cloud_ref(cloud);
 }
 
 static Storage*
@@ -111,7 +113,7 @@ storage_mgr_create_object(StorageMgr* self, Source* source)
 {
 	auto storage = storage_allocate(source);
 
-	// find cloud interface and create cloud object, if defined
+	// find cloud object, if defined
 	Exception e;
 	if (try(&e)) {
 		storage_set_cloud(self, storage);
@@ -221,7 +223,7 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 	{
 		if (storage->cloud)
 		{
-			cloud_free(storage->cloud);
+			cloud_unref(storage->cloud);
 			storage->cloud = NULL;
 		}
 

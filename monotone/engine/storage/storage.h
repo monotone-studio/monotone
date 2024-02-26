@@ -24,7 +24,7 @@ static inline void
 storage_free(Storage* self)
 {
 	if (self->cloud)
-		cloud_free(self->cloud);
+		cloud_unref(self->cloud);
 	if (self->source)
 		source_free(self->source);
 	mn_free(self);
