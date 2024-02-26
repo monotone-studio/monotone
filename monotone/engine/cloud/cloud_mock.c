@@ -8,21 +8,44 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
-#include <monotone_io.h>
+#include <monotone_cloud.h>
 
 static inline void
-mock_path(Id* self, Source* source, char* path)
+mock_path(Source* source, Id* id, char* path)
 {
 	// <source_path>/<min>
-	source_pathfmt(source, path, PATH_MAX, "mock/%020" PRIu64, self->min);
+	source_pathfmt(source, path, PATH_MAX, "mock/%020" PRIu64, id->min);
+}
+
+static void
+mock_free(Cloud* self)
+{
+	mn_free(self);
 }
 
 static Cloud*
-mock_create(CloudIf* iface, Source* source)
+mock_create(CloudIf* iface, CloudConfig* config)
 {
-	auto cloud = (Cloud*)mn_malloc(sizeof(Cloud));
-	cloud->iface  = iface;
-	cloud->source = source;
+	auto self = (Cloud*)mn_malloc(sizeof(Cloud));
+	self->refs   = 0;
+	self->iface  = iface;
+	self->config = NULL;
+	list_init(&self->link);
+	guard(self_guard, mock_free, self);
+	self->config = cloud_config_copy(config);
+	return self;
+}
+
+static void
+mock_update(Cloud* self)
+{
+	unused(self);
+}
+
+static void
+mock_download(Cloud* self, Source* source, Id* id)
+{
+	unused(self);
 
 	// create cloud mock directory, if not exists
 	char path[PATH_MAX];
@@ -33,23 +56,11 @@ mock_create(CloudIf* iface, Source* source)
 		fs_mkdir(0755, "%s", path);
 	}
 
-	return cloud;
-}
-
-static void
-mock_free(Cloud* self)
-{
-	mn_free(self);
-}
-
-static void
-mock_download(Cloud* self, Id* id)
-{
-	// copy file from mock directory to storage
+	// copy file from mock directory to the storage
 	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
-	mock_path(id, self->source, path_from);
-	id_path_incomplete(id, self->source, path_to);
+	mock_path(source, id, path_from);
+	id_path_incomplete(id, source, path_to);
 
 	// read mock file
 	Buf buf;
@@ -73,19 +84,21 @@ mock_download(Cloud* self, Id* id)
 	error_injection(error_download);
 
 	// rename
-	id_path_incomplete(id, self->source, path_from);
-	id_path(id, self->source, path_to);
+	id_path_incomplete(id, source, path_from);
+	id_path(id, source, path_to);
 	fs_rename(path_from, "%s", path_to);
 }
 
 static void
-mock_upload(Cloud* self, Id* id)
+mock_upload(Cloud* self, Source* source, Id* id)
 {
-	// copy file from storage to mock directory
+	unused(self);
+
+	// copy file from storage to the mock directory
 	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
-	id_path(id, self->source, path_from);
-	mock_path(id, self->source, path_to);
+	id_path(id, source, path_from);
+	mock_path(source, id, path_to);
 
 	// read storage file
 	Buf buf;
@@ -105,20 +118,25 @@ mock_upload(Cloud* self, Id* id)
 }
 
 static void
-mock_remove(Cloud* self, Id* id)
+mock_remove(Cloud* self, Source* source, Id* id)
 {
+	unused(self);
+
 	// remove file from mock directory
 	char path[PATH_MAX];
-	mock_path(id, self->source, path);
+	mock_path(source, id, path);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
 
 static void
-mock_read(Cloud* self, Id* id, Buf* buf, uint32_t size, uint64_t offset)
+mock_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
+          uint64_t offset)
 {
+	unused(self);
+
 	char path[PATH_MAX];
-	mock_path(id, self->source, path);
+	mock_path(source, id, path);
 	buf_reserve(buf, size);
 
 	// open and read mock file
@@ -130,18 +148,13 @@ mock_read(Cloud* self, Id* id, Buf* buf, uint32_t size, uint64_t offset)
 	file_close(&file);
 }
 
-void
-cloud_mock_init(CloudMock* self)
+CloudIf cloud_mock =
 {
-	Str name;
-	str_set_cstr(&name, "mock");
-	cloud_iface_init(&self->iface, &name);
-
-	auto iface = &self->iface;
-	iface->create   = mock_create;
-	iface->free     = mock_free;
-	iface->download = mock_download;
-	iface->upload   = mock_upload;
-	iface->remove   = mock_remove;
-	iface->read     = mock_read;
-}
+	.create   = mock_create,
+	.free     = mock_free,
+	.update   = mock_update,
+	.download = mock_download,
+	.upload   = mock_upload,
+	.remove   = mock_remove,
+	.read     = mock_read
+};
