@@ -44,6 +44,12 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 		}
 
 		// value
+		if (str_compare_raw(&name.string, "type", 4))
+		{
+			// type <string>
+			parse_string(self, &name, &config->type);
+			mask |= CLOUD_TYPE;
+		} else
 		if (str_compare_raw(&name.string, "url", 3))
 		{
 			// url <string>
