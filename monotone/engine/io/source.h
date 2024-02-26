@@ -264,9 +264,9 @@ source_pathfmt(Source* self, char* path, int path_size, char* fmt, ...)
 		} else
 		{
 			// <base>/<storage_path>/relative
-			snprintf(path, path_size, "%s/%.*s", config_directory(),
+			snprintf(path, path_size, "%s/%.*s/%s", config_directory(),
 			         str_size(&self->path),
-			         str_of(&self->path));
+			         str_of(&self->path), relative);
 		}
 	}
 }
