@@ -10,14 +10,14 @@ typedef struct Source Source;
 
 enum
 {
-	SOURCE_NAME        = 1,
-	SOURCE_PATH        = 2,
-	SOURCE_CLOUD       = 4,
-	SOURCE_SYNC        = 8,
-	SOURCE_CRC         = 16,
-	SOURCE_COMPRESSION = 32,
-	SOURCE_REFRESH_WM  = 64,
-	SOURCE_REGION_SIZE = 128
+	SOURCE_NAME        = 1 << 0,
+	SOURCE_PATH        = 1 << 1,
+	SOURCE_CLOUD       = 1 << 2,
+	SOURCE_SYNC        = 1 << 3,
+	SOURCE_CRC         = 1 << 4,
+	SOURCE_COMPRESSION = 1 << 5,
+	SOURCE_REFRESH_WM  = 1 << 6,
+	SOURCE_REGION_SIZE = 1 << 7
 };
 
 struct Source
