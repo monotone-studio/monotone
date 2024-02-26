@@ -12,18 +12,18 @@ enum
 {
 	CLOUD_NAME     = 1 << 0,
 	CLOUD_TYPE     = 1 << 1,
-	CLOUD_URL      = 1 << 2,
-	CLOUD_LOGIN    = 1 << 3,
-	CLOUD_PASSWORD = 1 << 4
+	CLOUD_LOGIN    = 1 << 2,
+	CLOUD_PASSWORD = 1 << 3,
+	CLOUD_URL      = 1 << 4
 };
 
 struct CloudConfig
 {
 	Str name;
 	Str type;
-	Str url;
 	Str login;
 	Str password;
+	Str url;
 };
 
 static inline CloudConfig*
@@ -34,6 +34,7 @@ cloud_config_allocate(void)
 	str_init(&self->type);
 	str_init(&self->login);
 	str_init(&self->password);
+	str_init(&self->url);
 	return self;
 }
 
@@ -44,6 +45,7 @@ cloud_config_free(CloudConfig* self)
 	str_free(&self->type);
 	str_free(&self->login);
 	str_free(&self->password);
+	str_free(&self->url);
 	mn_free(self);
 }
 
@@ -62,13 +64,6 @@ cloud_config_set_type(CloudConfig* self, Str* value)
 }
 
 static inline void
-cloud_config_set_url(CloudConfig* self, Str* value)
-{
-	str_free(&self->url);
-	str_copy(&self->url, value);
-}
-
-static inline void
 cloud_config_set_login(CloudConfig* self, Str* value)
 {
 	str_free(&self->login);
@@ -82,6 +77,13 @@ cloud_config_set_password(CloudConfig* self, Str* value)
 	str_copy(&self->password, value);
 }
 
+static inline void
+cloud_config_set_url(CloudConfig* self, Str* value)
+{
+	str_free(&self->url);
+	str_copy(&self->url, value);
+}
+
 static inline CloudConfig*
 cloud_config_copy(CloudConfig* self)
 {
@@ -91,6 +93,7 @@ cloud_config_copy(CloudConfig* self)
 	cloud_config_set_type(copy, &self->type);
 	cloud_config_set_login(copy, &self->login);
 	cloud_config_set_password(copy, &self->password);
+	cloud_config_set_url(copy, &self->url);
 	return unguard(&copy_guard);
 }
 
@@ -119,6 +122,10 @@ cloud_config_read(uint8_t** pos)
 	// password
 	data_skip(pos);
 	data_read_string_copy(pos, &self->password);
+
+	// url
+	data_skip(pos);
+	data_read_string_copy(pos, &self->url);
 	return unguard(&self_guard);
 }
 
@@ -126,7 +133,7 @@ static inline void
 cloud_config_write(CloudConfig* self, Buf* buf)
 {
 	// map
-	encode_map(buf, 4);
+	encode_map(buf, 5);
 
 	// name
 	encode_raw(buf, "name", 4);
@@ -143,6 +150,10 @@ cloud_config_write(CloudConfig* self, Buf* buf)
 	// password
 	encode_raw(buf, "password", 8);
 	encode_string(buf, &self->password);
+
+	// url
+	encode_raw(buf, "url", 3);
+	encode_string(buf, &self->url);
 }
 
 static inline void
@@ -154,12 +165,12 @@ cloud_config_alter(CloudConfig* self, CloudConfig* alter, int mask)
 	if (mask & CLOUD_TYPE)
 		cloud_config_set_type(self, &alter->type);
 
-	if (mask & CLOUD_URL)
-		cloud_config_set_url(self, &alter->url);
-
 	if (mask & CLOUD_LOGIN)
 		cloud_config_set_login(self, &alter->login);
 
 	if (mask & CLOUD_PASSWORD)
 		cloud_config_set_password(self, &alter->password);
+
+	if (mask & CLOUD_URL)
+		cloud_config_set_url(self, &alter->url);
 }
