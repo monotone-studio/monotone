@@ -273,6 +273,19 @@ storage_mgr_rename(StorageMgr* self, Str* name, Str* name_new, bool if_exists)
 }
 
 void
+storage_mgr_rename_cloud(StorageMgr* self, Str* name, Str* name_new)
+{
+	list_foreach(&self->list)
+	{
+		auto storage = list_at(Storage, link);
+		if (! str_compare(&storage->source->cloud, name))
+			continue;
+		source_set_cloud(storage->source, name_new);
+	}
+	storage_mgr_save(self);
+}
+
+void
 storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
 {
 	if (name == NULL)
