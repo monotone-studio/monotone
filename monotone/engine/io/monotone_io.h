@@ -6,15 +6,6 @@
 // time-series storage
 //
 
-// source
-#include "io/source.h"
-#include "io/id.h"
-
-// cloud
-#include "io/cloud.h"
-#include "io/cloud_mgr.h"
-#include "io/cloud_mock.h"
-
 // event
 #include "io/event.h"
 #include "io/comparator.h"
