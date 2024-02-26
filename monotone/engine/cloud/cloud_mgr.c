@@ -11,11 +11,10 @@
 #include <monotone_cloud.h>
 
 static CloudIf*
-cloud_mgr_find_interface(CloudMgr* self, Str* name)
+cloud_mgr_interface_of(Str* name)
 {
-	(void)self;
-	(void)name;
-	// todo
+	if (str_compare_raw(name, "mock", 4))
+		return &cloud_mock;
 	return NULL;
 }
 
@@ -59,7 +58,7 @@ static Cloud*
 cloud_mgr_create_object(CloudMgr* self, CloudConfig* config)
 {
 	// find interface
-	auto iface = cloud_mgr_find_interface(self, &config->type);
+	auto iface = cloud_mgr_interface_of(&config->type);
 	if (! iface)
 		error("cloud '%.*s': unknown cloud type", str_size(&config->name),
 		      str_of(&config->name));
