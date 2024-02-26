@@ -24,7 +24,7 @@ Monotone provides simple [API](monotone/main/api/monotone.h), which we tried to 
 Insert (and replace/delete) is done in batches using event id associated with raw data. Data are read using cursors.
 Where data management, administration and monitoring is done by using SQL-style DDL commands.
 
-Learn more about [Architecture](ARCHITECTURE.md).
+Learn more about its [Architecture](ARCHITECTURE.md).
 
 ## Features
 
