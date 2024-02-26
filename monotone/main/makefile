@@ -10,6 +10,7 @@ CFLAGS_INCLUDE = -I../runtime \
                  -I../runtime/lib \
                  -I../runtime/config \
                  -I../engine \
+                 -I../engine/cloud \
                  -I../engine/io \
                  -I../engine/storage \
                  -I../engine/wal \
@@ -23,6 +24,7 @@ LIB            = libmonotone-main.a
 OBJECTS        = \
                  command/lex.o \
                  command/parse_config.o \
+                 command/parse_cloud.o \
                  command/parse_storage.o \
                  command/parse_pipeline.o \
                  command/parse_partition.o \
