@@ -8,6 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
+#include <monotone_cloud.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
 #include <monotone_wal.h>
@@ -60,16 +61,22 @@ parse(Lex* self)
 	}
 	case KCREATE:
 	{
-		// CREATE STORAGE
+		// CREATE CLOUD | STORAGE
+		if (lex_if(self, KCLOUD, NULL))
+			cmd = parse_cloud_create(self);
+		else
 		if (lex_if(self, KSTORAGE, NULL))
 			cmd = parse_storage_create(self);
 		else
-			error("CREATE <STORAGE> expected");
+			error("CREATE <CLOUD|STORAGE> expected");
 		break;
 	}
 	case KDROP:
 	{
-		// DROP STORAGE | PARTITION | PARTITIONS
+		// DROP CLOUD | STORAGE | PARTITION | PARTITIONS
+		if (lex_if(self, KCLOUD, NULL))
+			cmd = parse_cloud_drop(self);
+		else
 		if (lex_if(self, KSTORAGE, NULL))
 			cmd = parse_storage_drop(self);
 		else
@@ -84,7 +91,10 @@ parse(Lex* self)
 	}
 	case KALTER:
 	{
-		// ALTER STORAGE | PIPELINE
+		// ALTER CLOUD | STORAGE | PIPELINE
+		if (lex_if(self, KCLOUD, NULL))
+			cmd = parse_cloud_alter(self);
+		else
 		if (lex_if(self, KSTORAGE, NULL))
 			cmd = parse_storage_alter(self);
 		else

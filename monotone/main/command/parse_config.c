@@ -8,6 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
+#include <monotone_cloud.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
 #include <monotone_wal.h>
@@ -28,6 +29,9 @@ parse_show(Lex* self)
 	case KWAL:
 		type = SHOW_WAL;
 		break;
+	case KCLOUDS:
+		type = SHOW_CLOUDS;
+		break;
 	case KSTORAGES:
 		type = SHOW_STORAGES;
 		break;
@@ -44,7 +48,7 @@ parse_show(Lex* self)
 		type = SHOW_NAME;
 		break;
 	default:
-		error("SHOW <MEMORY | WAL | STORAGES | PARTITIONS | PIPELINE | ALL | NAME>");
+		error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITIONS | PIPELINE | ALL | NAME>");
 	}
 
 	// [verbose]

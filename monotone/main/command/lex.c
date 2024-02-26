@@ -8,6 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
+#include <monotone_cloud.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
 #include <monotone_wal.h>
@@ -90,6 +91,7 @@ static Keyword keywords[] =
 	{ KREBALANCE,  "rebalance",    9},
 	{ KON,         "on",           2},
 	{ KCLOUD,      "cloud",        5},
+	{ KCLOUDS,     "clouds",       6},
 	{ KDOWNLOAD,   "download",     8},
 	{ KUPLOAD,     "upload",       6},
 	{ KVERBOSE,    "verbose",      7},
