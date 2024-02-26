@@ -21,14 +21,10 @@ Made to match following requirements:
 
 Learn more about [Architecture](ARCHITECTURE.md).
 
-### API
-
-Monotone provides simple API, which we tried to make intuitive and future-proof.
+Monotone provides simple [API](monotone/main/api/monotone.h), which we tried to make intuitive and future-proof.
 
 Insert (and replace/delete) is done in batches using key-value style approach using raw data.
 Where data management, administration and monitoring is done by using SQL-style DDL commands.
-
-*API ⇨*  [monotone.h](monotone/main/api/monotone.h)
 
 ## Features
 
