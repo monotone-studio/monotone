@@ -14,3 +14,4 @@
 #include "cloud/cloud_config.h"
 #include "cloud/cloud.h"
 #include "cloud/cloud_mgr.h"
+#include "cloud/cloud_mock.h"
