@@ -10,6 +10,7 @@ CFLAGS_INCLUDE  = -I. \
                   -I../monotone/runtime/lib \
                   -I../monotone/runtime/config \
                   -I../monotone/engine \
+                  -I../monotone/engine/cloud \
                   -I../monotone/engine/io \
                   -I../monotone/engine/storage \
                   -I../monotone/engine/wal \
