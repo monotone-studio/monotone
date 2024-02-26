@@ -6,4 +6,4 @@
 // time-series storage
 //
 
-CloudIf cloud_mock;
+extern CloudIf cloud_mock;
