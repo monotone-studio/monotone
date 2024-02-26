@@ -20,6 +20,8 @@ mock_path(Source* source, Id* id, char* path)
 static void
 mock_free(Cloud* self)
 {
+	if (self->config)
+		cloud_config_free(self->config);
 	mn_free(self);
 }
 
@@ -33,7 +35,7 @@ mock_create(CloudIf* iface, CloudConfig* config)
 	list_init(&self->link);
 	guard(self_guard, mock_free, self);
 	self->config = cloud_config_copy(config);
-	return self;
+	return unguard(&self_guard);
 }
 
 static void

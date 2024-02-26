@@ -18,7 +18,6 @@ struct CloudIf
 	void   (*upload)(Cloud*, Source*, Id*);
 	void   (*remove)(Cloud*, Source*, Id*);
 	void   (*read)(Cloud*, Source*, Id*, Buf*, uint32_t, uint64_t);
-	void   (*show)(Cloud*, Buf*);
 };
 
 struct Cloud
@@ -87,5 +86,12 @@ cloud_read(Cloud* self, Source* source, Id* id, Buf* buf,
 static inline void
 cloud_show(Cloud* self, Buf* buf)
 {
-	self->iface->show(self, buf);
+	buf_printf(buf, "%.*s\n", str_size(&self->config->name),
+	           str_of(&self->config->name));
+	buf_printf(buf, "  type  '%.*s'\n", str_size(&self->config->type),
+	           str_of(&self->config->type));
+	buf_printf(buf, "  login '%.*s'\n", str_size(&self->config->login),
+	           str_of(&self->config->login));
+	buf_printf(buf, "  url   '%.*s'\n", str_size(&self->config->url),
+	           str_of(&self->config->url));
 }
