@@ -8,6 +8,7 @@
 #include <monotone_runtime.h>
 #include <monotone_lib.h>
 #include <monotone_config.h>
+#include <monotone_cloud.h>
 #include <monotone_io.h>
 #include <monotone_storage.h>
 #include <monotone_wal.h>
@@ -26,6 +27,9 @@ execute_show(Executable* self)
 		break;
 	case SHOW_WAL:
 		wal_show(&self->main->wal, self->output);
+		break;
+	case SHOW_CLOUDS:
+		cloud_mgr_show(&self->main->cloud_mgr, NULL, self->output);
 		break;
 	case SHOW_STORAGES:
 		storage_mgr_show(&self->main->engine.storage_mgr, NULL,
@@ -192,6 +196,59 @@ execute_rebalance(Executable* self)
 	refresh_free(&refresh);
 	if (catch(&e))
 		rethrow();
+}
+
+static void
+execute_cloud_create(Executable* self)
+{
+	auto cmd = cmd_cloud_create_of(self->cmd);
+
+	// create cloud
+	cloud_mgr_create(&self->main->cloud_mgr, cmd->config,
+	                 cmd->if_not_exists);
+
+	// rewrite config file
+	control_save_config();
+}
+
+static void
+execute_cloud_drop(Executable* self)
+{
+	auto cmd = cmd_cloud_drop_of(self->cmd);
+
+	// drop storage
+	cloud_mgr_drop(&self->main->cloud_mgr, &cmd->name.string,
+	               cmd->if_exists);
+
+	// rewrite config file
+	control_save_config();
+}
+
+static void
+execute_cloud_alter(Executable* self)
+{
+	auto cmd = cmd_cloud_alter_of(self->cmd);
+
+	if (cmd->config)
+	{
+		// alter set
+		cloud_mgr_alter(&self->main->cloud_mgr,
+		                cmd->config,
+		                cmd->config_mask,
+		                cmd->if_exists);
+	} else
+	{
+		// alter rename
+		cloud_mgr_rename(&self->main->cloud_mgr, &cmd->name.string,
+		                 &cmd->name_new.string,
+		                  cmd->if_exists);
+		storage_mgr_rename_cloud(&self->main->engine.storage_mgr,
+		                         &cmd->name.string,
+		                         &cmd->name_new.string);
+	}
+
+	// rewrite config file
+	control_save_config();
 }
 
 static void
@@ -400,6 +457,9 @@ static Execute cmds[CMD_MAX] =
 	{ execute_checkpoint,               false },
 	{ execute_service,                  false },
 	{ execute_rebalance,                false },
+	{ execute_cloud_create,             true  },
+	{ execute_cloud_drop,               true  },
+	{ execute_cloud_alter,              true  },
 	{ execute_storage_create,           true  },
 	{ execute_storage_drop,             true  },
 	{ execute_storage_alter,            true  },

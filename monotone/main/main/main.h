@@ -16,7 +16,6 @@ struct Main
 	Service        service;
 	WorkerMgr      worker_mgr;
 	CloudMgr       cloud_mgr;
-	CloudMock      cloud_mock;
 	MemoryMgr      memory_mgr;
 	CompressionMgr compression_mgr;
 	UuidMgr        uuid_mgr;
