@@ -44,11 +44,9 @@ mock_update(Cloud* self)
 	unused(self);
 }
 
-static void
-mock_download(Cloud* self, Source* source, Id* id)
+static inline void
+mock_mkdir(Source* source)
 {
-	unused(self);
-
 	// create cloud mock directory, if not exists
 	char path[PATH_MAX];
 	source_pathfmt(source, path, sizeof(path), "mock");
@@ -57,6 +55,15 @@ mock_download(Cloud* self, Source* source, Id* id)
 		log("mock: new directory '%s'", path);
 		fs_mkdir(0755, "%s", path);
 	}
+}
+
+static void
+mock_download(Cloud* self, Source* source, Id* id)
+{
+	unused(self);
+
+	// create cloud mock directory, if not exists
+	mock_mkdir(source);
 
 	// copy file from mock directory to the storage
 	char path_from[PATH_MAX];
@@ -95,6 +102,9 @@ static void
 mock_upload(Cloud* self, Source* source, Id* id)
 {
 	unused(self);
+
+	// create cloud mock directory, if not exists
+	mock_mkdir(source);
 
 	// copy file from storage to the mock directory
 	char path_from[PATH_MAX];
