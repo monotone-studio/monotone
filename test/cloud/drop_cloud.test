@@ -1,0 +1,48 @@
+#
+
+init
+set workers to 0
+set interval to 10
+set serial to false
+open
+
+# test: drop cloud parsing
+drop
+drop cloud
+drop cloud if
+drop cloud if 123
+drop cloud if not
+drop cloud if exists
+drop cloud if exists 123
+drop cloud 123
+
+# test: drop cloud
+create cloud test (type 'mock')
+show clouds
+
+drop cloud test
+show clouds
+
+# test: drop cloud (does not exists)
+drop cloud test
+
+# test: drop cloud if exists
+drop cloud if exists test
+
+# test: create storage (with cloud)
+create cloud s3 (type 'mock')
+create storage test (cloud 's3')
+show storages
+
+# test: drop cloud (with storage)
+drop cloud s3
+show clouds
+
+# test: drop cloud (with storage) #2
+drop storage test
+show storages
+
+drop cloud s3
+show clouds
+
+close
