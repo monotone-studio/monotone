@@ -68,7 +68,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 - **Bottomless Storage**
 
-  Associate storages with cloud for extensive storage. Transparently access partitions on cloud.
+  Associate storages with cloud for extensive and cheaper storage. Transparently access partitions on cloud.
   Automate partitions lifecycle for cloud using Pipeline.
   
   Automatically or manually handle updates by reuploading partitions to cloud.
