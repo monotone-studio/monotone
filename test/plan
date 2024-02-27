@@ -25,6 +25,9 @@ test compression
 # cloud
 directory cloud
 group cloud
+test create_cloud
+test drop_cloud
+test alter_cloud
 test download
 test upload
 test cloud_storage

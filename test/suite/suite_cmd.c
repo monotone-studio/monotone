@@ -153,7 +153,6 @@ test_suite_cmd_open(TestSuite* self, char* arg)
 	if (rc == -1)
 	{
 		test_log(self, "error: %s\n", monotone_error(self->env));
-		monotone_free(self->env);
 		return 0;
 	}
 	return 0;
