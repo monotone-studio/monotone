@@ -1,0 +1,79 @@
+#
+
+init
+set workers to 0
+set interval to 10
+set serial to false
+open
+
+# test: alter cloud parsing
+alter
+alter cloud
+alter cloud if
+alter cloud if abc
+alter cloud if not abc
+alter cloud if exists
+alter cloud if exists test abc
+
+# test: alter cloud rename (already exists)
+create cloud test2 (type 'mock')
+create cloud test (type 'mock')
+show clouds
+
+alter cloud test rename
+alter cloud test rename to
+alter cloud test rename to test
+alter cloud test rename to test2
+
+# test: alter cloud rename
+drop cloud test2
+alter cloud test rename to test2
+show clouds
+drop cloud test2
+
+# test: alter cloud rename if exists
+alter cloud if exists test rename to test2
+show clouds
+
+# test: alter cloud rename (storage cascade)
+create cloud test (type 'mock')
+create storage test (cloud 'test')
+show storages
+
+alter cloud test rename to test2
+show storages
+show clouds
+drop storage test
+drop cloud test2
+
+# test: alter cloud set
+create cloud test (type 'mock')
+alter cloud test set
+alter cloud test set abc
+alter cloud test set (
+alter cloud test set (type
+alter cloud test set (url,)
+alter cloud test set (url 123
+alter cloud test set (url '',
+
+# url
+alter cloud test set (url 'localhost')
+show clouds
+
+# login
+alter cloud test set (login 'admin')
+show clouds
+
+# password
+alter cloud test set (password 'admin')
+show clouds
+
+# access_key
+alter cloud test set (access_key 'admin2')
+show clouds
+
+# secret_key
+alter cloud test set (secret_key 'admin2')
+show clouds
+
+close
