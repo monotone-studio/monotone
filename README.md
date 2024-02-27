@@ -36,13 +36,15 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 - **Transparent Compression**
 
-  Compress or recompress partitions automatically on refresh. Everything is done transparently
-  without blocking readers or writers of the original partition.
+  Compress or recompress partitions automatically on refresh (or partition move). Everything is done transparently
+  without blocking readers and writers.
 
 - **Storages**
 
-  Create logical storages to store data on different storage devices and apply different settings,
-  such as compression.
+  Create logical storages to store data on different storage devices. Set different storage settings,
+  such as compression, associated cloud, etc. Manually or automatically move partitions between storages.
+  Automatically do recompaction on move to change settings. Create or drop storages online.
+  Extend disk space by adding new storages without downtime.
 
 - **Tiering**
 
@@ -69,16 +71,30 @@ Learn more about its [Architecture](ARCHITECTURE.md).
   Associate storages with cloud for extensive storage. Transparently access partitions on cloud.
   Automate partitions lifecycle for cloud using Pipeline.
   
+  Automatically or manually handle updates by reuploading partitions to cloud.
+  Download or Upload partitions. Move partitions between local storages and cloud.
+  Move partitions between different cloud services.
+
+  *Example.*
+
+  Store only cold data on S3.
+
   ```
+  CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
   CREATE STORAGE hot (path '/mnt/ssd_nvme', compression 'lz4')
   CREATE STORAGE cold (cloud 's3', compression 'zstd')
   
   ALTER PIPELINE hot (interval 1day), cold
   ```
-  
-  Automatically or manually handle updates by reuploading partitions to cloud.
-  Download or Upload partitions. Move partitions between local storage and cloud.
-  Move partitions between different cloud services.
+
+  *Example.*
+
+  Work on top of S3.
+
+  ```
+  CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
+  ALTER STORAGE main (cloud 's3', compression 'zstd')
+  ``` 
   
 ## Performance
 
