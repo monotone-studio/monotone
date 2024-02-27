@@ -11,7 +11,7 @@ insert 2
 insert 3
 set error_refresh_1 to true
 refresh partition 0
-error: (engine/refresh.c:171) error injection: error_refresh_1
+error: (engine/refresh.c:172) error injection: error_refresh_1
 files main
 00000000000000000000.incomplete
 close
@@ -61,7 +61,7 @@ insert 2 x
 insert 3 x
 set error_refresh_1 to true
 refresh partition 0
-error: (engine/refresh.c:171) error injection: error_refresh_1
+error: (engine/refresh.c:172) error injection: error_refresh_1
 files main
 00000000000000000000
 00000000000000000000.incomplete
@@ -110,7 +110,7 @@ select
 # test: case 2: crash after completion
 set error_refresh_2 to true
 refresh partition 0
-error: (engine/refresh.c:177) error injection: error_refresh_2
+error: (engine/refresh.c:178) error injection: error_refresh_2
 files main
 00000000000000000000
 00000000000000000000.complete
@@ -159,7 +159,7 @@ select
 # test: case 3: crash after delete
 set error_refresh_3 to true
 refresh partition 0
-error: (engine/refresh.c:186) error injection: error_refresh_3
+error: (engine/refresh.c:187) error injection: error_refresh_3
 files main
 00000000000000000000.complete
 close
@@ -205,6 +205,12 @@ select
 [3]
 (eof)
 # test: case 4: crash during download
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 alter storage main set (cloud 'mock', sync false)
 show storages
 main
@@ -257,7 +263,7 @@ files main
 mock
 set error_download to true
 download partition 0
-error: (io/cloud_mock.c:73) error injection: error_download
+error: (cloud/cloud_mock.c:93) error injection: error_download
 files main
 00000000000000000000.incomplete
 00000000000000000000.cloud
@@ -308,7 +314,7 @@ select
 # test: case 4: error during download (retry)
 set error_download to true
 download partition 0
-error: (io/cloud_mock.c:73) error injection: error_download
+error: (cloud/cloud_mock.c:93) error injection: error_download
 files main
 00000000000000000000.incomplete
 00000000000000000000.cloud
@@ -385,7 +391,7 @@ main
         size            92
 set error_upload to true
 upload partition 0
-error: (io/cloud_mock.c:97) error injection: error_upload
+error: (cloud/cloud_mock.c:122) error injection: error_upload
 files main
 00000000000000000000
 mock
@@ -437,7 +443,7 @@ select
 drop partition 0 on cloud
 set error_upload to true
 upload partition 0
-error: (io/cloud_mock.c:97) error injection: error_upload
+error: (cloud/cloud_mock.c:122) error injection: error_upload
 files main
 00000000000000000000
 mock

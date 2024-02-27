@@ -85,6 +85,9 @@ show partitions debug
 select
 
 # test: case 4: crash during download
+create cloud mock (type 'mock')
+show clouds
+
 alter storage main set (cloud 'mock', sync false)
 show storages
 show partitions debug

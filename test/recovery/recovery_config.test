@@ -42,6 +42,18 @@ open
 # test: validate storage settings
 show storages
 
+## test: alter storage rename
+#alter storage test rename to test2
+#show storages
+
+## test: close/open
+#close
+#init
+#open
+
+## test: validate storage settings
+#show storages
+
 # test: drop storage
 drop storage test
 show storages
@@ -54,7 +66,57 @@ open
 # test: ensure storage does not exists
 show storages
 
+# test: create cloud
+create cloud mock (type 'mock')
+show clouds
+
+# test: close/open
+close
+init
+open
+
+# test: ensure cloud exists
+show clouds
+
+# test: alter cloud
+alter cloud mock set (url 'localhost')
+
+# test: close/open
+close
+init
+open
+
+# test: validate cloud settings
+show clouds
+
+# test: alter cloud rename
+alter cloud mock rename to mock2
+show clouds
+
+# test: close/open
+close
+init
+open
+
+# test: validate storage settings
+show clouds
+
+# test: drop cloud
+drop cloud mock2
+show clouds
+
+# test: close/open
+close
+init
+open
+
+# test: ensure cloud does not exists
+show clouds
+
 # test: create storage with cloud
+create cloud mock (type 'mock')
+show clouds
+
 create storage test (cloud 'mock', sync false)
 show storages
 
