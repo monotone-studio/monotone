@@ -86,13 +86,11 @@ create storage test (path 'on_base')
 show storages
 drop storage test
 
-# cloud
+# cloud (does not exists)
 create storage test (cloud
 create storage test (cloud false
 create storage test (cloud 'undef')
 create storage test (cloud 'mock')
-show storages
-drop storage test
 
 # test: create storage set path
 create storage test (path '__dir')
