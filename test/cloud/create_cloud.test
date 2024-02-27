@@ -1,0 +1,88 @@
+#
+
+init
+set workers to 0
+set interval to 10
+set serial to false
+open
+
+# test: no clouds after create
+show clouds
+
+# test: create cloud parsing
+create
+create cloud
+create cloud if
+create cloud if abc
+create cloud if not abc
+create cloud if not exists
+create cloud 123
+create cloud test junk
+create cloud test (
+create cloud test (123
+create cloud test (name
+create cloud test (type
+create cloud test (type int
+create cloud test (type false
+create cloud test (type '',
+create cloud test (type '',)
+
+# test: create cloud (no options)
+create cloud test
+show clouds
+
+# test: create cloud
+create cloud test (type 'mock')
+show clouds
+
+# test: create cloud (exists)
+create cloud test
+
+# test: create cloud if not exists
+create cloud if not exists test
+show clouds
+
+# test: create cloud (options)
+drop cloud test
+
+# type
+create cloud test (type
+create cloud test (type 123
+create cloud test (type '')
+show clouds
+
+# type (unknown)
+create cloud test (type 'abc')
+show clouds
+
+# url
+create cloud test (type 'mock', url 123)
+create cloud test (type 'mock', url 'http://127.0.0.1:9000')
+show clouds
+drop cloud test
+
+# login
+create cloud test (type 'mock', login 123)
+create cloud test (type 'mock', login 'login')
+show clouds
+drop cloud test
+
+# password
+create cloud test (type 'mock', password 123)
+create cloud test (type 'mock', password 'password')
+show clouds
+drop cloud test
+
+# access_key
+create cloud test (type 'mock', access_key 123)
+create cloud test (type 'mock', access_key 'login')
+show clouds
+drop cloud test
+
+# secret_key
+create cloud test (type 'mock', secret_key 123)
+create cloud test (type 'mock', secret_key 'password')
+show clouds
+drop cloud test
+
+close
