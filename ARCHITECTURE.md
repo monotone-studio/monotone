@@ -16,7 +16,7 @@ Region size can affect compression efficiency and reduce number of requests requ
 
 Each partition has ordered in-memory storage associated with partition file. Eventually in-memory storage
 and partition file merged together. This is done manually or in background by a pool of workers.
-Compaction is multi-threaaded and scalable. Each partition file has index of regions, which contains of min/max keys of each region
+Compaction is multi-threaded and scalable. Each partition file has index of regions, which contains of min/max keys of each region
 and its file position. This index is kept in memory and loaded on start. Index size is insignificant even for huge data sets.
 
 #### Refresh
