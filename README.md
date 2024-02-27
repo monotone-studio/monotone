@@ -36,8 +36,8 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 - **Transparent Compression**
 
-  Compress or recompress partitions automatically on refresh (or partition move). Everything is done transparently
-  without blocking readers and writers.
+  Compress or recompress partitions automatically on refresh (or partition move). Allow different compression types and compression ratio settings.
+  Everything is done transparently without blocking readers and writers.
 
 - **Storages**
 
@@ -77,7 +77,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
   *Example.*
 
-  Store only cold data on S3.
+  Store recent data on SSD for 1 day, then move to S3.
 
   ```
   CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
