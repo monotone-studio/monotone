@@ -4,6 +4,12 @@ set interval to 10
 set serial to false
 open
 # test: create storages
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 create storage hot (sync false)
 create storage cold (cloud 'mock', sync false)
 # test: alter pipeline set partitions

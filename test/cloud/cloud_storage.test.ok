@@ -5,8 +5,14 @@ set serial to false
 open
 # test: create storage with cloud (not found)
 create storage test (cloud 'unknown')
-error: storage 'test': cloud interface 'unknown' does not exists
+error: storage 'test': cloud 'unknown' does not exists
 # test: create storage with cloud
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 create storage test (cloud 'mock', sync false)
 show storages
 main
@@ -82,7 +88,7 @@ test
   region_size         131072
 # test: alter storage set cloud (unknown)
 alter storage test set (cloud 'undef')
-error: storage 'test': cloud interface 'undef' does not exists
+error: storage 'test': cloud 'undef' does not exists
 # test: alter storage set cloud (no partitions)
 alter storage test set (cloud 'mock')
 show storages

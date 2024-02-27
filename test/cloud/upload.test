@@ -27,6 +27,9 @@ upload partition 0
 upload partition 0 if cloud
 
 # test: create storage with cloud
+create cloud mock (type 'mock')
+show clouds
+
 create storage test (cloud 'mock', sync false)
 show storages
 alter pipeline set test

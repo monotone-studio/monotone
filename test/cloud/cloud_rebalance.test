@@ -7,6 +7,9 @@ set serial to false
 open
 
 # test: create storages
+create cloud mock (type 'mock')
+show clouds
+
 create storage hot (sync false)
 create storage cold (cloud 'mock', sync false)
 

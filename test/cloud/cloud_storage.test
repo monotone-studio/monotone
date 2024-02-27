@@ -10,6 +10,9 @@ open
 create storage test (cloud 'unknown')
 
 # test: create storage with cloud
+create cloud mock (type 'mock')
+show clouds
+
 create storage test (cloud 'mock', sync false)
 show storages
 

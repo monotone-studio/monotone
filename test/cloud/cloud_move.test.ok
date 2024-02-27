@@ -31,6 +31,12 @@ select
 [2]
 (eof)
 # test: create cloud storage
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 create storage test (cloud 'mock', sync false, compression 'zstd')
 show storages
 main

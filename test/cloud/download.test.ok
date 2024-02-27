@@ -27,6 +27,12 @@ error: download: partition <0> has no associated cloud
 insert 0
 download partition 0 if cloud
 # test: create storage with cloud
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 create storage test (cloud 'mock', sync false)
 show storages
 main

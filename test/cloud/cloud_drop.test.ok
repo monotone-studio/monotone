@@ -4,6 +4,12 @@ set interval to 10
 set serial to false
 open
 # test: alter storage set cloud
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 alter storage main set (cloud 'mock', sync false)
 show storages
 main

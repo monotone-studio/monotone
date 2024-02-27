@@ -7,6 +7,9 @@ set serial to false
 open
 
 # test: alter storage set cloud
+create cloud mock (type 'mock')
+show clouds
+
 alter storage main set (cloud 'mock', sync false)
 show storages
 

@@ -26,6 +26,12 @@ error: upload: partition <0> storage has no associated cloud
 # test: upload if cloud
 upload partition 0 if cloud
 # test: create storage with cloud
+create cloud mock (type 'mock')
+show clouds
+mock
+  type  'mock'
+  login ''
+  url   ''
 create storage test (cloud 'mock', sync false)
 show storages
 main

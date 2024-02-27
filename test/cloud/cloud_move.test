@@ -14,6 +14,9 @@ show storages
 select
 
 # test: create cloud storage
+create cloud mock (type 'mock')
+show clouds
+
 create storage test (cloud 'mock', sync false, compression 'zstd')
 show storages
 
