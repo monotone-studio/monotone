@@ -21,8 +21,10 @@
 #include "lib/crc.h"
 #include "lib/uuid.h"
 
+// cache
+#include "lib/cache.h"
+
 // compression
 #include "lib/compression.h"
 #include "lib/compression_zstd.h"
-#include "lib/compression_cache.h"
 #include "lib/compression_mgr.h"

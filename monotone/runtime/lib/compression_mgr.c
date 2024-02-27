@@ -11,20 +11,31 @@
 void
 compression_mgr_init(CompressionMgr* self)
 {
-	compression_cache_init(&self->cache_zstd, &compression_zstd);
+	cache_init(&self->cache_zstd);
 }
 
 void
 compression_mgr_free(CompressionMgr* self)
 {
-	compression_cache_free(&self->cache_zstd);
+	list_foreach_safe(&self->cache_zstd.list)
+	{
+		auto ref = list_at(Compression, link);
+		compression_free(ref);
+	}
+	cache_reset(&self->cache_zstd);
+	cache_free(&self->cache_zstd);
 }
 
 Compression*
 compression_mgr_pop(CompressionMgr* self, int id)
 {
 	if (id == COMPRESSION_ZSTD)
-		return compression_cache_pop(&self->cache_zstd);
+	{
+		auto ref = cache_pop(&self->cache_zstd);
+		if (likely(ref))
+			return compression_of(ref);
+		return compression_create(&compression_zstd);
+	}
 	abort();
 	return NULL;
 }
@@ -34,7 +45,7 @@ compression_mgr_push(CompressionMgr* self, Compression* compression)
 {
 	if (compression->iface->id == COMPRESSION_ZSTD)
 	{
-		compression_cache_push(&self->cache_zstd, compression);
+		cache_push(&self->cache_zstd, &compression->link);
 		return;
 	}
 	abort();

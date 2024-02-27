@@ -10,7 +10,7 @@ typedef struct CompressionMgr CompressionMgr;
 
 struct CompressionMgr
 {
-	CompressionCache cache_zstd;
+	Cache cache_zstd;
 };
 
 void compression_mgr_init(CompressionMgr*);

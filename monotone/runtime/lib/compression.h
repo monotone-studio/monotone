@@ -42,6 +42,12 @@ compression_free(Compression* self)
 	return self->iface->free(self);
 }
 
+static inline Compression*
+compression_of(List* link)
+{
+	return container_of(link, Compression, link);
+}
+
 static inline void
 compression_compress(Compression* self, Buf* buf, int level,
                      Buf*         a,
