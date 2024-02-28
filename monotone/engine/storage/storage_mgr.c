@@ -50,7 +50,7 @@ storage_mgr_save(StorageMgr* self)
 }
 
 static Storage*
-storage_mgr_create_object(StorageMgr*, Source*);
+storage_mgr_create_object(StorageMgr*, Source*, bool);
 
 void
 storage_mgr_open(StorageMgr* self)
@@ -71,7 +71,7 @@ storage_mgr_open(StorageMgr* self)
 		guard(guard, source_free, source);
 
 		// create storage
-		auto storage = storage_mgr_create_object(self, source);
+		auto storage = storage_mgr_create_object(self, source, false);
 		list_append(&self->list, &storage->link);
 		self->list_count++;
 	}
@@ -90,7 +90,7 @@ storage_mgr_create_system(StorageMgr* self)
 }
 
 static void
-storage_set_cloud(StorageMgr* self, Storage* storage)
+storage_set_cloud(StorageMgr* self, Storage* storage, bool attach)
 {
 	auto source = storage->source;
 	if (str_empty(&source->cloud))
@@ -104,19 +104,22 @@ storage_set_cloud(StorageMgr* self, Storage* storage)
 		      str_size(&source->cloud),
 		      str_of(&source->cloud));
 
+	if (attach)
+		cloud_attach(cloud, source);
+
 	storage->cloud = cloud;
 	cloud_ref(cloud);
 }
 
 static Storage*
-storage_mgr_create_object(StorageMgr* self, Source* source)
+storage_mgr_create_object(StorageMgr* self, Source* source, bool attach)
 {
 	auto storage = storage_allocate(source);
 
 	// find cloud object, if defined
 	Exception e;
 	if (try(&e)) {
-		storage_set_cloud(self, storage);
+		storage_set_cloud(self, storage, attach);
 	}
 	if (catch(&e))
 	{
@@ -148,7 +151,7 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 	}
 
 	// create storage object
-	storage = storage_mgr_create_object(self, source);
+	storage = storage_mgr_create_object(self, source, true);
 	list_append(&self->list, &storage->link);
 	self->list_count++;
 
@@ -233,7 +236,7 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 			part->cloud = NULL;
 		}
 
-		storage_set_cloud(self, storage);
+		storage_set_cloud(self, storage, true);
 
 		if (storage->cloud)
 		{
