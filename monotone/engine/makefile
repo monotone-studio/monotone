@@ -20,6 +20,8 @@ LIB            = libmonotone-engine.a
 OBJECTS        = \
                  cloud/cloud_mgr.o \
                  cloud/cloud_mock.o \
+                 cloud/s3_io.o \
+                 cloud/s3.o \
                  io/memtable.o \
                  io/part_file.o \
                  io/part_op.o \

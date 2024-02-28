@@ -25,7 +25,7 @@ LFLAGS          = -rdynamic -pthread -Wl,-whole-archive \
                   ../monotone/runtime/libmonotone-runtime.a \
                   ../monotone/engine/libmonotone-engine.a \
                   ../monotone/main/libmonotone-main.a \
-                  -Wl,-no-whole-archive -lm -lzstd
+                  -Wl,-no-whole-archive -lm -lzstd -lcurl -lcrypto
 TARGET          = test
 OBJECTS_RUNTIME =
 OBJECTS         = suite/suite.o \

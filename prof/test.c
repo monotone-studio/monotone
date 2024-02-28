@@ -199,41 +199,27 @@ cli(void)
 		return;
 	}
 
-	monotone_execute(env, "alter storage main set (compression 'zstd', refresh_wm 0kB)", NULL);
-
-#if 0
-	/*
-	rc = monotone_execute(env, "create storage if not exists hot (cloud 'mock', compression 1, refresh_wm 0)", NULL);
+	rc = monotone_execute(env, "create cloud if not exists s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-	*/
 
-	rc = monotone_execute(env, "create storage if not exists hot (compression 'zstd', refresh_wm 0)", NULL);
+	rc = monotone_execute(env, "create storage if not exists test (cloud 's3', compression 'zstd', refresh_wm 0, region_size 1MiB)", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-	rc = monotone_execute(env, "create storage if not exists cold (compression 'zstd', cloud 'mock')", NULL);
+
+	rc = monotone_execute(env, "alter pipeline set test", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-	rc = monotone_execute(env, "alter pipeline set main (partitions 10), cold", NULL);
 
-	rc = monotone_execute(env, "alter pipeline set main (partitions 10)", NULL);
-#endif
-
-	rc = monotone_execute(env, "alter pipeline set main (interval 10000000)", NULL);
-	if (rc == -1)
-	{
-		printf("error: %s\n", monotone_error(env));
-		return;
-	}
 
 	for (;;)
 	{
