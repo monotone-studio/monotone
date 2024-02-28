@@ -34,6 +34,7 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 		lex_next(self, &name);
 		switch (name.id) {
 		case KCLOUD:
+		case KDEBUG:
 			name.id = KNAME;
 			break;
 		case KNAME:
@@ -79,6 +80,12 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 			// password <string>
 			parse_string(self, &name, &config->password);
 			mask |= CLOUD_PASSWORD;
+		} else
+		if (str_compare_raw(&name.string, "debug", 5))
+		{
+			// debug <bool>
+			parse_bool(self, &name, &config->debug);
+			mask |= CLOUD_DEBUG;
 		} else
 		{
 			error("%s: unknown option %.*s", command, str_size(&name.string),
@@ -170,6 +177,10 @@ parse_cloud_alter_set(Lex* self, Cmd* arg)
 	// (options)
 	cmd->config_mask =
 		parse_cloud_options(self, cmd->config, "ALTER CLOUD");
+
+	// do not allow to change cloud type
+	if (cmd->config_mask & CLOUD_TYPE)
+		error("cloud type cannot be changed");
 }
 
 Cmd*
