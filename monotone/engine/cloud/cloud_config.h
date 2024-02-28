@@ -14,22 +14,25 @@ enum
 	CLOUD_TYPE     = 1 << 1,
 	CLOUD_LOGIN    = 1 << 2,
 	CLOUD_PASSWORD = 1 << 3,
-	CLOUD_URL      = 1 << 4
+	CLOUD_URL      = 1 << 4,
+	CLOUD_DEBUG    = 1 << 5
 };
 
 struct CloudConfig
 {
-	Str name;
-	Str type;
-	Str login;
-	Str password;
-	Str url;
+	Str  name;
+	Str  type;
+	Str  login;
+	Str  password;
+	Str  url;
+	bool debug;
 };
 
 static inline CloudConfig*
 cloud_config_allocate(void)
 {
 	auto self = (CloudConfig*)mn_malloc(sizeof(CloudConfig));
+	self->debug = false;
 	str_init(&self->name);
 	str_init(&self->type);
 	str_init(&self->login);
@@ -84,6 +87,12 @@ cloud_config_set_url(CloudConfig* self, Str* value)
 	str_copy(&self->url, value);
 }
 
+static inline void
+cloud_config_set_debug(CloudConfig* self, bool value)
+{
+	self->debug = value;
+}
+
 static inline CloudConfig*
 cloud_config_copy(CloudConfig* self)
 {
@@ -94,6 +103,7 @@ cloud_config_copy(CloudConfig* self)
 	cloud_config_set_login(copy, &self->login);
 	cloud_config_set_password(copy, &self->password);
 	cloud_config_set_url(copy, &self->url);
+	cloud_config_set_debug(copy, self->debug);
 	return unguard(&copy_guard);
 }
 
@@ -126,6 +136,10 @@ cloud_config_read(uint8_t** pos)
 	// url
 	data_skip(pos);
 	data_read_string_copy(pos, &self->url);
+
+	// debug
+	data_skip(pos);
+	data_read_bool(pos, &self->debug);
 	return unguard(&self_guard);
 }
 
@@ -154,6 +168,10 @@ cloud_config_write(CloudConfig* self, Buf* buf)
 	// url
 	encode_raw(buf, "url", 3);
 	encode_string(buf, &self->url);
+
+	// debug
+	encode_raw(buf, "debug", 5);
+	encode_bool(buf, self->debug);
 }
 
 static inline void
@@ -173,4 +191,7 @@ cloud_config_alter(CloudConfig* self, CloudConfig* alter, int mask)
 
 	if (mask & CLOUD_URL)
 		cloud_config_set_url(self, &alter->url);
+
+	if (mask & CLOUD_DEBUG)
+		cloud_config_set_debug(self, alter->debug);
 }
