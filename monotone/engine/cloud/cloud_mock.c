@@ -39,9 +39,10 @@ mock_create(CloudIf* iface, CloudConfig* config)
 }
 
 static void
-mock_update(Cloud* self)
+mock_attach(Cloud* self, Source* source)
 {
 	unused(self);
+	unused(source);
 }
 
 static inline void
@@ -87,7 +88,6 @@ mock_download(Cloud* self, Source* source, Id* id)
 	guard(guard_file, file_close, &file);
 	file_create(&file, path_to);
 	file_write_buf(&file, &buf);
-	file_close(&file);
 
 	// crash case 4
 	error_injection(error_download);
@@ -157,14 +157,13 @@ mock_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
 	guard(guard_file, file_close, &file);
 	file_open(&file, path);
 	file_pread_buf(&file, buf, size, offset);
-	file_close(&file);
 }
 
 CloudIf cloud_mock =
 {
 	.create   = mock_create,
 	.free     = mock_free,
-	.update   = mock_update,
+	.attach   = mock_attach,
 	.download = mock_download,
 	.upload   = mock_upload,
 	.remove   = mock_remove,
