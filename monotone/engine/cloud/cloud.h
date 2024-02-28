@@ -13,7 +13,7 @@ struct CloudIf
 {
 	Cloud* (*create)(CloudIf*, CloudConfig*);
 	void   (*free)(Cloud*);
-	void   (*update)(Cloud*);
+	void   (*attach)(Cloud*, Source*);
 	void   (*download)(Cloud*, Source*, Id*);
 	void   (*upload)(Cloud*, Source*, Id*);
 	void   (*remove)(Cloud*, Source*, Id*);
@@ -53,9 +53,9 @@ cloud_unref(Cloud* self)
 }
 
 static inline void
-cloud_update(Cloud* self)
+cloud_attach(Cloud* self, Source* source)
 {
-	self->iface->update(self);
+	self->iface->attach(self, source);
 }
 
 static inline void
