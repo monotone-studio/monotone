@@ -1,0 +1,197 @@
+
+//
+// monotone
+//
+// time-series storage
+//
+
+#include <monotone_runtime.h>
+#include <monotone_lib.h>
+#include <monotone_config.h>
+#include <monotone_cloud.h>
+
+#include <curl/curl.h>
+
+typedef struct S3 S3;
+
+struct S3
+{
+	Cloud cloud;
+	Cache cache;
+};
+
+always_inline static inline S3*
+s3_of(Cloud* self)
+{
+	return (S3*)self;
+}
+
+static void
+s3_free(Cloud* self)
+{
+	auto s3 = s3_of(self);
+	list_foreach_safe(&s3->cache.list)
+	{
+		auto io = list_at(S3Io, link);
+		s3_io_free(io);
+	}
+	if (self->config)
+		cloud_config_free(self->config);
+	mn_free(self);
+}
+
+static Cloud*
+s3_create(CloudIf* iface, CloudConfig* config)
+{
+	// todo: validate config options
+
+	auto self = (S3*)mn_malloc(sizeof(S3));
+	cache_init(&self->cache);
+
+	auto cloud = &self->cloud;
+	cloud->refs   = 0;
+	cloud->iface  = iface;
+	cloud->config = NULL;
+	list_init(&cloud->link);
+
+	guard(self_guard, s3_free, self);
+	cloud->config = cloud_config_copy(config);
+
+	unguard(&self_guard);
+	return cloud;
+}
+
+static inline S3Io*
+s3_get_io(S3* self)
+{
+	auto link = cache_pop(&self->cache);
+	if (likely(link))
+		return container_of(link, S3Io, link);
+	return s3_io_allocate(&self->cloud);
+}
+
+static void
+s3_attach(Cloud* self, Source* source)
+{
+	auto s3 = s3_of(self);
+
+	// get io handle
+	auto io = s3_get_io(s3);
+	guard(guard_io, s3_io_free, io);
+
+	// create bucket, if not exists
+	s3_io_create_bucket(io, source);
+
+	// put io back to cache
+	unguard(&guard_io);
+	cache_push(&s3->cache, &io->link);
+}
+
+static void
+s3_download(Cloud* self, Source* source, Id* id)
+{
+	auto s3 = s3_of(self);
+
+	// create incomplete partition file
+	char path[PATH_MAX];
+	id_path_incomplete(id, source, path);
+
+	// in case previous attempt failed without crash
+	if (fs_exists("%s", path))
+		fs_unlink("%s", path);
+	File file;
+	file_init(&file);
+	guard(guard_file, file_close, &file);
+	file_create(&file, path);
+
+	// get io handle
+	auto io = s3_get_io(s3);
+	guard(guard_io, s3_io_free, io);
+
+	// execute GET and write content to the file
+	s3_io_download(io, source, id, &file);
+
+	// sync
+	if (source->sync)
+		file_sync(&file);
+
+	// rename as completed
+	char path_to[PATH_MAX];
+	id_path(id, source, path_to);
+	fs_rename(path, "%s", path_to);
+
+	// put io back to cache
+	unguard(&guard_io);
+	cache_push(&s3->cache, &io->link);
+}
+
+static void
+s3_upload(Cloud* self, Source* source, Id* id)
+{
+	auto s3 = s3_of(self);
+
+	// open partition file
+	char path[PATH_MAX];
+	id_path(id, source, path);
+	File file;
+	file_init(&file);
+	guard(guard_file, file_close, &file);
+	file_open(&file, path);
+	
+	// get io handle
+	auto io = s3_get_io(s3);
+	guard(guard_io, s3_io_free, io);
+
+	// execute PUT and transfer file content
+	s3_io_upload(io, source, id, &file);
+
+	// put io back to cache
+	unguard(&guard_io);
+	cache_push(&s3->cache, &io->link);
+}
+
+static void
+s3_remove(Cloud* self, Source* source, Id* id)
+{
+	auto s3 = s3_of(self);
+	
+	// get io handle
+	auto io = s3_get_io(s3);
+	guard(guard_io, s3_io_free, io);
+
+	// execute DELETE
+	s3_io_delete(io, source, id);
+
+	// put io back to cache
+	unguard(&guard_io);
+	cache_push(&s3->cache, &io->link);
+}
+
+static void
+s3_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
+        uint64_t offset)
+{
+	auto s3 = s3_of(self);
+	
+	// get io handle
+	auto io = s3_get_io(s3);
+	guard(guard_io, s3_io_free, io);
+
+	// execute GET and read partial file range to the buffer
+	s3_io_read(io, source, id, buf, size, offset);
+
+	// put io back to cache
+	unguard(&guard_io);
+	cache_push(&s3->cache, &io->link);
+}
+
+CloudIf cloud_s3 =
+{
+	.create   = s3_create,
+	.free     = s3_free,
+	.attach   = s3_attach,
+	.download = s3_download,
+	.upload   = s3_upload,
+	.remove   = s3_remove,
+	.read     = s3_read
+};

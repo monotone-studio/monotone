@@ -15,6 +15,8 @@ cloud_mgr_interface_of(Str* name)
 {
 	if (str_compare_raw(name, "mock", 4))
 		return &cloud_mock;
+	if (str_compare_raw(name, "s3", 2))
+		return &cloud_s3;
 	return NULL;
 }
 
@@ -151,9 +153,6 @@ cloud_mgr_alter(CloudMgr* self, CloudConfig* config, int mask, bool if_exists)
 	// update and save cloud config
 	cloud_config_alter(cloud->config, config, mask);
 	cloud_mgr_save(self);
-
-	// notify cloud object
-	cloud_update(cloud);
 }
 
 void
