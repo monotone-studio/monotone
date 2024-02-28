@@ -147,7 +147,7 @@ static inline void
 cloud_config_write(CloudConfig* self, Buf* buf)
 {
 	// map
-	encode_map(buf, 5);
+	encode_map(buf, 6);
 
 	// name
 	encode_raw(buf, "name", 4);
