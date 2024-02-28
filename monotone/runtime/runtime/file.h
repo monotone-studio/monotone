@@ -132,6 +132,16 @@ file_rename(File* self, const char* path)
 	self->path = new_path;
 }
 
+static inline int
+file_write_nothrow(File* self, void* data, int size)
+{
+	int rc = vfs_write(self->fd, data, size);
+	if (unlikely(rc == -1))
+		return -1;
+	self->size += rc;
+	return rc;
+}
+
 static inline uint64_t
 file_write(File* self, void* data, int size)
 {
