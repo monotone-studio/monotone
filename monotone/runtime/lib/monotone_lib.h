@@ -20,6 +20,7 @@
 // hashing
 #include "lib/crc.h"
 #include "lib/uuid.h"
+#include "lib/hmac.h"
 
 // cache
 #include "lib/cache.h"
