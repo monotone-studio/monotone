@@ -9,6 +9,9 @@ CFLAGS_INCLUDE = -I../runtime \
                  -I../runtime/runtime \
                  -I../runtime/lib \
                  -I../runtime/config \
+                 -I../cloud \
+                 -I../cloud/cloud \
+                 -I../cloud/s3 \
                  -I../engine \
                  -I../engine/cloud \
                  -I../engine/io \

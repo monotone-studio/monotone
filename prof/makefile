@@ -9,6 +9,9 @@ CFLAGS_INCLUDE = -I. \
                  -I../monotone/runtime/runtime \
                  -I../monotone/runtime/lib \
                  -I../monotone/runtime/config \
+                 -I../monotone/cloud \
+                 -I../monotone/cloud/cloud \
+                 -I../monotone/cloud/s3 \
                  -I../monotone/engine \
                  -I../monotone/engine/cloud \
                  -I../monotone/engine/io \
@@ -21,6 +24,7 @@ CFLAGS_INCLUDE = -I. \
                  -I../monotone/main/api
 LFLAGS         = -rdynamic -pthread -Wl,-whole-archive \
                   ../monotone/runtime/libmonotone-runtime.a \
+                  ../monotone/cloud/libmonotone-cloud.a \
                   ../monotone/engine/libmonotone-engine.a \
                   ../monotone/main/libmonotone-main.a \
                   -Wl,-no-whole-archive -lm -lzstd -lcurl -lcrypto
