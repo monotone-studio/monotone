@@ -13,20 +13,6 @@
 
 #include <curl/curl.h>
 
-typedef struct S3 S3;
-
-struct S3
-{
-	Cloud cloud;
-	Cache cache;
-};
-
-always_inline static inline S3*
-s3_of(Cloud* self)
-{
-	return (S3*)self;
-}
-
 static void
 s3_free(Cloud* self)
 {
@@ -41,10 +27,24 @@ s3_free(Cloud* self)
 	mn_free(self);
 }
 
+static void
+s3_validate_config(CloudConfig* config)
+{
+	if (str_empty(&config->login))
+		error("s3: access_key is not defined");
+
+	if (str_empty(&config->password))
+		error("s3: secret_key is not defined");
+
+	if (str_empty(&config->url))
+		error("s3: url is not defined");
+}
+
 static Cloud*
 s3_create(CloudIf* iface, CloudConfig* config)
 {
-	// todo: validate config options
+	// validate config options
+	s3_validate_config(config);
 
 	auto self = (S3*)mn_malloc(sizeof(S3));
 	cache_init(&self->cache);
@@ -81,7 +81,7 @@ s3_attach(Cloud* self, Source* source)
 	guard(guard_io, s3_io_free, io);
 
 	// create bucket, if not exists
-	s3_io_create_bucket(io, source);
+	s3_op_create_bucket(io, source);
 
 	// put io back to cache
 	unguard(&guard_io);
@@ -110,7 +110,7 @@ s3_download(Cloud* self, Source* source, Id* id)
 	guard(guard_io, s3_io_free, io);
 
 	// execute GET and write content to the file
-	s3_io_download(io, source, id, &file);
+	s3_op_download(io, source, id, &file);
 
 	// sync
 	if (source->sync)
@@ -144,7 +144,7 @@ s3_upload(Cloud* self, Source* source, Id* id)
 	guard(guard_io, s3_io_free, io);
 
 	// execute PUT and transfer file content
-	s3_io_upload(io, source, id, &file);
+	s3_op_upload(io, source, id, &file);
 
 	// put io back to cache
 	unguard(&guard_io);
@@ -161,7 +161,7 @@ s3_remove(Cloud* self, Source* source, Id* id)
 	guard(guard_io, s3_io_free, io);
 
 	// execute DELETE
-	s3_io_delete(io, source, id);
+	s3_op_delete(io, source, id);
 
 	// put io back to cache
 	unguard(&guard_io);
@@ -179,7 +179,7 @@ s3_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
 	guard(guard_io, s3_io_free, io);
 
 	// execute GET and read partial file range to the buffer
-	s3_io_read(io, source, id, buf, size, offset);
+	s3_op_read(io, source, id, buf, size, offset);
 
 	// put io back to cache
 	unguard(&guard_io);

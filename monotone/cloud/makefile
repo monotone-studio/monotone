@@ -18,6 +18,8 @@ OBJECTS        = \
                  cloud/cloud_mgr.o \
                  cloud/cloud_mock.o \
                  s3/s3_io.o \
+                 s3/s3_request.o \
+                 s3/s3_op.o \
                  s3/s3.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
