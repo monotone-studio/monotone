@@ -16,4 +16,4 @@
 #include "cloud/cloud_mgr.h"
 
 // cloud mock
-#include "cloud/cloud_mock.h"
+#include "cloud/mock.h"

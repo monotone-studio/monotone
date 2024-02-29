@@ -16,7 +16,7 @@ CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-cloud.a
 OBJECTS        = \
                  cloud/cloud_mgr.o \
-                 cloud/cloud_mock.o \
+                 cloud/mock.o \
                  s3/s3_io.o \
                  s3/s3_request.o \
                  s3/s3_op.o \
