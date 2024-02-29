@@ -17,6 +17,34 @@
 #include <curl/curl.h>
 
 static void
+s3_request_encode_base64(uint8_t digest_raw[20],
+                         uint8_t digest[28])
+{
+	static const char* const chars =
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	unsigned long v = 0;
+	int i = 0;
+	int j = 0;
+	for (; i < 20; ++i)
+	{
+		v = (v << 8) | digest_raw[i];
+		if ((i % 3) == 2)
+		{
+			digest[j++] = chars[(v >> 18) & 0x3F];
+			digest[j++] = chars[(v >> 12) & 0x3F];
+			digest[j++] = chars[(v >> 6)  & 0x3F];
+			digest[j++] = chars[v & 0x3F];
+			v = 0;
+		}
+	}
+	digest[j++] = chars[(v >> 10) & 0x3F];
+	digest[j++] = chars[(v >> 4)  & 0x3F];
+	digest[j++] = chars[(v << 2)  & 0x3F];
+	digest[j++] = '=';
+	digest[j++] = '\0';
+}
+
+static void
 s3_request_prepare(S3Request* self)
 {
 	auto config = self->io->cloud->config;
@@ -46,7 +74,7 @@ s3_request_prepare(S3Request* self)
 		                       id->min);
 
 		snprintf(self->url, sizeof(self->url),
-		        "%.*s/%.*s/%020" PRIu64,
+		         "%.*s/%.*s/%020" PRIu64,
 		         str_size(&config->url),
 		         str_of(&config->url),
 		         str_size(&source->name),
@@ -73,23 +101,25 @@ s3_request_prepare(S3Request* self)
 		         str_of(&source->name));
 	}
 
-	// sign header using base64 hmac
+	// create MAC (message authentication code)
 	auto access_key = &config->login;
 	auto secret_key = &config->password;
 
-	char hmac[HMAC_SZ];
-	hmac_base64(hmac, sizeof(hmac),
-	            str_of(secret_key),
-	            str_size(secret_key),
-	            header,
-	            header_size);
+	uint8_t digest[20];
+	HMAC(EVP_sha1(), str_of(secret_key), str_size(secret_key),
+	     (unsigned char*)header, header_size,
+	      digest, NULL);
 
-	// create authorization header field
+	// encode MAC using base64
+	uint8_t digest_base64[28];
+	s3_request_encode_base64(digest, digest_base64);
+
+	// prepare authorization header field
 	snprintf(self->authorization, sizeof(self->authorization),
 	         "AWS %.*s:%s",
 	         str_size(access_key),
 	         str_of(access_key),
-	         hmac);
+	         digest_base64);
 }
 
 void

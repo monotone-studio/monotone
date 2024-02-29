@@ -19,7 +19,6 @@ OBJECTS        = \
                  lib/rbtree.o \
                  lib/crc.o \
                  lib/uuid.o \
-                 lib/hmac.o \
                  lib/compression_zstd.o \
                  lib/compression_mgr.o \
                  config/config.o
