@@ -19,7 +19,7 @@ Made to match following requirements:
   - Transparently work on top of S3
   - Understand Hot and Cold data patterns
 
-Monotone provides simple [API](monotone/main/api/monotone.h), which we tried to make intuitive and future-proof.
+Monotone provides simple FFI-friendly [C API](monotone/main/api/monotone.h).
 
 Insert (and replace/delete) is done in batches using event id associated with raw data. Data are read using cursors.
 Where data management, administration and monitoring is done by using SQL-style DDL commands.
