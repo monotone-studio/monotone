@@ -10,6 +10,8 @@
 #include <monotone_config.h>
 #include <monotone_cloud.h>
 
+extern CloudIf cloud_s3;
+
 static CloudIf*
 cloud_mgr_interface_of(Str* name)
 {

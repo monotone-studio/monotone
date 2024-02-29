@@ -9,6 +9,7 @@
 #include <monotone_lib.h>
 #include <monotone_config.h>
 #include <monotone_cloud.h>
+#include <monotone_s3.h>
 
 #include <openssl/hmac.h>
 #include <openssl/evp.h>

@@ -17,8 +17,8 @@ LIB            = libmonotone-cloud.a
 OBJECTS        = \
                  cloud/cloud_mgr.o \
                  cloud/cloud_mock.o \
-#                cloud/s3_io.o \
-                 cloud/s3.o
+                 s3/s3_io.o \
+                 s3/s3.o
 $(LIB): clean $(OBJECTS)
 	@$(AR) cr $(LIB) $(OBJECTS)
 	@echo $(AR) $(LIB)
