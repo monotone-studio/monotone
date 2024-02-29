@@ -185,6 +185,9 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 		error("storage '%.*s': has partitions", str_size(name),
 		      str_of(name));
 
+	if (storage->cloud)
+		cloud_detach(storage->cloud, storage->source);
+
 	list_unlink(&storage->link);
 	self->list_count--;
 	assert(self->list_count >= 0);
@@ -217,6 +220,9 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 				      str_size(&source->name),
 				      str_of(&source->name));
 		}
+
+		if (storage->cloud)
+			cloud_detach(storage->cloud, storage->source);
 	}
 
 	source_alter(storage->source, source, mask);
