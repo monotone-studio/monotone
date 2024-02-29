@@ -180,3 +180,25 @@ s3_op_create_bucket(S3Io* self, Source* source)
 	};
 	s3_request_execute(&req);
 }
+
+void
+s3_op_drop_bucket(S3Io* self, Source* source)
+{
+	S3Request req =
+	{
+		.io               = self,
+		.on_read          = NULL,
+		.on_write         = NULL,
+		.arg              = NULL,
+		.source           = source,
+		.id               = NULL,
+		.method           = "DELETE",
+		.content_type     = NULL,
+		.content_length   = 0,
+		.range            = NULL,
+		.date[0]          = 0,
+		.authorization[0] = 0,
+		.url[0]           = 0
+	};
+	s3_request_execute(&req);
+}

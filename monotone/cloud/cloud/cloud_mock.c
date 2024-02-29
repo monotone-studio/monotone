@@ -45,6 +45,13 @@ mock_attach(Cloud* self, Source* source)
 	unused(source);
 }
 
+static void
+mock_detach(Cloud* self, Source* source)
+{
+	unused(self);
+	unused(source);
+}
+
 static inline void
 mock_mkdir(Source* source)
 {
@@ -164,6 +171,7 @@ CloudIf cloud_mock =
 	.create   = mock_create,
 	.free     = mock_free,
 	.attach   = mock_attach,
+	.detach   = mock_detach,
 	.download = mock_download,
 	.upload   = mock_upload,
 	.remove   = mock_remove,

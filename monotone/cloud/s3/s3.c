@@ -89,6 +89,23 @@ s3_attach(Cloud* self, Source* source)
 }
 
 static void
+s3_detach(Cloud* self, Source* source)
+{
+	auto s3 = s3_of(self);
+
+	// get io handle
+	auto io = s3_get_io(s3);
+	guard(guard_io, s3_io_free, io);
+
+	// drop bucket
+	s3_op_drop_bucket(io, source);
+
+	// put io back to cache
+	unguard(&guard_io);
+	cache_push(&s3->cache, &io->link);
+}
+
+static void
 s3_download(Cloud* self, Source* source, Id* id)
 {
 	auto s3 = s3_of(self);
@@ -191,6 +208,7 @@ CloudIf cloud_s3 =
 	.create   = s3_create,
 	.free     = s3_free,
 	.attach   = s3_attach,
+	.detach   = s3_detach,
 	.download = s3_download,
 	.upload   = s3_upload,
 	.remove   = s3_remove,
