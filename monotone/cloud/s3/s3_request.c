@@ -122,6 +122,38 @@ s3_request_prepare(S3Request* self)
 	         digest_base64);
 }
 
+static int
+s3_request_debug_cb(CURL*         handle,
+                    curl_infotype type,
+                    char*         data,
+                    size_t        data_size,
+                    void*         arg)
+{
+	unused(handle);
+	unused(arg);
+
+	const char* prefix;
+	switch (type) {
+	case CURLINFO_TEXT:
+		prefix = "";
+		break;
+	case CURLINFO_HEADER_IN:
+		prefix = "< ";
+		break;
+	case CURLINFO_HEADER_OUT:
+		prefix = "> ";
+		break;
+	default:
+		return 0;
+	}
+	if (data_size > 0) {
+		if (data[data_size - 1] == '\n')
+			data_size--;
+	}
+	log("s3: %s%.*s", prefix, data_size, data);
+	return 0;
+}
+
 void
 s3_request_execute(S3Request* self)
 {
@@ -167,6 +199,7 @@ s3_request_execute(S3Request* self)
 	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
 	if (self->on_read)
 	{
 		if (self->content_length > 0)
@@ -177,13 +210,18 @@ s3_request_execute(S3Request* self)
 		curl_easy_setopt(curl, CURLOPT_READFUNCTION, self->on_read);
 		curl_easy_setopt(curl, CURLOPT_READDATA, self->arg);
 	}
+
 	if (self->on_write)
 	{
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, self->on_write);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, self->arg);
 	}
+
 	if (config->debug)
+	{
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+		curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, s3_request_debug_cb);
+	}
 
 	CURLcode code;
 	code = curl_easy_setopt(curl, CURLOPT_URL, self->url);
