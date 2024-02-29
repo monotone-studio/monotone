@@ -24,6 +24,7 @@ struct TestGroup
 {
 	char* name;
 	char* directory;
+	bool  optional;
 	List  list_test;
 	List  link;
 };

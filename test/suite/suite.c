@@ -64,11 +64,13 @@ test_find(TestSuite* self, const char* name)
 static TestGroup*
 test_group_new(TestSuite*  self,
                const char* name,
-               const char* directory)
+               const char* directory,
+               bool        optional)
 {
 	TestGroup* group = malloc(sizeof(*group));
 	if (group == NULL)
 		return NULL;
+	group->optional = optional;
 	group->name = strdup(name);
 	if (group->name == NULL) {
 		free(group);
@@ -112,7 +114,8 @@ test_group_find(TestSuite* self, const char* name)
 }
 
 static int
-test_suite_plan_group(TestSuite* self, char* arg, char* directory)
+test_suite_plan_group(TestSuite* self, char* arg, char* directory,
+                      bool optional)
 {
 	char* name = test_arg(&arg);
 	if (name == NULL || !strlen(name)) {
@@ -127,7 +130,7 @@ test_suite_plan_group(TestSuite* self, char* arg, char* directory)
 		           name);
 		return -1;
 	}
-	group = test_group_new(self, name, directory);
+	group = test_group_new(self, name, directory, optional);
 	self->current_group = group;
 	return 0;
 }
@@ -193,6 +196,19 @@ test_suite_plan(TestSuite* self)
 			char* name = test_arg(&arg);
 			snprintf(directory, sizeof(directory), "%s", name);
 		} else
+		if (strncmp(query, "group_optional", 14) == 0)
+		{
+			if (strlen(directory) == 0)
+			{
+				test_error(self, "plan: %d: directory is not set",
+				           self->current_plan_line);
+				goto error;
+			}
+			// group_optional <name>
+			rc = test_suite_plan_group(self, query + 14, directory, true);
+			if (rc == -1)
+				goto error;
+		} else
 		if (strncmp(query, "group", 5) == 0)
 		{
 			if (strlen(directory) == 0)
@@ -202,7 +218,7 @@ test_suite_plan(TestSuite* self)
 				goto error;
 			}
 			// group <name>
-			rc = test_suite_plan_group(self, query + 5, directory);
+			rc = test_suite_plan_group(self, query + 5, directory, false);
 			if (rc == -1)
 				goto error;
 		} else
@@ -555,6 +571,11 @@ test_suite_run(TestSuite* self)
 	list_foreach(&self->list_group)
 	{
 		auto group = list_at(TestGroup, link);
+
+		// skip optional groups
+		if (group->optional)
+			continue;
+
 		rc = test_suite_execute_group(self, group);
 		if (rc == -1)
 			return -1;
