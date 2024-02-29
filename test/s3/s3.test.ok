@@ -1,0 +1,1287 @@
+init
+set workers to 0
+set interval to 10
+set serial to false
+open
+# test: create s3 cloud
+create cloud s3 (type 's3')
+error: s3: access_key is not defined
+create cloud s3 (type 's3', url 'localhost:9000')
+error: s3: access_key is not defined
+create cloud s3 (type 's3', url 'localhost:9000', access_key 'minioadmin')
+error: s3: secret_key is not defined
+create cloud s3 (type 's3', url 'localhost:9000', access_key 'minioadmin', secret_key 'minioadmin')
+show clouds
+s3
+  type  's3'
+  login 'minioadmin'
+  url   'localhost:9000'
+# test: create storage with cloud s3 (create bucket)
+create storage test (cloud 's3', sync false)
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions_cloud    0
+  events              0
+  events_heap         0
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions_cloud    0
+  events              0
+  events_heap         0
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
+  path                ''
+  cloud               's3'
+  sync                false
+  crc                 false
+  compression         
+  refresh_wm          41943040
+  region_size         131072
+alter pipeline set test
+# test: create partition (no file)
+insert 0
+insert 1
+insert 2
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  3 / 39
+    memtable_b  0 / 0
+    file        0
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions_cloud    0
+  events              0
+  events_heap         0
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 0
+  max                 10
+  partitions          1
+  partitions_cloud    0
+  events              3
+  events_heap         3
+  size                0M
+  size_uncompressed   0M
+  size_heap           2M
+  path                ''
+  cloud               's3'
+  sync                false
+  crc                 false
+  compression         
+  refresh_wm          41943040
+  region_size         131072
+select
+[0]
+[1]
+[2]
+(eof)
+# test: refresh (upload)
+refresh partition 0
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      events              3
+      lsn                 3
+      compression         0
+# test: select (from cloud)
+select
+[0]
+[1]
+[2]
+(eof)
+# test: download
+download partition 0
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      events              3
+      lsn                 3
+      compression         0
+# test: select (from storage, still on cloud)
+select
+[0]
+[1]
+[2]
+(eof)
+# test: upload
+upload partition 0
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  yes
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      events              3
+      lsn                 3
+      compression         0
+# test: select (from cloud)
+select
+[0]
+[1]
+[2]
+(eof)
+# test: drop from cloud
+drop partition 0 on cloud
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  yes
+    on cloud    no
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        242
+    index
+      size                159
+      size_regions        75
+      size_regions_origin 75
+      regions             1
+      events              3
+      lsn                 3
+      compression         0
+# test: select
+select
+[0]
+[1]
+[2]
+(eof)
+# test: update partition
+insert 1 xx
+insert 2 yy
+# test: refresh (upload)
+refresh partition 0
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                161
+      size_regions        79
+      size_regions_origin 79
+      regions             1
+      events              3
+      lsn                 5
+      compression         0
+# test: select (from cloud)
+select
+[0]
+[1, xx]
+[2, yy]
+(eof)
+# test: create partitions
+insert 10
+insert 20
+insert 30
+insert 40
+insert 50
+insert 60
+insert 70
+insert 80
+insert 90
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                161
+      size_regions        79
+      size_regions_origin 79
+      regions             1
+      events              3
+      lsn                 5
+      compression         0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  30
+    min         30
+    max         40
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  40
+    min         40
+    max         50
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  50
+    min         50
+    max         60
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  60
+    min         60
+    max         70
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  70
+    min         70
+    max         80
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  80
+    min         80
+    max         90
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+  90
+    min         90
+    max         100
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    no
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+# test: refresh partitions
+refresh partitions from 0 to 100
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                161
+      size_regions        79
+      size_regions_origin 79
+      regions             1
+      events              3
+      lsn                 5
+      compression         0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 6
+      compression         0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 7
+      compression         0
+  30
+    min         30
+    max         40
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 8
+      compression         0
+  40
+    min         40
+    max         50
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 9
+      compression         0
+  50
+    min         50
+    max         60
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 10
+      compression         0
+  60
+    min         60
+    max         70
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 11
+      compression         0
+  70
+    min         70
+    max         80
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 12
+      compression         0
+  80
+    min         80
+    max         90
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 13
+      compression         0
+  90
+    min         90
+    max         100
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 14
+      compression         0
+# test: update partitions
+insert 11
+insert 21
+insert 31
+insert 41
+insert 51
+insert 61
+insert 71
+insert 81
+insert 91
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                161
+      size_regions        79
+      size_regions_origin 79
+      regions             1
+      events              3
+      lsn                 5
+      compression         0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 6
+      compression         0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 7
+      compression         0
+  30
+    min         30
+    max         40
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 8
+      compression         0
+  40
+    min         40
+    max         50
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 9
+      compression         0
+  50
+    min         50
+    max         60
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 10
+      compression         0
+  60
+    min         60
+    max         70
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 11
+      compression         0
+  70
+    min         70
+    max         80
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 12
+      compression         0
+  80
+    min         80
+    max         90
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 13
+      compression         0
+  90
+    min         90
+    max         100
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  1 / 13
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        41
+      size_regions_origin 41
+      regions             1
+      events              1
+      lsn                 14
+      compression         0
+# test: refresh partitions #2
+refresh partitions from 0 to 100
+show partitions verbose
+main
+test
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                161
+      size_regions        79
+      size_regions_origin 79
+      regions             1
+      events              3
+      lsn                 5
+      compression         0
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 15
+      compression         0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 16
+      compression         0
+  30
+    min         30
+    max         40
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 17
+      compression         0
+  40
+    min         40
+    max         50
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 18
+      compression         0
+  50
+    min         50
+    max         60
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 19
+      compression         0
+  60
+    min         60
+    max         70
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 20
+      compression         0
+  70
+    min         70
+    max         80
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 21
+      compression         0
+  80
+    min         80
+    max         90
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 22
+      compression         0
+  90
+    min         90
+    max         100
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 23
+      compression         0
+# test: select
+select
+[0]
+[1, xx]
+[2, yy]
+[10]
+[11]
+[20]
+[21]
+[30]
+[31]
+[40]
+[41]
+[50]
+[51]
+[60]
+[61]
+[70]
+[71]
+[80]
+[81]
+[90]
+[91]
+(eof)
+# test: restart (close/open)
+close
+init
+set workers to 0
+set interval to 10
+set serial to false
+open
+# test: validate
+show clouds
+s3
+  type  's3'
+  login 'minioadmin'
+  url   'localhost:9000'
+show storages
+main
+  min                 18446744073709551615
+  max                 0
+  partitions          0
+  partitions_cloud    0
+  events              0
+  events_heap         0
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
+  path                ''
+  cloud               ''
+  sync                true
+  crc                 false
+  compression         
+  refresh_wm          41943040
+  region_size         131072
+test
+  min                 0
+  max                 100
+  partitions          10
+  partitions_cloud    10
+  events              21
+  events_heap         0
+  size                0M
+  size_uncompressed   0M
+  size_heap           0M
+  path                ''
+  cloud               's3'
+  sync                false
+  crc                 false
+  compression         
+  refresh_wm          41943040
+  region_size         131072
+show partitions verbose
+main
+test
+  10
+    min         10
+    max         20
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 15
+      compression         0
+  0
+    min         0
+    max         10
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                161
+      size_regions        79
+      size_regions_origin 79
+      regions             1
+      events              3
+      lsn                 5
+      compression         0
+  20
+    min         20
+    max         30
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 16
+      compression         0
+  30
+    min         30
+    max         40
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 17
+      compression         0
+  60
+    min         60
+    max         70
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 20
+      compression         0
+  70
+    min         70
+    max         80
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 21
+      compression         0
+  90
+    min         90
+    max         100
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 23
+      compression         0
+  40
+    min         40
+    max         50
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 18
+      compression         0
+  50
+    min         50
+    max         60
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 19
+      compression         0
+  80
+    min         80
+    max         90
+    storage     test
+    cloud       s3
+    refresh     no
+    on storage  no
+    on cloud    yes
+    memtable_a  0 / 0
+    memtable_b  0 / 0
+    file        0
+    index
+      size                159
+      size_regions        58
+      size_regions_origin 58
+      regions             1
+      events              2
+      lsn                 22
+      compression         0
+select
+[0]
+[1, xx]
+[2, yy]
+[10]
+[11]
+[20]
+[21]
+[30]
+[31]
+[40]
+[41]
+[50]
+[51]
+[60]
+[61]
+[70]
+[71]
+[80]
+[81]
+[90]
+[91]
+(eof)
+# test: drop storage (has partitions)
+drop storage test
+error: storage 'test': has dependencies
+# test: drop storage (detach, drop bucket)
+alter pipeline reset
+drop partitions from 0 to 9999
+drop storage test
+close
