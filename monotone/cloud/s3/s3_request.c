@@ -1,0 +1,183 @@
+
+//
+// monotone
+//
+// time-series storage
+//
+
+#include <monotone_runtime.h>
+#include <monotone_lib.h>
+#include <monotone_config.h>
+#include <monotone_cloud.h>
+#include <monotone_s3.h>
+
+#include <openssl/hmac.h>
+#include <openssl/evp.h>
+
+#include <curl/curl.h>
+
+static void
+s3_request_prepare(S3Request* self)
+{
+	auto config = self->io->cloud->config;
+	auto source = self->source;
+	auto id     = self->id;
+
+	// prepare RFC2616 date
+	time_t    now = time(0);
+	struct tm now_tm = *gmtime(&now);
+	strftime(self->date, sizeof(self->date), "%a, %d %b %Y %H:%M:%S %Z", &now_tm);
+
+	// prepare request header
+	int  header_size;
+	char header[256];
+	if (self->id)
+	{
+		header_size = snprintf(header, sizeof(header),
+		                       "%s\n\n"
+		                       "%s\n"
+		                       "%s\n"
+		                       "/%.*s/%020" PRIu64,
+		                       self->method,
+		                       self->content_type ? self->content_type : "",
+		                       self->date,
+		                       str_size(&source->name),
+		                       str_of(&source->name),
+		                       id->min);
+
+		snprintf(self->url, sizeof(self->url),
+		        "%.*s/%.*s/%020" PRIu64,
+		         str_size(&config->url),
+		         str_of(&config->url),
+		         str_size(&source->name),
+		         str_of(&source->name),
+		         id->min);
+	} else
+	{
+		header_size = snprintf(header, sizeof(header),
+		                       "%s\n\n"
+		                       "%s\n"
+		                       "%s\n"
+		                       "/%.*s",
+		                       self->method,
+		                       self->content_type ? self->content_type : "",
+		                       self->date,
+		                       str_size(&source->name),
+		                       str_of(&source->name));
+
+		snprintf(self->url, sizeof(self->url),
+		         "%.*s/%.*s",
+		         str_size(&config->url),
+		         str_of(&config->url),
+		         str_size(&source->name),
+		         str_of(&source->name));
+	}
+
+	// sign header using base64 hmac
+	auto access_key = &config->login;
+	auto secret_key = &config->password;
+
+	char hmac[HMAC_SZ];
+	hmac_base64(hmac, sizeof(hmac),
+	            str_of(secret_key),
+	            str_size(secret_key),
+	            header,
+	            header_size);
+
+	// create authorization header field
+	snprintf(self->authorization, sizeof(self->authorization),
+	         "AWS %.*s:%s",
+	         str_size(access_key),
+	         str_of(access_key),
+	         hmac);
+}
+
+void
+s3_request_execute(S3Request* self)
+{
+	auto config = self->io->cloud->config;
+
+	// prepare s3 request
+	s3_request_prepare(self);
+
+	// prepare http request headers
+	struct curl_slist* headers = NULL;
+
+	// date
+	char data[256];
+	snprintf(data, sizeof(data), "Date: %s", self->date);
+	headers = curl_slist_append(headers, data);
+
+	// content type
+	if (self->content_type)
+	{
+		snprintf(data, sizeof(data), "Content-Type: %s", self->content_type);
+		headers = curl_slist_append(headers, data);
+
+		// content length
+		snprintf(data, sizeof(data), "Content-Length: %" PRIu64, self->content_length);
+		headers = curl_slist_append(headers, data);
+	}
+
+	// range
+	if (self->range)
+	{
+		snprintf(data, sizeof(data), "Range: %s", self->range);
+		headers = curl_slist_append(headers, data);
+	}
+
+	// authorization
+	snprintf(data, sizeof(data), "Authorization: %s", self->authorization);
+	headers = curl_slist_append(headers, data);
+
+	// prepare and execute request
+	CURL* curl = self->io->handle;
+	curl_easy_reset(curl);
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, self->method);
+	curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+	if (self->on_read)
+	{
+		if (self->content_length > 0)
+		{
+			curl_easy_setopt(curl, CURLOPT_UPLOAD, 1);
+			curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, self->content_length);
+		}
+		curl_easy_setopt(curl, CURLOPT_READFUNCTION, self->on_read);
+		curl_easy_setopt(curl, CURLOPT_READDATA, self->arg);
+	}
+	if (self->on_write)
+	{
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, self->on_write);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, self->arg);
+	}
+	if (config->debug)
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+
+	CURLcode code;
+	code = curl_easy_setopt(curl, CURLOPT_URL, self->url);
+	if (code != CURLE_OK)
+		goto error;
+
+	code = curl_easy_perform(curl);
+	if (code != CURLE_OK)
+		goto error;
+
+	curl_slist_free_all(headers);
+	return;
+
+error:;
+	curl_slist_free_all(headers);
+
+	const char* str = curl_easy_strerror(code);
+	if (CURLE_HTTP_RETURNED_ERROR)
+	{
+		long http_code = 0;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+		error("s3: HTTP %d (%s)", (int)http_code, str);
+	}  else
+	{
+		error("s3: %s", str);
+	}
+}
