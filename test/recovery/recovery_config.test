@@ -42,20 +42,20 @@ open
 # test: validate storage settings
 show storages debug
 
-## test: alter storage rename
-#alter storage test rename to test2
-#show storages debug
+# test: alter storage rename
+alter storage test rename to test2
+show storages debug
 
-## test: close/open
-#close
-#init
-#open
+# test: close/open
+close
+init
+open
 
-## test: validate storage settings
-#show storages debug
+# test: validate storage settings
+show storages debug
 
 # test: drop storage
-drop storage test
+drop storage test2
 show storages debug
 
 # test: close/open
