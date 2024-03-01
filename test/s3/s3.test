@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: create s3 cloud
@@ -15,7 +16,7 @@ create cloud s3 (type 's3', url 'localhost:9000', access_key 'minioadmin', secre
 show clouds
 
 # test: create storage with cloud s3 (create bucket)
-create storage test (cloud 's3', sync false)
+create storage test (cloud 's3', sync false, uuid '00000000-0000-0000-0000-000000000123')
 show storages
 
 alter pipeline set test

@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: create s3 cloud
 create cloud s3 (type 's3')
@@ -17,7 +18,7 @@ s3
   login 'minioadmin'
   url   'localhost:9000'
 # test: create storage with cloud s3 (create bucket)
-create storage test (cloud 's3', sync false)
+create storage test (cloud 's3', sync false, uuid '00000000-0000-0000-0000-000000000123')
 show storages
 main
   min                 18446744073709551615
@@ -29,6 +30,7 @@ main
   size                0M
   size_uncompressed   0M
   size_heap           0M
+  uuid                00000000-0000-0000-0000-000000000000
   path                ''
   cloud               ''
   sync                true
@@ -46,6 +48,7 @@ test
   size                0M
   size_uncompressed   0M
   size_heap           0M
+  uuid                00000000-0000-0000-0000-000000000123
   path                ''
   cloud               's3'
   sync                false
@@ -83,6 +86,7 @@ main
   size                0M
   size_uncompressed   0M
   size_heap           0M
+  uuid                00000000-0000-0000-0000-000000000000
   path                ''
   cloud               ''
   sync                true
@@ -100,6 +104,7 @@ test
   size                0M
   size_uncompressed   0M
   size_heap           2M
+  uuid                00000000-0000-0000-0000-000000000123
   path                ''
   cloud               's3'
   sync                false
@@ -1037,6 +1042,7 @@ main
   size                0M
   size_uncompressed   0M
   size_heap           0M
+  uuid                00000000-0000-0000-0000-000000000000
   path                ''
   cloud               ''
   sync                true
@@ -1054,6 +1060,7 @@ test
   size                0M
   size_uncompressed   0M
   size_heap           0M
+  uuid                00000000-0000-0000-0000-000000000123
   path                ''
   cloud               's3'
   sync                false
