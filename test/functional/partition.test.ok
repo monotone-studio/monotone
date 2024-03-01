@@ -2,9 +2,10 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 alter storage main set (sync false)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -69,7 +70,7 @@ main
         events          4
         offset          0
         size            92
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 # test: select (no key)
 select
@@ -739,7 +740,7 @@ drop partition 0
 show partitions debug
 main
 alter storage main set (region_size 60)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0

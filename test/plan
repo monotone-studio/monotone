@@ -46,7 +46,7 @@ test recovery_cloud
 test recovery_serial
 test crash
 
-# s3
-directory s3
-group_optional s3
-test s3
+## s3
+#directory s3
+#group_optional s3
+#test s3

@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: refresh parsing
@@ -22,11 +23,11 @@ refresh partition if exists 0
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 
 # test: refresh (memtable)
 refresh partition 0
-show storages
+show storages debug
 
 # test: select (region)
 select
@@ -35,14 +36,14 @@ select
 insert 3
 insert 4
 insert 5
-show storages
+show storages debug
 
 # test: select (memtable + region)
 select
 
 # test: refresh (memtable + region)
 refresh partition 0
-show storages
+show storages debug
 show partitions debug
 
 # test: select (updated region)
@@ -50,7 +51,7 @@ select
 
 # test: refresh (with no updates)
 refresh partition 0
-show storages
+show storages debug
 show partitions debug
 
 # test: set compression
@@ -58,7 +59,7 @@ alter storage main set (compression 'zstd')
 
 # test: refresh (compress)
 refresh partition 0
-show storages
+show storages debug
 show partitions debug
 
 # test: select (compressed data)
@@ -68,7 +69,7 @@ select
 insert 20
 insert 30
 insert 40
-show storages
+show storages debug
 
 # test: refresh partitions parsing
 refresh partitions
@@ -81,14 +82,14 @@ refresh partitions from 0 to abc
 
 # test: refresh partitions
 refresh partitions from 0 to 40
-show storages
+show storages debug
 
 # test: select
 select
 
 # test: refresh partitions #2
 refresh partitions from 40 to 50
-show storages
+show storages debug
 
 # test: select
 select

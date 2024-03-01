@@ -7,9 +7,9 @@ set serial to false
 open
 files
 wal
-main
 config.json
 log
+c14fb1d4-d1f7-5bf1-f256-4ad89bc47379
 close
 # test: open
 init
@@ -36,7 +36,7 @@ lsn                             0
 psn                             0
 events_written                  0
 events_written_bytes            0
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -56,12 +56,12 @@ main
   region_size         131072
 files
 wal
-main
 config.json
 log
+c14fb1d4-d1f7-5bf1-f256-4ad89bc47379
 # test: create storage
 create storage test (sync false)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -101,7 +101,7 @@ close
 init
 open
 # test: ensure storage exists
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -143,7 +143,7 @@ close
 init
 open
 # test: validate storage settings
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -180,7 +180,7 @@ test
   region_size         131072
 # test: drop storage
 drop storage test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -203,7 +203,7 @@ close
 init
 open
 # test: ensure storage does not exists
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -284,7 +284,7 @@ mock
   login ''
   url   ''
 create storage test (cloud 'mock', sync false)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -324,7 +324,7 @@ close
 init
 open
 # test: ensure storage exists
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -361,7 +361,7 @@ test
   region_size         131072
 # test: drop storage
 drop storage test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -384,7 +384,7 @@ close
 init
 open
 # test: ensure storage does not exists
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -413,7 +413,7 @@ open
 # test: ensure pipeline settings remain
 show pipeline
 main (partitions 0)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0

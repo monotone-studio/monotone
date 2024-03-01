@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: alter storage set cloud
@@ -11,13 +12,13 @@ create cloud mock (type 'mock')
 show clouds
 
 alter storage main set (cloud 'mock', sync false)
-show storages
+show storages debug
 
 # test: create partition
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 show partitions debug
 select
 
@@ -25,7 +26,7 @@ select
 refresh partition 0
 show partitions debug
 select
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: update
 insert 1 x
@@ -39,7 +40,7 @@ select
 refresh partition 0
 show partitions debug
 select
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: update
 insert 1 y
@@ -49,7 +50,7 @@ show partitions debug
 # test: download
 download partition 0
 show partitions debug
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: select (memtable + storage, cloud)
 select
@@ -58,10 +59,10 @@ select
 refresh partition 0
 show partitions debug
 select
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: drop
 drop partition 0
-files main
+files 00000000-0000-0000-0000-000000000000
 
 close

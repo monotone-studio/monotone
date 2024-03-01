@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: alter storage set cloud
 create cloud mock (type 'mock')
@@ -44,7 +45,7 @@ main
         events          4
         offset          0
         size            92
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 select
@@ -59,7 +60,7 @@ init
 set workers to 0
 set interval to 10
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 # test: validate partition
@@ -131,7 +132,7 @@ init
 set workers to 0
 set interval to 10
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.cloud
 mock
@@ -179,7 +180,7 @@ init
 set workers to 0
 set interval to 10
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 # test: validate partition

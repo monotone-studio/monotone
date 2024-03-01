@@ -4,10 +4,11 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 alter storage main set (sync false)
-show storages
+show storages debug
 
 # test: insert + refresh (create region)
 insert 1
@@ -19,7 +20,7 @@ refresh partition 0
 
 # test: validate
 show partitions debug
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: select (no key)
 select
@@ -192,7 +193,7 @@ drop partition 0
 show partitions debug
 
 alter storage main set (region_size 60)
-show storages
+show storages debug
 
 # test: insert + refresh (create regions)
 insert 1

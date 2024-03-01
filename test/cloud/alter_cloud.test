@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: alter cloud parsing
@@ -38,10 +39,10 @@ show clouds
 # test: alter cloud rename (storage cascade)
 create cloud test (type 'mock')
 create storage test (cloud 'test')
-show storages
+show storages debug
 
 alter cloud test rename to test2
-show storages
+show storages debug
 show clouds
 drop storage test
 drop cloud test2

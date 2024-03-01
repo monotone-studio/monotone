@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: refresh parsing
 refresh
@@ -21,7 +22,7 @@ refresh partition if exists 0
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -41,7 +42,7 @@ main
   region_size         131072
 # test: refresh (memtable)
 refresh partition 0
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -69,7 +70,7 @@ select
 insert 3
 insert 4
 insert 5
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -98,7 +99,7 @@ select
 (eof)
 # test: refresh (memtable + region)
 refresh partition 0
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -154,7 +155,7 @@ select
 (eof)
 # test: refresh (with no updates)
 refresh partition 0
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -203,7 +204,7 @@ main
 alter storage main set (compression 'zstd')
 # test: refresh (compress)
 refresh partition 0
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -261,7 +262,7 @@ select
 insert 20
 insert 30
 insert 40
-show storages
+show storages debug
 main
   min                 0
   max                 50
@@ -296,7 +297,7 @@ refresh partitions from 0 to abc
 error: REFRESH PARTITIONS FROM min TO <max>
 # test: refresh partitions
 refresh partitions from 0 to 40
-show storages
+show storages debug
 main
   min                 0
   max                 50
@@ -328,7 +329,7 @@ select
 (eof)
 # test: refresh partitions #2
 refresh partitions from 40 to 50
-show storages
+show storages debug
 main
   min                 0
   max                 50

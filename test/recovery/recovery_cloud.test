@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: alter storage set cloud
@@ -19,7 +20,7 @@ insert 2
 insert 3
 refresh partition 0
 show partitions debug
-files main
+files 00000000-0000-0000-0000-000000000000
 select
 
 # test: close/open
@@ -29,7 +30,7 @@ init
 set workers to 0
 set interval to 10
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partition
 show partitions debug
@@ -46,7 +47,7 @@ init
 set workers to 0
 set interval to 10
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partition
 show partitions debug
@@ -64,7 +65,7 @@ init
 set workers to 0
 set interval to 10
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partition
 show partitions debug

@@ -4,13 +4,14 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: create partition
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 select
 
 # test: create cloud storage
@@ -18,17 +19,17 @@ create cloud mock (type 'mock')
 show clouds
 
 create storage test (cloud 'mock', sync false, compression 'zstd')
-show storages
+show storages debug
 
 # test: move to cloud
 move partition 0 into test
-show storages
+show storages debug
 show partitions debug
 select
 
 # test: move from cloud
 move partition 0 into main
-show storages
+show storages debug
 show partitions debug
 select
 

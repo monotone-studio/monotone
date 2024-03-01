@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: drop cloud parsing
@@ -32,7 +33,7 @@ drop cloud if exists test
 # test: create storage (with cloud)
 create cloud s3 (type 'mock')
 create storage test (cloud 's3')
-show storages
+show storages debug
 
 # test: drop cloud (with storage)
 drop cloud s3
@@ -40,7 +41,7 @@ show clouds
 
 # test: drop cloud (with storage) #2
 drop storage test
-show storages
+show storages debug
 
 drop cloud s3
 show clouds

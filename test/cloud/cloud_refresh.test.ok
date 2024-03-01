@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: alter storage set cloud
 create cloud mock (type 'mock')
@@ -11,7 +12,7 @@ mock
   login ''
   url   ''
 alter storage main set (cloud 'mock', sync false)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -33,7 +34,7 @@ main
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -103,7 +104,7 @@ select
 [1]
 [2]
 (eof)
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 # test: update
@@ -176,7 +177,7 @@ select
 [1, x]
 [2, x]
 (eof)
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 # test: update
@@ -238,7 +239,7 @@ main
         events          3
         offset          0
         size            77
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.cloud
 mock
@@ -282,11 +283,11 @@ select
 [1, y]
 [2, y]
 (eof)
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 # test: drop
 drop partition 0
-files main
+files 00000000-0000-0000-0000-000000000000
 mock
 close

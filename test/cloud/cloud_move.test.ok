@@ -2,12 +2,13 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: create partition
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -38,7 +39,7 @@ mock
   login ''
   url   ''
 create storage test (cloud 'mock', sync false, compression 'zstd')
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -75,7 +76,7 @@ test
   region_size         131072
 # test: move to cloud
 move partition 0 into test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -145,7 +146,7 @@ select
 (eof)
 # test: move from cloud
 move partition 0 into main
-show storages
+show storages debug
 main
   min                 0
   max                 10

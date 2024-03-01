@@ -16,12 +16,12 @@ set workers to 0
 set interval to 10
 open
 show all
-show storages
+show storages debug
 files
 
 # test: create storage
 create storage test (sync false)
-show storages
+show storages debug
 
 # test: close/open
 close
@@ -29,7 +29,7 @@ init
 open
 
 # test: ensure storage exists
-show storages
+show storages debug
 
 # test: alter storage
 alter storage test set (compression 'zstd')
@@ -40,11 +40,11 @@ init
 open
 
 # test: validate storage settings
-show storages
+show storages debug
 
 ## test: alter storage rename
 #alter storage test rename to test2
-#show storages
+#show storages debug
 
 ## test: close/open
 #close
@@ -52,11 +52,11 @@ show storages
 #open
 
 ## test: validate storage settings
-#show storages
+#show storages debug
 
 # test: drop storage
 drop storage test
-show storages
+show storages debug
 
 # test: close/open
 close
@@ -64,7 +64,7 @@ init
 open
 
 # test: ensure storage does not exists
-show storages
+show storages debug
 
 # test: create cloud
 create cloud mock (type 'mock')
@@ -118,7 +118,7 @@ create cloud mock (type 'mock')
 show clouds
 
 create storage test (cloud 'mock', sync false)
-show storages
+show storages debug
 
 # test: close/open
 close
@@ -126,11 +126,11 @@ init
 open
 
 # test: ensure storage exists
-show storages
+show storages debug
 
 # test: drop storage
 drop storage test
-show storages
+show storages debug
 
 # test: close/open
 close
@@ -138,7 +138,7 @@ init
 open
 
 # test: ensure storage does not exists
-show storages
+show storages debug
 
 # test: alter set pipeline
 alter pipeline set main (partitions 0)
@@ -151,6 +151,6 @@ open
 
 # test: ensure pipeline settings remain
 show pipeline
-show storages
+show storages debug
 
 close

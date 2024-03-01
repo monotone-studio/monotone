@@ -3,6 +3,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: create partition
 insert 0
@@ -37,7 +38,7 @@ main
         events          4
         offset          0
         size            92
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 select
 [0]
@@ -52,7 +53,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 # test: validate partition
 show partitions debug
@@ -225,7 +226,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000200
 00000000000000000300
@@ -364,7 +365,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000200
 00000000000000000300
@@ -564,7 +565,7 @@ main
         events          1
         offset          0
         size            42
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000200
 00000000000000000700
@@ -575,7 +576,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000200
 00000000000000000700
@@ -678,7 +679,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
 show partitions debug
 main
@@ -695,9 +696,9 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 # test: validate storages
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -761,7 +762,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
 show partitions debug
 main
@@ -805,7 +806,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
 show partitions debug
 main
@@ -956,7 +957,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
 show partitions debug
 main

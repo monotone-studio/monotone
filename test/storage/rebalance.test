@@ -4,11 +4,12 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: rebalance (no pipeline set)
 rebalance
-show storages
+show storages debug
 
 # test: create storages
 create storage hot
@@ -20,32 +21,32 @@ show pipeline
 
 # test: rebalance #1 (empty, <= partitions)
 rebalance
-show storages
+show storages debug
 
 # test: rebalance #2 (< partitions)
 insert 0
 rebalance
-show storages
+show storages debug
 
 # test: rebalance #3 (= partitions)
 insert 10
 rebalance
-show storages
+show storages debug
 
 # test: rebalance #4 (> partitions)
 insert 20
-show storages
+show storages debug
 rebalance
-show storages
+show storages debug
 
 # test: rebalance #5 (more then one, > partitions)
 insert 30
 insert 40
 insert 500
 insert 600
-show storages
+show storages debug
 rebalance
-show storages
+show storages debug
 
 select
 
@@ -54,34 +55,34 @@ alter pipeline set hot (partitions 0)
 show pipeline
 
 # test: rebalance (auto drop)
-show storages
+show storages debug
 rebalance
-show storages
+show storages debug
 
 # test: alter pipeline set partitions zero #2 (chain)
 alter pipeline set hot (partitions 2), cold (partitions 0)
 show pipeline
 
 # test: rebalance #1 (auto drop existing)
-show storages
+show storages debug
 rebalance
-show storages
+show storages debug
 
 # test: rebalance #2 (auto drop)
 insert 0
 rebalance
-show storages
+show storages debug
 
 # test: rebalance #3 (auto drop)
 insert 10
 rebalance
-show storages
+show storages debug
 select
 
 # test: rebalance #4 (auto drop from cold)
 insert 20
 rebalance
-show storages
+show storages debug
 select
 
 close

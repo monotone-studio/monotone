@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: drop storage parsing
 drop
@@ -22,7 +23,7 @@ drop storage 123
 error: DROP STORAGE <name> expected
 # test: drop storage
 create storage test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -58,7 +59,7 @@ test
   refresh_wm          41943040
   region_size         131072
 drop storage test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -83,12 +84,12 @@ error: storage 'test': not exists
 drop storage if exists test
 # test: drop storage main
 drop storage main
-error: storage 'main': system storage cannot be dropped
+error: storage 'main': main storage cannot be dropped
 # test: create storage (with partition)
 create storage test
 insert 0
 move partition 0 into test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -150,7 +151,7 @@ drop storage test
 error: storage 'test': has partitions
 drop partition 0
 drop storage test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0

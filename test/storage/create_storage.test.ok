@@ -2,9 +2,10 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: main storage created on open
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -61,7 +62,7 @@ create storage test (sync false, sync false) junk
 error: unexpected clause at the end of command
 # test: create storage (no options)
 create storage test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -101,7 +102,7 @@ create storage test
 error: storage 'test': already exists
 # test: create storage if not exists
 create storage if not exists test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -143,7 +144,7 @@ error: sync <true/false> expected
 create storage test (sync 123
 error: sync <true/false> expected
 create storage test (sync false)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -184,7 +185,7 @@ error: crc <true/false> expected
 create storage test (crc 123
 error: crc <true/false> expected
 create storage test (crc true)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -225,7 +226,7 @@ error: refresh_wm <integer> expected
 create storage test (refresh_wm false
 error: refresh_wm <integer> expected
 create storage test (refresh_wm 0)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -266,7 +267,7 @@ error: region_size <integer> expected
 create storage test (region_size false
 error: region_size <integer> expected
 create storage test (region_size 4096)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -309,7 +310,7 @@ error: compression <string> expected
 create storage test (compression 1)
 error: compression <string> expected
 create storage test (compression 'none')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -350,7 +351,7 @@ error: path <string> expected
 create storage test (path false
 error: path <string> expected
 create storage test (path 'on_base')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -396,6 +397,5 @@ create storage test (cloud 'mock')
 error: storage 'test': cloud 'mock' does not exists
 # test: create storage set path
 create storage test (path '__dir')
-files __dir
 drop storage test
 close

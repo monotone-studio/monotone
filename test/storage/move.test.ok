@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: move parsing
 move
@@ -23,7 +24,7 @@ move partition if exists 0 into main
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -43,7 +44,7 @@ main
   region_size         131072
 # test: move partition (same storage)
 move partition 0 into main
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -64,7 +65,7 @@ main
 # test: move partition
 create storage test
 move partition 0 into test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -110,7 +111,7 @@ insert 10
 insert 20
 insert 30
 insert 40
-show storages
+show storages debug
 main
   min                 10
   max                 50
@@ -164,7 +165,7 @@ move partitions from 10 to 50 into
 error: MOVE PARTITIONS FROM min TO max INTO <name>
 # test: move partitions
 move partitions from 10 to 50 into test
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -341,7 +342,7 @@ select
 alter storage main set (compression 'zstd')
 # test: move partitions #2
 move partitions from 0 to 50 into main
-show storages
+show storages debug
 main
   min                 0
   max                 50

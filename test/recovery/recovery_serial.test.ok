@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to true
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: restart (no records)
 show ssn

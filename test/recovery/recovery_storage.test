@@ -5,6 +5,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: create partition
@@ -14,7 +15,7 @@ insert 2
 insert 3
 refresh partition 0
 show partitions debug
-files main
+files 00000000-0000-0000-0000-000000000000
 select
 
 # test: close/open
@@ -25,7 +26,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partition
 show partitions debug
@@ -58,7 +59,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug
@@ -83,7 +84,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug
@@ -92,7 +93,7 @@ select
 # test: drop partition
 drop partition 300
 show partitions debug
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: close/open
 close
@@ -102,7 +103,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug
@@ -121,7 +122,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug
@@ -140,10 +141,10 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate storages
-show storages
+show storages debug
 show pipeline
 
 # test: create partition #1 (< partitions)
@@ -158,7 +159,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug
@@ -176,7 +177,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug
@@ -198,7 +199,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 
 # test: validate partitions
 show partitions debug

@@ -2,9 +2,10 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: pipeline is not set by default
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -26,7 +27,7 @@ show pipeline
 
 # test: insert (main only)
 insert 0 x
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -49,7 +50,7 @@ create storage hot
 create storage cold
 insert 0 y
 insert 30 y
-show storages
+show storages debug
 main
   min                 0
   max                 40
@@ -118,7 +119,7 @@ show pipeline
 hot ()
 # test: insert (primary changed)
 insert 40 z
-show storages
+show storages debug
 main
   min                 0
   max                 40
@@ -188,7 +189,7 @@ drop storage hot
 error: storage 'hot': has partitions
 drop partition 40
 drop storage hot
-show storages
+show storages debug
 main
   min                 0
   max                 40
@@ -225,7 +226,7 @@ cold
   region_size         131072
 # test: insert (primary changed)
 insert 40 v
-show storages
+show storages debug
 main
   min                 0
   max                 50
@@ -268,7 +269,7 @@ create storage hot
 alter pipeline set hot
 show pipeline
 hot ()
-show storages
+show storages debug
 main
   min                 0
   max                 50
@@ -325,7 +326,7 @@ create storage hot_swap
 alter pipeline set hot_swap
 show pipeline
 hot_swap ()
-show storages
+show storages debug
 main
   min                 0
   max                 50
@@ -395,7 +396,7 @@ hot_swap
   refresh_wm          41943040
   region_size         131072
 insert 60
-show storages
+show storages debug
 main
   min                 0
   max                 50
@@ -476,7 +477,7 @@ select
 move partition 60 into hot
 alter pipeline reset
 drop storage hot_swap
-show storages
+show storages debug
 main
   min                 0
   max                 50

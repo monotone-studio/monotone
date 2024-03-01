@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: create storage with cloud (not found)
 create storage test (cloud 'unknown')
@@ -14,7 +15,7 @@ mock
   login ''
   url   ''
 create storage test (cloud 'mock', sync false)
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -51,7 +52,7 @@ test
   region_size         131072
 # test: alter storage set cloud none (no partitions)
 alter storage test set (cloud '')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -91,7 +92,7 @@ alter storage test set (cloud 'undef')
 error: storage 'test': cloud 'undef' does not exists
 # test: alter storage set cloud (no partitions)
 alter storage test set (cloud 'mock')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -143,7 +144,7 @@ test
     memtable_a  1 / 13
     memtable_b  0 / 0
     file        0
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -180,7 +181,7 @@ test
   region_size         131072
 # test: alter storage set cloud none (no files)
 alter storage test set (cloud '')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -247,7 +248,7 @@ test
         events          1
         offset          0
         size            41
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -285,7 +286,7 @@ test
 # test: alter storage set cloud none #1 (exists on cloud)
 alter storage test set (cloud '')
 error: storage 'test': some partitions are still remain on cloud
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -322,7 +323,7 @@ test
   region_size         131072
 # test: download partition
 download partition 0
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -388,7 +389,7 @@ test
 # test: alter storage set cloud none #2 (exists on cloud and storage)
 alter storage test set (cloud '')
 error: storage 'test': some partitions are still remain on cloud
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -425,7 +426,7 @@ test
   region_size         131072
 # test: drop partition from cloud
 drop partition 0 on cloud
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -490,7 +491,7 @@ test
         size            41
 # test: alter storage set cloud none #2 (exists on storage only)
 alter storage test set (cloud '')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -558,7 +559,7 @@ select
 (eof)
 # test: alter storage set cloud (storage partitions exists)
 alter storage test set (cloud 'mock')
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -623,7 +624,7 @@ test
         size            41
 # test: upload
 upload partition 0
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0
@@ -691,7 +692,7 @@ select
 (eof)
 # test: drop partition from storage
 drop partition 0 on storage
-show storages
+show storages debug
 main
   min                 18446744073709551615
   max                 0

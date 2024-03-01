@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: drop storage parsing
@@ -18,10 +19,10 @@ drop storage 123
 
 # test: drop storage
 create storage test
-show storages
+show storages debug
 
 drop storage test
-show storages
+show storages debug
 
 # test: drop storage (not exists)
 drop storage test
@@ -37,13 +38,13 @@ create storage test
 insert 0
 move partition 0 into test
 
-show storages
+show storages debug
 show partitions verbose
 
 # test: drop storage (with partition)
 drop storage test
 drop partition 0
 drop storage test
-show storages
+show storages debug
 
 close

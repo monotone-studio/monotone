@@ -3,6 +3,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: case 1: crash before completion (no parent)
 insert 0
@@ -12,7 +13,7 @@ insert 3
 set error_refresh_1 to true
 refresh partition 0
 error: (engine/refresh.c:172) error injection: error_refresh_1
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.incomplete
 close
 # test: recover
@@ -21,7 +22,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 # test: case 1: crash before completion (with parent)
 insert 0
 insert 1
@@ -62,7 +63,7 @@ insert 3 x
 set error_refresh_1 to true
 refresh partition 0
 error: (engine/refresh.c:172) error injection: error_refresh_1
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.incomplete
 close
@@ -72,7 +73,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 show partitions debug
 main
@@ -111,7 +112,7 @@ select
 set error_refresh_2 to true
 refresh partition 0
 error: (engine/refresh.c:178) error injection: error_refresh_2
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.complete
 close
@@ -121,7 +122,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 show partitions debug
 main
@@ -160,7 +161,7 @@ select
 set error_refresh_3 to true
 refresh partition 0
 error: (engine/refresh.c:187) error injection: error_refresh_3
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.complete
 close
 # test: recover
@@ -169,7 +170,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 show partitions debug
 main
@@ -212,7 +213,7 @@ mock
   login ''
   url   ''
 alter storage main set (cloud 'mock', sync false)
-show storages
+show storages debug
 main
   min                 0
   max                 10
@@ -258,13 +259,13 @@ main
         offset          0
         size            92
 refresh partition 0
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 set error_download to true
 download partition 0
 error: (cloud/mock.c:100) error injection: error_download
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.incomplete
 00000000000000000000.cloud
 mock
@@ -275,7 +276,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
 show partitions debug
@@ -315,13 +316,13 @@ select
 set error_download to true
 download partition 0
 error: (cloud/mock.c:100) error injection: error_download
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000.incomplete
 00000000000000000000.cloud
 mock
 set error_download to false
 download partition 0
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.cloud
 mock
@@ -392,7 +393,7 @@ main
 set error_upload to true
 upload partition 0
 error: (cloud/mock.c:129) error injection: error_upload
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 mock
 00000000000000000000.cloud.incomplete
@@ -403,7 +404,7 @@ set workers to 0
 set interval to 10
 set wal_enable to false
 open
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 mock
 show partitions debug
@@ -444,7 +445,7 @@ drop partition 0 on cloud
 set error_upload to true
 upload partition 0
 error: (cloud/mock.c:129) error injection: error_upload
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 mock
 00000000000000000000.cloud.incomplete
@@ -456,7 +457,7 @@ select
 (eof)
 set error_upload to false
 upload partition 0
-files main
+files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.cloud
 mock

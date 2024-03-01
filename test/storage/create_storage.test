@@ -4,10 +4,11 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: main storage created on open
-show storages
+show storages debug
 
 # test: create storage parsing
 create
@@ -31,14 +32,14 @@ create storage test (sync false, sync false) junk
 
 # test: create storage (no options)
 create storage test
-show storages
+show storages debug
 
 # test: create storage (exists)
 create storage test
 
 # test: create storage if not exists
 create storage if not exists test
-show storages
+show storages debug
 
 # test: create storage (with options)
 drop storage test
@@ -47,28 +48,28 @@ drop storage test
 create storage test (sync
 create storage test (sync 123
 create storage test (sync false)
-show storages
+show storages debug
 drop storage test
 
 # crc
 create storage test (crc
 create storage test (crc 123
 create storage test (crc true)
-show storages
+show storages debug
 drop storage test
 
 # refresh_wm
 create storage test (refresh_wm
 create storage test (refresh_wm false
 create storage test (refresh_wm 0)
-show storages
+show storages debug
 drop storage test
 
 # region_size
 create storage test (region_size
 create storage test (region_size false
 create storage test (region_size 4096)
-show storages
+show storages debug
 drop storage test
 
 # compression
@@ -76,14 +77,14 @@ create storage test (compression
 create storage test (compression false
 create storage test (compression 1)
 create storage test (compression 'none')
-show storages
+show storages debug
 drop storage test
 
 # path
 create storage test (path
 create storage test (path false
 create storage test (path 'on_base')
-show storages
+show storages debug
 drop storage test
 
 # cloud (does not exists)
@@ -94,7 +95,6 @@ create storage test (cloud 'mock')
 
 # test: create storage set path
 create storage test (path '__dir')
-files __dir
 drop storage test
 
 close

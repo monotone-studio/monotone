@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: move parsing
@@ -23,16 +24,16 @@ move partition if exists 0 into main
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 
 # test: move partition (same storage)
 move partition 0 into main
-show storages
+show storages debug
 
 # test: move partition
 create storage test
 move partition 0 into test
-show storages
+show storages debug
 
 # test: select
 select
@@ -42,7 +43,7 @@ insert 10
 insert 20
 insert 30
 insert 40
-show storages
+show storages debug
 
 # test: move partitions parsing
 move partitions
@@ -56,7 +57,7 @@ move partitions from 10 to 50 into
 
 # test: move partitions
 move partitions from 10 to 50 into test
-show storages
+show storages debug
 show partitions debug
 
 # test: select
@@ -67,7 +68,7 @@ alter storage main set (compression 'zstd')
 
 # test: move partitions #2
 move partitions from 0 to 50 into main
-show storages
+show storages debug
 show partitions debug
 
 # test: select

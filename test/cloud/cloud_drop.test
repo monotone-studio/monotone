@@ -4,6 +4,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: alter storage set cloud
@@ -11,13 +12,13 @@ create cloud mock (type 'mock')
 show clouds
 
 alter storage main set (cloud 'mock', sync false)
-show storages
+show storages debug
 
 # test: create partition
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 show partitions debug
 select
 
@@ -29,7 +30,7 @@ show partitions debug
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 show partitions debug
 select
 
@@ -82,7 +83,7 @@ service
 insert 0
 insert 1
 insert 2
-show storages
+show storages debug
 show partitions debug
 select
 

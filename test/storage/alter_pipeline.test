@@ -4,22 +4,23 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: pipeline is not set by default
-show storages
+show storages debug
 show pipeline
 
 # test: insert (main only)
 insert 0 x
-show storages
+show storages debug
 
 # test: insert (more storages wo pipeline)
 create storage hot
 create storage cold
 insert 0 y
 insert 30 y
-show storages
+show storages debug
 
 # test: alter pipeline parsing
 alter
@@ -34,7 +35,7 @@ show pipeline
 
 # test: insert (primary changed)
 insert 40 z
-show storages
+show storages debug
 
 # test: select
 select
@@ -50,11 +51,11 @@ show pipeline
 drop storage hot
 drop partition 40
 drop storage hot
-show storages
+show storages debug
 
 # test: insert (primary changed)
 insert 40 v
-show storages
+show storages debug
 
 # test: alter pipeline set (storage does not exists)
 alter pipeline set undef
@@ -64,16 +65,16 @@ create storage hot
 alter pipeline set hot
 show pipeline
 
-show storages
+show storages debug
 insert 50
 
 create storage hot_swap
 alter pipeline set hot_swap
 show pipeline
-show storages
+show storages debug
 
 insert 60
-show storages
+show storages debug
 
 # test: select
 select
@@ -83,7 +84,7 @@ move partition 60 into hot
 alter pipeline reset
 drop storage hot_swap
 
-show storages
+show storages debug
 
 alter pipeline set hot (partitions 2), cold
 show pipeline
