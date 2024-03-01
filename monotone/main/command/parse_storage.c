@@ -44,6 +44,12 @@ parse_storage_options(Lex* self, Source* config, char* command)
 		}
 
 		// value
+		if (str_compare_raw(&name.string, "uuid", 4))
+		{
+			// uuid <string>
+			parse_uuid(self, &name, &config->uuid);
+			mask |= SOURCE_UUID;
+		} else
 		if (str_compare_raw(&name.string, "path", 4))
 		{
 			// path <string>
@@ -130,6 +136,11 @@ parse_storage_create(Lex* self)
 	cmd->config = source_allocate();
 	source_set_name(cmd->config, &name.string);
 
+	/// generate uuid
+	Uuid uuid;
+	uuid_mgr_generate(global()->uuid_mgr, &uuid);
+	source_set_uuid(cmd->config, &uuid);
+
 	// [(options)]
 	parse_storage_options(self, cmd->config, "CREATE STORAGE");
 
@@ -182,6 +193,9 @@ parse_storage_alter_set(Lex* self, Cmd* arg)
 	// (options)
 	cmd->config_mask =
 		parse_storage_options(self, cmd->config, "ALTER STORAGE");
+
+	if (cmd->config_mask & SOURCE_UUID)
+		error("storage uuid cannot be changed this way");
 }
 
 Cmd*

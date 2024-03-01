@@ -79,3 +79,15 @@ parse_string(Lex* self, Token* name, Str* value)
 	str_free(value);
 	str_copy(value, &tk.string);
 }
+
+static inline void
+parse_uuid(Lex* self, Token* name, Uuid* value)
+{
+	// string
+	Token tk;
+	if (! lex_if(self, KSTRING, &tk))
+		error("%.*s <string> expected", str_size(&name->string),
+		      str_of(&name->string));
+
+	uuid_from_string(value, &tk.string);
+}
