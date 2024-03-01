@@ -97,4 +97,9 @@ create storage test (cloud 'mock')
 create storage test (path '__dir')
 drop storage test
 
+# test: create storage (with uuid)
+create storage test (uuid '00000000-0000-0000-0000-000000000001')
+show storages
+drop storage test
+
 close
