@@ -42,10 +42,3 @@
 #include "runtime/fs.h"
 #include "runtime/file.h"
 #include "runtime/logger.h"
-
-// blob
-#include "runtime/blob.h"
-
-// memory manager
-#include "runtime/memory_mgr.h"
-#include "runtime/heap.h"

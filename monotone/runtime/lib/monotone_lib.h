@@ -28,3 +28,7 @@
 #include "lib/compression.h"
 #include "lib/compression_zstd.h"
 #include "lib/compression_mgr.h"
+
+// heap
+#include "lib/memory_mgr.h"
+#include "lib/heap.h"
