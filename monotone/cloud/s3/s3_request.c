@@ -56,6 +56,9 @@ s3_request_prepare(S3Request* self)
 	struct tm now_tm = *gmtime(&now);
 	strftime(self->date, sizeof(self->date), "%a, %d %b %Y %H:%M:%S %Z", &now_tm);
 
+	char uuid[UUID_SZ];
+	uuid_to_string(&source->uuid, uuid, sizeof(uuid));
+
 	// prepare request header
 	int  header_size;
 	char header[256];
@@ -65,20 +68,18 @@ s3_request_prepare(S3Request* self)
 		                       "%s\n\n"
 		                       "%s\n"
 		                       "%s\n"
-		                       "/%.*s/%020" PRIu64,
+		                       "/%s/%020" PRIu64,
 		                       self->method,
 		                       self->content_type ? self->content_type : "",
 		                       self->date,
-		                       str_size(&source->name),
-		                       str_of(&source->name),
+		                       uuid,
 		                       id->min);
 
 		snprintf(self->url, sizeof(self->url),
-		         "%.*s/%.*s/%020" PRIu64,
+		         "%.*s/%s/%020" PRIu64,
 		         str_size(&config->url),
 		         str_of(&config->url),
-		         str_size(&source->name),
-		         str_of(&source->name),
+		         uuid,
 		         id->min);
 	} else
 	{
@@ -86,19 +87,17 @@ s3_request_prepare(S3Request* self)
 		                       "%s\n\n"
 		                       "%s\n"
 		                       "%s\n"
-		                       "/%.*s",
+		                       "/%s",
 		                       self->method,
 		                       self->content_type ? self->content_type : "",
 		                       self->date,
-		                       str_size(&source->name),
-		                       str_of(&source->name));
+		                       uuid);
 
 		snprintf(self->url, sizeof(self->url),
-		         "%.*s/%.*s",
+		         "%.*s/%s",
 		         str_size(&config->url),
 		         str_of(&config->url),
-		         str_size(&source->name),
-		         str_of(&source->name));
+		         uuid);
 	}
 
 	// create MAC (message authentication code)

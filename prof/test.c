@@ -199,14 +199,16 @@ cli(void)
 		return;
 	}
 
-	rc = monotone_execute(env, "create cloud if not exists s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')", NULL);
+	/*rc = monotone_execute(env, "alter storage main set (compression 'zstd', refresh_wm 0)", NULL);*/
+
+	rc = monotone_execute(env, "create cloud if not exists s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000', debug false)", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
 
-	rc = monotone_execute(env, "create storage if not exists test (cloud 's3', compression 'zstd', refresh_wm 0, region_size 1MiB)", NULL);
+	rc = monotone_execute(env, "create storage if not exists test (cloud 's3', compression 'zstd', refresh_wm 0, region_size 512KiB)", NULL);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(env));
@@ -219,7 +221,6 @@ cli(void)
 		printf("error: %s\n", monotone_error(env));
 		return;
 	}
-
 
 	for (;;)
 	{
