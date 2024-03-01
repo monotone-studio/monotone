@@ -50,7 +50,18 @@ file_open(File* self, const char* path)
 	self->size = size;
 
 	// open
-	self->fd = vfs_open(str_of(&self->path), O_RDWR, 0644);
+	self->fd = vfs_open(str_of(&self->path), O_RDWR, 0);
+	if (unlikely(self->fd == -1))
+		file_error(self, "open");
+}
+
+static inline void
+file_create_mode(File* self, const char* path, int mode)
+{
+	// create new File
+	str_strdup(&self->path, path);
+
+	self->fd = vfs_open(str_of(&self->path), O_CREAT|O_RDWR, mode);
 	if (unlikely(self->fd == -1))
 		file_error(self, "open");
 }
@@ -58,12 +69,7 @@ file_open(File* self, const char* path)
 static inline void
 file_create(File* self, const char* path)
 {
-	// create new File
-	str_strdup(&self->path, path);
-
-	self->fd = vfs_open(str_of(&self->path), O_CREAT|O_RDWR, 0644);
-	if (unlikely(self->fd == -1))
-		file_error(self, "open");
+	file_create_mode(self, path, 0644);
 }
 
 static inline void
