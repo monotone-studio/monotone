@@ -263,7 +263,7 @@ files main
 mock
 set error_download to true
 download partition 0
-error: (cloud/cloud_mock.c:100) error injection: error_download
+error: (cloud/mock.c:100) error injection: error_download
 files main
 00000000000000000000.incomplete
 00000000000000000000.cloud
@@ -314,7 +314,7 @@ select
 # test: case 4: error during download (retry)
 set error_download to true
 download partition 0
-error: (cloud/cloud_mock.c:100) error injection: error_download
+error: (cloud/mock.c:100) error injection: error_download
 files main
 00000000000000000000.incomplete
 00000000000000000000.cloud
@@ -391,7 +391,7 @@ main
         size            92
 set error_upload to true
 upload partition 0
-error: (cloud/cloud_mock.c:129) error injection: error_upload
+error: (cloud/mock.c:129) error injection: error_upload
 files main
 00000000000000000000
 mock
@@ -443,7 +443,7 @@ select
 drop partition 0 on cloud
 set error_upload to true
 upload partition 0
-error: (cloud/cloud_mock.c:129) error injection: error_upload
+error: (cloud/mock.c:129) error injection: error_upload
 files main
 00000000000000000000
 mock
