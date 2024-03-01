@@ -10,18 +10,20 @@ typedef struct Source Source;
 
 enum
 {
-	SOURCE_NAME        = 1 << 0,
-	SOURCE_PATH        = 1 << 1,
-	SOURCE_CLOUD       = 1 << 2,
-	SOURCE_SYNC        = 1 << 3,
-	SOURCE_CRC         = 1 << 4,
-	SOURCE_COMPRESSION = 1 << 5,
-	SOURCE_REFRESH_WM  = 1 << 6,
-	SOURCE_REGION_SIZE = 1 << 7
+	SOURCE_UUID        = 1 << 0,
+	SOURCE_NAME        = 1 << 1,
+	SOURCE_PATH        = 1 << 2,
+	SOURCE_CLOUD       = 1 << 3,
+	SOURCE_SYNC        = 1 << 4,
+	SOURCE_CRC         = 1 << 5,
+	SOURCE_COMPRESSION = 1 << 6,
+	SOURCE_REFRESH_WM  = 1 << 7,
+	SOURCE_REGION_SIZE = 1 << 8
 };
 
 struct Source
 {
+	Uuid    uuid;
 	Str     name;
 	Str     path;
 	Str     cloud;
@@ -40,6 +42,7 @@ source_allocate(void)
 	self->crc         = false;
 	self->region_size = 128 * 1024;
 	self->refresh_wm  = 40 * 1024 * 1024;
+	uuid_init(&self->uuid);
 	str_init(&self->name);
 	str_init(&self->path);
 	str_init(&self->cloud);
@@ -55,6 +58,12 @@ source_free(Source* self)
 	str_free(&self->cloud);
 	str_free(&self->compression);
 	mn_free(self);
+}
+
+static inline void
+source_set_uuid(Source* self, Uuid* value)
+{
+	self->uuid = *value;
 }
 
 static inline void
@@ -114,6 +123,7 @@ source_copy(Source* self)
 {
 	auto copy = source_allocate();
 	guard(copy_guard, source_free, copy);
+	source_set_uuid(copy, &self->uuid);
 	source_set_name(copy, &self->name);
 	source_set_path(copy, &self->path);
 	source_set_cloud(copy, &self->cloud);
@@ -134,6 +144,12 @@ source_read(uint8_t** pos)
 	// map
 	int count;
 	data_read_map(pos, &count);
+
+	// uuid
+	data_skip(pos);
+	Str uuid;
+	data_read_string(pos, &uuid);
+	uuid_from_string(&self->uuid, &uuid);
 
 	// name
 	data_skip(pos);
@@ -174,7 +190,13 @@ static inline void
 source_write(Source* self, Buf* buf)
 {
 	// map
-	encode_map(buf, 8);
+	encode_map(buf, 9);
+
+	// uuid
+	encode_raw(buf, "uuid", 4);
+	char uuid[UUID_SZ];
+	uuid_to_string(&self->uuid, uuid, sizeof(uuid));
+	encode_raw(buf, uuid, sizeof(uuid) - 1);
 
 	// name
 	encode_raw(buf, "name", 4);
@@ -212,6 +234,9 @@ source_write(Source* self, Buf* buf)
 static inline void
 source_alter(Source* self, Source* alter, int mask)
 {
+	if (mask & SOURCE_UUID)
+		source_set_uuid(self, &alter->uuid);
+
 	if (mask & SOURCE_NAME)
 		source_set_name(self, &alter->name);
 
@@ -247,26 +272,27 @@ source_pathfmt(Source* self, char* path, int path_size, char* fmt, ...)
 	vsnprintf(relative, sizeof(relative), fmt, args);
 	va_end(args);
 
+	char uuid[UUID_SZ];
+	uuid_to_string(&self->uuid, uuid, sizeof(uuid));
+
 	// set full storage path
 	if (str_empty(&self->path))
 	{
-		// <base>/<storage_name>/relative
-		snprintf(path, path_size, "%s/%.*s/%s", config_directory(),
-		         str_size(&self->name),
-		         str_of(&self->name), relative);
+		// <base>/<uuid>/relative
+		snprintf(path, path_size, "%s/%s/%s", config_directory(), uuid, relative);
 	} else
 	{
 		if (*str_of(&self->path) == '/')
 		{
-			// <absolute_storage_path>/relative
-			snprintf(path, path_size, "%.*s/%s", str_size(&self->path),
-			         str_of(&self->path), relative);
+			// <absolute_path>/<uuid>/relative
+			snprintf(path, path_size, "%.*s/%s/%s", str_size(&self->path),
+			         str_of(&self->path), uuid, relative);
 		} else
 		{
-			// <base>/<storage_path>/relative
-			snprintf(path, path_size, "%s/%.*s/%s", config_directory(),
+			// <base>/<path>/<uuid>/relative
+			snprintf(path, path_size, "%s/%.*s/%s/%s", config_directory(),
 			         str_size(&self->path),
-			         str_of(&self->path), relative);
+			         str_of(&self->path), uuid, relative);
 		}
 	}
 }
