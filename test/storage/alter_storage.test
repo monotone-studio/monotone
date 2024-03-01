@@ -58,4 +58,7 @@ show storages debug
 alter storage test set (sync false, crc true)
 show storages debug
 
+# test: alter storage set uuid
+alter storage test set (uuid '00000000-0000-0000-0000-000000000000')
+
 close
