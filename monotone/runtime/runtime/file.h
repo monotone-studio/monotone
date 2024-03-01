@@ -142,18 +142,16 @@ file_write_nothrow(File* self, void* data, int size)
 	return rc;
 }
 
-static inline uint64_t
+static inline void
 file_write(File* self, void* data, int size)
 {
-	uint64_t offset = self->size;
 	int rc = vfs_write(self->fd, data, size);
 	if (unlikely(rc == -1))
 		file_error(self, "write");
 	self->size += rc;
-	return offset;
 }
 
-static inline uint64_t
+static inline void
 file_write_buf(File* self, Buf* buf)
 {
 	return file_write(self, buf->start, buf_size(buf));
