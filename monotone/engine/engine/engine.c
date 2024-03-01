@@ -45,7 +45,7 @@ engine_open(Engine* self)
 {
 	// recover storages
 	storage_mgr_open(&self->storage_mgr);
-	storage_mgr_create_system(&self->storage_mgr);
+	storage_mgr_create_main(&self->storage_mgr);
 
 	// recover pipeline
 	pipeline_open(&self->pipeline);

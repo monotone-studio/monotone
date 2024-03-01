@@ -65,7 +65,7 @@ storage_stats(Storage* self, StorageStats* stats)
 }
 
 hot static inline void
-storage_stats_show(Storage* self, Buf* buf)
+storage_stats_show(Storage* self, Buf* buf, bool debug)
 {
 	auto source = self->source;
 	StorageStats stats;
@@ -92,6 +92,12 @@ storage_stats_show(Storage* self, Buf* buf)
 	buf_printf(buf, "  size_heap           %" PRIu64 "M\n", size_heap);
 
 	// source
+	if (! debug)
+	{
+		char uuid[UUID_SZ];
+		uuid_to_string(&source->uuid, uuid, sizeof(uuid));
+		buf_printf(buf, "  uuid                %s\n", uuid);
+	}
 	buf_printf(buf, "  path                '%.*s'\n", str_size(&source->path),
 	           str_of(&source->path));
 	buf_printf(buf, "  cloud               '%.*s'\n", str_size(&source->cloud),

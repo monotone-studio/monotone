@@ -78,11 +78,18 @@ storage_mgr_open(StorageMgr* self)
 }
 
 bool
-storage_mgr_create_system(StorageMgr* self)
+storage_mgr_create_main(StorageMgr* self)
 {
-	// create system storage, if not exists
+	// create main storage, if not exists
 	auto config = source_allocate();
 	guard(guard, source_free, config);
+
+	// use instance uuid as main uuid
+	Uuid uuid;
+	uuid_from_string(&uuid, &config()->uuid.string);
+	source_set_uuid(config, &uuid);
+
+	// set name
 	Str name;
 	str_set_cstr(&name, "main");
 	source_set_name(config, &name);
@@ -141,8 +148,25 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 		return false;
 	}
 
-	// create storage directory, if not exists
+	// create storage parent directory, if specified
 	char path[PATH_MAX];
+	if (! str_empty(&source->path))
+	{
+		if (*str_of(&source->path) == '/')
+			snprintf(path, sizeof(path), "%.*s", str_size(&source->path),
+			         str_of(&source->path));
+		else
+			snprintf(path, sizeof(path), "%s/%.*s", config_directory(),
+			         str_size(&source->path),
+			         str_of(&source->path));
+		if (! fs_exists("%s", path))
+		{
+			log("storage: new directory '%s'", path);
+			fs_mkdir(0755, "%s", path);
+		}
+	}
+
+	// create storage directory, if not exists
 	source_pathfmt(source, path, sizeof(path), "");
 	if (! fs_exists("%s", path))
 	{
@@ -164,7 +188,7 @@ storage_mgr_drop(StorageMgr* self, Str* name, bool if_exists)
 {
 	if (unlikely(str_compare_raw(name, "main", 4)))
 	{
-		error("storage '%.*s': system storage cannot be dropped",
+		error("storage '%.*s': main storage cannot be dropped",
 		      str_size(name), str_of(name));
 	}
 
@@ -260,7 +284,7 @@ storage_mgr_rename(StorageMgr* self, Str* name, Str* name_new, bool if_exists)
 {
 	if (unlikely(str_compare_raw(name, "main", 4)))
 	{
-		error("storage '%.*s': system storage cannot be renamed",
+		error("storage '%.*s': main storage cannot be renamed",
 		      str_size(name), str_of(name));
 	}
 
@@ -295,14 +319,14 @@ storage_mgr_rename_cloud(StorageMgr* self, Str* name, Str* name_new)
 }
 
 void
-storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
+storage_mgr_show(StorageMgr* self, Str* name, Buf* buf, bool debug)
 {
 	if (name == NULL)
 	{
 		list_foreach(&self->list)
 		{
 			auto storage = list_at(Storage, link);
-			storage_stats_show(storage, buf);
+			storage_stats_show(storage, buf, debug);
 		}
 		return;
 	}
@@ -313,7 +337,7 @@ storage_mgr_show(StorageMgr* self, Str* name, Buf* buf)
 		error("storage '%.*s': not exists", str_size(name), str_of(name));
 		return;
 	}
-	storage_stats_show(storage, buf);
+	storage_stats_show(storage, buf, debug);
 }
 
 void

@@ -18,13 +18,13 @@ struct StorageMgr
 void storage_mgr_init(StorageMgr*, CloudMgr*);
 void storage_mgr_free(StorageMgr*);
 void storage_mgr_open(StorageMgr*);
-bool storage_mgr_create_system(StorageMgr*);
+bool storage_mgr_create_main(StorageMgr*);
 bool storage_mgr_create(StorageMgr*, Source*, bool);
 void storage_mgr_drop(StorageMgr*, Str*, bool);
 void storage_mgr_alter(StorageMgr*, Source*, int, bool);
 void storage_mgr_rename(StorageMgr*, Str*, Str*, bool);
 void storage_mgr_rename_cloud(StorageMgr*, Str*, Str*);
-void storage_mgr_show(StorageMgr*, Str*, Buf*);
+void storage_mgr_show(StorageMgr*, Str*, Buf*, bool);
 void storage_mgr_show_partitions(StorageMgr*, Str*, Buf*, bool, bool);
 
 Storage*
