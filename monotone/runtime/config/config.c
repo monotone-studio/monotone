@@ -229,7 +229,7 @@ config_save_to(Config* self, const char* path)
 	File file;
 	file_init(&file);
 	guard(file_guard, file_close, &file);
-	file_create(&file, path);
+	file_create_mode(&file, path, 0600);
 	file_write_buf(&file, &text);
 
 	// sync
@@ -239,21 +239,21 @@ config_save_to(Config* self, const char* path)
 void
 config_save(Config* self, const char* path)
 {
-	// remove prevv saved config, if exists
+	// remove old saved config, if exists
 	Buf buf;
 	buf_init(&buf);
 	guard(guard, buf_free, &buf);
-	if (fs_exists("%s.prev", path))
-		fs_unlink("%s.prev", path);
+	if (fs_exists("%s.old", path))
+		fs_unlink("%s.old", path);
 
-	// save existing config as a previous
-	fs_rename(path,  "%s.prev", path);
+	// save existing config as a old
+	fs_rename(path,  "%s.old", path);
 
 	// create config file
 	config_save_to(self, path);
 
-	// remove prev config file
-	fs_unlink("%s.prev", path);
+	// remove old config file
+	fs_unlink("%s.old", path);
 }
 
 void

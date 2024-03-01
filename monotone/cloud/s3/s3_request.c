@@ -130,7 +130,6 @@ s3_request_debug_cb(CURL*         handle,
                     void*         arg)
 {
 	unused(handle);
-	unused(arg);
 
 	const char* prefix;
 	switch (type) {
@@ -150,7 +149,13 @@ s3_request_debug_cb(CURL*         handle,
 		if (data[data_size - 1] == '\n')
 			data_size--;
 	}
-	log("s3: %s%.*s", prefix, data_size, data);
+
+	CloudConfig* config = arg;
+	log("s3 %.*s: %s%.*s",
+	    str_size(&config->name),
+	    str_of(&config->name),
+	    prefix,
+	    data_size, data);
 	return 0;
 }
 
@@ -221,6 +226,7 @@ s3_request_execute(S3Request* self)
 	{
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 		curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, s3_request_debug_cb);
+		curl_easy_setopt(curl, CURLOPT_DEBUGDATA, config);
 	}
 
 	CURLcode code;
@@ -239,13 +245,20 @@ error:;
 	curl_slist_free_all(headers);
 
 	const char* str = curl_easy_strerror(code);
-	if (CURLE_HTTP_RETURNED_ERROR)
+	if (code == CURLE_HTTP_RETURNED_ERROR)
 	{
 		long http_code = 0;
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
-		error("s3: HTTP %d (%s)", (int)http_code, str);
+		error("s3: HTTP %d (%s)",
+		      str_size(&config->name),
+		      str_of(&config->name),
+		      (int)http_code,
+	          str);
 	}  else
 	{
-		error("s3: %s", str);
+		error("s3 %.*s: %s",
+		      str_size(&config->name),
+		      str_of(&config->name),
+		      str);
 	}
 }
