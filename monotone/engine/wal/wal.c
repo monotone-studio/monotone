@@ -229,7 +229,19 @@ wal_show(Wal* self, Buf* buf)
 	int      list_count;
 	uint64_t list_min;
 	wal_id_stats(&self->list, &list_count, &list_min);
-	buf_printf(buf, "lsn     %" PRIu64 "\n", config_lsn());
-	buf_printf(buf, "lsn_min %" PRIu64 "\n", list_min);
-	buf_printf(buf, "files   %d\n", list_count);
+
+	// map
+	encode_map(buf, 3);
+
+	// lsn
+	encode_raw(buf, "lsn", 3);
+	encode_integer(buf, config_lsn());
+
+	// lsn_min
+	encode_raw(buf, "lsn_min", 7);
+	encode_integer(buf, list_min);
+
+	// files
+	encode_raw(buf, "files", 5);
+	encode_integer(buf, list_count);
 }
