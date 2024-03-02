@@ -18,6 +18,7 @@
 #include "engine/engine.h"
 #include "engine/engine_recover.h"
 #include "engine/engine_cursor.h"
+#include "engine/engine_show.h"
 #include "engine/write.h"
 
 // refresh

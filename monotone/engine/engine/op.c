@@ -362,22 +362,22 @@ static inline bool
 engine_rebalance_tier_ready(Tier* tier)
 {
 	// rebalance by partitions
-	if (tier->config->partitions != INT64_MAX)
+	if (tier->config->partitions >= 0)
 		if (tier->storage->list_count > tier->config->partitions)
 			return true;
 
 	// rebalance by size
-	if (tier->config->size != INT64_MAX)
+	if (tier->config->size >= 0)
 		if (tier->storage->size > tier->config->size)
 			return true;
 
 	// rebalance by events
-	if (tier->config->events != INT64_MAX)
+	if (tier->config->events >= 0)
 		if (tier->storage->events > tier->config->events)
 			return true;
 
 	// rebalance by interval
-	if (tier->config->interval != INT64_MAX)
+	if (tier->config->interval >= 0)
 		if ((tier->storage->list_count * config_interval()) >
 		     (uint64_t)tier->config->interval)
 			return true;
@@ -469,7 +469,7 @@ engine_checkpoint(Engine* self)
 	while (slice)
 	{
 		auto ref = ref_of(slice);
-		if (!ref->part->refresh && ref->part->memtable->size > 0)
+		if (!ref->part->refresh && heap_used(&ref->part->memtable->heap) > 0)
 		{
 			service_refresh(self->service, slice->min);
 			ref->part->refresh = true;
