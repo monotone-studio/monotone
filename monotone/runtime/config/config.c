@@ -277,26 +277,28 @@ config_open(Config* self, const char* path)
 }
 
 void
-config_print_log(Config* self)
+config_print(Config* self)
 {
 	list_foreach(&self->list)
 	{
 		auto var = list_at(Var, link);
 		if (var_is(var, VAR_H) || var_is(var, VAR_S))
 			continue;
-		var_print_log(var);
+		var_print(var);
 	}
 }
 
 void
-config_print(Config* self, Buf* buf)
+config_show(Config* self, Buf* buf)
 {
+	encode_map(buf, self->count_visible);
 	list_foreach(&self->list)
 	{
 		auto var = list_at(Var, link);
 		if (var_is(var, VAR_H) || var_is(var, VAR_S))
 			continue;
-		var_print(var, buf);
+		encode_string(buf, &var->name);
+		var_encode(var, buf);
 	}
 }
 

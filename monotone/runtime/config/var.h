@@ -182,7 +182,7 @@ var_data_of(Var* self)
 }
 
 static inline void
-var_print_log(Var* self)
+var_print(Var* self)
 {
 	switch (self->type) {
 	case VAR_BOOL:
@@ -196,46 +196,6 @@ var_print_log(Var* self)
 	case VAR_STRING:
 		log("%-32s%.*s", str_of(&self->name),
 		    str_size(&self->string), str_of(&self->string));
-		break;
-	case VAR_DATA:
-		break;
-	}
-}
-
-static inline void
-var_print(Var* self, Buf* buf)
-{
-	switch (self->type) {
-	case VAR_BOOL:
-		buf_printf(buf, "%-32s%s\n", str_of(&self->name),
-		           var_int_of(self) ? "true" : "false");
-		break;
-	case VAR_INT:
-		buf_printf(buf, "%-32s%" PRIu64 "\n", str_of(&self->name),
-		           var_int_of(self));
-		break;
-	case VAR_STRING:
-		buf_printf(buf, "%-32s%.*s\n", str_of(&self->name),
-		           str_size(&self->string), str_of(&self->string));
-		break;
-	case VAR_DATA:
-		break;
-	}
-}
-
-static inline void
-var_print_value(Var* self, Buf* buf)
-{
-	switch (self->type) {
-	case VAR_BOOL:
-		buf_printf(buf, "%s\n", var_int_of(self) ? "true" : "false");
-		break;
-	case VAR_INT:
-		buf_printf(buf, "%" PRIu64 "\n", var_int_of(self));
-		break;
-	case VAR_STRING:
-		buf_printf(buf, "%.*s\n", str_size(&self->string),
-		           str_of(&self->string));
 		break;
 	case VAR_DATA:
 		break;
