@@ -13,6 +13,7 @@ struct Stats
 	uint64_t partitions;
 	uint64_t partitions_local;
 	uint64_t partitions_cloud;
+	uint64_t regions;
 	uint64_t min;
 	uint64_t max;
 	uint64_t events;
@@ -47,15 +48,18 @@ stats_add(Stats* self, Part* part)
 	if (part->id.max > self->max)
 		self->max = part->id.max;
 
-	// events
+	// regions and events
 	if (part->index)
+	{
+		self->regions += part->index->regions;
 		self->events += part->index->events;
+	}
 	uint64_t events_heap = atomic_u64_of(&part->memtable_a.count) +
 	                       atomic_u64_of(&part->memtable_b.count);
 	self->events_heap += events_heap;
 	self->events += events_heap;
 
-	// size
+	// size and regions
 	if (part->index)
 	{
 		self->size += part->index->size + part->index->size_regions;
@@ -69,7 +73,7 @@ static inline void
 stats_show(Stats* self, Buf* buf)
 {
 	// {}
-	encode_map(buf, 10);
+	encode_map(buf, 11);
 
 	// min
 	encode_raw(buf, "min", 3);
@@ -90,6 +94,10 @@ stats_show(Stats* self, Buf* buf)
 	// partitions_cloud
 	encode_raw(buf, "partitions_cloud", 16);
 	encode_integer(buf, self->partitions_cloud);
+
+	// regions
+	encode_raw(buf, "regions", 7);
+	encode_integer(buf, self->regions);
 
 	// events
 	encode_raw(buf, "events", 6);
@@ -121,12 +129,10 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 
 	// {}
 	if (debug)
-		encode_map(buf, 11);
+		encode_map(buf, 12);
 	else
-		encode_map(buf, 10);
+		encode_map(buf, 11);
 
-	// stats
-	
 	// min
 	encode_raw(buf, "min", 3);
 	encode_integer(buf, self->id.min);
@@ -142,6 +148,10 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 	// events_heap
 	encode_raw(buf, "events_heap", 11);
 	encode_integer(buf, stats.events_heap);
+
+	// regions
+	encode_raw(buf, "regions", 7);
+	encode_integer(buf, stats.regions);
 
 	// size
 	encode_raw(buf, "size", 4);

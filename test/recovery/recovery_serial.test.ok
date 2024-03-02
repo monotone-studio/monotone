@@ -59,6 +59,7 @@ show partitions debug
   "max": 10,
   "events": 2,
   "events_heap": 0,
+  "regions": 1,
   "size": 217,
   "size_uncompressed": 217,
   "size_heap": 0,
