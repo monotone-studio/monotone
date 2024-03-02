@@ -126,11 +126,22 @@ memory_mgr_show(MemoryMgr* self, Buf* buf)
 	int page_size  = self->page_size + sizeof(Page);
 	spinlock_unlock(&self->lock);
 
-	buf_printf(buf, "pages       %d (%d Mb)\n", pages,
-	           (pages * page_size) / 1024 / 1024);
-	buf_printf(buf, "pages_used  %d (%d Mb)\n", pages_used,
-	           (pages_used * page_size) / 1024 / 1024);
-	buf_printf(buf, "pages_free  %d (%d Mb)\n", pages_free,
-	           (pages_free * page_size) / 1024 / 1024);
-	buf_printf(buf, "page_size   %d\n", page_size);
+	// map
+	encode_map(buf, 4);
+
+	// pages
+	encode_raw(buf, "pages", 5);
+	encode_integer(buf, pages);
+
+	// pages_used
+	encode_raw(buf, "pages_used", 10);
+	encode_integer(buf, pages_used);
+
+	// pages_free
+	encode_raw(buf, "pages_free", 10);
+	encode_integer(buf, pages_free);
+
+	// page_size
+	encode_raw(buf, "page_size", 9);
+	encode_integer(buf, page_size);
 }

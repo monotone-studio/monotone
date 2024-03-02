@@ -373,7 +373,7 @@ json_export_as(Buf* data, bool pretty, int deep, uint8_t** pos)
 	}
 	default:
 		error_data();
-	   break;
+		break;
 	}
 }
 
