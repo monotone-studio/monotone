@@ -39,6 +39,9 @@
 #include "io/part_file.h"
 #include "io/part_op.h"
 
+// stats
+#include "io/stats.h"
+
 // reader
 #include "io/reader.h"
 
