@@ -42,7 +42,7 @@ storage_mgr_save(StorageMgr* self)
 	list_foreach(&self->list)
 	{
 		auto storage = list_at(Storage, link);
-		source_write(storage->source, &buf);
+		source_write(storage->source, &buf, false);
 	}
 
 	// update state
@@ -319,48 +319,16 @@ storage_mgr_rename_cloud(StorageMgr* self, Str* name, Str* name_new)
 }
 
 void
-storage_mgr_show(StorageMgr* self, Str* name, Buf* buf, bool debug)
+storage_mgr_show(StorageMgr* self, Buf* buf, bool debug)
 {
-	if (name == NULL)
+	// {}
+	encode_map(buf, self->list_count);
+	list_foreach(&self->list)
 	{
-		list_foreach(&self->list)
-		{
-			auto storage = list_at(Storage, link);
-			storage_stats_show(storage, buf, debug);
-		}
-		return;
+		auto storage = list_at(Storage, link);
+		encode_string(buf, &storage->source->name);
+		storage_show(storage, buf, debug);
 	}
-
-	auto storage = storage_mgr_find(self, name);
-	if (! storage)
-	{
-		error("storage '%.*s': not exists", str_size(name), str_of(name));
-		return;
-	}
-	storage_stats_show(storage, buf, debug);
-}
-
-void
-storage_mgr_show_partitions(StorageMgr* self, Str* name, Buf* buf,
-                            bool verbose, bool debug)
-{
-	if (name == NULL)
-	{
-		list_foreach(&self->list)
-		{
-			auto storage = list_at(Storage, link);
-			storage_show_partitions(storage, buf, verbose, debug);
-		}
-		return;
-	}
-
-	auto storage = storage_mgr_find(self, name);
-	if (! storage)
-	{
-		error("storage '%.*s': not exists", str_size(name), str_of(name));
-		return;
-	}
-	storage_show_partitions(storage, buf, verbose, debug);
 }
 
 Storage*

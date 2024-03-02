@@ -22,10 +22,10 @@ static inline TierConfig*
 tier_config_allocate(void)
 {
 	auto self = (TierConfig*)mn_malloc(sizeof(TierConfig));
-	self->partitions = INT64_MAX;
-	self->size       = INT64_MAX;
-	self->events     = INT64_MAX;
-	self->interval   = INT64_MAX;
+	self->partitions = -1;
+	self->size       = -1;
+	self->events     = -1;
+	self->interval   = -1;
 	str_init(&self->name);
 	list_init(&self->link);
 	return self;

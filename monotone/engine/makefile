@@ -31,6 +31,7 @@ OBJECTS        = \
                  wal/wal_cursor.o \
                  engine/engine.o \
                  engine/engine_recover.o \
+                 engine/engine_show.o \
                  engine/write.o \
                  engine/refresh.o \
                  engine/op.o \

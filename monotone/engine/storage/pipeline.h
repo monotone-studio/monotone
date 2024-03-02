@@ -21,5 +21,5 @@ void  pipeline_open(Pipeline*);
 bool  pipeline_empty(Pipeline*);
 void  pipeline_alter(Pipeline*, List*);
 void  pipeline_rename(Pipeline*, Str*, Str*);
-void  pipeline_print(Pipeline*, Buf*);
+void  pipeline_show(Pipeline*, Buf*);
 Tier* pipeline_primary(Pipeline*);

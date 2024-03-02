@@ -24,8 +24,7 @@ void storage_mgr_drop(StorageMgr*, Str*, bool);
 void storage_mgr_alter(StorageMgr*, Source*, int, bool);
 void storage_mgr_rename(StorageMgr*, Str*, Str*, bool);
 void storage_mgr_rename_cloud(StorageMgr*, Str*, Str*);
-void storage_mgr_show(StorageMgr*, Str*, Buf*, bool);
-void storage_mgr_show_partitions(StorageMgr*, Str*, Buf*, bool, bool);
+void storage_mgr_show(StorageMgr*, Buf*, bool);
 
 Storage*
 storage_mgr_find(StorageMgr*, Str*);

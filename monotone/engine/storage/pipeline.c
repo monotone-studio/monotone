@@ -147,56 +147,15 @@ pipeline_rename(Pipeline* self, Str* storage, Str* storage_new)
 }
 
 void
-pipeline_print(Pipeline* self, Buf* buf)
+pipeline_show(Pipeline* self, Buf* buf)
 {
-	bool first_tier = true;
+	// []
+	encode_array(buf, self->list_count);
 	list_foreach(&self->list)
 	{
 		auto tier = list_at(Tier, link);
-		if (! first_tier)
-			buf_printf(buf, " ⟶ ");
-		buf_printf(buf, "%.*s (", str_size(&tier->config->name),
-		           str_of(&tier->config->name));
-
-		// partitions
-		bool first = true;
-		if (tier->config->partitions != INT64_MAX)
-		{
-			buf_printf(buf, "partitions %" PRIi64, tier->config->partitions);
-			first = false;
-		}
-
-		// size
-		if (tier->config->size != INT64_MAX)
-		{
-			if (! first)
-				buf_printf(buf, ", ");
-			buf_printf(buf, "size %" PRIi64, tier->config->size);
-			first = false;
-		}
-
-		// events
-		if (tier->config->events != INT64_MAX)
-		{
-			if (! first)
-				buf_printf(buf, ", ");
-			buf_printf(buf, "events %" PRIi64, tier->config->events);
-			first = false;
-		}
-
-		// interval
-		if (tier->config->interval != INT64_MAX)
-		{
-			if (! first)
-				buf_printf(buf, ", ");
-			buf_printf(buf, "interval %" PRIi64, tier->config->interval);
-			first = false;
-		}
-
-		buf_printf(buf, ")");
-		first_tier = false;
+		tier_config_write(tier->config, buf);
 	}
-	buf_printf(buf, "\n");
 }
 
 Tier*
