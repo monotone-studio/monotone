@@ -19,7 +19,6 @@ memtable_init(Memtable*   self,
 {
 	self->count           = 0;
 	self->count_pages     = 0;
-	self->size            = 0;
 	self->size_page       = size_page;
 	self->size_split      = size_split;
 	self->comparator      = comparator;
@@ -58,7 +57,6 @@ memtable_free(Memtable* self)
 {
 	self->count       = 0;
 	self->count_pages = 0;
-	self->size        = 0;
 	self->lsn_min     = UINT64_MAX;
 	self->lsn_max     = 0;
 	rbtree_init(&self->tree);
@@ -75,7 +73,6 @@ memtable_move(Memtable* self, Memtable* from)
 
 	from->count       = 0;
 	from->count_pages = 0;
-	from->size        = 0;
 	from->lsn_min     = UINT64_MAX;
 	from->lsn_max     = 0;
 	rbtree_init(&from->tree);
@@ -202,8 +199,6 @@ memtable_insert(Memtable*      self,
 		// replace
 		auto prev = page->events[pos];
 		page->events[pos] = event;
-		self->size -= event_size(prev);
-		self->size += event_size(event);
 
 		// update iterators
 		if (self->iterators_count > 0)
@@ -238,8 +233,7 @@ memtable_insert(Memtable*      self,
 		memmove(&ref->events[pos + 1], &ref->events[pos], size);
 	ref->events[pos] = event;
 	ref->events_count++;
-	self->count++;
-	self->size += event_size(event);
+	atomic_u64_inc(&self->count);
 
 	// update iterators
 	if (self->iterators_count > 0)
@@ -260,8 +254,7 @@ memtable_set(Memtable* self, Event* event)
 		page->events_count++;
 		rbtree_set(&self->tree, NULL, 0, &page->node);
 		self->count_pages++;
-		self->count++;
-		self->size += event_size(event);
+		atomic_u64_inc(&self->count);
 		return NULL;
 	}
 
@@ -295,11 +288,9 @@ memtable_unset(Memtable* self, Event* event)
 		return;
 
 	// remove event from the page
-	auto prev = page->events[pos];
 	page->events[pos] = NULL;
-	self->size -= event_size(prev);
-	self->count--;
 	page->events_count--;
+	atomic_u64_dec(&self->count);
 
 	// remove page, if it becomes empty
 	if (page->events_count == 0)

@@ -20,11 +20,10 @@ struct Memtable
 {
 	Comparator* comparator;
 	Rbtree      tree;
-	uint64_t    count;
-	int         count_pages;
-	uint64_t    size;
 	int         size_page;
 	int         size_split;
+	int         count_pages;
+	atomic_u64  count;
 	atomic_u64  lsn_min;
 	atomic_u64  lsn_max;
 	List        iterators;
