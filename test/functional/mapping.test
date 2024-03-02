@@ -18,7 +18,7 @@ insert 19
 insert 20
 insert 21
 
-show partitions verbose
+show partitions debug
 
 # test: select (no key)
 select
@@ -41,7 +41,7 @@ refresh partition 10
 refresh partition 20
 files 00000000-0000-0000-0000-000000000000
 
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -57,9 +57,9 @@ insert 6
 insert 7
 insert 8
 insert 9
-show partitions verbose
+show partitions debug
 refresh partition 0
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -67,9 +67,9 @@ select 9
 
 # test: create partition (in the future)
 insert 4096
-show partitions verbose
+show partitions debug
 refresh partition 4096
-show partitions verbose
+show partitions debug
 files 00000000-0000-0000-0000-000000000000
 
 # test: select

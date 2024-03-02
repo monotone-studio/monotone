@@ -39,7 +39,7 @@ insert 0
 move partition 0 into test
 
 show storages debug
-show partitions verbose
+show partitions debug
 
 # test: drop storage (with partition)
 drop storage test

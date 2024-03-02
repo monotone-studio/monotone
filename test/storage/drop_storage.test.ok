@@ -170,7 +170,7 @@ show storages debug
     }
   }
 }
-show partitions verbose
+show partitions debug
 [{
   "min": 0,
   "max": 10,
@@ -181,7 +181,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "test"
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 1,
+    "compression": 0
+  }
 }]
 # test: drop storage (with partition)
 drop storage test

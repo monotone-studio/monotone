@@ -39,7 +39,7 @@ insert 11
 insert 19
 insert 20
 insert 21
-show partitions verbose
+show partitions debug
 [{
   "min": 10,
   "max": 20,
@@ -50,7 +50,8 @@ show partitions verbose
   "size_heap": 2097152,
   "on_storage": false,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": null
 }, {
   "min": 20,
   "max": 30,
@@ -61,7 +62,8 @@ show partitions verbose
   "size_heap": 2097152,
   "on_storage": false,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": null
 }]
 # test: select (no key)
 select
@@ -126,7 +128,7 @@ refresh partition 20
 files 00000000-0000-0000-0000-000000000000
 00000000000000000010
 00000000000000000020
-show partitions verbose
+show partitions debug
 [{
   "min": 10,
   "max": 20,
@@ -137,7 +139,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
 }, {
   "min": 20,
   "max": 30,
@@ -148,7 +159,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 58,
+    "size_regions_origin": 58,
+    "regions": 1,
+    "events": 2,
+    "lsn": 5,
+    "compression": 0
+  }
 }]
 # test: select
 select
@@ -169,7 +189,7 @@ insert 6
 insert 7
 insert 8
 insert 9
-show partitions verbose
+show partitions debug
 [{
   "min": 0,
   "max": 10,
@@ -180,7 +200,8 @@ show partitions verbose
   "size_heap": 2097152,
   "on_storage": false,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": null
 }, {
   "min": 10,
   "max": 20,
@@ -191,7 +212,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
 }, {
   "min": 20,
   "max": 30,
@@ -202,10 +232,19 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 58,
+    "size_regions_origin": 58,
+    "regions": 1,
+    "events": 2,
+    "lsn": 5,
+    "compression": 0
+  }
 }]
 refresh partition 0
-show partitions verbose
+show partitions debug
 [{
   "min": 0,
   "max": 10,
@@ -216,7 +255,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 381,
+    "size_regions": 266,
+    "size_regions_origin": 266,
+    "regions": 4,
+    "events": 10,
+    "lsn": 15,
+    "compression": 0
+  }
 }, {
   "min": 10,
   "max": 20,
@@ -227,7 +275,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
 }, {
   "min": 20,
   "max": 30,
@@ -238,7 +295,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 58,
+    "size_regions_origin": 58,
+    "regions": 1,
+    "events": 2,
+    "lsn": 5,
+    "compression": 0
+  }
 }]
 # test: select
 select
@@ -268,7 +334,7 @@ select 9
 (eof)
 # test: create partition (in the future)
 insert 4096
-show partitions verbose
+show partitions debug
 [{
   "min": 0,
   "max": 10,
@@ -279,7 +345,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 381,
+    "size_regions": 266,
+    "size_regions_origin": 266,
+    "regions": 4,
+    "events": 10,
+    "lsn": 15,
+    "compression": 0
+  }
 }, {
   "min": 10,
   "max": 20,
@@ -290,7 +365,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
 }, {
   "min": 20,
   "max": 30,
@@ -301,7 +385,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 58,
+    "size_regions_origin": 58,
+    "regions": 1,
+    "events": 2,
+    "lsn": 5,
+    "compression": 0
+  }
 }, {
   "min": 4090,
   "max": 4100,
@@ -312,10 +405,11 @@ show partitions verbose
   "size_heap": 2097152,
   "on_storage": false,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": null
 }]
 refresh partition 4096
-show partitions verbose
+show partitions debug
 [{
   "min": 0,
   "max": 10,
@@ -326,7 +420,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 381,
+    "size_regions": 266,
+    "size_regions_origin": 266,
+    "regions": 4,
+    "events": 10,
+    "lsn": 15,
+    "compression": 0
+  }
 }, {
   "min": 10,
   "max": 20,
@@ -337,7 +440,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
 }, {
   "min": 20,
   "max": 30,
@@ -348,7 +460,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 58,
+    "size_regions_origin": 58,
+    "regions": 1,
+    "events": 2,
+    "lsn": 5,
+    "compression": 0
+  }
 }, {
   "min": 4090,
   "max": 4100,
@@ -359,7 +480,16 @@ show partitions verbose
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
-  "storage": "main"
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 16,
+    "compression": 0
+  }
 }]
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000

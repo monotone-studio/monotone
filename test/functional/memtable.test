@@ -8,10 +8,10 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: insert
-show partitions verbose
+show partitions debug
 
 insert 1
-show partitions verbose
+show partitions debug
 
 # test: cursor (no key)
 cursor c
@@ -52,7 +52,7 @@ insert 0
 insert 2
 insert 3
 insert 5
-show partitions verbose
+show partitions debug
 
 # test: select (no key)
 select
@@ -73,7 +73,7 @@ select 12
 # test: insert #3 (replace by key)
 insert 0 x
 insert 3 x
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -85,7 +85,7 @@ select 3
 cursor c 2
 insert 2 y
 cursor_close c
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -95,14 +95,14 @@ select 3
 
 # test: delete by key (open case)
 delete 0
-show partitions verbose
+show partitions debug
 
 # test: select
 select
 
 # test: delete by key
 delete 3
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -146,7 +146,7 @@ drop partition 0
 insert 1
 insert 2
 insert 4
-show partitions verbose
+show partitions debug
 
 # test: cursor
 cursor c 2
