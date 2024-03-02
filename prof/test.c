@@ -280,7 +280,7 @@ cli(void)
 		}
 		if (result)
 		{
-			printf("%s", result);
+			printf("%s\n", result);
 			free(result);
 		}
 	}
