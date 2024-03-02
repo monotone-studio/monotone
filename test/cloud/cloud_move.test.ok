@@ -9,23 +9,33 @@ insert 0
 insert 1
 insert 2
 show storages debug
-main
-  min                 0
-  max                 10
-  partitions          1
-  partitions_cloud    0
-  events              3
-  events_heap         3
-  size                0M
-  size_uncompressed   0M
-  size_heap           2M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 3,
+      "events_heap": 3,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 2097152
+    }
+  }
+}
 select
 [0]
 [1]
@@ -34,111 +44,147 @@ select
 # test: create cloud storage
 create cloud mock (type 'mock')
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 create storage test (cloud 'mock', sync false, compression 'zstd')
 show storages debug
-main
-  min                 0
-  max                 10
-  partitions          1
-  partitions_cloud    0
-  events              3
-  events_heap         3
-  size                0M
-  size_uncompressed   0M
-  size_heap           2M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               'mock'
-  sync                false
-  crc                 false
-  compression         zstd
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 3,
+      "events_heap": 3,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 2097152
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "mock",
+      "sync": false,
+      "crc": false,
+      "compression": "zstd",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: move to cloud
 move partition 0 into test
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 0
-  max                 10
-  partitions          1
-  partitions_cloud    1
-  events              3
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               'mock'
-  sync                false
-  crc                 false
-  compression         zstd
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "mock",
+      "sync": false,
+      "crc": false,
+      "compression": "zstd",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 0,
+      "partitions_cloud": 1,
+      "events": 3,
+      "events_heap": 0,
+      "size": 194,
+      "size_uncompressed": 234,
+      "size_heap": 0
+    }
+  }
+}
 show partitions debug
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        35
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         1
-      region
-        min             0
-        max             2
-        events          3
-        offset          0
-        size            35
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 194,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 35,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 1
+  }
+}]
 select
 [0]
 [1]
@@ -147,68 +193,80 @@ select
 # test: move from cloud
 move partition 0 into main
 show storages debug
-main
-  min                 0
-  max                 10
-  partitions          1
-  partitions_cloud    0
-  events              3
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               'mock'
-  sync                false
-  crc                 false
-  compression         zstd
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "events": 3,
+      "events_heap": 0,
+      "size": 234,
+      "size_uncompressed": 234,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "mock",
+      "sync": false,
+      "crc": false,
+      "compression": "zstd",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-      region
-        min             0
-        max             2
-        events          3
-        offset          0
-        size            75
-test
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
+}]
 select
 [0]
 [1]

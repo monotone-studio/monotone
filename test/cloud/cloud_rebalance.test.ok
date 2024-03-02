@@ -7,153 +7,166 @@ open
 # test: create storages
 create cloud mock (type 'mock')
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 create storage hot (sync false)
 create storage cold (cloud 'mock', sync false)
 # test: alter pipeline set partitions
 alter pipeline set hot (partitions 2), cold
 show pipeline
-hot (partitions 2) ⟶ cold ()
+[{
+  "name": "hot",
+  "partitions": 2,
+  "size": -1,
+  "events": -1,
+  "interval": -1
+}, {
+  "name": "cold",
+  "partitions": -1,
+  "size": -1,
+  "events": -1,
+  "interval": -1
+}]
 # test: create partition #1 (< partitions)
 insert 0
 show partitions debug
-main
-hot
-  0
-    min         0
-    max         10
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-cold
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}]
 # test: create partition #2 (= partitions)
 insert 10
 show partitions debug
-main
-hot
-  0
-    min         0
-    max         10
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-cold
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}]
 # test: create partition #3 (> partitions)
 insert 20
 show partitions debug
-main
-hot
-  0
-    min         0
-    max         10
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-cold
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}]
 # test: rebalance
 rebalance
 show partitions debug
-main
-hot
-  10
-    min         10
-    max         20
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-cold
-  0
-    min         0
-    max         10
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 1
-      compression         0
-      region
-        min             0
-        max             0
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 1,
+    "compression": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}]
 # test: create partitions (> partitions)
 insert 30
 insert 300
@@ -161,318 +174,276 @@ insert 3000
 insert 30000
 insert 300000
 show partitions debug
-main
-hot
-  10
-    min         10
-    max         20
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  30
-    min         30
-    max         40
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  300
-    min         300
-    max         310
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  3000
-    min         3000
-    max         3010
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  30000
-    min         30000
-    max         30010
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  300000
-    min         300000
-    max         300010
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-cold
-  0
-    min         0
-    max         10
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 1
-      compression         0
-      region
-        min             0
-        max             0
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 1,
+    "compression": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 300,
+  "max": 310,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 3000,
+  "max": 3010,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 30000,
+  "max": 30010,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}, {
+  "min": 300000,
+  "max": 300010,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": null
+}]
 refresh partitions from 0 to 300010
 # test: rebalance
 rebalance
 show partitions debug
-main
-hot
-  30000
-    min         30000
-    max         30010
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 7
-      compression         0
-      region
-        min             30000
-        max             30000
-        events          1
-        offset          0
-        size            41
-  300000
-    min         300000
-    max         300010
-    storage     hot
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 8
-      compression         0
-      region
-        min             300000
-        max             300000
-        events          1
-        offset          0
-        size            41
-cold
-  0
-    min         0
-    max         10
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 1
-      compression         0
-      region
-        min             0
-        max             0
-        events          1
-        offset          0
-        size            41
-  10
-    min         10
-    max         20
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 2
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
-  20
-    min         20
-    max         30
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             20
-        max             20
-        events          1
-        offset          0
-        size            41
-  30
-    min         30
-    max         40
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 4
-      compression         0
-      region
-        min             30
-        max             30
-        events          1
-        offset          0
-        size            41
-  300
-    min         300
-    max         310
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 5
-      compression         0
-      region
-        min             300
-        max             300
-        events          1
-        offset          0
-        size            41
-  3000
-    min         3000
-    max         3010
-    storage     cold
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 6
-      compression         0
-      region
-        min             3000
-        max             3000
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 1,
+    "compression": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 2,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 4,
+    "compression": 0
+  }
+}, {
+  "min": 300,
+  "max": 310,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 5,
+    "compression": 0
+  }
+}, {
+  "min": 3000,
+  "max": 3010,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "cold",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 6,
+    "compression": 0
+  }
+}, {
+  "min": 30000,
+  "max": 30010,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 7,
+    "compression": 0
+  }
+}, {
+  "min": 300000,
+  "max": 300010,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 8,
+    "compression": 0
+  }
+}]
 select
 [0]
 [10]

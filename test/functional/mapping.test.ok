@@ -6,23 +6,33 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 alter storage main set (sync false, region_size 60)
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         60
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 60
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: create partitions
 insert 10
 insert 11
@@ -30,29 +40,29 @@ insert 19
 insert 20
 insert 21
 show partitions verbose
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  3 / 39
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  2 / 26
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 10,
+  "max": 20,
+  "events": 3,
+  "events_heap": 3,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 2,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select (no key)
 select
 [10]
@@ -117,45 +127,29 @@ files 00000000-0000-0000-0000-000000000000
 00000000000000000010
 00000000000000000020
 show partitions verbose
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        225
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 5
-      compression         0
+[{
+  "min": 10,
+  "max": 20,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select
 select
 [10]
@@ -176,116 +170,76 @@ insert 7
 insert 8
 insert 9
 show partitions verbose
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        225
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 5
-      compression         0
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  10 / 130
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 10,
+  "events_heap": 10,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}]
 refresh partition 0
 show partitions verbose
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        225
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 5
-      compression         0
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        655
-    index
-      size                381
-      size_regions        266
-      size_regions_origin 266
-      regions             4
-      events              10
-      lsn                 15
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 10,
+  "events_heap": 0,
+  "size": 647,
+  "size_uncompressed": 647,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select
 select
 [0]
@@ -315,154 +269,98 @@ select 9
 # test: create partition (in the future)
 insert 4096
 show partitions verbose
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        225
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 5
-      compression         0
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        655
-    index
-      size                381
-      size_regions        266
-      size_regions_origin 266
-      regions             4
-      events              10
-      lsn                 15
-      compression         0
-  4090
-    min         4090
-    max         4100
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 10,
+  "events_heap": 0,
+  "size": 647,
+  "size_uncompressed": 647,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 4090,
+  "max": 4100,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 refresh partition 4096
 show partitions verbose
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        225
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 5
-      compression         0
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        655
-    index
-      size                381
-      size_regions        266
-      size_regions_origin 266
-      regions             4
-      events              10
-      lsn                 15
-      compression         0
-  4090
-    min         4090
-    max         4100
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 16
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 10,
+  "events_heap": 0,
+  "size": 647,
+  "size_uncompressed": 647,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}, {
+  "min": 4090,
+  "max": 4100,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main"
+}]
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000010

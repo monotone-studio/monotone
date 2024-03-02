@@ -48,36 +48,33 @@ debug "wal_create"
 debug "wal_gc"
 debug "wal_read"
 show wal
-lsn     2
-lsn_min 3
-files   1
+{
+  "lsn": 2,
+  "lsn_min": 3,
+  "files": 1
+}
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        225
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 2
-      compression         0
-      region
-        min             0
-        max             1
-        events          2
-        offset          0
-        size            58
+[{
+  "min": 0,
+  "max": 10,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 58,
+    "size_regions_origin": 58,
+    "regions": 1,
+    "events": 2,
+    "lsn": 2,
+    "compression": 0
+  }
+}]
 # test: restart (restore from partition)
 close
 init

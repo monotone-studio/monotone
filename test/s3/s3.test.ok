@@ -13,105 +13,142 @@ create cloud s3 (type 's3', url 'localhost:9000', access_key 'minioadmin')
 error: s3: secret_key is not defined
 create cloud s3 (type 's3', url 'localhost:9000', access_key 'minioadmin', secret_key 'minioadmin')
 show clouds
-s3
-  type  's3'
-  login 'minioadmin'
-  url   'localhost:9000'
+{
+  "s3": {
+    "name": "s3",
+    "type": "s3",
+    "login": "minioadmin",
+    "password": "(secret)",
+    "url": "localhost:9000",
+    "debug": false
+  }
+}
 # test: create storage with cloud s3 (create bucket)
 create storage test (cloud 's3', sync false, uuid '00000000-0000-0000-0000-000000000123')
 show storages
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  uuid                00000000-0000-0000-0000-000000000000
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  uuid                00000000-0000-0000-0000-000000000123
-  path                ''
-  cloud               's3'
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000123",
+      "name": "test",
+      "path": "",
+      "cloud": "s3",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 alter pipeline set test
 # test: create partition (no file)
 insert 0
 insert 1
 insert 2
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  3 / 39
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 3,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}]
 show storages
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  uuid                00000000-0000-0000-0000-000000000000
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 0
-  max                 10
-  partitions          1
-  partitions_cloud    0
-  events              3
-  events_heap         3
-  size                0M
-  size_uncompressed   0M
-  size_heap           2M
-  uuid                00000000-0000-0000-0000-000000000123
-  path                ''
-  cloud               's3'
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000123",
+      "name": "test",
+      "path": "",
+      "cloud": "s3",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 3,
+      "events_heap": 3,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 2097152
+    }
+  }
+}
 select
 [0]
 [1]
@@ -120,27 +157,18 @@ select
 # test: refresh (upload)
 refresh partition 0
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: select (from cloud)
 select
 [0]
@@ -150,27 +178,18 @@ select
 # test: download
 download partition 0
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: select (from storage, still on cloud)
 select
 [0]
@@ -180,27 +199,18 @@ select
 # test: upload
 upload partition 0
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: select (from cloud)
 select
 [0]
@@ -210,27 +220,18 @@ select
 # test: drop from cloud
 drop partition 0 on cloud
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "test"
+}]
 # test: select
 select
 [0]
@@ -243,27 +244,18 @@ insert 2 yy
 # test: refresh (upload)
 refresh partition 0
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                161
-      size_regions        79
-      size_regions_origin 79
-      regions             1
-      events              3
-      lsn                 5
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 240,
+  "size_uncompressed": 240,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: select (from cloud)
 select
 [0]
@@ -281,321 +273,231 @@ insert 70
 insert 80
 insert 90
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                161
-      size_regions        79
-      size_regions_origin 79
-      regions             1
-      events              3
-      lsn                 5
-      compression         0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  30
-    min         30
-    max         40
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  40
-    min         40
-    max         50
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  50
-    min         50
-    max         60
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  60
-    min         60
-    max         70
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  70
-    min         70
-    max         80
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  80
-    min         80
-    max         90
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  90
-    min         90
-    max         100
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 240,
+  "size_uncompressed": 240,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 40,
+  "max": 50,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 50,
+  "max": 60,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 70,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 80,
+  "max": 90,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}, {
+  "min": 90,
+  "max": 100,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test"
+}]
 # test: refresh partitions
 refresh partitions from 0 to 100
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                161
-      size_regions        79
-      size_regions_origin 79
-      regions             1
-      events              3
-      lsn                 5
-      compression         0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 6
-      compression         0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 7
-      compression         0
-  30
-    min         30
-    max         40
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 8
-      compression         0
-  40
-    min         40
-    max         50
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 9
-      compression         0
-  50
-    min         50
-    max         60
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 10
-      compression         0
-  60
-    min         60
-    max         70
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 11
-      compression         0
-  70
-    min         70
-    max         80
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 12
-      compression         0
-  80
-    min         80
-    max         90
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 13
-      compression         0
-  90
-    min         90
-    max         100
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 14
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 240,
+  "size_uncompressed": 240,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 40,
+  "max": 50,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 50,
+  "max": 60,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 70,
+  "max": 80,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 80,
+  "max": 90,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 90,
+  "max": 100,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: update partitions
 insert 11
 insert 21
@@ -607,393 +509,231 @@ insert 71
 insert 81
 insert 91
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                161
-      size_regions        79
-      size_regions_origin 79
-      regions             1
-      events              3
-      lsn                 5
-      compression         0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 6
-      compression         0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 7
-      compression         0
-  30
-    min         30
-    max         40
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 8
-      compression         0
-  40
-    min         40
-    max         50
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 9
-      compression         0
-  50
-    min         50
-    max         60
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 10
-      compression         0
-  60
-    min         60
-    max         70
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 11
-      compression         0
-  70
-    min         70
-    max         80
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 12
-      compression         0
-  80
-    min         80
-    max         90
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 13
-      compression         0
-  90
-    min         90
-    max         100
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 14
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 240,
+  "size_uncompressed": 240,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 40,
+  "max": 50,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 50,
+  "max": 60,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 70,
+  "max": 80,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 80,
+  "max": 90,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 90,
+  "max": 100,
+  "events": 2,
+  "events_heap": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: refresh partitions #2
 refresh partitions from 0 to 100
 show partitions verbose
-main
-test
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                161
-      size_regions        79
-      size_regions_origin 79
-      regions             1
-      events              3
-      lsn                 5
-      compression         0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 15
-      compression         0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 16
-      compression         0
-  30
-    min         30
-    max         40
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 17
-      compression         0
-  40
-    min         40
-    max         50
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 18
-      compression         0
-  50
-    min         50
-    max         60
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 19
-      compression         0
-  60
-    min         60
-    max         70
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 20
-      compression         0
-  70
-    min         70
-    max         80
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 21
-      compression         0
-  80
-    min         80
-    max         90
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 22
-      compression         0
-  90
-    min         90
-    max         100
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 23
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 240,
+  "size_uncompressed": 240,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 40,
+  "max": 50,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 50,
+  "max": 60,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 70,
+  "max": 80,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 80,
+  "max": 90,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 90,
+  "max": 100,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}]
 # test: select
 select
 [0]
@@ -1027,240 +767,181 @@ set serial to false
 open
 # test: validate
 show clouds
-s3
-  type  's3'
-  login 'minioadmin'
-  url   'localhost:9000'
+{
+  "s3": {
+    "name": "s3",
+    "type": "s3",
+    "login": "minioadmin",
+    "password": "(secret)",
+    "url": "localhost:9000",
+    "debug": false
+  }
+}
 show storages
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  uuid                00000000-0000-0000-0000-000000000000
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 0
-  max                 100
-  partitions          10
-  partitions_cloud    10
-  events              21
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  uuid                00000000-0000-0000-0000-000000000123
-  path                ''
-  cloud               's3'
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000123",
+      "name": "test",
+      "path": "",
+      "cloud": "s3",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 100,
+      "partitions": 10,
+      "partitions_local": 0,
+      "partitions_cloud": 10,
+      "events": 21,
+      "events_heap": 0,
+      "size": 2193,
+      "size_uncompressed": 2193,
+      "size_heap": 0
+    }
+  }
+}
 show partitions verbose
-main
-test
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 15
-      compression         0
-  0
-    min         0
-    max         10
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                161
-      size_regions        79
-      size_regions_origin 79
-      regions             1
-      events              3
-      lsn                 5
-      compression         0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 16
-      compression         0
-  30
-    min         30
-    max         40
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 17
-      compression         0
-  60
-    min         60
-    max         70
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 20
-      compression         0
-  70
-    min         70
-    max         80
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 21
-      compression         0
-  90
-    min         90
-    max         100
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 23
-      compression         0
-  40
-    min         40
-    max         50
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 18
-      compression         0
-  50
-    min         50
-    max         60
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 19
-      compression         0
-  80
-    min         80
-    max         90
-    storage     test
-    cloud       s3
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        58
-      size_regions_origin 58
-      regions             1
-      events              2
-      lsn                 22
-      compression         0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 240,
+  "size_uncompressed": 240,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 40,
+  "max": 50,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 50,
+  "max": 60,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 70,
+  "max": 80,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 80,
+  "max": 90,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}, {
+  "min": 90,
+  "max": 100,
+  "events": 2,
+  "events_heap": 0,
+  "size": 217,
+  "size_uncompressed": 217,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test"
+}]
 select
 [0]
 [1, xx]

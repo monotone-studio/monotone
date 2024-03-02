@@ -17,43 +17,55 @@ set workers to 0
 set interval to 10
 open
 show all
-version                         0.0
-uuid                            c14fb1d4-d1f7-5bf1-f256-4ad89bc47379
-online                          true
-directory                       _output
-log_enable                      true
-log_to_file                     true
-log_to_stdout                   false
-serial                          false
-interval                        10
-workers                         0
-wal_enable                      true
-wal_rotate_wm                   104857600
-wal_sync_on_rotate              true
-wal_sync_on_write               false
-ssn                             0
-lsn                             0
-psn                             0
-events_written                  0
-events_written_bytes            0
+{
+  "version": "0.0",
+  "uuid": "c14fb1d4-d1f7-5bf1-f256-4ad89bc47379",
+  "online": true,
+  "directory": "_output",
+  "log_enable": true,
+  "log_to_file": true,
+  "log_to_stdout": false,
+  "serial": false,
+  "interval": 10,
+  "workers": 0,
+  "wal_enable": true,
+  "wal_rotate_wm": 104857600,
+  "wal_sync_on_rotate": true,
+  "wal_sync_on_write": false,
+  "ssn": 0,
+  "lsn": 0,
+  "psn": 0,
+  "events_written": 0,
+  "events_written_bytes": 0
+}
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 files
 wal
 config.json
@@ -62,80 +74,116 @@ c14fb1d4-d1f7-5bf1-f256-4ad89bc47379
 # test: create storage
 create storage test (sync false)
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: close/open
 close
 init
 open
 # test: ensure storage exists
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: alter storage
 alter storage test set (compression 'zstd')
 # test: close/open
@@ -144,177 +192,263 @@ init
 open
 # test: validate storage settings
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                false
-  crc                 false
-  compression         zstd
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "zstd",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: alter storage rename
 alter storage test rename to test2
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test2
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                false
-  crc                 false
-  compression         zstd
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test2": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test2",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "zstd",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: close/open
 close
 init
 open
 # test: validate storage settings
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test2
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                false
-  crc                 false
-  compression         zstd
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test2": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test2",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "zstd",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: drop storage
 drop storage test2
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: close/open
 close
 init
 open
 # test: ensure storage does not exists
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: create cloud
 create cloud mock (type 'mock')
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 # test: close/open
 close
 init
 open
 # test: ensure cloud exists
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 # test: alter cloud
 alter cloud mock set (url 'localhost')
 # test: close/open
@@ -323,189 +457,295 @@ init
 open
 # test: validate cloud settings
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   'localhost'
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "localhost",
+    "debug": false
+  }
+}
 # test: alter cloud rename
 alter cloud mock rename to mock2
 show clouds
-mock2
-  type  'mock'
-  login ''
-  url   'localhost'
+{
+  "mock2": {
+    "name": "mock2",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "localhost",
+    "debug": false
+  }
+}
 # test: close/open
 close
 init
 open
 # test: validate storage settings
 show clouds
-mock2
-  type  'mock'
-  login ''
-  url   'localhost'
+{
+  "mock2": {
+    "name": "mock2",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "localhost",
+    "debug": false
+  }
+}
 # test: drop cloud
 drop cloud mock2
 show clouds
+{
+}
 # test: close/open
 close
 init
 open
 # test: ensure cloud does not exists
 show clouds
+{
+}
 # test: create storage with cloud
 create cloud mock (type 'mock')
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 create storage test (cloud 'mock', sync false)
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               'mock'
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "mock",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: close/open
 close
 init
 open
 # test: ensure storage exists
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               'mock'
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "mock",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: drop storage
 drop storage test
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: close/open
 close
 init
 open
 # test: ensure storage does not exists
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: alter set pipeline
 alter pipeline set main (partitions 0)
 show pipeline
-main (partitions 0)
+[{
+  "name": "main",
+  "partitions": 0,
+  "size": -1,
+  "events": -1,
+  "interval": -1
+}]
 # test: close/open
 close
 init
 open
 # test: ensure pipeline settings remain
 show pipeline
-main (partitions 0)
+[{
+  "name": "main",
+  "partitions": 0,
+  "size": -1,
+  "events": -1,
+  "interval": -1
+}]
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 close

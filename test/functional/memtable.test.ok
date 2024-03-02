@@ -6,21 +6,21 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: insert
 show partitions verbose
-main
+[]
 insert 1
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: cursor (no key)
 cursor c
 read c
@@ -71,18 +71,18 @@ insert 2
 insert 3
 insert 5
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  5 / 65
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 5,
+  "events_heap": 5,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select (no key)
 select
 [0]
@@ -118,18 +118,18 @@ select 12
 insert 0 x
 insert 3 x
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  5 / 67
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 5,
+  "events_heap": 5,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select
 select
 [0, x]
@@ -159,18 +159,18 @@ cursor c 2
 insert 2 y
 cursor_close c
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  5 / 68
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 5,
+  "events_heap": 5,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select
 select
 [0, x]
@@ -198,18 +198,18 @@ select 3
 # test: delete by key (open case)
 delete 0
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  5 / 67
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 5,
+  "events_heap": 5,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select
 select
 [1]
@@ -220,18 +220,18 @@ select
 # test: delete by key
 delete 3
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  5 / 66
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 5,
+  "events_heap": 5,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: select
 select
 [1]
@@ -289,18 +289,18 @@ insert 1
 insert 2
 insert 4
 show partitions verbose
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  3 / 39
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 3,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main"
+}]
 # test: cursor
 cursor c 2
 read c

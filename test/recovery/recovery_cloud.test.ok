@@ -7,10 +7,16 @@ open
 # test: alter storage set cloud
 create cloud mock (type 'mock')
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 alter storage main set (cloud 'mock', sync false)
 # test: create partition
 insert 0
@@ -19,32 +25,27 @@ insert 2
 insert 3
 refresh partition 0
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        92
-      size_regions_origin 92
-      regions             1
-      events              4
-      lsn                 4
-      compression         0
-      region
-        min             0
-        max             3
-        events          4
-        offset          0
-        size            92
+[{
+  "min": 0,
+  "max": 10,
+  "events": 4,
+  "events_heap": 0,
+  "size": 251,
+  "size_uncompressed": 251,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 92,
+    "size_regions_origin": 92,
+    "regions": 1,
+    "events": 4,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
 mock
@@ -65,32 +66,27 @@ files 00000000-0000-0000-0000-000000000000
 mock
 # test: validate partition
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        92
-      size_regions_origin 92
-      regions             1
-      events              4
-      lsn                 4
-      compression         0
-      region
-        min             0
-        max             3
-        events          4
-        offset          0
-        size            92
+[{
+  "min": 0,
+  "max": 10,
+  "events": 4,
+  "events_heap": 0,
+  "size": 251,
+  "size_uncompressed": 251,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 92,
+    "size_regions_origin": 92,
+    "regions": 1,
+    "events": 4,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 select
 [0]
 [1]
@@ -100,32 +96,27 @@ select
 # test: download
 download partition 0
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        259
-    index
-      size                159
-      size_regions        92
-      size_regions_origin 92
-      regions             1
-      events              4
-      lsn                 4
-      compression         0
-      region
-        min             0
-        max             3
-        events          4
-        offset          0
-        size            92
+[{
+  "min": 0,
+  "max": 10,
+  "events": 4,
+  "events_heap": 0,
+  "size": 251,
+  "size_uncompressed": 251,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 92,
+    "size_regions_origin": 92,
+    "regions": 1,
+    "events": 4,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 # test: close/open
 close
 init
@@ -138,32 +129,27 @@ files 00000000-0000-0000-0000-000000000000
 mock
 # test: validate partition
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        259
-    index
-      size                159
-      size_regions        92
-      size_regions_origin 92
-      regions             1
-      events              4
-      lsn                 4
-      compression         0
-      region
-        min             0
-        max             3
-        events          4
-        offset          0
-        size            92
+[{
+  "min": 0,
+  "max": 10,
+  "events": 4,
+  "events_heap": 0,
+  "size": 251,
+  "size_uncompressed": 251,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 92,
+    "size_regions_origin": 92,
+    "regions": 1,
+    "events": 4,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 select
 [0]
 [1]
@@ -185,32 +171,27 @@ files 00000000-0000-0000-0000-000000000000
 mock
 # test: validate partition
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                160
-      size_regions        94
-      size_regions_origin 94
-      regions             1
-      events              4
-      lsn                 6
-      compression         0
-      region
-        min             0
-        max             3
-        events          4
-        offset          0
-        size            94
+[{
+  "min": 0,
+  "max": 10,
+  "events": 4,
+  "events_heap": 0,
+  "size": 254,
+  "size_uncompressed": 254,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 160,
+    "size_regions": 94,
+    "size_regions_origin": 94,
+    "regions": 1,
+    "events": 4,
+    "lsn": 6,
+    "compression": 0
+  }
+}]
 select
 [0]
 [1]

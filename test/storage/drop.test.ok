@@ -23,127 +23,137 @@ insert 0
 insert 1
 insert 2
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  3 / 39
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 3,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
 # test: drop
 drop partition 0
 show partitions debug
-main
+[]
 # test: create partition
 insert 0
 insert 1
 insert 2
 refresh partition 0
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 7
-      compression         0
-      region
-        min             0
-        max             2
-        events          3
-        offset          0
-        size            75
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 7,
+    "compression": 0
+  }
+}]
 # test: drop #2
 drop partition 0
 show partitions debug
-main
+[]
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 # test: create partitions
 insert 10
 insert 20
 insert 30
 insert 40
 show partitions debug
-main
-  10
-    min         10
-    max         20
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  30
-    min         30
-    max         40
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  40
-    min         40
-    max         50
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 50,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
 # test: drop partitions parsing
 drop partitions
 error: DROP PARTITIONS <FROM> min TO max
@@ -162,96 +172,120 @@ error: DROP PARTITIONS FROM min TO <max>
 # test: drop partitions
 drop partitions from 0 to 50
 show partitions debug
-main
+[]
 # test: drop partitions (gap)
 insert 100
 insert 200
 insert 300
 insert 400
 show partitions debug
-main
-  100
-    min         100
-    max         110
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  200
-    min         200
-    max         210
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  300
-    min         300
-    max         310
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  400
-    min         400
-    max         410
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 100,
+  "max": 110,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 200,
+  "max": 210,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 300,
+  "max": 310,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 400,
+  "max": 410,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
 show storages debug
-main
-  min                 100
-  max                 410
-  partitions          4
-  partitions_cloud    0
-  events              4
-  events_heap         4
-  size                0M
-  size_uncompressed   0M
-  size_heap           8M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 100,
+      "max": 410,
+      "partitions": 4,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 4,
+      "events_heap": 4,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 8388608
+    }
+  }
+}
 # test: drop partitions
 drop partitions from 0 to 500
 show partitions debug
-main
+[]
 show storages debug
-main
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 close

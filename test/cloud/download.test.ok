@@ -30,124 +30,152 @@ download partition 0 if cloud
 # test: create storage with cloud
 create cloud mock (type 'mock')
 show clouds
-mock
-  type  'mock'
-  login ''
-  url   ''
+{
+  "mock": {
+    "name": "mock",
+    "type": "mock",
+    "login": "",
+    "password": "(secret)",
+    "url": "",
+    "debug": false
+  }
+}
 create storage test (cloud 'mock', sync false)
 show storages debug
-main
-  min                 0
-  max                 10
-  partitions          1
-  partitions_cloud    0
-  events              1
-  events_heap         1
-  size                0M
-  size_uncompressed   0M
-  size_heap           2M
-  path                ''
-  cloud               ''
-  sync                true
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
-test
-  min                 18446744073709551615
-  max                 0
-  partitions          0
-  partitions_cloud    0
-  events              0
-  events_heap         0
-  size                0M
-  size_uncompressed   0M
-  size_heap           0M
-  path                ''
-  cloud               'mock'
-  sync                false
-  crc                 false
-  compression         
-  refresh_wm          41943040
-  region_size         131072
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 1,
+      "events_heap": 1,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 2097152
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "mock",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
 alter pipeline set test
 # test: create partitions
 insert 10
 insert 20
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 # test: download (no files)
 download partition 10
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 select
 [0]
 [10]
@@ -156,55 +184,51 @@ select
 # test: refresh (create and upload)
 refresh partition 10
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 select
 [0]
 [10]
@@ -213,55 +237,51 @@ select
 # test: download
 download partition 10
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 select
 [0]
 [10]
@@ -270,55 +290,51 @@ select
 # test: download (already exists)
 download partition 10
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 select
 [0]
 [10]
@@ -327,55 +343,51 @@ select
 # test: drop from storage
 drop partition 10 on storage
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 select
 [0]
 [10]
@@ -384,55 +396,51 @@ select
 # test: download #2
 download partition 10
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "test",
+  "index": null
+}]
 select
 [0]
 [10]
@@ -463,201 +471,171 @@ error: unexpected clause at the end of command
 refresh partition 10
 refresh partition 20
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 4
-      compression         0
-      region
-        min             20
-        max             20
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 drop partition 10 on storage
 drop partition 20 on storage
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  no
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        0
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 4
-      compression         0
-      region
-        min             20
-        max             20
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 # test: download partitions
 download partitions from 10 to 30
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  1 / 13
-    memtable_b  0 / 0
-    file        0
-test
-  10
-    min         10
-    max         20
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 3
-      compression         0
-      region
-        min             10
-        max             10
-        events          1
-        offset          0
-        size            41
-  20
-    min         20
-    max         30
-    storage     test
-    cloud       mock
-    refresh     no
-    on storage  yes
-    on cloud    yes
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        208
-    index
-      size                159
-      size_regions        41
-      size_regions_origin 41
-      regions             1
-      events              1
-      lsn                 4
-      compression         0
-      region
-        min             20
-        max             20
-        events          1
-        offset          0
-        size            41
+[{
+  "min": 0,
+  "max": 10,
+  "events": 1,
+  "events_heap": 1,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 4,
+    "compression": 0
+  }
+}]
 select
 [0]
 [10]

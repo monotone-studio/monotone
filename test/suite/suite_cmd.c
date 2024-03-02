@@ -507,7 +507,7 @@ test_suite_cmd(TestSuite* self, char* query)
 	{
 		if (result)
 		{
-			test_log(self, "%s", result);
+			test_log(self, "%s\n", result);
 			free(result);
 		}
 	}

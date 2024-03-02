@@ -9,18 +9,19 @@ insert 0
 insert 1
 insert 3
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  no
-    on cloud    no
-    memtable_a  3 / 39
-    memtable_b  0 / 0
-    file        0
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 3,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
 refresh partition 0
 select
 [0]
@@ -30,61 +31,51 @@ select
 # test: alter storage set compression
 alter storage main set (compression 'zstd')
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-      region
-        min             0
-        max             3
-        events          3
-        offset          0
-        size            75
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
+}]
 # test: refresh (compress)
 refresh partition 0
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        202
-    index
-      size                159
-      size_regions        35
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         1
-      region
-        min             0
-        max             3
-        events          3
-        offset          0
-        size            35
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 194,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 35,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 1
+  }
+}]
 select
 [0]
 [1]
@@ -93,61 +84,51 @@ select
 # test: alter storage set compression, crc
 alter storage main set (compression 'zstd', crc true)
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        202
-    index
-      size                159
-      size_regions        35
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         1
-      region
-        min             0
-        max             3
-        events          3
-        offset          0
-        size            35
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 194,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 35,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 1
+  }
+}]
 # test: refresh
 refresh partition 0
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        202
-    index
-      size                159
-      size_regions        35
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         1
-      region
-        min             0
-        max             3
-        events          3
-        offset          0
-        size            35
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 194,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 35,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 1
+  }
+}]
 select
 [0]
 [1]
@@ -156,61 +137,51 @@ select
 # test: alter storage set crc
 alter storage main set (compression '', crc true)
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        202
-    index
-      size                159
-      size_regions        35
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         1
-      region
-        min             0
-        max             3
-        events          3
-        offset          0
-        size            35
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 194,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 35,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 1
+  }
+}]
 # test: refresh
 refresh partition 0
 show partitions debug
-main
-  0
-    min         0
-    max         10
-    storage     main
-    cloud       
-    refresh     no
-    on storage  yes
-    on cloud    no
-    memtable_a  0 / 0
-    memtable_b  0 / 0
-    file        242
-    index
-      size                159
-      size_regions        75
-      size_regions_origin 75
-      regions             1
-      events              3
-      lsn                 3
-      compression         0
-      region
-        min             0
-        max             3
-        events          3
-        offset          0
-        size            75
+[{
+  "min": 0,
+  "max": 10,
+  "events": 3,
+  "events_heap": 0,
+  "size": 234,
+  "size_uncompressed": 234,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 159,
+    "size_regions": 75,
+    "size_regions_origin": 75,
+    "regions": 1,
+    "events": 3,
+    "lsn": 3,
+    "compression": 0
+  }
+}]
 select
 [0]
 [1]
