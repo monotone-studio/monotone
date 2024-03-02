@@ -14,7 +14,7 @@ Made to match following requirements:
   - Read events serially or by time as fast as possible
   - Efficiently store and manage large volumes of data using partitions
   - Efficiently compress data
-  - Transparently update partitions or recompress data without blocking writers and readers
+  - Transparently update partitions or recompress data without blocking readers and writers
   - Extend disk space without downtime by plugging additional storages
   - Transparently work on top of S3
   - Understand Hot and Cold data patterns
