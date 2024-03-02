@@ -144,7 +144,7 @@ cloud_config_read(uint8_t** pos)
 }
 
 static inline void
-cloud_config_write(CloudConfig* self, Buf* buf)
+cloud_config_write(CloudConfig* self, Buf* buf, bool safe)
 {
 	// map
 	encode_map(buf, 6);
@@ -162,8 +162,15 @@ cloud_config_write(CloudConfig* self, Buf* buf)
 	encode_string(buf, &self->login);
 
 	// password
-	encode_raw(buf, "password", 8);
-	encode_string(buf, &self->password);
+	if (! safe)
+	{
+		encode_raw(buf, "password", 8);
+		encode_string(buf, &self->password);
+	} else
+	{
+		encode_raw(buf, "password", 8);
+		encode_cstr(buf, "(secret)");
+	}
 
 	// url
 	encode_raw(buf, "url", 3);

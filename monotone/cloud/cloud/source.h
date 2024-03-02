@@ -187,16 +187,22 @@ source_read(uint8_t** pos)
 }
 
 static inline void
-source_write(Source* self, Buf* buf)
+source_write(Source* self, Buf* buf, bool debug)
 {
 	// map
 	encode_map(buf, 9);
 
 	// uuid
 	encode_raw(buf, "uuid", 4);
-	char uuid[UUID_SZ];
-	uuid_to_string(&self->uuid, uuid, sizeof(uuid));
-	encode_raw(buf, uuid, sizeof(uuid) - 1);
+	if (! debug)
+	{
+		char uuid[UUID_SZ];
+		uuid_to_string(&self->uuid, uuid, sizeof(uuid));
+		encode_raw(buf, uuid, sizeof(uuid) - 1);
+	} else
+	{
+		encode_raw(buf, "(filtered)", 10);
+	}
 
 	// name
 	encode_raw(buf, "name", 4);

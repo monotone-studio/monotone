@@ -51,7 +51,7 @@ cloud_mgr_save(CloudMgr* self)
 	list_foreach(&self->list)
 	{
 		auto cloud = list_at(Cloud, link);
-		cloud_config_write(cloud->config, &buf);
+		cloud_config_write(cloud->config, &buf, false);
 	}
 
 	// update state
@@ -184,10 +184,13 @@ cloud_mgr_show(CloudMgr* self, Str* name, Buf* buf)
 {
 	if (name == NULL)
 	{
+		// {}
+		encode_map(buf, self->list_count);
 		list_foreach(&self->list)
 		{
 			auto cloud = list_at(Cloud, link);
-			cloud_show(cloud, buf);
+			encode_string(buf, &cloud->config->name);
+			cloud_config_write(cloud->config, buf, true);
 		}
 		return;
 	}
@@ -199,7 +202,7 @@ cloud_mgr_show(CloudMgr* self, Str* name, Buf* buf)
 		      str_of(name));
 		return;
 	}
-	cloud_show(cloud, buf);
+	cloud_config_write(cloud->config, buf, true);
 }
 
 Cloud*
