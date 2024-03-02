@@ -29,13 +29,27 @@ parse_show(Lex* self)
 	case KWAL:
 		type = SHOW_WAL;
 		break;
+	case KCLOUD:
+		// show cloud storage
+		if (! lex_if(self, KNAME, &tk))
+			error("SHOW CLOUD <name> expected");
+		type = SHOW_CLOUDS;
+		break;
 	case KCLOUDS:
 		type = SHOW_CLOUDS;
+		break;
+	case KSTORAGE:
+		// show storage storage
+		if (! lex_if(self, KNAME, &tk))
+			error("SHOW STORAGE <name> expected");
+		type = SHOW_STORAGES;
 		break;
 	case KSTORAGES:
 		type = SHOW_STORAGES;
 		break;
 	case KPARTITIONS:
+		// show partitions [storage]
+		lex_if(self, KNAME, &tk);
 		type = SHOW_PARTITIONS;
 		break;
 	case KPIPELINE:
@@ -51,13 +65,10 @@ parse_show(Lex* self)
 		error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITIONS | PIPELINE | ALL | NAME>");
 	}
 
-	// [verbose]
-	bool verbose = lex_if(self, KVERBOSE, NULL);
-
 	// [debug]
 	bool debug = lex_if(self, KDEBUG, NULL);
 
-	return &cmd_show_allocate(type, &tk, verbose, debug)->cmd;
+	return &cmd_show_allocate(type, &tk, debug)->cmd;
 }
 
 Cmd*

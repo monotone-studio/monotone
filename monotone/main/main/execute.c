@@ -33,16 +33,31 @@ execute_show(Executable* self)
 		wal_show(&self->main->wal, &buf);
 		break;
 	case SHOW_CLOUDS:
-		cloud_mgr_show(&self->main->cloud_mgr, NULL, &buf);
+	{
+		Str* name = NULL;
+		if (cmd->name.id == KNAME)
+			name = &cmd->name.string;
+		cloud_mgr_show(&self->main->cloud_mgr, name, &buf);
 		break;
+	}
 	case SHOW_STORAGES:
+	{
+		Str* storage = NULL;
+		if (cmd->name.id == KNAME)
+			storage = &cmd->name.string;
 		engine_show(&self->main->engine, ENGINE_SHOW_STORAGES,
-		            NULL, &buf, cmd->debug);
+		            storage, &buf, cmd->debug);
 		break;
+	}
 	case SHOW_PARTITIONS:
+	{
+		Str* storage = NULL;
+		if (cmd->name.id == KNAME)
+			storage = &cmd->name.string;
 		engine_show(&self->main->engine, ENGINE_SHOW_PARTITIONS,
-		            NULL, &buf, cmd->debug);
+		            storage, &buf, cmd->debug);
 		break;
+	}
 	case SHOW_PIPELINE:
 		pipeline_show(&self->main->engine.pipeline, &buf);
 		break;

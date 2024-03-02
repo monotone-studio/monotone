@@ -32,6 +32,7 @@ create storage test (sync false, sync false) junk
 
 # test: create storage (no options)
 create storage test
+show storage test debug
 show storages debug
 
 # test: create storage (exists)

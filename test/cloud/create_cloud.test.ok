@@ -49,6 +49,15 @@ show clouds
 }
 # test: create cloud
 create cloud test (type 'mock')
+show cloud test
+{
+  "name": "test",
+  "type": "mock",
+  "login": "",
+  "password": "(secret)",
+  "url": "",
+  "debug": false
+}
 show clouds
 {
   "test": {

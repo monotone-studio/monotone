@@ -21,7 +21,7 @@ engine_show_storages(Engine* self, Storage* storage,
 {
 	if (storage)
 	{
-		storage_stats_show(storage, buf, debug);
+		storage_show(storage, buf, debug);
 		return;
 	}
 	storage_mgr_show(&self->storage_mgr, buf, debug);
