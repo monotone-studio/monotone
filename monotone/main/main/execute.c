@@ -21,30 +21,33 @@ execute_show(Executable* self)
 {
 	auto cmd = cmd_show_of(self->cmd);
 
+	Buf buf;
+	buf_init(&buf);
+	guard(guard, buf_free, &buf);
+
 	switch (cmd->type) {
 	case SHOW_MEMORY:
-		memory_mgr_show(&self->main->memory_mgr, self->output);
+		memory_mgr_show(&self->main->memory_mgr, &buf);
 		break;
 	case SHOW_WAL:
-		wal_show(&self->main->wal, self->output);
+		wal_show(&self->main->wal, &buf);
 		break;
 	case SHOW_CLOUDS:
-		cloud_mgr_show(&self->main->cloud_mgr, NULL, self->output);
+		cloud_mgr_show(&self->main->cloud_mgr, NULL, &buf);
 		break;
 	case SHOW_STORAGES:
-		storage_mgr_show(&self->main->engine.storage_mgr, NULL,
-		                  self->output, cmd->debug);
+		engine_show(&self->main->engine, ENGINE_SHOW_STORAGES,
+		            NULL, &buf, cmd->debug);
 		break;
 	case SHOW_PARTITIONS:
-		storage_mgr_show_partitions(&self->main->engine.storage_mgr, NULL,
-		                            self->output,
-		                            cmd->verbose, cmd->debug);
+		engine_show(&self->main->engine, ENGINE_SHOW_PARTITIONS,
+		            NULL, &buf, cmd->debug);
 		break;
 	case SHOW_PIPELINE:
-		pipeline_print(&self->main->engine.pipeline, self->output);
+		pipeline_show(&self->main->engine.pipeline, &buf);
 		break;
 	case SHOW_ALL:
-		config_print(config(), self->output);
+		config_show(config(), &buf);
 		break;
 	case SHOW_NAME:
 	{
@@ -55,10 +58,13 @@ execute_show(Executable* self)
 		if (unlikely(var == NULL))
 			error("SHOW name: '%.*s' not found", str_size(&cmd->name.string),
 			      str_of(&cmd->name.string));
-		var_print_value(var, self->output);
+		var_encode(var, &buf);
 		break;
 	}
 	}
+
+	uint8_t* pos = buf.start;
+	json_export_pretty(self->output, &pos);
 }
 
 static void
@@ -450,30 +456,30 @@ execute_partition_upload_range(Executable* self)
 
 static Execute cmds[CMD_MAX] =
 {
-	{ NULL,                             false },
-	{ execute_show,                     true  },
-	{ execute_set,                      true  },
-	{ execute_debug,                    false },
-	{ execute_checkpoint,               false },
-	{ execute_service,                  false },
-	{ execute_rebalance,                false },
-	{ execute_cloud_create,             true  },
-	{ execute_cloud_drop,               true  },
-	{ execute_cloud_alter,              true  },
-	{ execute_storage_create,           true  },
-	{ execute_storage_drop,             true  },
-	{ execute_storage_alter,            true  },
-	{ execute_pipeline_alter,           true  },
-	{ execute_partition_drop,           false },
-	{ execute_partition_drop_range,     false },
-	{ execute_partition_move,           false },
-	{ execute_partition_move_range,     false },
-	{ execute_partition_refresh,        false },
-	{ execute_partition_refresh_range,  false },
-	{ execute_partition_download,       false },
-	{ execute_partition_download_range, false },
-	{ execute_partition_upload,         false },
-	{ execute_partition_upload_range,   false }
+	{ NULL,                             EXECUTE_LOCK_NONE       },
+	{ execute_show,                     EXECUTE_LOCK_SHARED     },
+	{ execute_set,                      EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_debug,                    EXECUTE_LOCK_NONE       },
+	{ execute_checkpoint,               EXECUTE_LOCK_NONE       },
+	{ execute_service,                  EXECUTE_LOCK_NONE       },
+	{ execute_rebalance,                EXECUTE_LOCK_NONE       },
+	{ execute_cloud_create,             EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_cloud_drop,               EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_cloud_alter,              EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_storage_create,           EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_storage_drop,             EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_storage_alter,            EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_pipeline_alter,           EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_partition_drop,           EXECUTE_LOCK_NONE       },
+	{ execute_partition_drop_range,     EXECUTE_LOCK_NONE       },
+	{ execute_partition_move,           EXECUTE_LOCK_NONE       },
+	{ execute_partition_move_range,     EXECUTE_LOCK_NONE       },
+	{ execute_partition_refresh,        EXECUTE_LOCK_NONE       },
+	{ execute_partition_refresh_range,  EXECUTE_LOCK_NONE       },
+	{ execute_partition_download,       EXECUTE_LOCK_NONE       },
+	{ execute_partition_download_range, EXECUTE_LOCK_NONE       },
+	{ execute_partition_upload,         EXECUTE_LOCK_NONE       },
+	{ execute_partition_upload_range,   EXECUTE_LOCK_NONE       }
 };
 
 void
@@ -492,8 +498,16 @@ main_execute(Main* self, const char* command, char** result)
 
 	// prepare for execution
 	auto execute = &cmds[cmd->type];
-	if (execute->lock)
+	switch (execute->lock) {
+	case EXECUTE_LOCK_NONE:
+		break;
+	case EXECUTE_LOCK_SHARED:
+		control_lock_shared();
+		break;
+	case EXECUTE_LOCK_EXCLUSIVE:
 		control_lock_exclusive();
+		break;
+	}
 
 	Buf output;
 	buf_init(&output);
@@ -512,7 +526,7 @@ main_execute(Main* self, const char* command, char** result)
 		execute->function(&arg);
 	}
 
-	if (execute->lock)
+	if (execute->lock != EXECUTE_LOCK_NONE)
 		control_unlock();
 	cmd_free(cmd);
 

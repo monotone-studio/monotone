@@ -11,10 +11,17 @@ typedef struct Executable Executable;
 
 typedef void (*ExecuteFunction)(Executable*);
 
+enum
+{
+	EXECUTE_LOCK_NONE,
+	EXECUTE_LOCK_SHARED,
+	EXECUTE_LOCK_EXCLUSIVE,
+};
+
 struct Execute
 {
 	ExecuteFunction function;
-	bool            lock;
+	int             lock;
 };
 
 struct Executable

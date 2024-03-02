@@ -200,7 +200,7 @@ main_start(Main* self, const char* directory)
 	log("");
 	log("monotone.");
 	log("");
-	config_print_log(config());
+	config_print(config());
 	log("");
 
 	// unset comparator for serial mode
