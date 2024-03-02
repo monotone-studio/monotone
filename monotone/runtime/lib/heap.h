@@ -12,7 +12,7 @@ struct Heap
 {
 	Page*      list;
 	Page*      list_tail;
-	int        list_count;
+	atomic_u32 list_count;
 	MemoryMgr* memory_mgr;
 };
 
@@ -28,20 +28,22 @@ heap_init(Heap* self, MemoryMgr* memory_mgr)
 static inline void
 heap_reset(Heap* self)
 {
-	if (self->list_count > 0)
+	uint32_t count = atomic_u32_of(&self->list_count);
+	if (count > 0)
 		memory_mgr_push_list(self->memory_mgr,
 		                     self->list,
 		                     self->list_tail,
-		                     self->list_count);
-	self->list       = NULL;
-	self->list_tail  = NULL;
-	self->list_count = 0;
+		                     count);
+	self->list      = NULL;
+	self->list_tail = NULL;
+	atomic_u32_set(&self->list_count, 0);
 }
 
 static inline size_t
 heap_used(Heap* self)
 {
-	return self->list_count * (self->memory_mgr->page_size + sizeof(Page));
+	uint32_t count = atomic_u32_of(&self->list_count);
+	return count * (self->memory_mgr->page_size + sizeof(Page));
 }
 
 hot static inline void*
@@ -59,7 +61,7 @@ heap_allocate(Heap* self, int size)
 		else
 			self->list_tail->next = page;
 		self->list_tail = page;
-		self->list_count++;
+		atomic_u32_inc(&self->list_count);
 	} else {
 		page = self->list_tail;
 	}
