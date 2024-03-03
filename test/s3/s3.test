@@ -25,34 +25,34 @@ alter pipeline set test
 insert 0
 insert 1
 insert 2
-show partitions verbose
+show partitions debug
 show storages
 select
 
 # test: refresh (upload)
 refresh partition 0
-show partitions verbose
+show partitions debug
 
 # test: select (from cloud)
 select
 
 # test: download
 download partition 0
-show partitions verbose
+show partitions debug
 
 # test: select (from storage, still on cloud)
 select
 
 # test: upload
 upload partition 0
-show partitions verbose
+show partitions debug
 
 # test: select (from cloud)
 select
 
 # test: drop from cloud
 drop partition 0 on cloud
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -63,7 +63,7 @@ insert 2 yy
 
 # test: refresh (upload)
 refresh partition 0
-show partitions verbose
+show partitions debug
 
 # test: select (from cloud)
 select
@@ -78,11 +78,11 @@ insert 60
 insert 70
 insert 80
 insert 90
-show partitions verbose
+show partitions debug
 
 # test: refresh partitions
 refresh partitions from 0 to 100
-show partitions verbose
+show partitions debug
 
 # test: update partitions
 insert 11
@@ -94,11 +94,11 @@ insert 61
 insert 71
 insert 81
 insert 91
-show partitions verbose
+show partitions debug
 
 # test: refresh partitions #2
 refresh partitions from 0 to 100
-show partitions verbose
+show partitions debug
 
 # test: select
 select
@@ -115,7 +115,7 @@ open
 # test: validate
 show clouds
 show storages
-show partitions verbose
+show partitions debug
 select
 
 # test: drop storage (has partitions)
