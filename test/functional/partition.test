@@ -267,6 +267,22 @@ show partitions debug
 # test: select (regions)
 select
 
+# test: delete all
+delete 1
+delete 2
+delete 3
+delete 4
+
+# test: select
+select
+
+# test: refresh (empty partition file)
+refresh partition 0
+show partitions debug
+
+# test: select
+select
+
 drop partition 0
 select
 
