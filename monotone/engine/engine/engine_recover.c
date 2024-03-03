@@ -90,7 +90,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 			Id id =
 			{
 				.min = min,
-				.max = min + config_interval(),
+				.max = 0,
 				.psn = 0
 			};
 			part = part_allocate(self->comparator, storage->source, &id);
@@ -223,13 +223,14 @@ engine_recover(Engine* self)
 			else
 				abort();
 
+			// sync metrics
+			part->id = part->index->id;
+
 			// add metrics after open
 			storage_add_metrics(storage, part);
 
-			// sync metrics
 			config_lsn_follow(part->index->lsn);
-			config_psn_follow(part->index->id.psn);
-			part->id.psn = part->index->id.psn;
+			config_psn_follow(part->id.psn);
 
 			// register partition reference
 			auto ref = ref_allocate(part->id.min, part->id.max);
