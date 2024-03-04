@@ -32,12 +32,6 @@ event_size(Event* self)
 	return sizeof(Event) + self->data_size;
 }
 
-always_inline hot static inline uint64_t
-event_interval_min(Event* self)
-{
-	return self->id - (self->id % config_interval());
-}
-
 hot static inline void
 event_init(Event* self, EventArg* arg)
 {

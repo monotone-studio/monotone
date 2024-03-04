@@ -121,34 +121,39 @@ mapping_prev(Mapping* self, Slice* slice)
 }
 
 hot static inline Slice*
-mapping_seek(Mapping* self, uint64_t min)
+mapping_seek(Mapping* self, uint64_t id)
 {
-	// slice[n].min >= key && key < slice[n + 1].min
+	// slice[n].min >= id && key < slice[n + 1].id
 	RbtreeNode* node = NULL;
-	mapping_find(&self->tree, NULL, &min, &node);
+	int rc = mapping_find(&self->tree, NULL, &id, &node);
 	assert(node != NULL);
+	if (rc > 0) {
+		auto prev = rbtree_prev(&self->tree, node);
+		if (prev)
+			node = prev;
+	}
 	return mapping_of(node);
 }
 
 hot static inline Slice*
-mapping_gte(Mapping* self, uint64_t min)
+mapping_gte(Mapping* self, uint64_t id)
 {
-	if (self->tree_count == 0)
+	if (unlikely(self->tree_count == 0))
 		return NULL;
-	auto slice = mapping_seek(self, min);
-	if (slice->max <= min)
+	auto slice = mapping_seek(self, id);
+	if (slice->max <= id)
 		return mapping_next(self, slice);
 	return slice;
 }
 
 hot static inline Slice*
-mapping_match(Mapping* self, uint64_t min)
+mapping_match(Mapping* self, uint64_t id)
 {
 	// exact match
-	if (self->tree_count == 0)
+	if (unlikely(self->tree_count == 0))
 		return NULL;
-	auto slice = mapping_seek(self, min);
-	if (slice_in(slice, min))
+	auto slice = mapping_seek(self, id);
+	if (slice_in(slice, id))
 		return slice;
 	return NULL;
 }
