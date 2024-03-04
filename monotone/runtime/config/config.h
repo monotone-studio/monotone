@@ -31,7 +31,6 @@ struct Config
 	// state
 	Var  ssn;
 	Var  lsn;
-	Var  psn;
 	Var  clouds;
 	Var  storages;
 	Var  pipeline;

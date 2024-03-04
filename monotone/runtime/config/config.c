@@ -94,7 +94,6 @@ config_prepare(Config* self)
 		// state
 		{ "ssn",                     VAR_INT,    VAR_E|VAR_R,          &self->ssn,                     NULL,        0                },
 		{ "lsn",                     VAR_INT,    VAR_E,                &self->lsn,                     NULL,        0                },
-		{ "psn",                     VAR_INT,    VAR_E,                &self->psn,                     NULL,        0                },
 		{ "clouds",                  VAR_DATA,   VAR_C|VAR_H,          &self->clouds,                  NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
 		{ "pipeline",                VAR_DATA,   VAR_C|VAR_H,          &self->pipeline,                NULL,        0                },
