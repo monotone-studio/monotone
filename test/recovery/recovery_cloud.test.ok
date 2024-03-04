@@ -28,6 +28,7 @@ show partitions debug
 [{
   "min": 0,
   "max": 10,
+  "created": "(filtered)",
   "events": 4,
   "events_heap": 0,
   "regions": 1,
@@ -70,6 +71,7 @@ show partitions debug
 [{
   "min": 0,
   "max": 10,
+  "created": "(filtered)",
   "events": 4,
   "events_heap": 0,
   "regions": 1,
@@ -101,6 +103,7 @@ show partitions debug
 [{
   "min": 0,
   "max": 10,
+  "created": "(filtered)",
   "events": 4,
   "events_heap": 0,
   "regions": 1,
@@ -135,6 +138,7 @@ show partitions debug
 [{
   "min": 0,
   "max": 10,
+  "created": "(filtered)",
   "events": 4,
   "events_heap": 0,
   "regions": 1,
@@ -178,6 +182,7 @@ show partitions debug
 [{
   "min": 0,
   "max": 10,
+  "created": "(filtered)",
   "events": 4,
   "events_heap": 0,
   "regions": 1,

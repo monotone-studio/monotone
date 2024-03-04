@@ -36,6 +36,9 @@
 #include "runtime/str.h"
 #include "runtime/buf.h"
 
+// clock
+#include "runtime/clock.h"
+
 // file io
 #include "runtime/iov.h"
 #include "runtime/vfs.h"
