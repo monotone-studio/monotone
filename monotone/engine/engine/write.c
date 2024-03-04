@@ -89,8 +89,7 @@ engine_write(Engine* self, EventArg* events, int count)
 			auto op = log_add(&log);
 
 			// find or create partition
-			uint64_t min = config_interval_of(arg->id);
-			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
+			auto ref = engine_lock(self, arg->id, LOCK_ACCESS, false, true);
 			op->ref = ref;
 			auto memtable = ref->part->memtable;
 
@@ -146,8 +145,7 @@ engine_write_replay(Engine* self, LogWrite* write)
 			auto op = log_add(&log);
 
 			// find or create partition
-			uint64_t min = config_interval_of(pos->id);
-			auto ref = engine_lock(self, min, LOCK_ACCESS, false, true);
+			auto ref = engine_lock(self, pos->id, LOCK_ACCESS, false, true);
 			auto part = ref->part;
 
 			// skip if partition is a newer then write lsn

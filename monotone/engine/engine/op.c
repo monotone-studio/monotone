@@ -15,6 +15,129 @@
 #include <monotone_engine.h>
 #include <malloc.h>
 
+static Slice*
+engine_create(Engine* self, uint64_t min, uint64_t max)
+{
+	// create new reference
+	auto ref = ref_allocate(min, max);
+	guard(guard, ref_free, ref);
+
+	// create new partition
+	Id id =
+	{
+		.min = min,
+		.max = max,
+		.psn = config_psn_next()
+	};
+	auto part = part_allocate(self->comparator, NULL, &id);
+	ref_prepare(ref, &self->lock, &self->cond_var, part);
+
+	// update mapping
+	mapping_add(&self->mapping, &ref->slice);
+
+	// match primary storage
+	Storage* storage = NULL;
+	Tier*    primary = pipeline_primary(&self->pipeline);
+	if (primary)
+	{
+		// first storage according to the pipeline order
+		storage = primary->storage;
+	} else
+	{
+		// pipeline is not set, using main storage
+		storage = storage_mgr_first(&self->storage_mgr);
+	}
+	storage_add(storage, part);
+	part->source = storage->source;
+	unguard(&guard);
+
+	// schedule rebalance
+	if (! pipeline_empty(&self->pipeline))
+		service_rebalance(self->service);
+
+	return &ref->slice;
+}
+
+void
+engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
+{
+	if (lock)
+	{
+		// take shared control lock to avoid exclusive operations
+		control_lock_shared();
+		guard(cglguard, control_unlock_guard, NULL);
+
+		mutex_lock(&self->lock);
+		guard(unlock, mutex_unlock, &self->lock);
+	}
+
+	// validate range
+	if (unlikely(min >= max))
+		error("fill: invalid partition interval");
+
+	// empty
+	if (unlikely(self->mapping.tree_count == 0))
+	{
+		engine_create(self, min, max);
+		return;
+	}
+
+	// create one or more partitions to fill gap between
+	// min and max range
+	typedef struct
+	{
+		uint64_t min;
+		uint64_t max;
+	} Gap;
+
+	Buf gaps;
+	buf_init(&gaps);
+	guard(guard, buf_free, &gaps);
+
+	auto slice = mapping_seek(&self->mapping, min);
+	while (min < max)
+	{
+		if (slice)
+		{
+			//       [....] slice
+			//  [....]
+			if (min < slice->min)
+			{
+				Gap gap;
+				gap.min = min;
+				if (max < slice->min)
+					gap.max = max;
+				else
+					gap.max = slice->min;
+				buf_write(&gaps, &gap, sizeof(gap));
+
+				min = slice->max;
+			} else
+			if (slice_in(slice, min))
+			{
+				min = slice->max;
+			}
+
+			slice = mapping_next(&self->mapping, slice);
+			continue;
+		}
+
+		Gap gap =
+		{
+			.min = min,
+			.max = max
+		};
+		buf_write(&gaps, &gap, sizeof(gap));
+		break;
+	}
+
+	// create partitions using gaps
+	auto pos = (Gap*)gaps.start;
+	auto end = (Gap*)gaps.position;
+	for (; pos < end; pos++)
+		engine_create(self, pos->min, pos->max);
+}
+
 static inline bool
 engine_foreach(Engine* self, uint64_t* min, uint64_t* min_next, uint64_t max)
 {

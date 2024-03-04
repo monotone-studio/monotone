@@ -7,6 +7,7 @@
 //
 
 // operations
+void engine_fill(Engine*, uint64_t, uint64_t, bool);
 void engine_drop(Engine*, uint64_t, bool, int);
 void engine_drop_range(Engine*, uint64_t, uint64_t, int);
 

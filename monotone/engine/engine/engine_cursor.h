@@ -41,8 +41,7 @@ engine_cursor_open(EngineCursor* self, Engine* engine, Event* key)
 	// find partition
 	uint64_t min = 0;
 	if (key)
-		min = event_interval_min(key);
-
+		min = key->id;
 	engine_cursor_open_part(self, min, key);
 
 	// partition found but cursor key set to > max
@@ -106,10 +105,11 @@ engine_cursor_next(EngineCursor* self)
 hot static inline void
 engine_cursor_skip_deletes(EngineCursor* self)
 {
-	for (;;)
+	// skip deletes and empty partitions
+	while (engine_cursor_has(self))
 	{
 		auto at = engine_cursor_at(self);
-		if (!at || !at->is_delete)
+		if (at && !at->is_delete)
 			break;
 		engine_cursor_next(self);
 	}

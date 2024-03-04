@@ -79,7 +79,7 @@ engine_set_serial(Engine* self)
 
 	bool     serial_set = false;
 	uint64_t serial = 0;
-	if (part->index)
+	if (part->index && part->index->regions > 0)
 	{
 		auto max = index_max(part->index);
 		serial = max->id;
@@ -99,55 +99,8 @@ engine_set_serial(Engine* self)
 	config_ssn_set(serial);
 }
 
-static Slice*
-engine_create(Engine* self, Slice* head, uint64_t min, uint64_t max)
-{
-	// create new reference
-	auto ref = ref_allocate(min, max);
-	guard(guard, ref_free, ref);
-
-	// create new partition
-	Id id =
-	{
-		.min = min,
-		.max = max,
-		.psn = config_psn_next()
-	};
-	auto part = part_allocate(self->comparator, NULL, &id);
-	ref_prepare(ref, &self->lock, &self->cond_var, part);
-
-	// update mapping
-	mapping_add(&self->mapping, &ref->slice);
-
-	// match primary storage
-	Storage* storage = NULL;
-	Tier*    primary = pipeline_primary(&self->pipeline);
-	if (primary)
-	{
-		// first storage according to the pipeline order
-		storage = primary->storage;
-	} else
-	{
-		// pipeline is not set, using main storage
-		storage = storage_mgr_first(&self->storage_mgr);
-	}
-	storage_add(storage, part);
-	part->source = storage->source;
-	unguard(&guard);
-
-	// schedule rebalance
-	if (! pipeline_empty(&self->pipeline))
-		service_rebalance(self->service);
-
-	// schedule refresh for previous head
-	if (head && head->min < min)
-		service_refresh(self->service, head->min);
-
-	return &ref->slice;
-}
-
 hot Ref*
-engine_lock(Engine* self, uint64_t min, LockType lock,
+engine_lock(Engine* self, uint64_t id, LockType lock,
             bool    gte,
             bool    create_if_not_exists)
 {
@@ -161,24 +114,35 @@ engine_lock(Engine* self, uint64_t min, LockType lock,
 	Slice* slice;
 	if (gte)
 	{
-		// find partition >= min
-		slice = mapping_gte(&self->mapping, min);
+		// find partition min >= id
+		slice = mapping_gte(&self->mapping, id);
 		if (! slice)
 			return NULL;
 	} else
 	{
 		// find partition = min
 		auto head = mapping_max(&self->mapping);
-		if (likely(head && slice_in(head, min)))
+		if (likely(head && slice_in(head, id)))
 			slice = head;
 		else
-			slice = mapping_match(&self->mapping, min);
+			slice = mapping_match(&self->mapping, id);
 		if (! slice)
 		{
 			if (! create_if_not_exists)
 				return NULL;
+
+			// create one or more partitions using default interval
+			auto min = config_interval_of(id);
 			auto max = min + config_interval();
-			slice = engine_create(self, head, min, max);
+			engine_fill(self, min, max, false);
+
+			// retry search
+			slice = mapping_match(&self->mapping, id);
+			assert(slice);
+
+			// schedule refresh for previous head
+			if (head && head->min < min)
+				service_refresh(self->service, head->min);
 		}
 	}
 
