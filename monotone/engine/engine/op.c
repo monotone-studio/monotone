@@ -26,10 +26,10 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	Id id =
 	{
 		.min = min,
-		.max = max,
-		.psn = config_psn_next()
+		.max = max
 	};
 	auto part = part_allocate(self->comparator, NULL, &id);
+	part_set_time(part, time_us());
 	ref_prepare(ref, &self->lock, &self->cond_var, part);
 
 	// update mapping
@@ -515,7 +515,7 @@ engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 	if (! engine_rebalance_tier_ready(tier))
 		return NULL;
 
-	// get oldest partition (by psn)
+	// get oldest partition (by time)
 	auto oldest = storage_oldest(tier->storage);
 
 	// schedule partition drop
