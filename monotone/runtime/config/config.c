@@ -84,7 +84,7 @@ config_prepare(Config* self)
 		{ "log_to_stdout",           VAR_BOOL,   VAR_C,                &self->log_to_stdout,           NULL,        false            },
 		// engine
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
-		{ "interval",                VAR_INT,    VAR_C,                &self->interval,                NULL,        3000000          },
+		{ "interval",                VAR_INT,    VAR_C|VAR_R,          &self->interval,                NULL,        3000000          },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
 		// wal
 		{ "wal_enable",              VAR_BOOL,   VAR_C,                &self->wal_enable,              NULL,        true             },
