@@ -1,0 +1,417 @@
+init
+set workers to 0
+set interval to 10
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+# test: create partition parsing
+create partition
+error: CREATE PARTITION <min> max
+create partition abc
+error: CREATE PARTITION <min> max
+# test: create partition (default interval)
+create partition 30
+show partitions debug
+[{
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (prev)
+create partition 20 30
+show partitions debug
+[{
+  "min": 20,
+  "max": 30,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (next)
+create partition 40 60
+show partitions debug
+[{
+  "min": 20,
+  "max": 30,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 60,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (gap)
+create partition 100 200
+show partitions debug
+[{
+  "min": 20,
+  "max": 30,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 60,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 100,
+  "max": 200,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: overlap (right)
+create partition 0 25
+show partitions debug
+[{
+  "min": 0,
+  "max": 20,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 60,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 100,
+  "max": 200,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: overlap (left)
+create partition 20 70
+show partitions debug
+[{
+  "min": 0,
+  "max": 20,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 60,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 100,
+  "max": 200,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: overlap (right)
+create partition 60 220
+show partitions debug
+[{
+  "min": 0,
+  "max": 20,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 60,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 60,
+  "max": 70,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 70,
+  "max": 100,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 100,
+  "max": 200,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 200,
+  "max": 220,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+close

@@ -1,0 +1,42 @@
+#
+
+init
+set workers to 0
+set interval to 10
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+
+# test: create partition parsing
+create partition
+create partition abc
+
+# test: create partition (default interval)
+create partition 30
+show partitions debug
+
+# test: create partition (prev)
+create partition 20 30
+show partitions debug
+
+# test: create partition (next)
+create partition 40 60
+show partitions debug
+
+# test: create partition (gap)
+create partition 100 200
+show partitions debug
+
+# test: overlap (right)
+create partition 0 25
+show partitions debug
+
+# test: overlap (left)
+create partition 20 70
+show partitions debug
+
+# test: overlap (right)
+create partition 60 220
+show partitions debug
+
+close
