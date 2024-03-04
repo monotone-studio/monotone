@@ -70,13 +70,14 @@ index_writer_start(IndexWriter* self, int compression_id, bool crc)
 }
 
 static inline void
-index_writer_stop(IndexWriter* self, Id* id, uint64_t lsn)
+index_writer_stop(IndexWriter* self, Id* id, uint64_t time, uint64_t lsn)
 {
 	// prepare header
 	auto header = index_writer_header(self);
 	header->compression = self->compression_id;
 	header->crc         = 0;
 	header->id          = *id;
+	header->time        = time;
 	header->lsn         = lsn;
 
 	// prepare eof marker
