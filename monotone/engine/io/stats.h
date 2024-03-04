@@ -129,9 +129,9 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 
 	// {}
 	if (debug)
-		encode_map(buf, 12);
+		encode_map(buf, 13);
 	else
-		encode_map(buf, 11);
+		encode_map(buf, 12);
 
 	// min
 	encode_raw(buf, "min", 3);
@@ -140,6 +140,13 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 	// max
 	encode_raw(buf, "max", 3);
 	encode_integer(buf, self->id.max);
+
+	// created
+	encode_raw(buf, "created", 7);
+	if (debug)
+		encode_raw(buf, "(filtered)", 10);
+	else
+		encode_integer(buf, self->time);
 
 	// events
 	encode_raw(buf, "events", 6);

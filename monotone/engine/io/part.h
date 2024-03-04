@@ -23,6 +23,7 @@ struct Part
 	Id          id;
 	bool        refresh;
 	int         state;
+	uint64_t    time;
 	Memtable*   memtable;
 	Memtable    memtable_a;
 	Memtable    memtable_b;
@@ -42,6 +43,7 @@ part_allocate(Comparator* comparator, Source* source, Id* id)
 	self->id         = *id;
 	self->refresh    = false;
 	self->state      = PART_NONE;
+	self->time       = 0;
 	self->index      = NULL;
 	self->cloud      = NULL;
 	self->source     = source;
@@ -81,6 +83,12 @@ static inline bool
 part_has(Part* self, int mask)
 {
 	return (self->state & mask) > 0;
+}
+
+static inline void
+part_set_time(Part* self, uint64_t time)
+{
+	self->time = time;
 }
 
 static inline void

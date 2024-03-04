@@ -71,12 +71,13 @@ merger_write(Merger* self, MergerReq* req)
 		merge_iterator_next(it);
 	}
 
-	uint64_t lsn_max = memtable->lsn_max;
-	if (origin->index && origin->index->lsn > lsn_max)
-		lsn_max = origin->index->lsn;
+	uint64_t lsn = memtable->lsn_max;
+	if (origin->index && origin->index->lsn > lsn)
+		lsn = origin->index->lsn;
 
 	auto id = &self->part->id;
-	writer_stop(writer, id, lsn_max, req->source->sync);
+	writer_stop(writer, id, self->part->time, lsn,
+	            req->source->sync);
 
 	// copy index to the partition
 	index_writer_copy(&self->writer.index_writer, &self->part->index_buf);
@@ -104,10 +105,10 @@ merger_execute(Merger* self, MergerReq* req)
 
 	// allocate and create incomplete partition file
 	Id id = origin->id;
-	id.psn = config_psn_next();
 	self->part = part_allocate(origin->comparator, req->source, &id);
 	part_create(self->part, PART_INCOMPLETE);
 	part_set(self->part, PART_INCOMPLETE);
+	part_set_time(self->part, time_us());
 
 	// write partition file
 	merger_write(self, req);
