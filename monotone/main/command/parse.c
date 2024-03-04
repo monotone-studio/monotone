@@ -61,14 +61,17 @@ parse(Lex* self)
 	}
 	case KCREATE:
 	{
-		// CREATE CLOUD | STORAGE
+		// CREATE CLOUD | STORAGE | PARTITION
 		if (lex_if(self, KCLOUD, NULL))
 			cmd = parse_cloud_create(self);
 		else
 		if (lex_if(self, KSTORAGE, NULL))
 			cmd = parse_storage_create(self);
 		else
-			error("CREATE <CLOUD|STORAGE> expected");
+		if (lex_if(self, KPARTITION, NULL))
+			cmd = parse_partition_create(self);
+		else
+			error("CREATE <CLOUD|STORAGE|PARTITION> expected");
 		break;
 	}
 	case KDROP:

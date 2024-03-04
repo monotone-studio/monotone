@@ -39,6 +39,7 @@ cmd_partition_allocate(CmdType type)
 	return self;
 }
 
+Cmd* parse_partition_create(Lex*);
 Cmd* parse_partition_drop(Lex*);
 Cmd* parse_partition_drop_range(Lex*);
 Cmd* parse_partition_move(Lex*);

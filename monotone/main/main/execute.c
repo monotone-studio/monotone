@@ -338,6 +338,15 @@ execute_pipeline_alter(Executable* self)
 }
 
 static void
+execute_partition_create(Executable* self)
+{
+	auto cmd = cmd_partition_of(self->cmd);
+
+	// create one or more partitions
+	engine_fill(&self->main->engine, cmd->min, cmd->max, true);
+}
+
+static void
 execute_partition_drop(Executable* self)
 {
 	auto cmd = cmd_partition_of(self->cmd);
@@ -485,6 +494,7 @@ static Execute cmds[CMD_MAX] =
 	{ execute_storage_drop,             EXECUTE_LOCK_EXCLUSIVE  },
 	{ execute_storage_alter,            EXECUTE_LOCK_EXCLUSIVE  },
 	{ execute_pipeline_alter,           EXECUTE_LOCK_EXCLUSIVE  },
+	{ execute_partition_create,         EXECUTE_LOCK_NONE       },
 	{ execute_partition_drop,           EXECUTE_LOCK_NONE       },
 	{ execute_partition_drop_range,     EXECUTE_LOCK_NONE       },
 	{ execute_partition_move,           EXECUTE_LOCK_NONE       },

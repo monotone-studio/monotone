@@ -16,6 +16,27 @@
 #include <monotone_command.h>
 
 Cmd*
+parse_partition_create(Lex* self)
+{
+	// CREATE PARTITION <min> <max>
+
+	// min
+	Token min;
+	if (! lex_if(self, KINT, &min))
+		error("CREATE PARTITION <min> max");
+
+	// [max]
+	Token max;
+	if (! lex_if(self, KINT, &max))
+		max.integer = min.integer + config_interval();
+
+	auto cmd = cmd_partition_allocate(CMD_PARTITION_CREATE);
+	cmd->min = min.integer;
+	cmd->max = max.integer;
+	return &cmd->cmd;
+}
+
+Cmd*
 parse_partition_drop(Lex* self)
 {
 	// DROP PARTITION [IF EXISTS] <id> [ON STORAGE | ON CLOUD]
