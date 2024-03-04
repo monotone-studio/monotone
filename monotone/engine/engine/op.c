@@ -84,12 +84,6 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 
 	// create one or more partitions to fill gap between
 	// min and max range
-	typedef struct
-	{
-		uint64_t min;
-		uint64_t max;
-	} Gap;
-
 	Buf gaps;
 	buf_init(&gaps);
 	guard(guard, buf_free, &gaps);
@@ -103,7 +97,7 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 			//  [....]
 			if (min < slice->min)
 			{
-				Gap gap;
+				Id gap;
 				gap.min = min;
 				if (max < slice->min)
 					gap.max = max;
@@ -122,7 +116,7 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 			continue;
 		}
 
-		Gap gap =
+		Id gap =
 		{
 			.min = min,
 			.max = max
@@ -132,8 +126,8 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 	}
 
 	// create partitions using gaps
-	auto pos = (Gap*)gaps.start;
-	auto end = (Gap*)gaps.position;
+	auto pos = (Id*)gaps.start;
+	auto end = (Id*)gaps.position;
 	for (; pos < end; pos++)
 		engine_create(self, pos->min, pos->max);
 }
