@@ -12,7 +12,6 @@ struct Id
 {
 	uint64_t min;
 	uint64_t max;
-	uint64_t psn;
 } packed;
 
 static inline void
