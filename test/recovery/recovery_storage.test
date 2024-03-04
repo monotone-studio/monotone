@@ -205,4 +205,23 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 select
 
+# test: delete/refresh
+delete 0
+refresh partition 0
+show partitions debug
+
+# test: close/open (recover empty partition)
+close
+
+init
+set workers to 0
+set interval to 10
+set wal_enable to false
+open
+files 00000000-0000-0000-0000-000000000000
+
+# test: validate partitions
+show partitions debug
+select
+
 close

@@ -960,4 +960,150 @@ select
 [10]
 [20]
 (eof)
+# test: delete/refresh
+delete 0
+refresh partition 0
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 85,
+  "size_uncompressed": 85,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "cold",
+  "index": {
+    "size": 85,
+    "size_regions": 0,
+    "size_regions_origin": 0,
+    "regions": 0,
+    "events": 0,
+    "lsn": 4,
+    "compression": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 2,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}]
+# test: close/open (recover empty partition)
+close
+init
+set workers to 0
+set interval to 10
+set wal_enable to false
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partitions
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 85,
+  "size_uncompressed": 85,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "cold",
+  "index": {
+    "size": 85,
+    "size_regions": 0,
+    "size_regions_origin": 0,
+    "regions": 0,
+    "events": 0,
+    "lsn": 4,
+    "compression": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 2,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 200,
+  "size_uncompressed": 200,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 159,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}]
+select
+[10]
+[20]
+(eof)
 close
