@@ -1,0 +1,1563 @@
+init
+set workers to 0
+set interval to 10
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+# test: create partition
+create partition 150 450
+show partitions debug
+[{
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (left)
+insert 120
+show partitions debug
+[{
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (left, near)
+insert 140
+show partitions debug
+[{
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (overlap right)
+create partition 120 170
+show partitions debug
+[{
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+# test: create partition (fill left-right gaps)
+create partition 80 500
+show partitions debug
+[{
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[120]
+[140]
+(eof)
+# test: set interval
+set interval to 1000
+# test: insert
+insert 0
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+(eof)
+# test: insert #2
+insert 1200
+insert 1300
+insert 1500
+insert 1800
+insert 1900
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+(eof)
+# test: insert #3
+insert 2000
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+(eof)
+# test: set interval
+set interval to 10000
+insert 2900
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+(eof)
+# test: drop partition
+drop partition 150
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+(eof)
+# test: insert #4 (backfill + overlap)
+insert 150
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000,
+  "max": 10000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[150]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+(eof)
+# test: drop partition
+drop partition 150
+drop partition 3000
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+(eof)
+# test: insert #4 (gapfill)
+insert 3000
+insert 4000
+insert 5000
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000,
+  "max": 10000,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+[3000]
+[4000]
+[5000]
+(eof)
+# test: insert #5
+insert 10000
+insert 20000
+show partitions debug
+[{
+  "min": 0,
+  "max": 80,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 120,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 130,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 140,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 150,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 450,
+  "max": 500,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 500,
+  "max": 1000,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 2000,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 3000,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000,
+  "max": 10000,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10000,
+  "max": 20000,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20000,
+  "max": 30000,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+[3000]
+[4000]
+[5000]
+[10000]
+[20000]
+(eof)
+close

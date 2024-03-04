@@ -36,7 +36,7 @@ show storages debug
 }
 # test: create storage parsing
 create
-error: CREATE <CLOUD|STORAGE> expected
+error: CREATE <CLOUD|STORAGE|PARTITION> expected
 create storage
 error: CREATE STORAGE <name> expected
 create storage if

@@ -6,6 +6,7 @@ group functional
 test memtable
 test partition
 test mapping
+test mapping_custom
 test serial
 
 # storage
@@ -15,6 +16,7 @@ test create_storage
 test drop_storage
 test alter_storage
 test alter_pipeline
+test create
 test refresh
 test move
 test drop

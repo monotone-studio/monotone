@@ -10,7 +10,7 @@ show clouds
 }
 # test: create cloud parsing
 create
-error: CREATE <CLOUD|STORAGE> expected
+error: CREATE <CLOUD|STORAGE|PARTITION> expected
 create cloud
 error: CREATE CLOUD <name> expected
 create cloud if
