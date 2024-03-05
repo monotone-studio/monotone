@@ -2,10 +2,14 @@
 
 #### Architecture
 
-Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
-Data stored in sorted partition files. Partitions never overlap. Whole database can be seen as a 64bit range sparse array of events.
+Storage architecture is inspired by Log-Structured approach and implements custom made memory-disk hybrid data storage engine.
+Overall design follows ideas from Sophia and PostgreSQL (Timescale), addopted for IoT and high-performance sequential data
+storage/access patterns. 
 
-Event is a pair of [u64 id, raw data]. This can be seen almost the same as in key-value approach, beside the addition of id field.
+Whole database can be seen as a 64bit range sparse array of ordered events. Data stored in sorted partition files.
+Each partition has `[min, max]`. Partitions never overlap.
+
+Event is a pair of `[u64 id, raw data]`. This can be seen almost the same as in key-value approach, beside the addition of id field.
 Event Id is used as a key and represents serial (or time) primary key. Additionally it is possible to specify custom comparator, which
 can be used to implement compound key (use additional embedded key in your data together with id).
 
@@ -58,6 +62,3 @@ Storage does not implement any kind of MVCC or Snapshot Isolation. This is done 
 necessity for garbage collection (VACUUM). Locking is done per partition instead, which is more inline with the common usage patterns.
 It is possible to read and write to different partitions without blocking each other.
 Storage designed to work in multi-threaded applications.
-
-Overall design follows ideas from Sophia and PostgreSQL (Timescale), addopted for IoT and sequential data
-storage/access patterns. 
