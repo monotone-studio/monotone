@@ -87,7 +87,7 @@ reader_execute(Reader* self, IndexRegion* index_region)
 	{
 		compression_decompress(self->compression,
 		                       &self->buf_uncompressed,
-		                       (char*)region,
+		                       (uint8_t*)region,
 		                       index_region->size,
 		                       index_region->size_origin);
 		region = (Region*)self->buf_uncompressed.start;
