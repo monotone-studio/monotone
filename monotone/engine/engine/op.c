@@ -475,51 +475,54 @@ engine_refresh_range(Engine* self, Refresh* refresh, uint64_t min, uint64_t max,
 		engine_refresh(self, refresh, min, storage, true);
 }
 
-static inline bool
-engine_rebalance_tier_ready(Tier* tier)
+static inline Part*
+engine_rebalance_tier_next(Tier* tier)
 {
 	// rebalance by partitions
 	if (tier->config->partitions >= 0)
 		if (tier->storage->list_count > tier->config->partitions)
-			return true;
+			return storage_oldest(tier->storage);
 
 	// rebalance by size
 	if (tier->config->size >= 0)
 		if (tier->storage->size > tier->config->size)
-			return true;
+			return storage_oldest(tier->storage);
 
 	// rebalance by events
 	if (tier->config->events >= 0)
 		if (tier->storage->events > tier->config->events)
-			return true;
+			return storage_oldest(tier->storage);
 
 	// rebalance by interval
 	if (tier->config->interval >= 0)
-		if ((tier->storage->list_count * config_interval()) >
-		     (uint64_t)tier->config->interval)
-			return true;
+	{
+		auto part = storage_oldest(tier->storage);
+		if (! part)
+			return NULL;
+		auto now = time_us();
+		if ((now - part->time) >= (uint64_t)tier->config->interval)
+			return part;
+	}
 
-	return false;
+	return NULL;
 }
 
 static inline Part*
 engine_rebalance_tier(Engine* self, Tier* tier, Str* storage)
 {
-	// check if tier needs to be rebalanced
-	if (! engine_rebalance_tier_ready(tier))
+	// check if tier needs to be rebalanced, get next partition
+	auto part = engine_rebalance_tier_next(tier);
+	if (! part)
 		return NULL;
-
-	// get oldest partition (by time)
-	auto oldest = storage_oldest(tier->storage);
 
 	// schedule partition drop
 	if (list_is_last(&self->pipeline.list, &tier->link))
-		return oldest;
+		return part;
 
 	// schedule partition move to the next tier storage
 	auto next = container_of(tier->link.next, Tier, link);
 	str_copy(storage, &next->storage->source->name);
-	return oldest;
+	return part;
 }
 
 static bool
