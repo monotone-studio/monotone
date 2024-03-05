@@ -36,7 +36,6 @@ compression_mgr_pop(CompressionMgr* self, int id)
 			return compression_of(ref);
 		return compression_create(&compression_zstd);
 	}
-	abort();
 	return NULL;
 }
 

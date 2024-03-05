@@ -78,7 +78,7 @@ compression_zstd_compress(Compression* ptr, Buf* buf, int level,
 static void
 compression_zstd_decompress(Compression* ptr,
                             Buf*         buf,
-                            char*        data,
+                            uint8_t*     data,
                             int          data_size,
                             int          data_size_uncompressed)
 {

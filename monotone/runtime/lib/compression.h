@@ -21,7 +21,7 @@ struct CompressionIf
 	Compression* (*create)(CompressionIf*);
 	void         (*free)(Compression*);
 	void         (*compress)(Compression*, Buf*, int, Buf*, Buf*);
-	void         (*decompress)(Compression*, Buf*, char*, int, int);
+	void         (*decompress)(Compression*, Buf*, uint8_t*, int, int);
 };
 
 struct Compression
@@ -59,7 +59,7 @@ compression_compress(Compression* self, Buf* buf, int level,
 static inline void
 compression_decompress(Compression* self,
                        Buf*         buf,
-                       char*        data,
+                       uint8_t*     data,
                        int          data_size,
                        int          data_size_uncompressed)
 {
