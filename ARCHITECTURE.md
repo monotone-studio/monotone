@@ -16,7 +16,7 @@ can be used to implement compound key (use additional embedded key in your data 
 #### Partitioning
 
 Each partition file contains a number of sorted regions. Regions represent a sorted list of events, variable in size and compressed (~150KiB).
-Region size can affect compression efficiency and reduce number of requests required to fulfill a scan.
+Region size can affect compression efficiency and reduce number of requests required to fulfill a scan (less round trips to cloud).
 
 Each partition has ordered in-memory storage associated with partition file. Eventually in-memory storage
 and partition file merged together. This is done manually or in background by a pool of workers.
@@ -33,6 +33,8 @@ refresh (power outage).
 Refresh automation is designed to reduce write-amplification as much as possible. Ideally, partition should
 be written once using only memory storage as a source. Partition refresh scheduled automatically, when partition reaches its
 refresh watermark (or can be done manually at any time).
+
+#### In-Memory Storage
 
 In-memory storage (memtable) implemented using T-tree style data structure to reduce pointers overhead and increase data locality.
 Each partition is using custom made memory allocator context optimized for sequential write and atomic free of large memory regions. 
