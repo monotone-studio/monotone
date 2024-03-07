@@ -18,44 +18,24 @@ struct Part
 	Memtable    memtable_a;
 	Memtable    memtable_b;
 	File        file;
-	Index*      index;
-	Buf         index_buf;
+	Index       index;
+	Buf         index_data;
 	Cloud*      cloud;
 	Source*     source;
 	Comparator* comparator;
 	List        link;
 };
 
-static inline Part*
-part_allocate(Comparator* comparator, Source* source, Id* id)
-{
-	auto self = (Part*)mn_malloc(sizeof(Part));
-	self->id         = *id;
-	self->state      = ID_NONE;
-	self->time       = 0;
-	self->refresh    = false;
-	self->index      = NULL;
-	self->cloud      = NULL;
-	self->source     = source;
-	self->comparator = comparator;
-	file_init(&self->file);
-	self->memtable = &self->memtable_a;
-	memtable_init(&self->memtable_a, 512, 508, comparator);
-	memtable_init(&self->memtable_b, 512, 508, comparator);
-	buf_init(&self->index_buf);
-	list_init(&self->link);
-	return self;
-}
-
-static inline void
-part_free(Part* self)
-{
-	memtable_free(&self->memtable_a);
-	memtable_free(&self->memtable_b);
-	file_close(&self->file);
-	buf_free(&self->index_buf);
-	mn_free(self);
-}
+Part*
+part_allocate(Comparator*, Source*, Id*);
+void part_free(Part*);
+void part_open(Part*, int, bool);
+void part_create(Part*, int);
+void part_delete(Part*, int);
+void part_rename(Part*, int, int);
+void part_download(Part*);
+void part_upload(Part*);
+void part_offload(Part*, bool);
 
 static inline void
 part_set(Part* self, int state)

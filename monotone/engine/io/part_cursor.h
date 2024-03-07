@@ -37,8 +37,11 @@ part_cursor_open(PartCursor* self, Part* part, Event* event)
 	}
 
 	// open part iterator
-	part_iterator_open(&self->part_iterator, part, event);
-	merge_iterator_add(&self->merge_iterator, &self->part_iterator.iterator);
+	if (part->state != ID_NONE)
+	{
+		part_iterator_open(&self->part_iterator, part, event);
+		merge_iterator_add(&self->merge_iterator, &self->part_iterator.iterator);
+	}
 
 	// open merge iterator
 	merge_iterator_open(&self->merge_iterator, part->comparator);
