@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/file.h>
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <sys/mman.h>

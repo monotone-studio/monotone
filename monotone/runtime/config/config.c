@@ -228,7 +228,7 @@ config_save_to(Config* self, const char* path)
 	File file;
 	file_init(&file);
 	guard(file_guard, file_close, &file);
-	file_create_mode(&file, path, 0600);
+	file_open_as(&file, path, O_CREAT|O_RDWR, 0600);
 	file_write_buf(&file, &text);
 
 	// sync

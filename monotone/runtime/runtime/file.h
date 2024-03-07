@@ -38,38 +38,45 @@ file_is_openned(File* self)
 }
 
 static inline void
-file_open(File* self, const char* path)
+file_open_as(File* self, const char* path, int flags, int mode)
 {
-	// open existing file
+	// open or create file
 	str_strdup(&self->path, path);
 
 	// get file size
-	int64_t size = vfs_size(str_of(&self->path));
-	if (unlikely(size == -1))
-		file_error(self, "stat");
-	self->size = size;
+	if (! (flags & O_CREAT))
+	{
+		int64_t size = vfs_size(str_of(&self->path));
+		if (unlikely(size == -1))
+			file_error(self, "stat");
+		self->size = size;
+	}
 
 	// open
-	self->fd = vfs_open(str_of(&self->path), O_RDWR, 0);
+	self->fd = vfs_open(str_of(&self->path), flags, mode);
 	if (unlikely(self->fd == -1))
 		file_error(self, "open");
 }
 
 static inline void
-file_create_mode(File* self, const char* path, int mode)
+file_open(File* self, const char* path)
 {
-	// create new File
-	str_strdup(&self->path, path);
+	// open existing file
+	file_open_as(self, path, O_RDWR, 0);
+}
 
-	self->fd = vfs_open(str_of(&self->path), O_CREAT|O_RDWR, mode);
-	if (unlikely(self->fd == -1))
-		file_error(self, "open");
+static inline void
+file_open_directory(File* self, const char* path)
+{
+	// open existing file
+	file_open_as(self, path, O_DIRECTORY|O_RDONLY, 0);
 }
 
 static inline void
 file_create(File* self, const char* path)
 {
-	file_create_mode(self, path, 0644);
+	// create file
+	file_open_as(self, path, O_CREAT|O_RDWR, 0644);
 }
 
 static inline void
@@ -81,6 +88,26 @@ file_close(File* self)
 	}
 	str_free(&self->path);
 	self->size = 0;
+}
+
+static inline bool
+file_lock(File* self)
+{
+	int rc;
+	rc = vfs_flock_exclusive(self->fd);
+	if (unlikely(rc == -1))
+	{
+		if (errno == EWOULDBLOCK)
+			return false;
+		file_error(self, "flock");
+	}
+	return true;
+}
+
+static inline void
+file_unlock(File* self)
+{
+	vfs_flock_unlock(self->fd);
 }
 
 static inline void
