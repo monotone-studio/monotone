@@ -71,6 +71,8 @@ index_read(File*   self,
            Buf*    index_data,
            bool    copy)
 {
+	unused(source);
+
 	// empty partition file
 	if (index->size == 0)
 		return;
@@ -81,6 +83,12 @@ index_read(File*   self,
 	{
 		// read index
 		file_pread_buf(self, index_data, index->size, offset);
+
+		// check index data crc
+		uint32_t crc = crc32(0, index_data->start, buf_size(index_data));
+		if (crc != index->crc_data)
+			error("partition: file index data '%s' crc mismatch",
+			      str_of(&self->path));
 		return;
 	}
 
@@ -94,20 +102,19 @@ index_read(File*   self,
 	Buf data;
 	buf_init(&data);
 	guard(guard, buf_free, &data);
-	buf_reserve(&data, index->size_origin);
+	buf_reserve(&data, index->size);
 
-	// read and decompress index
+	// read compressed region
 	file_pread_buf(self, &data, index->size, offset);
+
+	// check index data crc
+	uint32_t crc = crc32(0, data.start, buf_size(&data));
+	if (crc != index->crc_data)
+		error("partition: file index data '%s' crc mismatch",
+		      str_of(&self->path));
+
+	// decompress region
 	compression_decompress(cp, index_data, data.start,
 	                       index->size,
 	                       index->size_origin);
-
-	// check index data crc
-	if (source->crc)
-	{
-		uint32_t crc = crc32(0, index_data->start, buf_size(index_data));
-		if (crc != index->crc_data)
-			error("partition: file index data '%s' crc mismatch",
-			      str_of(&self->path));
-	}
 }

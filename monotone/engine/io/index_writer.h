@@ -99,20 +99,17 @@ index_writer_stop(IndexWriter* self, Id* id, uint64_t time, uint64_t lsn)
 	index->lsn               = lsn;
 	index->compression       = compression_id;
 
-	// calculate index data crc without header
-	if (self->crc)
+	// calculate index data crc
+	uint32_t crc = 0;
+	if (self->compression)
 	{
-		uint32_t crc = 0;
-		if (self->compression)
-		{
-			crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
-		} else
-		{
-			crc = crc32(crc, self->meta.start, buf_size(&self->meta));
-			crc = crc32(crc, self->data.start, buf_size(&self->data));
-		}
-		index->crc_data = crc;
+		crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
+	} else
+	{
+		crc = crc32(crc, self->meta.start, buf_size(&self->meta));
+		crc = crc32(crc, self->data.start, buf_size(&self->data));
 	}
+	index->crc_data = crc;
 
 	// calculate index crc
 	index->crc = crc32(0, index, sizeof(Index));
