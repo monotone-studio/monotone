@@ -8,6 +8,16 @@
 
 typedef struct Id Id;
 
+enum
+{
+	ID_NONE             = 0,
+	ID                  = 1,
+	ID_INCOMPLETE       = 2,
+	ID_COMPLETE         = 4,
+	ID_CLOUD            = 8,
+	ID_CLOUD_INCOMPLETE = 16
+};
+
 struct Id
 {
 	uint64_t min;
@@ -15,40 +25,35 @@ struct Id
 } packed;
 
 static inline void
-id_path(Id* self, Source* source, char* path)
+id_path(Id* self, Source* source, int state, char* path)
 {
-	// <source_path>/<min>
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64, self->min);
-}
-
-static inline void
-id_path_incomplete(Id* self, Source* source, char* path)
-{
-	// <source_path>/<min>.incomplete
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".incomplete",
-	               self->min);
-}
-
-static inline void
-id_path_complete(Id* self, Source* source, char* path)
-{
-	// <source_path>/<min>.complete
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".complete",
-	               self->min);
-}
-
-static inline void
-id_path_cloud(Id* self, Source* source, char* path)
-{
-	// <source_path>/<min>.cloud
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".cloud",
-	               self->min);
-}
-
-static inline void
-id_path_cloud_incomplete(Id* self, Source* source, char* path)
-{
-	// <source_path>/<min>.cloud.incomplete
-	source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".cloud.incomplete",
-	               self->min);
+	switch (state) {
+	case ID:
+		// <source_path>/<min>
+		source_pathfmt(source, path, PATH_MAX, "%020" PRIu64, self->min);
+		break;
+	case ID_INCOMPLETE:
+		// <source_path>/<min>.incomplete
+		source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".incomplete",
+		               self->min);
+		break;
+	case ID_COMPLETE:
+		// <source_path>/<min>.complete
+		source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".complete",
+		               self->min);
+		break;
+	case ID_CLOUD:
+		// <source_path>/<min>.cloud
+		source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".cloud",
+		               self->min);
+		break;
+	case ID_CLOUD_INCOMPLETE:
+		// <source_path>/<min>.cloud.incomplete
+		source_pathfmt(source, path, PATH_MAX, "%020" PRIu64 ".cloud.incomplete",
+		               self->min);
+		break;
+	default:
+		abort();
+		break;
+	}
 }

@@ -32,19 +32,19 @@ engine_recover_id(const char* path, uint64_t* id)
 
 	int state = -1;
 	if (! *path)
-		state = PART;
+		state = ID;
 	else
 	if (! strcmp(path, ".incomplete"))
-		state = PART_INCOMPLETE;
+		state = ID_INCOMPLETE;
 	else
 	if (! strcmp(path, ".complete"))
-		state = PART_COMPLETE;
+		state = ID_COMPLETE;
 	else
 	if (! strcmp(path, ".cloud"))
-		state = PART_CLOUD;
+		state = ID_CLOUD;
 	else
 	if (! strcmp(path, ".cloud.incomplete"))
-		state = PART_CLOUD_INCOMPLETE;
+		state = ID_CLOUD_INCOMPLETE;
 	return state;
 }
 
@@ -107,35 +107,35 @@ engine_recover_validate(Engine* self, Storage* storage)
 		auto part = list_at(Part, link);
 
 		switch (part->state) {
-		case PART:
-		case PART | PART_CLOUD:
-		case PART_CLOUD:
+		case ID:
+		case ID | ID_CLOUD:
+		case ID_CLOUD:
 			// normal states
 			break;
 
 		// crash recovery cases (see refresh)
 
 		// crash case 1 (without parent)
-		case PART_INCOMPLETE:
+		case ID_INCOMPLETE:
 			storage_remove(storage, part);
-			part_delete(part, PART_INCOMPLETE);
+			part_delete(part, ID_INCOMPLETE);
 			part_free(part);
 			break;
 
 		// crash case 1 (with parent)
-		case PART | PART_INCOMPLETE:
-			part_delete(part, PART_INCOMPLETE);
-			part_unset(part, PART_INCOMPLETE);
+		case ID | ID_INCOMPLETE:
+			part_delete(part, ID_INCOMPLETE);
+			part_unset(part, ID_INCOMPLETE);
 			break;
 
 		// crash case 2
-		case PART | PART_COMPLETE:
-			part_delete(part, PART_COMPLETE);
-			part_unset(part, PART_COMPLETE);
+		case ID | ID_COMPLETE:
+			part_delete(part, ID_COMPLETE);
+			part_unset(part, ID_COMPLETE);
 			break;
 
 		// crash case 3
-		case PART_COMPLETE:
+		case ID_COMPLETE:
 		{
 			// crash during refresh on the same storage or move
 
@@ -143,39 +143,39 @@ engine_recover_validate(Engine* self, Storage* storage)
 			auto ref = storage_mgr_find_part(&self->storage_mgr, storage, part->id.min);
 			if (ref)
 			{
-				if (! part_has(ref, PART))
+				if (! part_has(ref, ID))
 					error("partition <%" PRIu64"> has unexpected state: %d",
 					      ref->id.min, ref->state);
 
 				// parent still exists, remove incomplete partition
 				storage_remove(storage, part);
-				part_delete(part, PART_COMPLETE);
+				part_delete(part, ID_COMPLETE);
 				part_free(part);
 				continue;
 			}
 
 			// finilize
-			part_rename(part, PART_COMPLETE, PART);
-			part_unset(part, PART_COMPLETE);
-			part_set(part, PART);
+			part_rename(part, ID_COMPLETE, ID);
+			part_unset(part, ID_COMPLETE);
+			part_set(part, ID);
 			break;
 		}
 
 		// crash case 4
-		case PART_CLOUD | PART_INCOMPLETE:
+		case ID_CLOUD | ID_INCOMPLETE:
 			// crash during download
 			//
 			// there is no complete state for download, cloud file not
 			// removed after download (only prior to refresh)
-			part_delete(part, PART_INCOMPLETE);
-			part_unset(part, PART_INCOMPLETE);
+			part_delete(part, ID_INCOMPLETE);
+			part_unset(part, ID_INCOMPLETE);
 			break;
 
 		// crash case 5
-		case PART | PART_CLOUD_INCOMPLETE:
+		case ID | ID_CLOUD_INCOMPLETE:
 			// crash during upload
-			part_delete(part, PART_CLOUD_INCOMPLETE);
-			part_unset(part, PART_CLOUD_INCOMPLETE);
+			part_delete(part, ID_CLOUD_INCOMPLETE);
+			part_unset(part, ID_CLOUD_INCOMPLETE);
 			break;
 
 		default:
@@ -214,11 +214,11 @@ engine_recover(Engine* self)
 			auto part = list_at(Part, link);
 
 			// open partition or cloud file, read index
-			if (part_has(part, PART))
-				part_open(part, PART, true);
+			if (part_has(part, ID))
+				part_open(part, ID, true);
 			else
-			if (part_has(part, PART_CLOUD))
-				part_open(part, PART_CLOUD, true);
+			if (part_has(part, ID_CLOUD))
+				part_open(part, ID_CLOUD, true);
 			else
 				abort();
 

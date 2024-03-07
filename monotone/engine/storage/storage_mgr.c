@@ -239,7 +239,7 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 		list_foreach(&storage->list)
 		{
 			auto part = list_at(Part, link);
-			if (part_has(part, PART_CLOUD))
+			if (part_has(part, ID_CLOUD))
 				error("storage '%.*s': some partitions are still remain on cloud",
 				      str_size(&source->name),
 				      str_of(&source->name));

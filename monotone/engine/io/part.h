@@ -8,22 +8,12 @@
 
 typedef struct Part Part;
 
-enum
-{
-	PART_NONE             = 0,
-	PART                  = 1,
-	PART_INCOMPLETE       = 2,
-	PART_COMPLETE         = 4,
-	PART_CLOUD            = 8,
-	PART_CLOUD_INCOMPLETE = 16
-};
-
 struct Part
 {
 	Id          id;
-	bool        refresh;
 	int         state;
 	uint64_t    time;
+	bool        refresh;
 	Memtable*   memtable;
 	Memtable    memtable_a;
 	Memtable    memtable_b;
@@ -41,9 +31,9 @@ part_allocate(Comparator* comparator, Source* source, Id* id)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
 	self->id         = *id;
-	self->refresh    = false;
-	self->state      = PART_NONE;
+	self->state      = ID_NONE;
 	self->time       = 0;
+	self->refresh    = false;
 	self->index      = NULL;
 	self->cloud      = NULL;
 	self->source     = source;

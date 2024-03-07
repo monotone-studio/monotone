@@ -163,7 +163,7 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 	auto part = ref->part;
 
 	// execute drop only if file is on cloud
-	if (if_cloud && !part_has(part, PART_CLOUD))
+	if (if_cloud && !part_has(part, ID_CLOUD))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		return false;
@@ -178,25 +178,25 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 	Exception e;
 	if (try(&e))
 	{
-		if (mask & PART_CLOUD)
+		if (mask & ID_CLOUD)
 		{
-			if (part_has(part, PART_CLOUD))
+			if (part_has(part, ID_CLOUD))
 			{
 				part_offload(part, false);
-				part_unset(part, PART_CLOUD);
+				part_unset(part, ID_CLOUD);
 			}
 		}
 
-		if (mask & PART)
+		if (mask & ID)
 		{
-			if (part_has(part, PART))
+			if (part_has(part, ID))
 			{
 				part_offload(part, true);
-				part_unset(part, PART);
+				part_unset(part, ID);
 			}
 		}
 
-		if (part->state == PART_NONE)
+		if (part->state == ID_NONE)
 		{
 			// unset storage metrics before droping the reference
 			auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
@@ -236,7 +236,7 @@ engine_drop_reference(Engine* self, uint64_t min)
 	auto part = ref->part;
 
 	// remove only empty partitions
-	if (part->state != PART_NONE)
+	if (part->state != ID_NONE)
 	{
 		// retry truncate
 		control_unlock();
@@ -275,7 +275,7 @@ void
 engine_drop(Engine* self, uint64_t min, bool if_exists, int mask)
 {
 	// partition drop
-	if (mask == (PART|PART_CLOUD))
+	if (mask == (ID|ID_CLOUD))
 	{
 		for (;;)
 		{
@@ -330,14 +330,14 @@ engine_download(Engine* self, uint64_t min,
 	}
 
 	// partition exists locally
-	if (part_has(part, PART))
+	if (part_has(part, ID))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		return;
 	}
 
 	// partition does not exists on cloud
-	if (! part_has(part, PART_CLOUD))
+	if (! part_has(part, ID_CLOUD))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		return;
@@ -358,7 +358,7 @@ engine_download(Engine* self, uint64_t min,
 	mutex_lock(&self->lock);
 	ref_lock(ref, LOCK_ACCESS);
 
-	part_set(part, PART);
+	part_set(part, ID);
 
 	ref_unlock(ref, LOCK_ACCESS);
 	mutex_unlock(&self->lock);
@@ -399,14 +399,14 @@ engine_upload(Engine* self, uint64_t min,
 	}
 
 	// partition already uploaded
-	if (part_has(part, PART_CLOUD))
+	if (part_has(part, ID_CLOUD))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		return;
 	}
 
 	// ensure partition file exists locally
-	if (! part_has(part, PART))
+	if (! part_has(part, ID))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		error("upload: partition <%" PRIu64 "> file not yet exists", min);
@@ -428,7 +428,7 @@ engine_upload(Engine* self, uint64_t min,
 	mutex_lock(&self->lock);
 	ref_lock(ref, LOCK_ACCESS);
 
-	part_set(part, PART_CLOUD);
+	part_set(part, ID_CLOUD);
 
 	ref_unlock(ref, LOCK_ACCESS);
 	mutex_unlock(&self->lock);
@@ -453,7 +453,7 @@ engine_refresh(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 	engine_download(self, min, if_exists, true);
 
 	// drop partition from cloud
-	engine_drop(self, min, if_exists, PART_CLOUD);
+	engine_drop(self, min, if_exists, ID_CLOUD);
 
 	// refresh partition
 	refresh_reset(refresh);
@@ -463,7 +463,7 @@ engine_refresh(Engine* self, Refresh* refresh, uint64_t min, Str* storage,
 	engine_upload(self, min, true, true);
 
 	// drop partition from storage, only if file been uploaded
-	engine_drop_file(self, min, if_exists, true, PART);
+	engine_drop_file(self, min, if_exists, true, ID);
 }
 
 void
@@ -571,7 +571,7 @@ engine_rebalance(Engine* self, Refresh* refresh)
 		if (! engine_rebalance_next(self, &min, &storage))
 			break;
 		if (str_empty(&storage))
-			engine_drop(self, min, true, PART|PART_CLOUD);
+			engine_drop(self, min, true, ID|ID_CLOUD);
 		else
 			engine_refresh(self, refresh, min, &storage, true);
 	}

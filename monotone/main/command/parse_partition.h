@@ -34,7 +34,7 @@ cmd_partition_allocate(CmdType type)
 	self->max       = 0;
 	self->if_exists = false;
 	self->if_cloud  = false;
-	self->mask      = PART_NONE;
+	self->mask      = ID_NONE;
 	token_init(&self->storage);
 	return self;
 }

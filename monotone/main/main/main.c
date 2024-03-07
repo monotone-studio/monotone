@@ -172,7 +172,7 @@ main_replay(Main* self)
 		case LOG_DROP:
 		{
 			auto drop = (LogDrop*)write;
-			engine_drop(&self->engine, drop->id, true, PART|PART_CLOUD);
+			engine_drop(&self->engine, drop->id, true, ID|ID_CLOUD);
 			break;
 		}
 		default:

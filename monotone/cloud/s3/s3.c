@@ -112,7 +112,7 @@ s3_download(Cloud* self, Source* source, Id* id)
 
 	// create incomplete partition file
 	char path[PATH_MAX];
-	id_path_incomplete(id, source, path);
+	id_path(id, source, ID_INCOMPLETE, path);
 
 	// in case previous attempt failed without crash
 	if (fs_exists("%s", path))
@@ -135,7 +135,7 @@ s3_download(Cloud* self, Source* source, Id* id)
 
 	// rename as completed
 	char path_to[PATH_MAX];
-	id_path(id, source, path_to);
+	id_path(id, source, ID, path_to);
 	fs_rename(path, "%s", path_to);
 
 	// put io back to cache
@@ -150,7 +150,7 @@ s3_upload(Cloud* self, Source* source, Id* id)
 
 	// open partition file
 	char path[PATH_MAX];
-	id_path(id, source, path);
+	id_path(id, source, ID, path);
 	File file;
 	file_init(&file);
 	guard(guard_file, file_close, &file);

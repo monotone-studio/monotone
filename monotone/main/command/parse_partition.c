@@ -50,14 +50,14 @@ parse_partition_drop(Lex* self)
 		error("DROP PARTITION <id>");
 
 	// [on storage | on cloud]
-	int mask = PART|PART_CLOUD;
+	int mask = ID|ID_CLOUD;
 	if (lex_if(self, KON, NULL))
 	{
 		if (lex_if(self, KSTORAGE, NULL))
-			mask = PART;
+			mask = ID;
 		else
 		if (lex_if(self, KCLOUD, NULL))
-			mask = PART_CLOUD;
+			mask = ID_CLOUD;
 		else
 			error("DROP PARTITION id <ON STORAGE | ON CLOUD> expected");
 	}
@@ -92,14 +92,14 @@ parse_partition_drop_range(Lex* self)
 		error("DROP PARTITIONS FROM min TO <max>");
 
 	// [on storage | on cloud]
-	int mask = PART|PART_CLOUD;
+	int mask = ID|ID_CLOUD;
 	if (lex_if(self, KON, NULL))
 	{
 		if (lex_if(self, KSTORAGE, NULL))
-			mask = PART;
+			mask = ID;
 		else
 		if (lex_if(self, KCLOUD, NULL))
-			mask = PART_CLOUD;
+			mask = ID_CLOUD;
 		else
 			error("DROP PARTITION FROM min TO max <ON STORAGE | ON CLOUD> expected");
 	}

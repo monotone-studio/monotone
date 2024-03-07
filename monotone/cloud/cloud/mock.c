@@ -77,7 +77,7 @@ mock_download(Cloud* self, Source* source, Id* id)
 	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
 	mock_path(source, id, path_from);
-	id_path_incomplete(id, source, path_to);
+	id_path(id, source, ID_INCOMPLETE, path_to);
 
 	// read mock file
 	Buf buf;
@@ -100,8 +100,8 @@ mock_download(Cloud* self, Source* source, Id* id)
 	error_injection(error_download);
 
 	// rename
-	id_path_incomplete(id, source, path_from);
-	id_path(id, source, path_to);
+	id_path(id, source, ID_INCOMPLETE, path_from);
+	id_path(id, source, ID, path_to);
 	fs_rename(path_from, "%s", path_to);
 }
 
@@ -116,7 +116,7 @@ mock_upload(Cloud* self, Source* source, Id* id)
 	// copy file from storage to the mock directory
 	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
-	id_path(id, source, path_from);
+	id_path(id, source, ID, path_from);
 	mock_path(source, id, path_to);
 
 	// read storage file

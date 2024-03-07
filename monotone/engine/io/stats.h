@@ -36,9 +36,9 @@ stats_add(Stats* self, Part* part)
 {
 	// partitions
 	self->partitions++;
-	if (part_has(part, PART))
+	if (part_has(part, ID))
 		self->partitions_local++;
-	if (part_has(part, PART_CLOUD))
+	if (part_has(part, ID_CLOUD))
 		self->partitions_cloud++;
 
 	// min/max
@@ -174,11 +174,11 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 
 	// on_storage
 	encode_raw(buf, "on_storage", 10);
-	encode_bool(buf, part_has(self, PART));
+	encode_bool(buf, part_has(self, ID));
 
 	// on_cloud
 	encode_raw(buf, "on_cloud", 8);
-	encode_bool(buf, part_has(self, PART_CLOUD));
+	encode_bool(buf, part_has(self, ID_CLOUD));
 
 	// storage
 	encode_raw(buf, "storage", 7);

@@ -106,8 +106,8 @@ merger_execute(Merger* self, MergerReq* req)
 	// allocate and create incomplete partition file
 	Id id = origin->id;
 	self->part = part_allocate(origin->comparator, req->source, &id);
-	part_create(self->part, PART_INCOMPLETE);
-	part_set(self->part, PART_INCOMPLETE);
+	part_create(self->part, ID_INCOMPLETE);
+	part_set(self->part, ID_INCOMPLETE);
 	part_set_time(self->part, time_us());
 
 	// write partition file

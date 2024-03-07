@@ -14,33 +14,33 @@
 void
 part_download(Part* self)
 {
-	assert(part_has(self, PART_CLOUD));
+	assert(part_has(self, ID_CLOUD));
 	assert(self->cloud);
 
 	// download partition file locally
 	cloud_download(self->cloud, self->source, &self->id);
 
 	// open
-	part_open(self, PART, false);
+	part_open(self, ID, false);
 }
 
 void
 part_upload(Part* self)
 {
-	assert(part_has(self, PART));
+	assert(part_has(self, ID));
 	assert(self->cloud);
 
 	// in case previous attempt failed without crash
-	part_delete(self, PART_CLOUD_INCOMPLETE);
+	part_delete(self, ID_CLOUD_INCOMPLETE);
 
 	// create incomplete cloud file (index dump)
-	part_create(self, PART_CLOUD_INCOMPLETE);
+	part_create(self, ID_CLOUD_INCOMPLETE);
 
 	// upload partition file to the cloud
 	cloud_upload(self->cloud, self->source, &self->id);
 
 	// rename partition cloud file as completed
-	part_rename(self, PART_CLOUD_INCOMPLETE, PART_CLOUD);
+	part_rename(self, ID_CLOUD_INCOMPLETE, ID_CLOUD);
 }
 
 void
@@ -51,7 +51,7 @@ part_offload(Part* self, bool from_storage)
 	{
 		// remove data file
 		file_close(&self->file);
-		part_delete(self, PART);
+		part_delete(self, ID);
 		return;
 	}
 
@@ -59,7 +59,7 @@ part_offload(Part* self, bool from_storage)
 	assert(self->cloud);
 
 	// remove cloud file first
-	part_delete(self, PART_CLOUD);
+	part_delete(self, ID_CLOUD);
 
 	// remove from cloud
 	cloud_remove(self->cloud, self->source, &self->id);

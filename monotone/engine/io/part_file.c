@@ -12,38 +12,13 @@
 #include <monotone_io.h>
 
 static void
-part_path(Part* self, char* path, int state)
-{
-	switch (state) {
-	case PART:
-		id_path(&self->id, self->source, path);
-		break;
-	case PART_INCOMPLETE:
-		id_path_incomplete(&self->id, self->source, path);
-		break;
-	case PART_COMPLETE:
-		id_path_complete(&self->id, self->source, path);
-		break;
-	case PART_CLOUD:
-		id_path_cloud(&self->id, self->source, path);
-		break;
-	case PART_CLOUD_INCOMPLETE:
-		id_path_cloud_incomplete(&self->id, self->source, path);
-		break;
-	default:
-		abort();
-		break;
-	}
-}
-
-static void
 part_open_file(Part* self, bool read_index)
 {
 	// open data file and read index
 
 	// <source_path>/<min>
 	char path[PATH_MAX];
-	part_path(self, path, PART);
+	id_path(&self->id, self->source, ID, path);
 	file_open(&self->file, path);
 
 	if (unlikely(self->file.size < (sizeof(Index) + sizeof(IndexEof))))
@@ -100,7 +75,7 @@ part_open_file_cloud(Part* self)
 
 	// <source_path>/<min>.cloud
 	char path[PATH_MAX];
-	part_path(self, path, PART_CLOUD);
+	id_path(&self->id, self->source, ID_CLOUD, path);
 
 	File file;
 	file_init(&file);
@@ -133,10 +108,10 @@ void
 part_open(Part* self, int state, bool read_index)
 {
 	switch (state) {
-	case PART:
+	case ID:
 		part_open_file(self, read_index);
 		break;
-	case PART_CLOUD:
+	case ID_CLOUD:
 		part_open_file_cloud(self);
 		break;
 	default:
@@ -151,14 +126,14 @@ part_create(Part* self, int state)
 	// <source_path>/<min>.incomplete
 	// <source_path>/<min>.cloud.incomplete
 	char path[PATH_MAX];
-	part_path(self, path, state);
+	id_path(&self->id, self->source, state, path);
 	switch (state) {
-	case PART_INCOMPLETE:
+	case ID_INCOMPLETE:
 	{
 		file_create(&self->file, path);
 		break;
 	}
-	case PART_CLOUD_INCOMPLETE:
+	case ID_CLOUD_INCOMPLETE:
 	{
 		// create, write and sync incomplete cloud file
 		File file;
@@ -186,7 +161,7 @@ part_delete(Part* self, int state)
 	// <source_path>/<min>.cloud
 	// <source_path>/<min>.cloud.incomplete
 	char path[PATH_MAX];
-	part_path(self, path, state);
+	id_path(&self->id, self->source, state, path);
 	if (fs_exists("%s", path))
 		fs_unlink("%s", path);
 }
@@ -197,8 +172,8 @@ part_rename(Part* self, int from, int to)
 	// rename file from one state to another
 	char path_from[PATH_MAX];
 	char path_to[PATH_MAX];
-	part_path(self, path_from, from);
-	part_path(self, path_to, to);
+	id_path(&self->id, self->source, from, path_from);
+	id_path(&self->id, self->source, to, path_to);
 	if (fs_exists("%s", path_from))
 		fs_rename(path_from, "%s", path_to);
 }
