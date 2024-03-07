@@ -2,7 +2,7 @@
 
 #### Architecture
 
-Storage architecture is inspired by Log-Structured approach and implements custom made memory-disk hybrid data storage engine.
+Storage architecture is inspired by Log-Structured approach and implements custom made memory-disk-cloud hybrid data storage engine.
 Overall design follows ideas from Sophia and PostgreSQL (Timescale), addopted for IoT and high-performance sequential data
 storage/access patterns. 
 
