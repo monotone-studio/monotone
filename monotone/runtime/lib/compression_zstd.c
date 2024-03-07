@@ -89,6 +89,7 @@ compression_zstd_decompress(Compression* ptr,
 	if (unlikely(ZSTD_isError(rc)))
 		error("decompression failed");
 	assert(rc == data_size_uncompressed);
+	buf_advance(buf, data_size_uncompressed);
 }
 
 CompressionIf compression_zstd =
