@@ -201,9 +201,8 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 			// unset storage metrics before droping the reference
 			auto storage = storage_mgr_find(&self->storage_mgr, &part->source->name);
 			storage_remove_metrics(storage, part);
-
-			part->index = NULL;
-			buf_reset(&part->index_buf);
+			index_init(&part->index);
+			buf_reset(&part->index_data);
 		}
 	}
 

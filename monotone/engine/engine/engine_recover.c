@@ -223,11 +223,9 @@ engine_recover(Engine* self)
 				abort();
 
 			// sync metrics
-			part->id = part->index->id;
-			part_set_time(part, part->index->time);
-
-			config_lsn_follow(part->index->lsn);
-
+			part->id = part->index.id;
+			part_set_time(part, part->index.time);
+			config_lsn_follow(part->index.lsn);
 			storage_add_metrics(storage, part);
 
 			// register partition reference

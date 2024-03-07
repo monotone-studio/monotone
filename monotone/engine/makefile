@@ -21,8 +21,8 @@ CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
 LIB            = libmonotone-engine.a
 OBJECTS        = \
                  io/memtable.o \
-                 io/part_file.o \
-                 io/part_op.o \
+                 io/index_op.o \
+                 io/part.o \
                  io/writer.o \
                  io/merger.o \
                  storage/storage_mgr.o \

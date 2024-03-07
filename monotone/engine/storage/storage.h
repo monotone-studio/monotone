@@ -62,19 +62,19 @@ storage_unref(Storage* self)
 static inline void
 storage_add_metrics(Storage* self, Part* part)
 {
-	if (! part->index)
+	if (part->state == ID_NONE)
 		return;
-	self->size += part->index->size_regions;
-	self->events += part->index->events;
+	self->size   += part->index.size_regions;
+	self->events += part->index.events;
 }
 
 static inline void
 storage_remove_metrics(Storage* self, Part* part)
 {
-	if (! part->index)
+	if (part->state == ID_NONE)
 		return;
-	self->size -= part->index->size_regions;
-	self->events -= part->index->events;
+	self->size   -= part->index.size_regions;
+	self->events -= part->index.events;
 }
 
 static inline void
@@ -92,8 +92,8 @@ storage_remove(Storage* self, Part* part)
 	assert(part->source == self->source);
 	list_unlink(&part->link);
 	self->list_count--;
-	part_set_cloud(part, NULL);
 	storage_remove_metrics(self, part);
+	part_set_cloud(part, NULL);
 }
 
 hot static inline Part*

@@ -149,7 +149,7 @@ engine_write_replay(Engine* self, LogWrite* write)
 			auto part = ref->part;
 
 			// skip if partition is a newer then write lsn
-			if (part->index && (part->index->lsn >= write->lsn))
+			if (part->state != ID_NONE && (part->index.lsn >= write->lsn))
 			{
 				engine_unlock(self, ref, LOCK_ACCESS);
 				log_pushback(&log);
