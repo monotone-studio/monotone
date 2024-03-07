@@ -68,6 +68,7 @@ main_init(Main* self)
 	memory_mgr_init(&self->memory_mgr, 2 * 1024 * 1024);
 	compression_mgr_init(&self->compression_mgr);
 	config_init(&self->config);
+	file_init(&self->lock_directory);
 
 	rwlock_init(&self->lock);
 	service_init(&self->service);
@@ -93,6 +94,7 @@ main_free(Main* self)
 	compression_mgr_free(&self->compression_mgr);
 	memory_mgr_free(&self->memory_mgr);
 	rwlock_free(&self->lock);
+	file_close(&self->lock_directory);
 }
 
 void
@@ -132,6 +134,11 @@ main_deploy(Main* self, Str* directory)
 	auto bootstrap = !fs_exists("%s", str_of(directory));
 	if (bootstrap)
 		fs_mkdir(0755, "%s", str_of(directory));
+
+	// get exclusive directory lock
+	file_open_directory(&self->lock_directory, str_of(directory));
+	if (! file_lock(&self->lock_directory))
+		error("in use by another process");
 
 	// read or create config file
 	char path[PATH_MAX];

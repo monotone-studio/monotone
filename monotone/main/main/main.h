@@ -11,6 +11,7 @@ typedef struct Main Main;
 struct Main
 {
 	Rwlock         lock;
+	File           lock_directory;
 	Engine         engine;
 	Wal            wal;
 	Service        service;
