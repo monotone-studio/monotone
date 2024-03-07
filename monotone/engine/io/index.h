@@ -8,7 +8,6 @@
 
 typedef struct IndexRegion IndexRegion;
 typedef struct Index       Index;
-typedef struct IndexEof    IndexEof;
 
 #define INDEX_MAGIC 0x20849615
 
@@ -27,59 +26,61 @@ struct IndexRegion
 struct Index
 {
 	uint32_t crc;
+	uint32_t crc_data;
+	uint32_t magic;
 	Id       id;
 	uint32_t size;
+	uint32_t size_origin;
 	uint64_t size_regions;
 	uint64_t size_regions_origin;
+	uint64_t size_total;
+	uint64_t size_total_origin;
 	uint32_t regions;
 	uint64_t events;
 	uint64_t time;
 	uint64_t lsn;
 	uint8_t  compression;
 	uint32_t reserved[4];
-	// u32 offset[]
-	// data
 } packed;
 
-struct IndexEof
+static inline void
+index_init(Index* self)
 {
-	uint32_t magic;
-	uint32_t size;
-} packed;
+	memset(self, 0, sizeof(*self));
+}
 
 static inline IndexRegion*
-index_get(Index* self, int pos)
+index_get(Index* self, Buf* data, int pos)
 {
 	assert(pos < (int)self->regions);
-	auto start  = (char*)self + sizeof(Index);
-	auto offset = (uint32_t*)start;
-	return (IndexRegion*)(start + (sizeof(uint32_t) * self->regions) +
+	auto offset = (uint32_t*)data->start;
+	return (IndexRegion*)(data->start + (sizeof(uint32_t) * self->regions) +
 	                      offset[pos]);
 }
 
 static inline Event*
-index_region_min(Index* self, int pos)
+index_region_min(Index* self, Buf* data, int pos)
 {
-	auto region = index_get(self, pos);
+	auto region = index_get(self, data, pos);
 	return (Event*)((char*)region + sizeof(IndexRegion));
 }
 
 static inline Event*
-index_region_max(Index* self, int pos)
+index_region_max(Index* self, Buf* data, int pos)
 {
-	auto region = index_get(self, pos);
+	auto region = index_get(self, data, pos);
 	return (Event*)((char*)region + sizeof(IndexRegion) +
 	                region->size_key_min);
 }
 
 static inline Event*
-index_min(Index* self)
+index_min(Index* self, Buf* data)
 {
-	return index_region_min(self, 0);
+	return index_region_min(self, data, 0);
 }
 
 static inline Event*
-index_max(Index* self)
+index_max(Index* self, Buf* data)
 {
-	return index_region_max(self, self->regions - 1);
+	return index_region_max(self, data, self->regions - 1);
 }

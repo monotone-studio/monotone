@@ -10,20 +10,25 @@ typedef struct IndexWriter IndexWriter;
 
 struct IndexWriter
 {
-	bool     crc;
-	int      compression_id;
-	Buf      meta;
-	Buf      data;
-	IndexEof eof;
+	bool         active;
+	Buf          meta;
+	Buf          data;
+	Buf          compressed;
+	Compression* compression;
+	bool         crc;
+	Index        index;
 };
 
 static inline void
 index_writer_init(IndexWriter* self)
 {
-	self->crc            = false;
-	self->compression_id = COMPRESSION_NONE;
+	self->active      = false;
+	self->compression = NULL;
+	self->crc         = false;
 	buf_init(&self->meta);
 	buf_init(&self->data);
+	buf_init(&self->compressed);
+	memset(&self->index, 0, sizeof(self->index));
 }
 
 static inline void
@@ -31,69 +36,86 @@ index_writer_free(IndexWriter* self)
 {
 	buf_free(&self->meta);
 	buf_free(&self->data);
+	buf_free(&self->compressed);
 }
 
 static inline void
 index_writer_reset(IndexWriter* self)
 {
-	self->crc            = false;
-	self->compression_id = COMPRESSION_NONE;
+	self->active      = false;
+	self->compression = NULL;
+	self->crc         = false;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
-}
-
-static inline Index*
-index_writer_header(IndexWriter* self)
-{
-	assert(self->meta.start != NULL);
-	return (Index*)self->meta.start;
+	buf_reset(&self->compressed);
+	memset(&self->index, 0, sizeof(self->index));
 }
 
 static inline bool
 index_writer_started(IndexWriter* self)
 {
-	return buf_size(&self->meta) > 0;
+	return self->active;
 }
 
 static inline void
-index_writer_start(IndexWriter* self, int compression_id, bool crc)
+index_writer_start(IndexWriter* self, Compression* compression, bool crc)
 {
-	self->crc            = crc;
-	self->compression_id = compression_id;
-
-	// index header
-	buf_reserve(&self->meta, sizeof(Index));
-	auto header = index_writer_header(self);
-	memset(header, 0, sizeof(Index));
-	header->size = sizeof(Index);
-	buf_advance(&self->meta, sizeof(Index));
+	self->compression = compression;
+	self->crc         = crc;
+	self->active      = true;
 }
 
 static inline void
 index_writer_stop(IndexWriter* self, Id* id, uint64_t time, uint64_t lsn)
 {
-	// prepare header
-	auto header = index_writer_header(self);
-	header->compression = self->compression_id;
-	header->crc         = 0;
-	header->id          = *id;
-	header->time        = time;
-	header->lsn         = lsn;
+	auto index = &self->index;
 
-	// prepare eof marker
-	auto eof = &self->eof;
-	eof->magic = INDEX_MAGIC;
-	eof->size  = buf_size(&self->meta) + buf_size(&self->data);
+	// compress index (without index)
+	uint32_t size_origin = index->size;
+	uint32_t size = size_origin;
+	int      compression_id;
+	if (self->compression)
+	{
+		compression_compress(self->compression, &self->compressed, 0,
+		                     &self->meta, &self->data);
+		size = buf_size(&self->compressed);
+		compression_id = self->compression->iface->id;
+	} else {
+		compression_id = COMPRESSION_NONE;
+	}
 
-	// crc
+	// prepare index
+	index->crc               = 0;
+	index->crc_data          = 0;
+	index->magic             = INDEX_MAGIC;
+	index->id                = *id;
+	index->size              = size;
+	index->size_origin       = size_origin;
+	index->size_total        =
+		index->size_regions + index->size + sizeof(Index);
+	index->size_total_origin =
+		index->size_regions_origin + index->size_origin + sizeof(Index);
+	index->time              = time;
+	index->lsn               = lsn;
+	index->compression       = compression_id;
+
+	// calculate index data crc without header
 	if (self->crc)
 	{
 		uint32_t crc = 0;
-		crc = crc32(crc, self->meta.start + sizeof(uint32_t),
-		            buf_size(&self->meta) - sizeof(uint32_t));
-		crc = crc32(crc, self->data.start, buf_size(&self->data));
-		header->crc  = crc;
+		if (self->compression)
+		{
+			crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
+		} else
+		{
+			crc = crc32(crc, self->meta.start, buf_size(&self->meta));
+			crc = crc32(crc, self->data.start, buf_size(&self->data));
+		}
+		index->crc_data = crc;
 	}
+
+	// calculate index crc
+	index->crc = crc32(0, index, sizeof(Index));
 }
 
 static inline void
@@ -112,10 +134,10 @@ index_writer_add(IndexWriter*  self,
 	buf_reserve(&self->data, sizeof(IndexRegion));
 
 	uint32_t size;
-	if (self->compression_id == COMPRESSION_NONE)
-		size = region->size;
-	else
+	if (self->compression)
 		size = buf_size(&region_writer->compressed);
+	else
+		size = region->size;
 
 	uint32_t crc = 0;
 	if (self->crc)
@@ -143,28 +165,34 @@ index_writer_add(IndexWriter*  self,
 	ref->size_key_max = event_size(max);
 
 	// update header
-	auto header = index_writer_header(self);
-	header->regions++;
-	header->events += region->events;
-	header->size += sizeof(uint32_t) + sizeof(IndexRegion) +
-	                event_size(min) +
-	                event_size(max);
-	header->size_regions += size;
-	header->size_regions_origin += region->size;
+	auto index = &self->index;
+	index->regions++;
+	index->events += region->events;
+	index->size += sizeof(uint32_t) +
+	               sizeof(IndexRegion) + event_size(min) +
+	               event_size(max);
+	index->size_regions += size;
+	index->size_regions_origin += region->size;
 }
 
 static inline void
-index_writer_copy(IndexWriter* self, Buf* buf)
+index_writer_copy(IndexWriter* self, Index* index, Buf* buf)
 {
+	*index = self->index;
 	buf_write(buf, self->meta.start, buf_size(&self->meta));
 	buf_write(buf, self->data.start, buf_size(&self->data));
-	buf_write(buf, &self->eof,       sizeof(self->eof));
 }
 
 static inline void
 index_writer_add_to_iov(IndexWriter* self, Iov* iov)
 {
-	iov_add(iov, self->meta.start, buf_size(&self->meta));
-	iov_add(iov, self->data.start, buf_size(&self->data));
-	iov_add(iov, &self->eof,       sizeof(self->eof));
+	if (self->compression)
+	{
+		iov_add(iov, self->compressed.start, buf_size(&self->compressed));
+	} else
+	{
+		iov_add(iov, self->meta.start, buf_size(&self->meta));
+		iov_add(iov, self->data.start, buf_size(&self->data));
+	}
+	iov_add(iov, &self->index, sizeof(self->index));
 }

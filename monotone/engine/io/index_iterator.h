@@ -11,6 +11,7 @@ typedef struct IndexIterator IndexIterator;
 struct IndexIterator
 {
 	Index*       index;
+	Buf*         index_data;
 	IndexRegion* current;
 	int          pos;
 	Comparator*  comparator;
@@ -20,6 +21,7 @@ static inline void
 index_iterator_init(IndexIterator* self)
 {
 	self->index      = NULL;
+	self->index_data = NULL;
 	self->current    = NULL;
 	self->pos        = 0;
 	self->comparator = NULL;
@@ -33,7 +35,8 @@ index_iterator_search(IndexIterator* self, Event* event)
 	while (begin != end)
 	{
 		int mid = begin + (end - begin) / 2;
-		if (compare(self->comparator, index_region_max(self->index, mid), event) < 0)
+		auto at = index_region_max(self->index, self->index_data, mid);
+		if (compare(self->comparator, at, event) < 0)
 			begin = mid + 1;
 		else
 			end = mid;
@@ -46,10 +49,12 @@ index_iterator_search(IndexIterator* self, Event* event)
 hot static inline void
 index_iterator_open(IndexIterator* self,
                     Index*         index,
+                    Buf*           index_data,
                     Comparator*    comparator,
                     Event*         event)
 {
 	self->index      = index;
+	self->index_data = index_data;
 	self->current    = NULL;
 	self->pos        = 0;
 	self->comparator = comparator;
@@ -57,19 +62,19 @@ index_iterator_open(IndexIterator* self,
 		return;
 
 	if (event == NULL) {
-		self->current = index_get(index, 0);
+		self->current = index_get(index, index_data, 0);
 		return;
 	}
 
 	self->pos = index_iterator_search(self, event);
 	int rc;
-	rc = compare(comparator, index_region_max(index, self->pos), event);
+	rc = compare(comparator, index_region_max(index, index_data, self->pos), event);
 	if (rc < 0)
 		self->pos++;
 	if (unlikely(self->pos >= (int)index->regions))
 		return;
 
-	self->current = index_get(index, self->pos);
+	self->current = index_get(index, index_data, self->pos);
 }
 
 static inline bool
@@ -91,5 +96,5 @@ index_iterator_next(IndexIterator* self)
 	self->current = NULL;
 	if (unlikely(self->pos >= (int)self->index->regions))
 		return;
-	self->current = index_get(self->index, self->pos);
+	self->current = index_get(self->index, self->index_data, self->pos);
 }
