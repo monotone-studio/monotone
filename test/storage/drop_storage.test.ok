@@ -169,8 +169,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 200,
-      "size_uncompressed": 200,
+      "size": 228,
+      "size_uncompressed": 228,
       "size_heap": 0
     }
   }
@@ -183,16 +183,19 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 200,
-  "size_uncompressed": 200,
+  "size": 228,
+  "size_uncompressed": 228,
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
   "storage": "test",
   "index": {
-    "size": 159,
+    "size": 74,
+    "size_origin": 74,
     "size_regions": 41,
     "size_regions_origin": 41,
+    "size_total": 228,
+    "size_total_origin": 228,
     "regions": 1,
     "events": 1,
     "lsn": 1,
