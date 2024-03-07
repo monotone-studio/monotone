@@ -4,7 +4,7 @@
 ## Storage for Sequential data and IoT
 
 We designed modern embeddable data storage from groundup specifically for sequential workloads, such as append write and range scans.
-Storage architecture is inspired by log-structured approach and implements custom made memory-disk hybrid engine.
+Storage architecture is inspired by log-structured approach and implements custom made memory-disk-cloud hybrid engine.
 
 Made to match following requirements:
 
