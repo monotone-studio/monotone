@@ -27,14 +27,13 @@
 #include "io/index.h"
 #include "io/index_iterator.h"
 #include "io/index_writer.h"
+#include "io/index_op.h"
 
 // writer
 #include "io/writer.h"
 
 // partition
 #include "io/part.h"
-#include "io/part_file.h"
-#include "io/part_op.h"
 
 // stats
 #include "io/stats.h"

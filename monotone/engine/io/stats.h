@@ -49,10 +49,10 @@ stats_add(Stats* self, Part* part)
 		self->max = part->id.max;
 
 	// regions and events
-	if (part->index)
+	if (part->state != ID_NONE)
 	{
-		self->regions += part->index->regions;
-		self->events += part->index->events;
+		self->regions += part->index.regions;
+		self->events += part->index.events;
 	}
 	uint64_t events_heap = atomic_u64_of(&part->memtable_a.count) +
 	                       atomic_u64_of(&part->memtable_b.count);
@@ -60,10 +60,10 @@ stats_add(Stats* self, Part* part)
 	self->events += events_heap;
 
 	// size and regions
-	if (part->index)
+	if (part->state != ID_NONE)
 	{
-		self->size += part->index->size + part->index->size_regions;
-		self->size_uncompressed += part->index->size + part->index->size_regions_origin;
+		self->size += part->index.size_total;
+		self->size_uncompressed += part->index.size_total_origin;
 	}
 	self->size_heap += heap_used(&part->memtable_a.heap) +
 	                   heap_used(&part->memtable_b.heap);
@@ -189,15 +189,19 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 	{
 		encode_raw(buf, "index", 5);
 
-		auto index = self->index;
-		if (index)
+		auto index = &self->index;
+		if (self->state != ID_NONE)
 		{
 			// {}
-			encode_map(buf, 7);
+			encode_map(buf, 10);
 
 			// size
 			encode_raw(buf, "size", 4);
 			encode_integer(buf, index->size);
+
+			// size_origin
+			encode_raw(buf, "size_origin", 11);
+			encode_integer(buf, index->size_origin);
 
 			// size_regions
 			encode_raw(buf, "size_regions", 12);
@@ -206,6 +210,14 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 			// size_regions_origin
 			encode_raw(buf, "size_regions_origin", 19);
 			encode_integer(buf, index->size_regions_origin);
+
+			// size_total
+			encode_raw(buf, "size_total", 10);
+			encode_integer(buf, index->size_total);
+
+			// size_total_origin
+			encode_raw(buf, "size_total_origin", 17);
+			encode_integer(buf, index->size_total_origin);
 
 			// regions
 			encode_raw(buf, "regions", 7);

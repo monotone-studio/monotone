@@ -50,7 +50,7 @@ reader_open(Reader* self, Part* part)
 	self->part = part;
 
 	// set compression context using partition index
-	int compression_id = part->index->compression;
+	int compression_id = part->index.compression;
 	if (compression_id != COMPRESSION_NONE)
 		self->compression =
 			compression_mgr_pop(global()->compression_mgr, compression_id);

@@ -92,7 +92,7 @@ writer_start(Writer* self, Source* source, File* file)
 
 	// start new index
 	index_writer_reset(&self->index_writer);
-	index_writer_start(&self->index_writer, compression_id, source->crc);
+	index_writer_start(&self->index_writer, self->compression, source->crc);
 }
 
 void

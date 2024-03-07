@@ -72,16 +72,17 @@ merger_write(Merger* self, MergerReq* req)
 	}
 
 	uint64_t lsn = memtable->lsn_max;
-	if (origin->index && origin->index->lsn > lsn)
-		lsn = origin->index->lsn;
+	if (origin->state != ID_NONE && origin->index.lsn > lsn)
+		lsn = origin->index.lsn;
 
 	auto id = &self->part->id;
 	writer_stop(writer, id, self->part->time, lsn,
 	            req->source->sync);
 
 	// copy index to the partition
-	index_writer_copy(&self->writer.index_writer, &self->part->index_buf);
-	self->part->index = (Index*)(self->part->index_buf.start);
+	index_writer_copy(&self->writer.index_writer,
+	                  &self->part->index,
+	                  &self->part->index_data);
 }
 
 hot void
