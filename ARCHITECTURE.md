@@ -7,7 +7,7 @@ Overall design follows ideas from Sophia and PostgreSQL (Timescale), addopted fo
 storage/access patterns. 
 
 Whole database can be seen as a 64bit range sparse array of ordered events. Data stored in sorted partition files.
-Each partition has `[min, max]`. Partitions never overlap.
+Each partition has associated `[min, max]` range. Partitions never overlap.
 
 Event is a pair of `[u64 id, raw data]`. This can be seen almost the same as in key-value approach, beside the addition of id field.
 Event Id is used as a key and represents serial (or time) primary key. Additionally it is possible to specify custom comparator, which
