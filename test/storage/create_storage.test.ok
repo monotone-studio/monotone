@@ -16,6 +16,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -83,6 +84,7 @@ show storage test debug
     "sync": true,
     "crc": false,
     "compression": "",
+    "compression_level": 0,
     "refresh_wm": 41943040,
     "region_size": 131072
   },
@@ -111,6 +113,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -137,6 +140,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -171,6 +175,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -197,6 +202,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -233,6 +239,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -259,6 +266,7 @@ show storages debug
       "sync": false,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -294,6 +302,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -320,6 +329,7 @@ show storages debug
       "sync": true,
       "crc": true,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -355,6 +365,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -381,6 +392,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 0,
       "region_size": 131072
     },
@@ -416,6 +428,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -442,6 +455,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 4096
     },
@@ -479,6 +493,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -505,6 +520,70 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "none",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
+drop storage test
+create storage test (compression_level
+error: compression_level <integer> expected
+create storage test (compression_level false
+error: compression_level <integer> expected
+create storage test (compression_level 9)
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "",
+      "compression_level": 9,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -540,6 +619,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -566,6 +646,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -609,6 +690,7 @@ show storages
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -635,6 +717,7 @@ show storages
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },

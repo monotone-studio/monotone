@@ -33,6 +33,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -64,6 +65,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -103,6 +105,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -143,6 +146,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -210,6 +214,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -270,6 +275,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "zstd",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -339,6 +345,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "zstd",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -385,6 +392,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "zstd",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },
@@ -428,6 +436,7 @@ show storages debug
       "sync": true,
       "crc": false,
       "compression": "zstd",
+      "compression_level": 0,
       "refresh_wm": 41943040,
       "region_size": 131072
     },

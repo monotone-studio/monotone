@@ -81,6 +81,13 @@ create storage test (compression 'none')
 show storages debug
 drop storage test
 
+# compression_level
+create storage test (compression_level
+create storage test (compression_level false
+create storage test (compression_level 9)
+show storages debug
+drop storage test
+
 # path
 create storage test (path
 create storage test (path false
