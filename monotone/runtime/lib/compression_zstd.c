@@ -46,9 +46,12 @@ compression_zstd_compress(Compression* ptr, Buf* buf, int level,
                           Buf*              a,
                           Buf*              b)
 {
-	unused(level);
-
 	auto self = (CompressionZstd*)ptr;
+
+	ZSTD_CCtx_reset(self->ctx, ZSTD_reset_session_only);
+	if (level > 0)
+		ZSTD_CCtx_setParameter(self->ctx, ZSTD_c_compressionLevel, level);
+
 	buf_reserve(buf, buf_size(a) + buf_size(b));
 
 	// a

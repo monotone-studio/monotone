@@ -10,15 +10,16 @@ typedef struct Source Source;
 
 enum
 {
-	SOURCE_UUID        = 1 << 0,
-	SOURCE_NAME        = 1 << 1,
-	SOURCE_PATH        = 1 << 2,
-	SOURCE_CLOUD       = 1 << 3,
-	SOURCE_SYNC        = 1 << 4,
-	SOURCE_CRC         = 1 << 5,
-	SOURCE_COMPRESSION = 1 << 6,
-	SOURCE_REFRESH_WM  = 1 << 7,
-	SOURCE_REGION_SIZE = 1 << 8
+	SOURCE_UUID              = 1 << 0,
+	SOURCE_NAME              = 1 << 1,
+	SOURCE_PATH              = 1 << 2,
+	SOURCE_CLOUD             = 1 << 3,
+	SOURCE_SYNC              = 1 << 4,
+	SOURCE_CRC               = 1 << 5,
+	SOURCE_COMPRESSION       = 1 << 6,
+	SOURCE_COMPRESSION_LEVEL = 1 << 7,
+	SOURCE_REFRESH_WM        = 1 << 8,
+	SOURCE_REGION_SIZE       = 1 << 9
 };
 
 struct Source
@@ -30,6 +31,7 @@ struct Source
 	bool    sync;
 	bool    crc;
 	Str     compression;
+	int64_t compression_level;
 	int64_t refresh_wm;
 	int64_t region_size;
 };
@@ -38,10 +40,11 @@ static inline Source*
 source_allocate(void)
 {
 	auto self = (Source*)mn_malloc(sizeof(Source));
-	self->sync        = true;
-	self->crc         = false;
-	self->region_size = 128 * 1024;
-	self->refresh_wm  = 40 * 1024 * 1024;
+	self->sync              = true;
+	self->crc               = false;
+	self->region_size       = 128 * 1024;
+	self->refresh_wm        = 40 * 1024 * 1024;
+	self->compression_level = 0;
 	uuid_init(&self->uuid);
 	str_init(&self->name);
 	str_init(&self->path);
@@ -107,6 +110,12 @@ source_set_compression(Source* self, Str* value)
 }
 
 static inline void
+source_set_compression_level(Source* self, int value)
+{
+	self->compression_level = value;
+}
+
+static inline void
 source_set_refresh_wm(Source* self, int value)
 {
 	self->refresh_wm = value;
@@ -130,6 +139,7 @@ source_copy(Source* self)
 	source_set_sync(copy, self->sync);
 	source_set_crc(copy, self->crc);
 	source_set_compression(copy, &self->compression);
+	source_set_compression_level(copy, self->compression_level);
 	source_set_refresh_wm(copy, self->refresh_wm);
 	source_set_region_size(copy, self->region_size);
 	return unguard(&copy_guard);
@@ -175,6 +185,10 @@ source_read(uint8_t** pos)
 	data_skip(pos);
 	data_read_string_copy(pos, &self->compression);
 
+	// compression_level
+	data_skip(pos);
+	data_read_integer(pos, &self->compression_level);
+
 	// refresh_wm
 	data_skip(pos);
 	data_read_integer(pos, &self->refresh_wm);
@@ -190,7 +204,7 @@ static inline void
 source_write(Source* self, Buf* buf, bool debug)
 {
 	// map
-	encode_map(buf, 9);
+	encode_map(buf, 10);
 
 	// uuid
 	encode_raw(buf, "uuid", 4);
@@ -228,6 +242,10 @@ source_write(Source* self, Buf* buf, bool debug)
 	encode_raw(buf, "compression", 11);
 	encode_string(buf, &self->compression);
 
+	// compression_level
+	encode_raw(buf, "compression_level", 17);
+	encode_integer(buf, self->compression_level);
+
 	// refresh_wm
 	encode_raw(buf, "refresh_wm", 10);
 	encode_integer(buf, self->refresh_wm);
@@ -260,6 +278,9 @@ source_alter(Source* self, Source* alter, int mask)
 
 	if (mask & SOURCE_COMPRESSION)
 		source_set_compression(self, &alter->compression);
+
+	if (mask & SOURCE_COMPRESSION_LEVEL)
+		source_set_compression_level(self, alter->compression_level);
 
 	if (mask & SOURCE_REFRESH_WM)
 		source_set_refresh_wm(self, alter->refresh_wm);
