@@ -40,6 +40,7 @@ struct Index
 	uint64_t time;
 	uint64_t lsn;
 	uint8_t  compression;
+	uint8_t  encryption;
 	uint32_t reserved[4];
 } packed;
 
