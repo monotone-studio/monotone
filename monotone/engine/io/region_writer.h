@@ -14,12 +14,14 @@ struct RegionWriter
 	Buf          data;
 	Buf          compressed;
 	Compression* compression;
+	int          compression_level;
 };
 
 static inline void
 region_writer_init(RegionWriter* self)
 {
-	self->compression = NULL;
+	self->compression       = NULL;
+	self->compression_level = 0;
 	buf_init(&self->meta);
 	buf_init(&self->data);
 	buf_init(&self->compressed);
@@ -36,7 +38,8 @@ region_writer_free(RegionWriter* self)
 static inline void
 region_writer_reset(RegionWriter* self)
 {
-	self->compression = NULL;
+	self->compression       = NULL;
+	self->compression_level = 0;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
@@ -62,9 +65,12 @@ region_writer_size(RegionWriter* self)
 }
 
 static inline void
-region_writer_start(RegionWriter* self, Compression* compression)
+region_writer_start(RegionWriter* self,
+                    Compression*  compression,
+                    int           compression_level)
 {
-	self->compression = compression;
+	self->compression       = compression;
+	self->compression_level = compression_level;
 
 	// region header
 	buf_reserve(&self->meta, sizeof(Region));
@@ -81,8 +87,10 @@ region_writer_stop(RegionWriter* self)
 
 	// compress region
 	if (self->compression)
-		compression_compress(self->compression, &self->compressed, 0,
-		                     &self->meta, &self->data);
+		compression_compress(self->compression, &self->compressed,
+		                     self->compression_level,
+		                     &self->meta,
+		                     &self->data);
 }
 
 static inline void

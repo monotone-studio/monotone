@@ -56,7 +56,8 @@ static inline void
 writer_start_region(Writer* self)
 {
 	region_writer_reset(&self->region_writer);
-	region_writer_start(&self->region_writer, self->compression);
+	region_writer_start(&self->region_writer, self->compression,
+	                    self->source->compression_level);
 }
 
 hot static inline void
@@ -92,7 +93,9 @@ writer_start(Writer* self, Source* source, File* file)
 
 	// start new index
 	index_writer_reset(&self->index_writer);
-	index_writer_start(&self->index_writer, self->compression, source->crc);
+	index_writer_start(&self->index_writer, self->compression,
+	                    source->compression_level,
+	                    source->crc);
 }
 
 void

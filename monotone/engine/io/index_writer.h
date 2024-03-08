@@ -15,6 +15,7 @@ struct IndexWriter
 	Buf          data;
 	Buf          compressed;
 	Compression* compression;
+	int          compression_level;
 	bool         crc;
 	Index        index;
 };
@@ -22,9 +23,10 @@ struct IndexWriter
 static inline void
 index_writer_init(IndexWriter* self)
 {
-	self->active      = false;
-	self->compression = NULL;
-	self->crc         = false;
+	self->active            = false;
+	self->compression       = NULL;
+	self->compression_level = 0;
+	self->crc               = false;
 	buf_init(&self->meta);
 	buf_init(&self->data);
 	buf_init(&self->compressed);
@@ -42,9 +44,10 @@ index_writer_free(IndexWriter* self)
 static inline void
 index_writer_reset(IndexWriter* self)
 {
-	self->active      = false;
-	self->compression = NULL;
-	self->crc         = false;
+	self->active            = false;
+	self->compression       = NULL;
+	self->compression_level = 0;
+	self->crc               = false;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
@@ -58,11 +61,15 @@ index_writer_started(IndexWriter* self)
 }
 
 static inline void
-index_writer_start(IndexWriter* self, Compression* compression, bool crc)
+index_writer_start(IndexWriter* self,
+                   Compression* compression,
+                   int          compression_level,
+                   bool         crc)
 {
-	self->compression = compression;
-	self->crc         = crc;
-	self->active      = true;
+	self->compression       = compression;
+	self->compression_level = compression_level;
+	self->crc               = crc;
+	self->active            = true;
 }
 
 static inline void
@@ -76,7 +83,8 @@ index_writer_stop(IndexWriter* self, Id* id, uint64_t time, uint64_t lsn)
 	int      compression_id;
 	if (self->compression)
 	{
-		compression_compress(self->compression, &self->compressed, 0,
+		compression_compress(self->compression, &self->compressed,
+		                     self->compression_level,
 		                     &self->meta, &self->data);
 		size = buf_size(&self->compressed);
 		compression_id = self->compression->iface->id;
