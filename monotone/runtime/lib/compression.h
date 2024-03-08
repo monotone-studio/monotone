@@ -12,7 +12,8 @@ typedef struct Compression   Compression;
 enum
 {
 	COMPRESSION_NONE = 0,
-	COMPRESSION_ZSTD = 1
+	COMPRESSION_ZSTD = 1,
+	COMPRESSION_LZ4  = 2
 };
 
 struct CompressionIf

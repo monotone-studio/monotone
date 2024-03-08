@@ -26,7 +26,7 @@ compression_zstd_create(CompressionIf* iface)
 	if (self->ctx == NULL)
 	{
 		mn_free(self);
-		error("failed to create compression context");
+		error("zstd: failed to create compression context");
 	}
 	list_init(&self->id.link);
 	return &self->id;
@@ -41,7 +41,7 @@ compression_zstd_free(Compression* ptr)
 	mn_free(self);
 }
 
-static void
+hot static void
 compression_zstd_compress(Compression* ptr, Buf* buf, int level,
                           Buf*              a,
                           Buf*              b)
@@ -78,7 +78,7 @@ compression_zstd_compress(Compression* ptr, Buf* buf, int level,
 	buf_advance(buf, out.pos);
 }
 
-static void
+hot static void
 compression_zstd_decompress(Compression* ptr,
                             Buf*         buf,
                             uint8_t*     data,
@@ -90,7 +90,7 @@ compression_zstd_decompress(Compression* ptr,
 	ssize_t rc;
 	rc = ZSTD_decompress(buf->start, data_size_uncompressed, data, data_size);
 	if (unlikely(ZSTD_isError(rc)))
-		error("decompression failed");
+		error("zstd: decompression failed");
 	assert(rc == data_size_uncompressed);
 	buf_advance(buf, data_size_uncompressed);
 }

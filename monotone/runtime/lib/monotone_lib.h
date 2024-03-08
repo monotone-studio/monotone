@@ -26,6 +26,7 @@
 
 // compression
 #include "lib/compression.h"
+#include "lib/compression_lz4.h"
 #include "lib/compression_zstd.h"
 #include "lib/compression_mgr.h"
 
