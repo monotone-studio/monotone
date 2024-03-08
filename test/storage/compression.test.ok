@@ -219,4 +219,337 @@ select
 [1]
 [3]
 (eof)
+drop partition 0
+# test: zstd refresh/select
+create storage zstd (compression 'zstd')
+alter pipeline set zstd
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": true,
+      "compression": "",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "zstd": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "zstd",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "zstd",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+refresh partition 0
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "events": 10,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 237,
+  "size_uncompressed": 382,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "zstd",
+  "index": {
+    "size": 36,
+    "size_origin": 74,
+    "size_regions": 87,
+    "size_regions_origin": 194,
+    "size_total": 237,
+    "size_total_origin": 382,
+    "regions": 1,
+    "events": 10,
+    "lsn": 14,
+    "compression": 1
+  }
+}]
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
+drop partition 0
+# test: lz4 refresh/select
+create storage lz4 (compression 'lz4')
+alter pipeline set lz4
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": true,
+      "compression": "",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "zstd": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "zstd",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "zstd",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "lz4": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "lz4",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "lz4",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+refresh partition 0
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": true,
+      "compression": "",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "zstd": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "zstd",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "zstd",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "lz4": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "lz4",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "compression": "lz4",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 10,
+      "events_heap": 0,
+      "size": 267,
+      "size_uncompressed": 382,
+      "size_heap": 0
+    }
+  }
+}
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "events": 10,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 267,
+  "size_uncompressed": 382,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "lz4",
+  "index": {
+    "size": 49,
+    "size_origin": 74,
+    "size_regions": 104,
+    "size_regions_origin": 194,
+    "size_total": 267,
+    "size_total_origin": 382,
+    "regions": 1,
+    "events": 10,
+    "lsn": 25,
+    "compression": 2
+  }
+}]
+select
+[0]
+[1]
+[2]
+[3]
+[4]
+[5]
+[6]
+[7]
+[8]
+[9]
+(eof)
 close

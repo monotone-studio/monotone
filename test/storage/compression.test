@@ -41,5 +41,44 @@ show partitions debug
 refresh partition 0
 show partitions debug
 select
+drop partition 0
+
+# test: zstd refresh/select
+create storage zstd (compression 'zstd')
+alter pipeline set zstd
+show storages debug
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+refresh partition 0
+show partitions debug
+select
+drop partition 0
+
+# test: lz4 refresh/select
+create storage lz4 (compression 'lz4')
+alter pipeline set lz4
+show storages debug
+insert 0
+insert 1
+insert 2
+insert 3
+insert 4
+insert 5
+insert 6
+insert 7
+insert 8
+insert 9
+refresh partition 0
+show storages debug
+show partitions debug
+select
 
 close

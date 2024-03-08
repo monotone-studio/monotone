@@ -29,7 +29,7 @@ LFLAGS          = -rdynamic -pthread -Wl,-whole-archive \
                   ../monotone/cloud/libmonotone-cloud.a \
                   ../monotone/engine/libmonotone-engine.a \
                   ../monotone/main/libmonotone-main.a \
-                  -Wl,-no-whole-archive -lm -lzstd -lcurl -lcrypto
+                  -Wl,-no-whole-archive -lm -lzstd -llz4 -lcurl -lcrypto
 TARGET          = test
 OBJECTS_RUNTIME =
 OBJECTS         = suite/suite.o \
