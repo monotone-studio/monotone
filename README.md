@@ -36,7 +36,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 - **Transparent Compression**
 
-  Compress or recompress partitions automatically on refresh (or partition move). Allow different compression types and compression ratio settings.
+  Compress or recompress partitions automatically on refresh (or partition move). Allow different compression types and compression level settings.
   Everything is done transparently without blocking readers and writers.
 
 - **Storages**
