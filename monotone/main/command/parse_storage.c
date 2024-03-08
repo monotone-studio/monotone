@@ -92,6 +92,12 @@ parse_storage_options(Lex* self, Source* config, char* command)
 				error("unknown compression: %.*s", str_size(&config->compression),
 				      str_of(&config->compression));
 		} else
+		if (str_compare_raw(&name.string, "compression_level", 17))
+		{
+			// compression_level <int>
+			parse_int(self, &name, &config->compression_level);
+			mask |= SOURCE_COMPRESSION_LEVEL;
+		} else
 		if (str_compare_raw(&name.string, "region_size", 11))
 		{
 			// region_size <int>
