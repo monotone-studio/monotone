@@ -1,33 +1,4 @@
-#
-# monotone runtime makefile
-#
-CC             = clang
-AR             = ar
-RM             = rm
-CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
-CFLAGS_INCLUDE = -I. \
-                 -Iruntime \
-                 -Ilib \
-                 -Iconfig
-CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
-LIB            = libmonotone-runtime.a
-OBJECTS        = \
-                 runtime/runtime.o \
-                 runtime/vfs.o \
-                 runtime/logger.o \
-                 lib/json.o \
-                 lib/rbtree.o \
-                 lib/crc.o \
-                 lib/uuid.o \
-                 lib/compression_lz4.o \
-                 lib/compression_zstd.o \
-                 lib/compression_mgr.o \
-                 config/config.o
-$(LIB): clean $(OBJECTS)
-	@$(AR) cr $(LIB) $(OBJECTS)
-	@echo $(AR) $(LIB)
-.c.o:
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo $(CC) -c $<
+all:
+	@(cd ../.. && make --no-print-directory)
 clean:
-	@$(RM) -f $(OBJECTS) $(LIB)
+	@(cd ../.. && make --no-print-directory clean)

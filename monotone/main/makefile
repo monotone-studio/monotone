@@ -1,46 +1,4 @@
-#
-# monotone main makefile
-#
-CC             = clang
-AR             = ar
-RM             = rm
-CFLAGS_OPTS    = -Wall -Wextra -g -fPIC -O0
-CFLAGS_INCLUDE = -I../runtime \
-                 -I../runtime/runtime \
-                 -I../runtime/lib \
-                 -I../runtime/config \
-                 -I../cloud \
-                 -I../cloud/cloud \
-                 -I../cloud/s3 \
-                 -I../engine \
-                 -I../engine/cloud \
-                 -I../engine/io \
-                 -I../engine/storage \
-                 -I../engine/wal \
-                 -I../engine/engine \
-                 -I. \
-                 -Icommand \
-                 -Imain \
-                 -Iapi
-CFLAGS         = $(CFLAGS_INCLUDE) $(CFLAGS_OPTS)
-LIB            = libmonotone-main.a
-OBJECTS        = \
-                 command/lex.o \
-                 command/parse_config.o \
-                 command/parse_cloud.o \
-                 command/parse_storage.o \
-                 command/parse_pipeline.o \
-                 command/parse_partition.o \
-                 command/parse_debug.o \
-                 command/parse.o \
-                 main/main.o \
-                 main/execute.o \
-                 api/monotone.o
-$(LIB): clean $(OBJECTS)
-	@$(AR) cr $(LIB) $(OBJECTS)
-	@echo $(AR) $(LIB)
-.c.o:
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@echo $(CC) -c $<
+all:
+	@(cd ../.. && make --no-print-directory)
 clean:
-	@$(RM) -f $(OBJECTS) $(LIB)
+	@(cd ../.. && make --no-print-directory clean)
