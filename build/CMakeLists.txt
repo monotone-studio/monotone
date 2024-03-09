@@ -149,9 +149,10 @@ target_link_libraries(monotone ${MONOTONE_STATIC_LINK})
 target_link_libraries(monotone ${MONOTONE_LIBRARIES})
 
 # prof
-add_executable(prof ${CMAKE_SOURCE_DIR}/prof/test.c)
-target_link_libraries(prof ${MONOTONE_STATIC_LINK})
-target_link_libraries(prof ${MONOTONE_LIBRARIES})
+add_executable(monotone_prof ${CMAKE_SOURCE_DIR}/prof/test.c)
+target_link_libraries(monotone_prof ${MONOTONE_STATIC_LINK})
+target_link_libraries(monotone_prof ${MONOTONE_LIBRARIES})
+set_target_properties(monotone_prof PROPERTIES OUTPUT_NAME monotone-prof)
 
 # test suite
 add_executable(monotone_test
