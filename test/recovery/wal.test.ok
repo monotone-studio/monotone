@@ -306,10 +306,10 @@ select
 # test: wal write error
 set error_wal to true
 insert 5
-error: (engine/write.c:108) error injection: error_wal
+error: error injection: error_wal
 # test: wal write error #2
 insert 4 xxx
-error: (engine/write.c:108) error injection: error_wal
+error: error injection: error_wal
 set error_wal to false
 # test: wal write error #3
 insert 8 zzz
@@ -322,7 +322,7 @@ select
 (eof)
 set error_wal to true
 insert 4 xxx
-error: (engine/write.c:108) error injection: error_wal
+error: error injection: error_wal
 set error_wal to false
 # test: select
 show partitions debug

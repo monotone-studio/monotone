@@ -12,7 +12,7 @@ insert 2
 insert 3
 set error_refresh_1 to true
 refresh partition 0
-error: (engine/refresh.c:172) error injection: error_refresh_1
+error: error injection: error_refresh_1
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.incomplete
 close
@@ -62,7 +62,7 @@ insert 2 x
 insert 3 x
 set error_refresh_1 to true
 refresh partition 0
-error: (engine/refresh.c:172) error injection: error_refresh_1
+error: error injection: error_refresh_1
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.incomplete
@@ -111,7 +111,7 @@ select
 # test: case 2: crash after completion
 set error_refresh_2 to true
 refresh partition 0
-error: (engine/refresh.c:178) error injection: error_refresh_2
+error: error injection: error_refresh_2
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 00000000000000000000.complete
@@ -160,7 +160,7 @@ select
 # test: case 3: crash after delete
 set error_refresh_3 to true
 refresh partition 0
-error: (engine/refresh.c:187) error injection: error_refresh_3
+error: error injection: error_refresh_3
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.complete
 close
@@ -282,7 +282,7 @@ files 00000000-0000-0000-0000-000000000000
 mock
 set error_download to true
 download partition 0
-error: (cloud/mock.c:100) error injection: error_download
+error: error injection: error_download
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.incomplete
 00000000000000000000.cloud
@@ -333,7 +333,7 @@ select
 # test: case 4: error during download (retry)
 set error_download to true
 download partition 0
-error: (cloud/mock.c:100) error injection: error_download
+error: error injection: error_download
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.incomplete
 00000000000000000000.cloud
@@ -410,7 +410,7 @@ show partitions debug
 }]
 set error_upload to true
 upload partition 0
-error: (cloud/mock.c:129) error injection: error_upload
+error: error injection: error_upload
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 mock
@@ -462,7 +462,7 @@ select
 drop partition 0 on cloud
 set error_upload to true
 upload partition 0
-error: (cloud/mock.c:129) error injection: error_upload
+error: error injection: error_upload
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
 mock
