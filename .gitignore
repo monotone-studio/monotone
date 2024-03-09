@@ -1,4 +1,5 @@
 *.o
+prof/t
 test/core
 test/vgcore.*
 build/CMakeCache.txt
