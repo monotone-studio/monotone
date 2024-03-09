@@ -19,6 +19,8 @@ static pthread_t    report_id;
 static void*
 writer_main(void* arg)
 {
+	(void)arg;
+
 	const int metrics = 25;
 	float data[metrics]; // ~ 100 bytes
 	for (int i = 0; i < metrics; i++)
@@ -125,6 +127,7 @@ report_print(void)
 static void*
 report_main(void* arg)
 {
+	(void)arg;
 	while (report_run)
 	{
 		sleep(1);
@@ -299,6 +302,8 @@ cli(void)
 int
 main(int argc, char* argv[])
 {
+	(void)argc;
+	(void)argv;
 	cli();
 	return 0;
 }

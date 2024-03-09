@@ -9,6 +9,7 @@
 static inline int
 test_sh(TestSuite* self, const char* fmt, ...)
 {
+	(void)self;
 	va_list args;
 	va_start(args, fmt);
 	char cmd[PATH_MAX];
@@ -21,6 +22,7 @@ test_sh(TestSuite* self, const char* fmt, ...)
 static inline void
 test_info(TestSuite* self, const char* fmt, ...)
 {
+	(void)self;
 	va_list args;
 	va_start(args, fmt);
 	vprintf(fmt, args);
@@ -31,6 +33,7 @@ test_info(TestSuite* self, const char* fmt, ...)
 static inline void
 test_error(TestSuite* self, const char* fmt, ...)
 {
+	(void)self;
 	va_list args;
 	va_start(args, fmt);
 	printf("\n");

@@ -161,6 +161,7 @@ test_suite_cmd_open(TestSuite* self, char* arg)
 static int
 test_suite_cmd_close(TestSuite* self, char* arg)
 {
+	unused(arg);
 	if (! self->env)
 	{
 		test_log(self, "close: env is not created\n");
@@ -179,6 +180,7 @@ test_suite_cmd_close(TestSuite* self, char* arg)
 static int
 test_suite_cmd_error(TestSuite* self, char* arg)
 {
+	unused(arg);
 	test_log_error(self);
 	return 0;
 }
