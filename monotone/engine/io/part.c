@@ -113,7 +113,8 @@ part_create(Part* self, int state)
 
 		file_init(&file);
 		file_create(&file, path);
-		file_write_buf(&file, &index_data);
+		if (buf_size(&index_data) > 0)
+			file_write_buf(&file, &index_data);
 		file_write(&file, &index, sizeof(index));
 		if (self->source->sync)
 			file_sync(&file);

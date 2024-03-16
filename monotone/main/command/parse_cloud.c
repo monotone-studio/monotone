@@ -77,7 +77,7 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 		} else
 		if (str_compare_raw(&name.string, "secret_key", 10))
 		{
-			// password <string>
+			// secret_key <string>
 			parse_string(self, &name, &config->password);
 			mask |= CLOUD_PASSWORD;
 		} else

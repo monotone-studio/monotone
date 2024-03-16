@@ -796,4 +796,98 @@ select
 [10]
 [20]
 (eof)
+# test: create empty partition
+create partition 50 60
+refresh partition 50
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10,
+  "max": 20,
+  "created": "(filtered)",
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 229,
+  "size_uncompressed": 229,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 74,
+    "size_origin": 74,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "size_total": 229,
+    "size_total_origin": 229,
+    "regions": 1,
+    "events": 1,
+    "lsn": 2,
+    "compression": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "created": "(filtered)",
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 229,
+  "size_uncompressed": 229,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 74,
+    "size_origin": 74,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "size_total": 229,
+    "size_total_origin": 229,
+    "regions": 1,
+    "events": 1,
+    "lsn": 3,
+    "compression": 0
+  }
+}, {
+  "min": 50,
+  "max": 60,
+  "created": "(filtered)",
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 114,
+  "size_uncompressed": 114,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "test",
+  "index": {
+    "size": 0,
+    "size_origin": 0,
+    "size_regions": 0,
+    "size_regions_origin": 0,
+    "size_total": 114,
+    "size_total_origin": 114,
+    "regions": 0,
+    "events": 0,
+    "lsn": 0,
+    "compression": 0
+  }
+}]
 close

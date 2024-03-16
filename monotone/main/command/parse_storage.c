@@ -82,7 +82,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 		} else
 		if (str_compare_raw(&name.string, "compression", 11))
 		{
-			// compression <int>
+			// compression <string>
 			parse_string(self, &name, &config->compression);
 			mask |= SOURCE_COMPRESSION;
 
