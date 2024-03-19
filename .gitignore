@@ -1,5 +1,5 @@
 *.o
-prof/t
+cli/t
 test/core
 test/vgcore.*
 build/CMakeCache.txt
@@ -9,6 +9,6 @@ build/cmake_install.cmake
 build/libmonotone_so.c
 build/libmonotone.a
 build/libmonotone.so
-build/monotone-prof
+build/monotone
 build/monotone-test
 build/monotone
