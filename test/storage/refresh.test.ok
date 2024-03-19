@@ -78,8 +78,8 @@ show storages debug
       "regions": 1,
       "events": 3,
       "events_heap": 0,
-      "size": 263,
-      "size_uncompressed": 263,
+      "size": 267,
+      "size_uncompressed": 267,
       "size_heap": 0
     }
   }
@@ -118,8 +118,8 @@ show storages debug
       "regions": 1,
       "events": 6,
       "events_heap": 3,
-      "size": 263,
-      "size_uncompressed": 263,
+      "size": 267,
+      "size_uncompressed": 267,
       "size_heap": 2097152
     }
   }
@@ -159,8 +159,8 @@ show storages debug
       "regions": 1,
       "events": 6,
       "events_heap": 0,
-      "size": 314,
-      "size_uncompressed": 314,
+      "size": 318,
+      "size_uncompressed": 318,
       "size_heap": 0
     }
   }
@@ -170,11 +170,12 @@ show partitions debug
   "min": 0,
   "max": 10,
   "created": "(filtered)",
+  "refreshes": 2,
   "events": 6,
   "events_heap": 0,
   "regions": 1,
-  "size": 314,
-  "size_uncompressed": 314,
+  "size": 318,
+  "size_uncompressed": 318,
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
@@ -184,10 +185,11 @@ show partitions debug
     "size_origin": 74,
     "size_regions": 126,
     "size_regions_origin": 126,
-    "size_total": 314,
-    "size_total_origin": 314,
+    "size_total": 318,
+    "size_total_origin": 318,
     "regions": 1,
     "events": 6,
+    "refreshes": 2,
     "lsn": 6,
     "compression": 0
   }
@@ -227,8 +229,8 @@ show storages debug
       "regions": 1,
       "events": 6,
       "events_heap": 0,
-      "size": 314,
-      "size_uncompressed": 314,
+      "size": 318,
+      "size_uncompressed": 318,
       "size_heap": 0
     }
   }
@@ -238,11 +240,12 @@ show partitions debug
   "min": 0,
   "max": 10,
   "created": "(filtered)",
+  "refreshes": 3,
   "events": 6,
   "events_heap": 0,
   "regions": 1,
-  "size": 314,
-  "size_uncompressed": 314,
+  "size": 318,
+  "size_uncompressed": 318,
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
@@ -252,10 +255,11 @@ show partitions debug
     "size_origin": 74,
     "size_regions": 126,
     "size_regions_origin": 126,
-    "size_total": 314,
-    "size_total_origin": 314,
+    "size_total": 318,
+    "size_total_origin": 318,
     "regions": 1,
     "events": 6,
+    "refreshes": 3,
     "lsn": 6,
     "compression": 0
   }
@@ -288,8 +292,8 @@ show storages debug
       "regions": 1,
       "events": 6,
       "events_heap": 0,
-      "size": 208,
-      "size_uncompressed": 314,
+      "size": 212,
+      "size_uncompressed": 318,
       "size_heap": 0
     }
   }
@@ -299,11 +303,12 @@ show partitions debug
   "min": 0,
   "max": 10,
   "created": "(filtered)",
+  "refreshes": 4,
   "events": 6,
   "events_heap": 0,
   "regions": 1,
-  "size": 208,
-  "size_uncompressed": 314,
+  "size": 212,
+  "size_uncompressed": 318,
   "size_heap": 0,
   "on_storage": true,
   "on_cloud": false,
@@ -313,10 +318,11 @@ show partitions debug
     "size_origin": 74,
     "size_regions": 58,
     "size_regions_origin": 126,
-    "size_total": 208,
-    "size_total_origin": 314,
+    "size_total": 212,
+    "size_total_origin": 318,
     "regions": 1,
     "events": 6,
+    "refreshes": 4,
     "lsn": 6,
     "compression": 1
   }
@@ -358,8 +364,8 @@ show storages debug
       "regions": 1,
       "events": 9,
       "events_heap": 3,
-      "size": 208,
-      "size_uncompressed": 314,
+      "size": 212,
+      "size_uncompressed": 318,
       "size_heap": 6291456
     }
   }
@@ -405,8 +411,8 @@ show storages debug
       "regions": 3,
       "events": 9,
       "events_heap": 1,
-      "size": 562,
-      "size_uncompressed": 772,
+      "size": 574,
+      "size_uncompressed": 784,
       "size_heap": 2097152
     }
   }
@@ -449,8 +455,8 @@ show storages debug
       "regions": 4,
       "events": 9,
       "events_heap": 0,
-      "size": 739,
-      "size_uncompressed": 1001,
+      "size": 755,
+      "size_uncompressed": 1017,
       "size_heap": 0
     }
   }
