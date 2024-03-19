@@ -129,9 +129,9 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 
 	// {}
 	if (debug)
-		encode_map(buf, 13);
+		encode_map(buf, 14);
 	else
-		encode_map(buf, 12);
+		encode_map(buf, 13);
 
 	// min
 	encode_raw(buf, "min", 3);
@@ -147,6 +147,10 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 		encode_raw(buf, "(filtered)", 10);
 	else
 		encode_integer(buf, self->time);
+
+	// refreshes
+	encode_raw(buf, "refreshes", 9);
+	encode_integer(buf, self->index.refreshes);
 
 	// events
 	encode_raw(buf, "events", 6);
@@ -193,7 +197,7 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 		if (self->state != ID_NONE)
 		{
 			// {}
-			encode_map(buf, 10);
+			encode_map(buf, 11);
 
 			// size
 			encode_raw(buf, "size", 4);
@@ -226,6 +230,10 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 			// events
 			encode_raw(buf, "events", 6);
 			encode_integer(buf, index->events);
+
+			// refreshes
+			encode_raw(buf, "refreshes", 9);
+			encode_integer(buf, index->refreshes);
 
 			// lsn
 			encode_raw(buf, "lsn", 3);
