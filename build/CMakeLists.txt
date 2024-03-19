@@ -149,7 +149,9 @@ target_link_libraries(monotone ${MONOTONE_STATIC_LINK})
 target_link_libraries(monotone ${MONOTONE_LIBRARIES})
 
 # cli
-add_executable(monotone_cli ${CMAKE_SOURCE_DIR}/cli/test.c)
+add_executable(monotone_cli
+               ${CMAKE_SOURCE_DIR}/cli/monotone.c
+               ${CMAKE_SOURCE_DIR}/cli/bench.c)
 target_link_libraries(monotone_cli ${MONOTONE_STATIC_LINK})
 target_link_libraries(monotone_cli ${MONOTONE_LIBRARIES})
 set_target_properties(monotone_cli PROPERTIES OUTPUT_NAME monotone)
