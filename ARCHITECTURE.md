@@ -2,15 +2,19 @@
 
 #### Architecture
 
-Monotone architecture is inspired by the Log-Structured approach and implements a custom-made memory-disk-cloud hybrid data storage engine.
-The overall design follows ideas from Sophia and PostgreSQL (Timescale), which were adopted for IoT and high-performance sequential data storage/access patterns.
+Monotone architecture is inspired by the Log-Structured approach and implements a custom-made memory-disk-cloud
+hybrid data storage engine.
+The overall design shares ideas and use cases from Sophia and PostgreSQL (Timescale) and Kafka.
 
 The whole database can be seen as a 64-bit range sparse array of ordered events.
 Data is stored in sorted partition files.
 Each partition has an associated `[min, max]` range. Partitions never overlap.
 
-Event is a pair of `[u64 id, raw data]`. This is almost the same as the key-value approach, except for the addition of the `id` field. Event `id` is used as a key and represents a serial (or time) primary key.
+Event is a pair of `[u64 id, raw data]`. Event `id` is used as a key and represents a serial (or time) primary key.
 Additionally, it is possible to specify a custom comparator, which can be used to implement a compound key (use an additional embedded key in your data together with `id`).
+
+It is correct to say, that monotone is a cloud-native key-value storage for events with
+advanced data management.
 
 #### Partitioning
 
