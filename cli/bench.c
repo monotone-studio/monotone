@@ -10,8 +10,9 @@
 #include "bench.h"
 
 static int
-instance_open(Instance* self, const char* path, int id)
+instance_open(Instance* self, BenchConfig* config, int id)
 {
+	self->config = config;
 	self->env = monotone_init(NULL, NULL);
 	if (self->env == NULL)
 	{
@@ -19,18 +20,26 @@ instance_open(Instance* self, const char* path, int id)
 		return -1;
 	}
 
+	// log to console
 	monotone_execute(self->env, "set log_to_stdout to true", NULL);
+
+	// serial
 	monotone_execute(self->env, "set serial to true", NULL);
-	monotone_execute(self->env, "set workers to 2", NULL);
-	monotone_execute(self->env, "set wal_enable to false", NULL);
 
-	char ref_path[PATH_MAX];
-	snprintf(ref_path, sizeof(ref_path), "%s/%d", path, id);
+	// workers
+	char sz[PATH_MAX];
+	snprintf(sz, sizeof(sz), "set workers to %d", config->workers);
+	monotone_execute(self->env, sz, NULL);
 
-	mkdir(path, 0755);
+	// wal
+	snprintf(sz, sizeof(sz), "set wal_enable to %s", config->wal ? "true": "false");
+	monotone_execute(self->env, sz, NULL);
 
+	mkdir(config->path, 0755);
+
+	snprintf(sz, sizeof(sz), "%s/%d", config->path, id);
 	int rc;
-	rc = monotone_open(self->env, ref_path);
+	rc = monotone_open(self->env, sz);
 	if (rc == -1)
 	{
 		printf("error: %s\n", monotone_error(self->env));
@@ -55,18 +64,20 @@ static void*
 instance_writer(void* arg)
 {
 	Instance* self = arg;
+	BenchConfig* config = self->config;
 
-	const int metrics = 25;
-	float     data[metrics]; // ~ 100 bytes
-	for (int i = 0; i < metrics; i++)
-		data[i] = 0.345;
+	uint8_t data[config->size_event];
+	memset(data, 0, sizeof(data));
 
-	int              batch_size = 200;
-	monotone_event_t batch[batch_size];
+	float* metrics = (float*)data;
+	for (int i = 0; i < config->size_event / config->size_metric; i++)
+		metrics[i] = i + 0.345;
+
+	monotone_event_t batch[config->size_batch];
 
 	while (self->writer_active)
 	{
-		for (int i = 0; i < batch_size; i++)
+		for (int i = 0; i < config->size_batch; i++)
 		{
 			auto ev = &batch[i];
 			ev->id        = UINT64_MAX;
@@ -76,15 +87,15 @@ instance_writer(void* arg)
 		}
 
 		int rc;
-		rc = monotone_write(self->env, batch, batch_size);
+		rc = monotone_write(self->env, batch, config->size_batch);
 		if (rc == -1)
 		{
 			printf("error: %s\n", monotone_error(self->env));
 			continue;
 		}
 
-		atomic_u64_add(&self->written, batch_size);
-		atomic_u64_add(&self->written_bytes, sizeof(data) * batch_size);
+		atomic_u64_add(&self->written, config->size_batch);
+		atomic_u64_add(&self->written_bytes, config->size_batch * (sizeof(Event) + sizeof(data)));
 	}
 
 	return NULL;
@@ -106,19 +117,21 @@ bench_close(Bench* self)
 }
 
 static int
-bench_open(Bench* self, BenchArgs* args)
+bench_open(Bench* self, BenchConfig* config)
 {
-	if (args->count <= 0)
+	self->config = config;
+	if (config->instances <= 0)
 		return -1;
 
-	self->instances_count = args->count;
-	self->instances = calloc(args->count, sizeof(Instance));
+	self->instances_count = config->instances;
+	self->instances = calloc(self->instances_count, sizeof(Instance));
 	if (self->instances == NULL)
 		return -1;
 
 	for (int i = 0; i < self->instances_count; i++)
 	{
-		int rc = instance_open(&self->instances[i], args->path, i);
+		auto ref = &self->instances[i];
+		int rc = instance_open(ref, config, i);
 		if (rc == -1)
 			return -1;
 	}
@@ -131,27 +144,66 @@ bench_reporter(void* arg)
 {
 	Bench* self = arg;
 
+	uint64_t written[self->instances_count];
+	uint64_t written_bytes[self->instances_count];
+	uint64_t written_last[self->instances_count];
+	uint64_t written_last_bytes[self->instances_count];
+
 	while (self->report_active)
 	{
 		sleep(1);
 
-		uint64_t written = 0;
-		uint64_t written_bytes = 0;
+		uint64_t total = 0;
+		uint64_t total_bytes = 0;
+		uint64_t total_last = 0;
+		uint64_t total_last_bytes = 0;
+
 		for (int i = 0; i < self->instances_count; i++)
 		{
 			auto ref = &self->instances[i];
-			written += atomic_u64_of(&ref->written);
-			written_bytes += atomic_u64_of(&ref->written_bytes);
+
+			written[i]            = atomic_u64_of(&ref->written);
+			written_bytes[i]      = atomic_u64_of(&ref->written_bytes);
+			written_last[i]       = ref->written_last;
+			written_last_bytes[i] = ref->written_last_bytes;
+
+			total            += written[i];
+			total_bytes      += written_bytes[i];
+			total_last       += written_last[i];
+			total_last_bytes += written_last_bytes[i];
+
+			ref->written_last = written[i];
+			ref->written_last_bytes = written_bytes[i];
 		}
 
 		printf("\n");
-		printf("write: %d rps (%.2fM) %.2f million metrics/sec\n",
-			   (int)(written - self->written_last),
-			   (written_bytes - self->written_last_bytes)  / 1024.0 / 1024.0,
-			   (float)((int)((written_bytes - self->written_last_bytes - sizeof(uint64_t)) / sizeof(uint32_t))) / 1000000.0 );
 
-		self->written_last = written;
-		self->written_last_bytes = written_bytes;
+		for (int i = 0; i < self->instances_count; i++)
+		{
+			auto ref = &self->instances[i];
+			char* result = NULL;
+			int rc = monotone_execute(ref->env, "show storage main", &result);
+			if (rc == -1)
+			{
+				printf("error: %s\n", monotone_error(ref->env));
+			}
+			if (result)
+			{
+				printf("%s\n", result);
+				free(result);
+			}
+		}
+
+		uint64_t rps = total - total_last;
+		double eps = (double)((total - total_last) / 1000000.0);
+		double mps = (double)(((total_bytes - total_last_bytes) / (double)self->config->size_metric)) / 1000000.0;
+		double dps = (double)((total_bytes - total_last_bytes) / 1024.0 / 1024.0);
+
+		if (self->config->size_event == 0)
+			mps = 0;
+
+		printf("write: %" PRIu64 " rps (%.2f million events/sec, %.2f million metrics/sec), %.2f MiB/sec\n",
+		       rps, eps, mps, dps);
 	}
 
 	return NULL;
@@ -202,11 +254,95 @@ bench_stop(Bench* self)
 }
 
 static void
+bench_select(Bench* self, uint64_t from, uint64_t count)
+{
+	auto current = &self->instances[atomic_u32_of(&self->current)];
+
+	uint64_t time = time_us();
+	uint64_t total = 0;
+	uint64_t total_size = 0;
+
+	monotone_event_t key;
+	key.id = from;
+	key.data = NULL;
+	key.data_size = 0;
+	key.remove = false;
+
+	auto cursor = monotone_cursor(current->env, NULL, &key);
+	if (cursor == NULL)
+	{
+		printf("error: %s\n", monotone_error(current->env));
+		return;
+	}
+
+	monotone_event_t event;
+	while (total < count)
+	{
+		int rc = monotone_read(cursor, &event);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(current->env));
+			break;
+		}
+		if (rc == 0)
+			break;
+
+		total++;
+		total_size += sizeof(Event) + event.data_size;
+
+		rc = monotone_next(cursor);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(current->env));
+			break;
+		}
+	}
+
+	monotone_free(cursor);
+
+	double   diff = (time_us() - time) / 1000.0 / 1000.0;
+	double   rps  = total / diff;
+	double   eps  = (double)rps / 1000000.0;
+	double   mps  = (((double)total_size / (double)self->config->size_metric) / 1000000.0) / diff;
+	if (self->config->size_event == 0)
+		mps = 0;
+	double   dps  = (double)(total_size / 1024 / 1024) / diff;
+
+	printf("read:         %.0f rps (%.2f million events/sec, %.2f million metrics/sec), %.2f MiB/sec\n",
+		   rps, eps, mps, dps);
+	printf("read events:  %" PRIu64 " (%.1f millions)\n", total, (double)total / 10000.0);
+	printf("read metrics: %" PRIu64 " millions\n",
+			(total_size - (sizeof(Event) * total) / self->config->size_metric) / 1000 / 1000);
+	printf("read size:    %.1f MiB\n",
+			(double)total_size / 1024.0 / 1024.0);
+	printf("read time:    %.1f secs\n", diff);
+}
+
+static void
+bench_help(Bench* self)
+{
+	unused(self);
+	printf("\nmonotone benchmarking.\n\n");
+	printf("/switch <instance>       -- set current instance\n");
+	printf("/start                   -- start benchmark\n");
+	printf("/stop                    -- stop  benchmark\n");
+	printf("/select <start> <count>  -- read events using current instance\n");
+	printf("/help                    -- show help\n\n");
+	printf("Other commands will be executed using current instance.");
+	printf("\n");
+}
+
+static void
 bench_cli(Bench* self)
 {
+	bench_help(self);
+
 	for (;;)
 	{
-		printf("> ");
+		if (self->instances_count == 1)
+			printf("> ");
+		else
+			printf("instance %d> ", atomic_u32_of(&self->current));
 		fflush(stdout);
 
 		char command[512];
@@ -214,7 +350,7 @@ bench_cli(Bench* self)
 		if (p == NULL)
 			break;
 
-		for (char* pos = p; *pos; pos++)
+		for (char* pos = command; *pos; pos++)
 			if (*pos == '\n')
 				*pos = 0;
 
@@ -232,21 +368,58 @@ bench_cli(Bench* self)
 
 		if (! strcmp(command, "/help"))
 		{
-			printf("/switch -- set current instance\n");
-			printf("/start  -- start benchmark\n");
-			printf("/stop   -- stop  benchmark\n");
-			printf("/exit   -- quit\n");
+			bench_help(self);
 			continue;
 		}
 
-		if (! strcmp(command, "/switch"))
+		if (! strncmp(command, "/switch", 7))
 		{
-			// todo
+			char* ptr = command + 7;
+			int order = 0;
+			if (sscanf(ptr, "%d", &order) != 1)
+			{
+				printf("error: please provide instance number\n");
+				continue;
+			}
+			if (order < 0 || order >= self->instances_count)
+			{
+				printf("error: instance order is out of range\n");
+				continue;
+			}
+			atomic_u32_set(&self->current, order);
+			continue;
+		}
+
+		if (! strncmp(command, "/select", 7))
+		{
+			char*    ptr   = command + 7;
+			uint64_t start = 0;
+			uint64_t count = 0;
+			if (sscanf(ptr, "%"SCNu64"%"SCNu64, &start, &count) != 2)
+			{
+				printf("error: /select <start> <count> expected\n");
+				continue;
+			}
+			bench_select(self, start, count);
 			continue;
 		}
 
 		if (! strcmp(command, "/exit"))
 			break;
+
+		auto current = &self->instances[atomic_u32_of(&self->current)];
+		char* result = NULL;
+		int rc = monotone_execute(current->env, command, &result);
+		if (rc == -1)
+		{
+			printf("error: %s\n", monotone_error(current->env));
+			continue;
+		}
+		if (result)
+		{
+			printf("%s\n", result);
+			free(result);
+		}
 	}
 
 	if (self->active)
@@ -254,9 +427,9 @@ bench_cli(Bench* self)
 }
 
 int
-bench_main(Bench* self, BenchArgs* args)
+bench_main(Bench* self, BenchConfig* config)
 {
-	int rc = bench_open(self, args);
+	int rc = bench_open(self, config);
 	if (rc == -1)
 	{
 		bench_close(self);
