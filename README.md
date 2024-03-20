@@ -134,14 +134,12 @@ Currently only Linux environments are supported.
 #### Build Release
 
 ```sh
-git clone https://github.com/monotone-studio/monotone
 make release
 ```
 
 #### Build Release (pass cmake options directly)
 
 ```sh
-git clone https://github.com/monotone-studio/monotone
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=<install_path> .
 make
@@ -150,14 +148,12 @@ make
 #### Build Debug
 
 ```sh
-git clone https://github.com/monotone-studio/monotone
 make debug
 ```
 
 #### Running tests
 
 ```sh
-git clone https://github.com/monotone-studio/monotone
 make
 cd test
 ./monotone-test
