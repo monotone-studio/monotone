@@ -141,7 +141,7 @@ write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.3
 ```
 Writing 1.5GiB to WAL (uncompressed), performance depends on your storage device throughput.
 
-Scan all events:
+Read all events:
 
 ```
 > /select 0 432000000
