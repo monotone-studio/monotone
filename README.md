@@ -141,8 +141,6 @@ write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.3
 ```
 Writing 1.5GiB to WAL (uncompressed), performance depends on your storage device throughput.
 
-![image description](.github/bench.gif)
-
 Scan all events:
 
 ```
@@ -155,6 +153,17 @@ read time:    14.2 secs
 ```
 
 **Without WAL**
+
+With recommended standard settings (100 bytes per event):
+
+```
+monotone bench -n
+write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00 MiB/sec
+```
+
+![image description](.github/bench.gif)
+
+## Maximum Scaling
 
 Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
 Write is in-memory with eventual persistency per partition. Partitions are compressed and flushed ASAP by background workers.
@@ -169,13 +178,6 @@ write: 5522800 rps (5.52 million events/sec, 1398.65 million metrics/sec), 5335.
 Those results depend on your hardware and can be scaled further by parallel writing
 to the independent storage instances. Please note that writing 5GiB into memory requires appropriate memory capacity
 to fit the updates until it is flushed to disk.
-
-With recommended standard settings (100 bytes per event):
-
-```
-monotone bench -n
-write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00 MiB/sec
-```
 
 ## Build
 
