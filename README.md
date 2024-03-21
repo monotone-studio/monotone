@@ -111,18 +111,46 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 ## Interactive Benchmarking
 
 Monotone ships with the client application, which can do simple interactive benchmarking and
-execute commands in runtime: `monotone bench.` One can use it to play around with settings and get a sense of performance.
+execute commands in runtime: `monotone bench.` You can use it to experiment with settings and data management commands and get a sense of performance.
 
 ## Performance
 
-Performance numbers to expect (**single instance, single thread writer**):
+Performance numbers to expect for **single instance** using **single thread writer**:
+
+**With WAL**
+
+With recommended standard settings (100 bytes per event):
+
+```
+monotone bench
+write: 4763000 rps (4.76 million events/sec, 134.55 million metrics/sec), 513.29 MiB/sec
+```
+
+Max event throughput, with data size set to zero:
+
+```
+monotone bench -s 0 -b 800
+write: 6012800 rps (6.01 million events/sec, 0.00 million metrics/sec), 74.55 MiB/sec
+```
+
+Maxing out metrics: (1000 bytes per event = 250 metrics per event):
+
+```
+monotone bench -s 1000
+write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.33 MiB/sec
+```
+
+Writing 1.5GiB to WAL (uncompressed), performance depends on your storage device throughput.
+
+
+![image description](.github/bench.gif)
 
 **Without WAL**
 
-Disabling WAL allows us to get maximum out of the storage and not get bound by IO.
+Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
 Write is in-memory with eventual persistency per partition. Partitions are compressed and flushed ASAP by background workers.
 
-The expected compression rate is more than `x25`, and write performance is more than `1 billion` metrics per second.
+The expected compression rate is more than `25x`, and write performance is more than `1 billion` metrics per second.
 
 ```
 monotone bench -n -s 1000
@@ -138,32 +166,6 @@ With recommended standard settings (100 bytes per event):
 ```
 monotone bench -n
 write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00 MiB/sec
-```
-
-**With WAL**
-
-With enabled WAL (1000 bytes per event = 250 metrics per event):
-
-```
-monotone bench -s 1000
-write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.33 MiB/sec
-```
-
-Writing 1.5GiB to WAL (uncompressed), performance depends on your storage throughput.
-
-
-Max event throughput, with data size set to zero:
-
-```
-monotone bench -s 0 -b 800
-write: 6012800 rps (6.01 million events/sec, 0.00 million metrics/sec), 74.55 MiB/sec
-```
-
-With recommended standard settings (100 bytes per event):
-
-```
-monotone bench
-write: 4763000 rps (4.76 million events/sec, 134.55 million metrics/sec), 513.29 MiB/sec
 ```
 
 ## Build
