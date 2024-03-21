@@ -168,7 +168,8 @@ write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00
 Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
 Write is in-memory with eventual persistency per partition. Partitions are compressed and flushed ASAP by background workers.
 
-The expected compression rate is more than `25x`, and write performance is more than `1 billion` metrics per second.
+The expected compression rate is more than `25x`, and write performance is more than `1 billion` metrics per second for a
+single thread writer.
 
 ```
 monotone bench -n -s 1000
