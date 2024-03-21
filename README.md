@@ -115,7 +115,7 @@ execute commands in runtime: `monotone bench.` You can use it to experiment with
 
 ## Performance
 
-Some arbitrary performance numbers for **single instance** using **single thread writer**:
+Some arbitrary performance numbers for **single instance** using **single writer thread**:
 
 **With WAL**
 
@@ -139,11 +139,20 @@ Maxing out metrics: (1000 bytes per event = 250 metrics per event):
 monotone bench -s 1000
 write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.33 MiB/sec
 ```
-
 Writing 1.5GiB to WAL (uncompressed), performance depends on your storage device throughput.
 
-
 ![image description](.github/bench.gif)
+
+Scan all events:
+
+```
+> /select 0 432689400
+read:         30513948 rps (30.51 million events/sec, 862.02 million metrics/sec), 3288.30 MiB/sec
+read events:  432000000 (432.0 millions)
+read metrics: 47412.0 millions
+read size:    46554.6 MiB
+read time:    14.2 secs
+```
 
 **Without WAL**
 
