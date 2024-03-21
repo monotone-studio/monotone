@@ -115,7 +115,7 @@ execute commands in runtime: `monotone bench.` You can use it to experiment with
 
 ## Performance
 
-Performance numbers to expect for **single instance** using **single thread writer**:
+Some arbitrary performance numbers for **single instance** using **single thread writer**:
 
 **With WAL**
 
