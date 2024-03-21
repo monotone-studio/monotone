@@ -310,9 +310,9 @@ bench_select(Bench* self, uint64_t from, uint64_t count)
 
 	printf("read:         %.0f rps (%.2f million events/sec, %.2f million metrics/sec), %.2f MiB/sec\n",
 	       rps, eps, mps, dps);
-	printf("read events:  %" PRIu64 " (%.1f millions)\n", total, (double)total / 10000.0);
-	printf("read metrics: %" PRIu64 " millions\n",
-	       (total_size - (sizeof(Event) * total) / self->config->size_metric) / 1000 / 1000);
+	printf("read events:  %" PRIu64 " (%.1f millions)\n", total, (double)total / 1000000.0);
+	printf("read metrics: %.1f millions\n",
+	       (double)(total_size - (sizeof(Event) * total) / self->config->size_metric) / 1000.0 / 1000.0);
 	printf("read size:    %.1f MiB\n",
 	       (double)total_size / 1024.0 / 1024.0);
 	printf("read time:    %.1f secs\n", diff);
