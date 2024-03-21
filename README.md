@@ -108,13 +108,63 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	ALTER STORAGE main (cloud 's3', compression 'zstd')
 	```
   
+## Interactive Benchmarking
+
+Monotone ships with the client application, which can do simple interactive benchmarking and
+execute commands in runtime: `monotone bench.` One can use it to play around with settings and get a sense of performance.
+
 ## Performance
 
-Performance numbers we achieved so far (single instance, single thread operations):
+Performance numbers to expect (**single instance, single thread writer**):
 
-    150+ million metrics write / second (~ 600+ MiB per second, 4 bytes per metric)
-    6-10 million events write / second (~ 100 bytes per event)
-    20-30 million events read / second (up to ~ 2GiB per second)
+**Without WAL**
+
+Disabling WAL allows us to get maximum out of the storage and not get bound by IO.
+Write is in-memory with eventual persistency per partition. Partitions are compressed and flushed ASAP by background workers.
+
+The expected compression rate is more than `x25`, and write performance is more than `1 billion` metrics per second.
+
+```
+monotone bench -n -s 1000
+write: 5522800 rps (5.52 million events/sec, 1398.65 million metrics/sec), 5335.42 MiB/sec
+```
+
+Those results depend on your hardware and can be scaled further by parallel writing
+to the independent storage instances. Please note that writing 5GiB into memory requires appropriate memory capacity
+to fit the updates until it is flushed to disk.
+
+With recommended standard settings (100 bytes per event):
+
+```
+monotone bench -n
+write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00 MiB/sec
+```
+
+**With WAL**
+
+With enabled WAL (1000 bytes per event = 250 metrics per event):
+
+```
+monotone bench -s 1000
+write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.33 MiB/sec
+```
+
+Writing 1.5GiB to WAL (uncompressed), performance depends on your storage throughput.
+
+
+Max event throughput, with data size set to zero:
+
+```
+monotone bench -s 0 -b 800
+write: 6012800 rps (6.01 million events/sec, 0.00 million metrics/sec), 74.55 MiB/sec
+```
+
+With recommended standard settings (100 bytes per event):
+
+```
+monotone bench
+write: 4763000 rps (4.76 million events/sec, 134.55 million metrics/sec), 513.29 MiB/sec
+```
 
 ## Build
 
