@@ -52,7 +52,10 @@ compression_zstd_compress(Compression* ptr, Buf* buf, int level,
 	if (level > 0)
 		ZSTD_CCtx_setParameter(self->ctx, ZSTD_c_compressionLevel, level);
 
-	buf_reserve(buf, buf_size(a) + buf_size(b));
+	if (b)
+		buf_reserve(buf, buf_size(a) + buf_size(b));
+	else
+		buf_reserve(buf, buf_size(a));
 
 	// a
 	ZSTD_outBuffer out;
@@ -71,9 +74,17 @@ compression_zstd_compress(Compression* ptr, Buf* buf, int level,
 	unused(rc);
 
 	// b
-	in.src   = b->start;
-	in.size  = buf_size(b);
-	in.pos   = 0;
+	if (b)
+	{
+		in.src  = b->start;
+		in.size = buf_size(b);
+		in.pos  = 0;
+	} else
+	{
+		in.src  = NULL;
+		in.size = 0;
+		in.pos  = 0;
+	}
 	rc = ZSTD_compressStream2(self->ctx, &out, &in, ZSTD_e_end);
 	assert(rc == 0);
 	unused(rc);

@@ -76,7 +76,9 @@ compression_lz4_compress(Compression* ptr, Buf* buf, int level,
 	// reserve buffer
 	size_t size_begin = LZ4F_HEADER_SIZE_MAX;
 	size_t size_a     = LZ4F_compressBound(buf_size(a), &prefs);
-	size_t size_b     = LZ4F_compressBound(buf_size(b), &prefs);
+	size_t size_b     = 0;
+	if (b)
+		size_b = LZ4F_compressBound(buf_size(b), &prefs);
 	size_t size_end   = LZ4F_compressBound(0, &prefs);
 	size_t size       = size_begin + size_a + size_b + size_end;
 	buf_reserve(buf, size);
@@ -96,12 +98,15 @@ compression_lz4_compress(Compression* ptr, Buf* buf, int level,
 	buf_advance(buf, size);
 
 	// b
-	size = LZ4F_compressUpdate(self->cctx, buf->position, size_b,
-	                           b->start, buf_size(b),
-	                           NULL);
-	if (unlikely(LZ4F_isError(size)))
-		compression_lz4_error(size);
-	buf_advance(buf, size);
+	if (b)
+	{
+		size = LZ4F_compressUpdate(self->cctx, buf->position, size_b,
+		                           b->start, buf_size(b),
+		                           NULL);
+		if (unlikely(LZ4F_isError(size)))
+			compression_lz4_error(size);
+		buf_advance(buf, size);
+	}
 
 	// end
 	size = LZ4F_compressEnd(self->cctx, buf->position, size_end, NULL);
