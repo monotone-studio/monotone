@@ -54,6 +54,7 @@ index_init(Index* self)
 static inline IndexRegion*
 index_get(Index* self, Buf* data, int pos)
 {
+	unused(self);
 	assert(pos < (int)self->regions);
 	return &((IndexRegion*)data->start)[pos];
 }
