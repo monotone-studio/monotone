@@ -46,7 +46,13 @@ instance_open(Instance* self, BenchConfig* config, int id)
 		return -1;
 	}
 
-	monotone_execute(self->env, "alter storage main set (compression 'zstd', refresh_wm 0)", NULL);
+	if (config->cloud)
+	{
+		monotone_execute(self->env, "create cloud if not exists s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000', debug false)", NULL);
+		monotone_execute(self->env, "alter storage main set (cloud 's3', compression 'zstd', refresh_wm 0)", NULL);
+	} else {
+		monotone_execute(self->env, "alter storage main set (compression 'zstd', refresh_wm 0)", NULL);
+	}
 	return 0;
 }
 

@@ -30,6 +30,7 @@ struct BenchConfig
 	int         size_event;
 	int         size_metric;
 	int         size_batch;
+	bool        cloud;
 	bool        wal;
 };
 

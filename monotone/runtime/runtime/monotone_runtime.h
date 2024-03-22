@@ -20,6 +20,7 @@
 
 // basic data structures
 #include "runtime/list.h"
+#include "runtime/misc.h"
 
 // exceptions
 #include "runtime/exception.h"

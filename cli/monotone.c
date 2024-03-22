@@ -25,6 +25,7 @@ usage(void)
 	printf("     -m <metric_size>  -- size of a single metric (default: 4)\n");
 	printf("     -b <batch_size>   -- how many events to include in a single write (default: 200)\n");
 	printf("     -n                -- disable WAL (default: WAL is enabled by default)\n");
+	printf("     -c                -- add S3 cloud (default: disabled)\n");
 	printf("\n");
 	printf("examples:\n");
 	printf("\n");
@@ -48,10 +49,11 @@ main_bench(int argc, char* argv[])
 		.size_event  = 100,
 		.size_metric = sizeof(float),
 		.size_batch  = 200,
+		.cloud       = false,
 		.wal         = true
 	};
 	int opt;
-	while ((opt = getopt(argc, argv, "i:w:s:m:b:n")) != -1)
+	while ((opt = getopt(argc, argv, "i:w:s:m:b:nc")) != -1)
 	{
 		switch (opt) {
 		case 'i':
@@ -71,6 +73,9 @@ main_bench(int argc, char* argv[])
 			break;
 		case 'n':
 			config.wal = false;
+			break;
+		case 'c':
+			config.cloud = true;
 			break;
 		default:
 			return usage();
