@@ -11,3 +11,4 @@ build/libmonotone.a
 build/libmonotone.so
 build/monotone-test
 build/monotone
+build/example_write_and_read
