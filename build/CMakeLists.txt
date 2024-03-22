@@ -164,3 +164,11 @@ add_executable(monotone_test
 target_link_libraries(monotone_test ${MONOTONE_STATIC_LINK})
 target_link_libraries(monotone_test ${MONOTONE_LIBRARIES})
 set_target_properties(monotone_test PROPERTIES OUTPUT_NAME monotone-test)
+
+# examples
+add_executable(example_write_and_read EXCLUDE_FROM_ALL
+               ${CMAKE_SOURCE_DIR}/examples/write_and_read.c)
+target_link_libraries(example_write_and_read ${MONOTONE_STATIC_LINK})
+target_link_libraries(example_write_and_read ${MONOTONE_LIBRARIES})
+set_target_properties(example_write_and_read PROPERTIES OUTPUT_NAME example_write_and_read)
+add_custom_target(examples DEPENDS example_write_and_read)
