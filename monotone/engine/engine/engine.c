@@ -81,8 +81,7 @@ engine_set_serial(Engine* self)
 	uint64_t serial = 0;
 	if (part->state != ID_NONE && part->index.regions > 0)
 	{
-		auto max = index_max(&part->index, &part->index_data);
-		serial = max->id;
+		serial = index_max(&part->index, &part->index_data);
 		serial_set = true;
 	}
 

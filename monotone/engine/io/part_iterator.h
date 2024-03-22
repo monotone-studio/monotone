@@ -39,8 +39,7 @@ part_iterator_open(PartIterator* self, Part* part, Event* event)
 
 	region_iterator_init(&self->region_iterator);
 	index_iterator_init(&self->index_iterator);
-	index_iterator_open(&self->index_iterator, &part->index, &part->index_data,
-	                     part->comparator, event);
+	index_iterator_open(&self->index_iterator, &part->index, &part->index_data, event);
 
 	self->current = index_iterator_at(&self->index_iterator);
 	if (self->current == NULL)

@@ -67,14 +67,8 @@ mapping_max(Mapping* self)
 	return mapping_of(max);
 }
 
-always_inline static inline int64_t
-mapping_compare(uint64_t a, uint64_t b)
-{
-	return (int64_t)a - (int64_t)b;
-}
-
 hot static inline
-rbtree_get(mapping_find, mapping_compare(mapping_of(n)->min, *(uint64_t*)key))
+rbtree_get(mapping_find, compare_u64(mapping_of(n)->min, *(uint64_t*)key))
 
 static inline void
 mapping_add(Mapping* self, Slice* slice)

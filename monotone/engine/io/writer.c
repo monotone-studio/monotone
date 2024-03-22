@@ -130,6 +130,15 @@ writer_add(Writer* self, Event* event)
 {
 	if (unlikely(writer_is_region_limit(self)))
 	{
+		// fit all events with the same id inside the same region,
+		// this case is only possible when using custom
+		// comparator
+		if (region_writer_started(&self->region_writer))
+		{
+			if (region_writer_max(&self->region_writer)->id == event->id)
+				goto add;
+		}
+
 		// write region
 		writer_stop_region(self);
 
@@ -137,6 +146,7 @@ writer_add(Writer* self, Event* event)
 		writer_start_region(self);
 	}
 
+add:
 	// add next event to the region
 	region_writer_add(&self->region_writer, event);
 }

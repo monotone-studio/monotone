@@ -11,7 +11,6 @@ typedef struct IndexWriter IndexWriter;
 struct IndexWriter
 {
 	bool         active;
-	Buf          meta;
 	Buf          data;
 	Buf          compressed;
 	Compression* compression;
@@ -27,7 +26,6 @@ index_writer_init(IndexWriter* self)
 	self->compression       = NULL;
 	self->compression_level = 0;
 	self->crc               = false;
-	buf_init(&self->meta);
 	buf_init(&self->data);
 	buf_init(&self->compressed);
 	memset(&self->index, 0, sizeof(self->index));
@@ -36,7 +34,6 @@ index_writer_init(IndexWriter* self)
 static inline void
 index_writer_free(IndexWriter* self)
 {
-	buf_free(&self->meta);
 	buf_free(&self->data);
 	buf_free(&self->compressed);
 }
@@ -48,7 +45,6 @@ index_writer_reset(IndexWriter* self)
 	self->compression       = NULL;
 	self->compression_level = 0;
 	self->crc               = false;
-	buf_reset(&self->meta);
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
 	memset(&self->index, 0, sizeof(self->index));
@@ -89,7 +85,7 @@ index_writer_stop(IndexWriter* self,
 	{
 		compression_compress(self->compression, &self->compressed,
 		                     self->compression_level,
-		                     &self->meta, &self->data);
+		                     &self->data, NULL);
 		size = buf_size(&self->compressed);
 		compression_id = self->compression->iface->id;
 	} else {
@@ -115,13 +111,9 @@ index_writer_stop(IndexWriter* self,
 	// calculate index data crc
 	uint32_t crc = 0;
 	if (self->compression)
-	{
 		crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
-	} else
-	{
-		crc = crc32(crc, self->meta.start, buf_size(&self->meta));
+	else
 		crc = crc32(crc, self->data.start, buf_size(&self->data));
-	}
 	index->crc_data = crc;
 
 	// calculate index crc
@@ -136,13 +128,6 @@ index_writer_add(IndexWriter*  self,
 	auto region = region_writer_header(region_writer);
 	assert(region->events > 0);
 
-	// write region offset
-	uint32_t offset = buf_size(&self->data);
-	buf_write(&self->meta, &offset, sizeof(offset));
-
-	// prepare meta region reference
-	buf_reserve(&self->data, sizeof(IndexRegion));
-
 	uint32_t size;
 	if (self->compression)
 		size = buf_size(&region_writer->compressed);
@@ -152,35 +137,25 @@ index_writer_add(IndexWriter*  self,
 	uint32_t crc = 0;
 	if (self->crc)
 		crc = region_writer_crc(region_writer);
+
+	// prepare meta region reference
+	buf_reserve(&self->data, sizeof(IndexRegion));
 	auto ref = (IndexRegion*)self->data.position;
 	ref->offset       = region_offset;
+	ref->crc          = crc;
+	ref->min          = region_writer_min(region_writer)->id;
+	ref->max          = region_writer_max(region_writer)->id;
 	ref->size_origin  = region->size;
 	ref->size         = size;
-	ref->size_key_min = 0;
-	ref->size_key_max = 0;
 	ref->events       = region->events;
-	ref->crc          = crc;
 	memset(ref->reserved, 0, sizeof(ref->reserved));
 	buf_advance(&self->data, sizeof(IndexRegion));
-
-	// copy min/max keys
-	auto min = region_writer_min(region_writer);
-	buf_write(&self->data, min, event_size(min));
-
-	auto max = region_writer_max(region_writer);
-	buf_write(&self->data, max, event_size(max));
-
-	ref = (IndexRegion*)(self->data.start + offset);
-	ref->size_key_min = event_size(min);
-	ref->size_key_max = event_size(max);
 
 	// update header
 	auto index = &self->index;
 	index->regions++;
 	index->events += region->events;
-	index->size += sizeof(uint32_t) +
-	               sizeof(IndexRegion) + event_size(min) +
-	               event_size(max);
+	index->size += sizeof(IndexRegion);
 	index->size_regions += size;
 	index->size_regions_origin += region->size;
 }
@@ -189,7 +164,6 @@ static inline void
 index_writer_copy(IndexWriter* self, Index* index, Buf* buf)
 {
 	*index = self->index;
-	buf_write(buf, self->meta.start, buf_size(&self->meta));
 	buf_write(buf, self->data.start, buf_size(&self->data));
 }
 
@@ -197,12 +171,8 @@ static inline void
 index_writer_add_to_iov(IndexWriter* self, Iov* iov)
 {
 	if (self->compression)
-	{
 		iov_add(iov, self->compressed.start, buf_size(&self->compressed));
-	} else
-	{
-		iov_add(iov, self->meta.start, buf_size(&self->meta));
+	else
 		iov_add(iov, self->data.start, buf_size(&self->data));
-	}
 	iov_add(iov, &self->index, sizeof(self->index));
 }
