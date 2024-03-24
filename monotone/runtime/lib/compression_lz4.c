@@ -63,24 +63,20 @@ compression_lz4_free(Compression* ptr)
 
 hot static void
 compression_lz4_compress(Compression* ptr, Buf* buf, int level,
-                         Buf*              a,
-                         Buf*              b)
+                         int          argc,
+                         Buf**        argv)
 {
 	auto self = (CompressionLz4*)ptr;
-	(void)level;
-
 	LZ4F_preferences_t prefs = LZ4F_INIT_PREFERENCES;
 	if (level > 0)
 		prefs.compressionLevel = level;
 
 	// reserve buffer
 	size_t size_begin = LZ4F_HEADER_SIZE_MAX;
-	size_t size_a     = LZ4F_compressBound(buf_size(a), &prefs);
-	size_t size_b     = 0;
-	if (b)
-		size_b = LZ4F_compressBound(buf_size(b), &prefs);
 	size_t size_end   = LZ4F_compressBound(0, &prefs);
-	size_t size       = size_begin + size_a + size_b + size_end;
+	size_t size       = size_begin + size_end;
+	for (int i = 0; i < argc; i++)
+		size += LZ4F_compressBound(buf_size(argv[i]), &prefs);
 	buf_reserve(buf, size);
 
 	// begin
@@ -89,19 +85,13 @@ compression_lz4_compress(Compression* ptr, Buf* buf, int level,
 		compression_lz4_error(size);
 	buf_advance(buf, size);
 
-	// a
-	size = LZ4F_compressUpdate(self->cctx, buf->position, size_a,
-	                           a->start, buf_size(a),
-	                           NULL);
-	if (unlikely(LZ4F_isError(size)))
-		compression_lz4_error(size);
-	buf_advance(buf, size);
-
-	// b
-	if (b)
+	// process
+	for (int i = 0; i < argc; i++)
 	{
-		size = LZ4F_compressUpdate(self->cctx, buf->position, size_b,
-		                           b->start, buf_size(b),
+		auto ref = argv[i];
+		size = LZ4F_compressUpdate(self->cctx, buf->position,
+		                           LZ4F_compressBound(buf_size(ref), &prefs),
+		                           ref->start, buf_size(ref),
 		                           NULL);
 		if (unlikely(LZ4F_isError(size)))
 			compression_lz4_error(size);

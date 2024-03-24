@@ -21,7 +21,7 @@ struct CompressionIf
 	int           id;
 	Compression* (*create)(CompressionIf*);
 	void         (*free)(Compression*);
-	void         (*compress)(Compression*, Buf*, int, Buf*, Buf*);
+	void         (*compress)(Compression*, Buf*, int, int, Buf**);
 	void         (*decompress)(Compression*, Buf*, uint8_t*, int, int);
 };
 
@@ -51,10 +51,10 @@ compression_of(List* link)
 
 static inline void
 compression_compress(Compression* self, Buf* buf, int level,
-                     Buf*         a,
-                     Buf*         b)
+                     int          argc,
+                     Buf**        argv)
 {
-	self->iface->compress(self, buf, level, a, b);
+	self->iface->compress(self, buf, level, argc, argv);
 }
 
 static inline void

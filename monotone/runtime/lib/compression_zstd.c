@@ -43,51 +43,46 @@ compression_zstd_free(Compression* ptr)
 
 hot static void
 compression_zstd_compress(Compression* ptr, Buf* buf, int level,
-                          Buf*              a,
-                          Buf*              b)
+                          int          argc,
+                          Buf**        argv)
 {
 	auto self = (CompressionZstd*)ptr;
-
 	ZSTD_CCtx_reset(self->ctx, ZSTD_reset_session_only);
 	if (level > 0)
 		ZSTD_CCtx_setParameter(self->ctx, ZSTD_c_compressionLevel, level);
 
-	if (b)
-		buf_reserve(buf, buf_size(a) + buf_size(b));
-	else
-		buf_reserve(buf, buf_size(a));
+	size_t size = 0;
+	for (int i = 0; i < argc; i++)
+		size += buf_size(argv[i]);
+	buf_reserve(buf, size);
 
-	// a
 	ZSTD_outBuffer out;
 	out.dst  = buf->position;
 	out.size = buf_size_unused(buf);
 	out.pos  = 0;
 
-	ZSTD_inBuffer in;
-	in.src   = a->start;
-	in.size  = buf_size(a);
-	in.pos   = 0;
-
-	ssize_t rc;
-	rc = ZSTD_compressStream2(self->ctx, &out, &in, ZSTD_e_continue);
-	assert(rc == 0);
-	unused(rc);
-
-	// b
-	if (b)
+	for (int i = 0; i < argc; i++)
 	{
-		in.src  = b->start;
-		in.size = buf_size(b);
-		in.pos  = 0;
-	} else
-	{
-		in.src  = NULL;
-		in.size = 0;
-		in.pos  = 0;
+		ZSTD_inBuffer in;
+		in.src   = argv[i]->start;
+		in.size  = buf_size(argv[i]);
+		in.pos   = 0;
+
+		ssize_t rc;
+		rc = ZSTD_compressStream2(self->ctx, &out, &in, ZSTD_e_continue);
+		assert(rc == 0);
+		unused(rc);
 	}
+
+	ZSTD_inBuffer in;
+	in.src   = NULL;
+	in.size  = 0;
+	in.pos   = 0;
+	ssize_t rc;
 	rc = ZSTD_compressStream2(self->ctx, &out, &in, ZSTD_e_end);
 	assert(rc == 0);
 	unused(rc);
+
 	buf_advance(buf, out.pos);
 }
 
