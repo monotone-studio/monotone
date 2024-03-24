@@ -17,6 +17,63 @@
 #include <monotone_main.h>
 
 static void
+execute_show_op(Executable* self, Buf* buf, CmdShowOp* op)
+{
+	switch (op->type) {
+	case SHOW_MEMORY:
+		memory_mgr_show(&self->main->memory_mgr, buf);
+		break;
+	case SHOW_WAL:
+		wal_show(&self->main->wal, buf);
+		break;
+	case SHOW_CLOUDS:
+	{
+		Str* name = NULL;
+		if (op->name.id == KNAME)
+			name = &op->name.string;
+		cloud_mgr_show(&self->main->cloud_mgr, name, buf);
+		break;
+	}
+	case SHOW_STORAGES:
+	{
+		Str* storage = NULL;
+		if (op->name.id == KNAME)
+			storage = &op->name.string;
+		engine_show(&self->main->engine, ENGINE_SHOW_STORAGES,
+		            storage, buf, op->debug);
+		break;
+	}
+	case SHOW_PARTITIONS:
+	{
+		Str* storage = NULL;
+		if (op->name.id == KNAME)
+			storage = &op->name.string;
+		engine_show(&self->main->engine, ENGINE_SHOW_PARTITIONS,
+		            storage, buf, op->debug);
+		break;
+	}
+	case SHOW_PIPELINE:
+		pipeline_show(&self->main->engine.pipeline, buf);
+		break;
+	case SHOW_ALL:
+		config_show(config(), buf);
+		break;
+	case SHOW_NAME:
+	{
+		// name
+		auto var = config_find(config(), &op->name.string);
+		if (var && var_is(var, VAR_S))
+			var = NULL;
+		if (unlikely(var == NULL))
+			error("SHOW name: '%.*s' not found", str_size(&op->name.string),
+			      str_of(&op->name.string));
+		var_encode(var, buf);
+		break;
+	}
+	}
+}
+
+static void
 execute_show(Executable* self)
 {
 	auto cmd = cmd_show_of(self->cmd);
@@ -25,57 +82,13 @@ execute_show(Executable* self)
 	buf_init(&buf);
 	guard(guard, buf_free, &buf);
 
-	switch (cmd->type) {
-	case SHOW_MEMORY:
-		memory_mgr_show(&self->main->memory_mgr, &buf);
-		break;
-	case SHOW_WAL:
-		wal_show(&self->main->wal, &buf);
-		break;
-	case SHOW_CLOUDS:
+	// []
+	if (cmd->list_count > 1)
+		encode_array(&buf, cmd->list_count);
+	list_foreach(&cmd->list)
 	{
-		Str* name = NULL;
-		if (cmd->name.id == KNAME)
-			name = &cmd->name.string;
-		cloud_mgr_show(&self->main->cloud_mgr, name, &buf);
-		break;
-	}
-	case SHOW_STORAGES:
-	{
-		Str* storage = NULL;
-		if (cmd->name.id == KNAME)
-			storage = &cmd->name.string;
-		engine_show(&self->main->engine, ENGINE_SHOW_STORAGES,
-		            storage, &buf, cmd->debug);
-		break;
-	}
-	case SHOW_PARTITIONS:
-	{
-		Str* storage = NULL;
-		if (cmd->name.id == KNAME)
-			storage = &cmd->name.string;
-		engine_show(&self->main->engine, ENGINE_SHOW_PARTITIONS,
-		            storage, &buf, cmd->debug);
-		break;
-	}
-	case SHOW_PIPELINE:
-		pipeline_show(&self->main->engine.pipeline, &buf);
-		break;
-	case SHOW_ALL:
-		config_show(config(), &buf);
-		break;
-	case SHOW_NAME:
-	{
-		// name
-		auto var = config_find(config(), &cmd->name.string);
-		if (var && var_is(var, VAR_S))
-			var = NULL;
-		if (unlikely(var == NULL))
-			error("SHOW name: '%.*s' not found", str_size(&cmd->name.string),
-			      str_of(&cmd->name.string));
-		var_encode(var, &buf);
-		break;
-	}
+		auto op = list_at(CmdShowOp, link);
+		execute_show_op(self, &buf, op);
 	}
 
 	uint8_t* pos = buf.start;

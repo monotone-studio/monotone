@@ -122,8 +122,36 @@ select 12
 # test: replace by key
 insert 0 x
 insert 3 x
-show partitions debug
+show storages, partitions debug
 [{
+  "main": {
+    "config": {
+      "uuid": "00000000-0000-0000-0000-000000000000",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "compression": "",
+      "compression_level": 0,
+      "refresh_wm": 41943040,
+      "region_size": 131072
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 6,
+      "events_heap": 2,
+      "size": 262,
+      "size_uncompressed": 262,
+      "size_heap": 2097152
+    }
+  }
+}, [{
   "min": 0,
   "max": 10,
   "created": "(filtered)",
@@ -150,7 +178,7 @@ show partitions debug
     "lsn": 4,
     "compression": 0
   }
-}]
+}]]
 # test: select (memtable + region)
 select
 [0, x]

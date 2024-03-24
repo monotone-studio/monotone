@@ -6,8 +6,9 @@
 // time-series storage
 //
 
-typedef struct CmdShow CmdShow;
-typedef struct CmdSet  CmdSet;
+typedef struct CmdShowOp CmdShowOp;
+typedef struct CmdShow   CmdShow;
+typedef struct CmdSet    CmdSet;
 
 enum
 {
@@ -21,12 +22,19 @@ enum
 	SHOW_NAME
 };
 
-struct CmdShow
+struct CmdShowOp
 {
-	Cmd   cmd;
 	int   type;
 	bool  debug;
 	Token name;
+	List  link;
+};
+
+struct CmdShow
+{
+	Cmd  cmd;
+	List list;
+	int  list_count;
 };
 
 struct CmdSet
@@ -48,14 +56,35 @@ cmd_set_of(Cmd* self)
 	return (CmdSet*)self;
 }
 
+static inline void
+cmd_show_free(Cmd* self)
+{
+	auto cmd = cmd_show_of(self);
+	list_foreach_safe(&cmd->list)
+	{
+		auto op = list_at(CmdShowOp, link);
+		mn_free(op);
+	}
+}
+
+static inline CmdShowOp*
+cmd_show_allocate_op(int type, Token* name, bool debug)
+{
+	CmdShowOp* self = mn_malloc(sizeof(CmdShowOp));
+	self->type  = type;
+	self->debug = debug;
+	self->name  = *name;
+	list_init(&self->link);
+	return self;
+}
+
 static inline CmdShow*
-cmd_show_allocate(int type, Token* name, bool debug)
+cmd_show_allocate(void)
 {
 	CmdShow* self;
-	self = cmd_allocate(CMD_SHOW, NULL, sizeof(*self));
-	self->type  = type;
-	self->name  = *name;
-	self->debug = debug;
+	self = cmd_allocate(CMD_SHOW, cmd_show_free, sizeof(*self));
+	self->list_count = 0;
+	list_init(&self->list);
 	return self;
 }
 

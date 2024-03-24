@@ -41,7 +41,8 @@ select 12
 # test: replace by key
 insert 0 x
 insert 3 x
-show partitions debug
+
+show storages, partitions debug
 
 # test: select (memtable + region)
 select
