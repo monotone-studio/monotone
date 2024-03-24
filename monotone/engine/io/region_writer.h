@@ -87,10 +87,11 @@ region_writer_stop(RegionWriter* self)
 
 	// compress region
 	if (self->compression)
+	{
+		Buf* argv[] = { &self->meta, &self->data };
 		compression_compress(self->compression, &self->compressed,
-		                     self->compression_level,
-		                     &self->meta,
-		                     &self->data);
+		                     self->compression_level, 2, argv);
+	}
 }
 
 static inline void

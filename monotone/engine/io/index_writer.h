@@ -83,9 +83,9 @@ index_writer_stop(IndexWriter* self,
 	int      compression_id;
 	if (self->compression)
 	{
+		Buf* argv[] = { &self->data };
 		compression_compress(self->compression, &self->compressed,
-		                     self->compression_level,
-		                     &self->data, NULL);
+		                     self->compression_level, 1, argv);
 		size = buf_size(&self->compressed);
 		compression_id = self->compression->iface->id;
 	} else {
