@@ -70,6 +70,7 @@ static Keyword keywords[] =
 	{ KTO,         "to",           2},
 	{ KSHOW,       "show",         4},
 	{ KALL,        "all",          3},
+	{ KCONFIG,     "config",       6},
 	{ KCHECKPOINT, "checkpoint",   10},
 	{ KSERVICE,    "service",      7},
 	{ KCREATE,     "create",       6},

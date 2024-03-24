@@ -55,7 +55,7 @@ execute_show_op(Executable* self, Buf* buf, CmdShowOp* op)
 	case SHOW_PIPELINE:
 		pipeline_show(&self->main->engine.pipeline, buf);
 		break;
-	case SHOW_ALL:
+	case SHOW_CONFIG:
 		config_show(config(), buf);
 		break;
 	case SHOW_NAME:

@@ -61,14 +61,15 @@ parse_show(Lex* self)
 		case KPIPELINE:
 			type = SHOW_PIPELINE;
 			break;
+		case KCONFIG:
 		case KALL:
-			type = SHOW_ALL;
+			type = SHOW_CONFIG;
 			break;
 		case KNAME:
 			type = SHOW_NAME;
 			break;
 		default:
-			error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITIONS | PIPELINE | ALL | NAME>");
+			error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITIONS | PIPELINE | CONFIG | NAME>");
 		}
 
 		// [debug]
