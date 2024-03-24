@@ -34,9 +34,6 @@ struct Config
 	Var  clouds;
 	Var  storages;
 	Var  pipeline;
-	// stats
-	Var  events_written;
-	Var  events_written_bytes;
 	// testing
 	Var  error_refresh_1;
 	Var  error_refresh_2;

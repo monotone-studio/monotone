@@ -97,9 +97,6 @@ config_prepare(Config* self)
 		{ "clouds",                  VAR_DATA,   VAR_C|VAR_H,          &self->clouds,                  NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
 		{ "pipeline",                VAR_DATA,   VAR_C|VAR_H,          &self->pipeline,                NULL,        0                },
-		// stats
-		{ "events_written",          VAR_INT,    VAR_E,                &self->events_written,          NULL,        0                },
-		{ "events_written_bytes",    VAR_INT,    VAR_E,                &self->events_written_bytes,    NULL,        0                },
 		// testing
 		{ "error_refresh_1",         VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->error_refresh_1,         NULL,        false            },
 		{ "error_refresh_2",         VAR_BOOL,   VAR_H|VAR_R|VAR_E,    &self->error_refresh_2,         NULL,        false            },

@@ -33,9 +33,7 @@ show all
   "wal_sync_on_rotate": true,
   "wal_sync_on_write": false,
   "ssn": 0,
-  "lsn": 0,
-  "events_written": 0,
-  "events_written_bytes": 0
+  "lsn": 0
 }
 show storages debug
 {

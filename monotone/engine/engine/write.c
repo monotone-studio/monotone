@@ -48,10 +48,6 @@ engine_commit(Engine* self, Log* log)
 			auto part = ref->part;
 			memtable_follow(ref->part->memtable, log->write.lsn);
 
-			// update stats
-			var_int_add(&config()->events_written, 1);
-			var_int_add(&config()->events_written_bytes, event_size(pos->event));
-
 			// schedule refresh
 			if (part_refresh_ready(part))
 			{
