@@ -62,12 +62,6 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			parse_string(self, &name, &config->cloud);
 			mask |= SOURCE_CLOUD;
 		} else
-		if (str_compare_raw(&name.string, "refresh_wm", 10))
-		{
-			// refresh_wm <int>
-			parse_int(self, &name, &config->refresh_wm);
-			mask |= SOURCE_REFRESH_WM;
-		} else
 		if (str_compare_raw(&name.string, "sync", 4))
 		{
 			// sync <bool>
@@ -79,6 +73,18 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			// crc <bool>
 			parse_bool(self, &name, &config->crc);
 			mask |= SOURCE_CRC;
+		} else
+		if (str_compare_raw(&name.string, "refresh_wm", 10))
+		{
+			// refresh_wm <int>
+			parse_int(self, &name, &config->refresh_wm);
+			mask |= SOURCE_REFRESH_WM;
+		} else
+		if (str_compare_raw(&name.string, "region_size", 11))
+		{
+			// region_size <int>
+			parse_int(self, &name, &config->region_size);
+			mask |= SOURCE_REGION_SIZE;
 		} else
 		if (str_compare_raw(&name.string, "compression", 11))
 		{
@@ -97,12 +103,26 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			// compression_level <int>
 			parse_int(self, &name, &config->compression_level);
 			mask |= SOURCE_COMPRESSION_LEVEL;
+
 		} else
-		if (str_compare_raw(&name.string, "region_size", 11))
+		if (str_compare_raw(&name.string, "encryption", 10))
 		{
-			// region_size <int>
-			parse_int(self, &name, &config->region_size);
-			mask |= SOURCE_REGION_SIZE;
+			// encryption <string>
+			parse_string(self, &name, &config->encryption);
+			mask |= SOURCE_ENCRYPTION;
+
+		} else
+		if (str_compare_raw(&name.string, "encryption_key", 14))
+		{
+			// encryption_key <string>
+			parse_string(self, &name, &config->encryption_key);
+			mask |= SOURCE_ENCRYPTION_KEY;
+		} else
+		if (str_compare_raw(&name.string, "encryption_iv", 13))
+		{
+			// encryption_iv <string>
+			parse_string(self, &name, &config->encryption_iv);
+			mask |= SOURCE_ENCRYPTION_IV;
 		} else
 		{
 			error("%s: unknown option %.*s", command, str_size(&name.string),
@@ -149,6 +169,16 @@ parse_storage_create(Lex* self)
 
 	// [(options)]
 	parse_storage_options(self, cmd->config, "CREATE STORAGE");
+
+	// validate and set encryption
+	EncryptionConfig config =
+	{
+		.type = &cmd->config->encryption,
+		.key  = &cmd->config->encryption_key,
+		.iv   = &cmd->config->encryption_iv
+	};
+	encryption_mgr_prepare(global()->encryption_mgr, &config,
+	                       global()->uuid_mgr);
 
 	unguard(&guard);
 	return &cmd->cmd;
@@ -202,6 +232,11 @@ parse_storage_alter_set(Lex* self, Cmd* arg)
 
 	if (cmd->config_mask & SOURCE_UUID)
 		error("storage uuid cannot be changed this way");
+
+	if (cmd->config_mask & SOURCE_ENCRYPTION ||
+	    cmd->config_mask & SOURCE_ENCRYPTION_KEY ||
+	    cmd->config_mask & SOURCE_ENCRYPTION_IV)
+		error("encryption settings cannot be changed");
 }
 
 Cmd*

@@ -42,7 +42,7 @@ storage_mgr_save(StorageMgr* self)
 	list_foreach(&self->list)
 	{
 		auto storage = list_at(Storage, link);
-		source_write(storage->source, &buf, false);
+		source_write(storage->source, &buf, false, false);
 	}
 
 	// update state

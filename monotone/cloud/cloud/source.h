@@ -16,10 +16,13 @@ enum
 	SOURCE_CLOUD             = 1 << 3,
 	SOURCE_SYNC              = 1 << 4,
 	SOURCE_CRC               = 1 << 5,
-	SOURCE_COMPRESSION       = 1 << 6,
-	SOURCE_COMPRESSION_LEVEL = 1 << 7,
-	SOURCE_REFRESH_WM        = 1 << 8,
-	SOURCE_REGION_SIZE       = 1 << 9
+	SOURCE_REFRESH_WM        = 1 << 6,
+	SOURCE_REGION_SIZE       = 1 << 7,
+	SOURCE_COMPRESSION       = 1 << 8,
+	SOURCE_COMPRESSION_LEVEL = 1 << 9,
+	SOURCE_ENCRYPTION        = 1 << 10,
+	SOURCE_ENCRYPTION_KEY    = 1 << 11,
+	SOURCE_ENCRYPTION_IV     = 1 << 12
 };
 
 struct Source
@@ -30,10 +33,13 @@ struct Source
 	Str     cloud;
 	bool    sync;
 	bool    crc;
-	Str     compression;
-	int64_t compression_level;
 	int64_t refresh_wm;
 	int64_t region_size;
+	Str     compression;
+	int64_t compression_level;
+	Str     encryption;
+	Str     encryption_key;
+	Str     encryption_iv;
 };
 
 static inline Source*
@@ -42,14 +48,17 @@ source_allocate(void)
 	auto self = (Source*)mn_malloc(sizeof(Source));
 	self->sync              = true;
 	self->crc               = false;
+	self->compression_level = 0;
 	self->region_size       = 128 * 1024;
 	self->refresh_wm        = 40 * 1024 * 1024;
-	self->compression_level = 0;
 	uuid_init(&self->uuid);
 	str_init(&self->name);
 	str_init(&self->path);
 	str_init(&self->cloud);
 	str_init(&self->compression);
+	str_init(&self->encryption);
+	str_init(&self->encryption_key);
+	str_init(&self->encryption_iv);
 	return self;
 }
 
@@ -60,6 +69,9 @@ source_free(Source* self)
 	str_free(&self->path);
 	str_free(&self->cloud);
 	str_free(&self->compression);
+	str_free(&self->encryption);
+	str_free(&self->encryption_key);
+	str_free(&self->encryption_iv);
 	mn_free(self);
 }
 
@@ -103,6 +115,18 @@ source_set_crc(Source* self, bool value)
 }
 
 static inline void
+source_set_refresh_wm(Source* self, int value)
+{
+	self->refresh_wm = value;
+}
+
+static inline void
+source_set_region_size(Source* self, int value)
+{
+	self->region_size = value;
+}
+
+static inline void
 source_set_compression(Source* self, Str* value)
 {
 	str_free(&self->compression);
@@ -116,15 +140,24 @@ source_set_compression_level(Source* self, int value)
 }
 
 static inline void
-source_set_refresh_wm(Source* self, int value)
+source_set_encryption(Source* self, Str* value)
 {
-	self->refresh_wm = value;
+	str_free(&self->encryption);
+	str_copy(&self->encryption, value);
 }
 
 static inline void
-source_set_region_size(Source* self, int value)
+source_set_encryption_key(Source* self, Str* value)
 {
-	self->region_size = value;
+	str_free(&self->encryption_key);
+	str_copy(&self->encryption_key, value);
+}
+
+static inline void
+source_set_encryption_iv(Source* self, Str* value)
+{
+	str_free(&self->encryption_iv);
+	str_copy(&self->encryption_iv, value);
 }
 
 static inline Source*
@@ -138,10 +171,13 @@ source_copy(Source* self)
 	source_set_cloud(copy, &self->cloud);
 	source_set_sync(copy, self->sync);
 	source_set_crc(copy, self->crc);
-	source_set_compression(copy, &self->compression);
-	source_set_compression_level(copy, self->compression_level);
 	source_set_refresh_wm(copy, self->refresh_wm);
 	source_set_region_size(copy, self->region_size);
+	source_set_compression(copy, &self->compression);
+	source_set_compression_level(copy, self->compression_level);
+	source_set_encryption(copy, &self->encryption);
+	source_set_encryption_key(copy, &self->encryption_key);
+	source_set_encryption_iv(copy, &self->encryption_iv);
 	return unguard(&copy_guard);
 }
 
@@ -181,14 +217,6 @@ source_read(uint8_t** pos)
 	data_skip(pos);
 	data_read_bool(pos, &self->crc);
 
-	// compression
-	data_skip(pos);
-	data_read_string_copy(pos, &self->compression);
-
-	// compression_level
-	data_skip(pos);
-	data_read_integer(pos, &self->compression_level);
-
 	// refresh_wm
 	data_skip(pos);
 	data_read_integer(pos, &self->refresh_wm);
@@ -197,14 +225,37 @@ source_read(uint8_t** pos)
 	data_skip(pos);
 	data_read_integer(pos, &self->region_size);
 
+	// compression
+	data_skip(pos);
+	data_read_string_copy(pos, &self->compression);
+
+	// compression_level
+	data_skip(pos);
+	data_read_integer(pos, &self->compression_level);
+
+	// encryption
+	data_skip(pos);
+	data_read_string_copy(pos, &self->encryption);
+
+	// encryption_key
+	data_skip(pos);
+	data_read_string_copy(pos, &self->encryption_key);
+
+	// encryption_iv
+	data_skip(pos);
+	data_read_string_copy(pos, &self->encryption_iv);
+
 	return unguard(&self_guard);
 }
 
 static inline void
-source_write(Source* self, Buf* buf, bool debug)
+source_write(Source* self, Buf* buf, bool safe, bool debug)
 {
 	// map
-	encode_map(buf, 10);
+	if (safe)
+		encode_map(buf, 11);
+	else
+		encode_map(buf, 13);
 
 	// uuid
 	encode_raw(buf, "uuid", 4);
@@ -238,6 +289,14 @@ source_write(Source* self, Buf* buf, bool debug)
 	encode_raw(buf, "crc", 3);
 	encode_bool(buf, self->crc);
 
+	// refresh_wm
+	encode_raw(buf, "refresh_wm", 10);
+	encode_integer(buf, self->refresh_wm);
+
+	// region_size
+	encode_raw(buf, "region_size", 11);
+	encode_integer(buf, self->region_size);
+
 	// compression
 	encode_raw(buf, "compression", 11);
 	encode_string(buf, &self->compression);
@@ -246,13 +305,20 @@ source_write(Source* self, Buf* buf, bool debug)
 	encode_raw(buf, "compression_level", 17);
 	encode_integer(buf, self->compression_level);
 
-	// refresh_wm
-	encode_raw(buf, "refresh_wm", 10);
-	encode_integer(buf, self->refresh_wm);
+	// encryption
+	encode_raw(buf, "encryption", 10);
+	encode_string(buf, &self->encryption);
 
-	// region_size
-	encode_raw(buf, "region_size", 11);
-	encode_integer(buf, self->region_size);
+	if (! safe)
+	{
+		// encryption_key
+		encode_raw(buf, "encryption_key", 14);
+		encode_string(buf, &self->encryption_key);
+
+		// encryption_iv
+		encode_raw(buf, "encryption_iv", 13);
+		encode_string(buf, &self->encryption_iv);
+	}
 }
 
 static inline void
@@ -276,17 +342,26 @@ source_alter(Source* self, Source* alter, int mask)
 	if (mask & SOURCE_CRC)
 		source_set_crc(self, alter->crc);
 
+	if (mask & SOURCE_REFRESH_WM)
+		source_set_refresh_wm(self, alter->refresh_wm);
+
+	if (mask & SOURCE_REGION_SIZE)
+		source_set_region_size(self, alter->region_size);
+
 	if (mask & SOURCE_COMPRESSION)
 		source_set_compression(self, &alter->compression);
 
 	if (mask & SOURCE_COMPRESSION_LEVEL)
 		source_set_compression_level(self, alter->compression_level);
 
-	if (mask & SOURCE_REFRESH_WM)
-		source_set_refresh_wm(self, alter->refresh_wm);
+	if (mask & SOURCE_ENCRYPTION)
+		source_set_encryption(self, &alter->encryption);
 
-	if (mask & SOURCE_REGION_SIZE)
-		source_set_region_size(self, alter->region_size);
+	if (mask & SOURCE_ENCRYPTION_KEY)
+		source_set_encryption_key(self, &alter->encryption_key);
+
+	if (mask & SOURCE_ENCRYPTION_IV)
+		source_set_encryption_iv(self, &alter->encryption_iv);
 }
 
 static inline void

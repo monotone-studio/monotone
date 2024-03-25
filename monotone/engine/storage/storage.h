@@ -141,7 +141,7 @@ storage_show(Storage* self, Buf* buf, bool debug)
 
 	// source config
 	encode_raw(buf, "config", 6);
-	source_write(self->source, buf, debug);
+	source_write(self->source, buf, true, debug);
 
 	// stats
 	encode_raw(buf, "stats", 5);
