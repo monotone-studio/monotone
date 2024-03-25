@@ -55,6 +55,7 @@ main_init(Main* self)
 	self->global.control         = &self->control;
 	self->global.memory_mgr      = &self->memory_mgr;
 	self->global.compression_mgr = &self->compression_mgr;
+	self->global.encryption_mgr  = &self->encryption_mgr;
 	self->global.uuid_mgr        = &self->uuid_mgr;
 
 	// runtime
@@ -67,6 +68,7 @@ main_init(Main* self)
 	uuid_mgr_init(&self->uuid_mgr);
 	memory_mgr_init(&self->memory_mgr, 2 * 1024 * 1024);
 	compression_mgr_init(&self->compression_mgr);
+	encryption_mgr_init(&self->encryption_mgr);
 	config_init(&self->config);
 	file_init(&self->lock_directory);
 
@@ -92,6 +94,7 @@ main_free(Main* self)
 	cloud_mgr_free(&self->cloud_mgr);
 	config_free(&self->config);
 	compression_mgr_free(&self->compression_mgr);
+	encryption_mgr_free(&self->encryption_mgr);
 	memory_mgr_free(&self->memory_mgr);
 	rwlock_free(&self->lock);
 	file_close(&self->lock_directory);

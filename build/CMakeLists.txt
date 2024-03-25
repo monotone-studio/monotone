@@ -88,6 +88,8 @@ set(MONOTONE_SOURCES_RUNTIME
     ${MONOTONE_ROOT}/runtime/lib/compression_lz4.c
     ${MONOTONE_ROOT}/runtime/lib/compression_zstd.c
     ${MONOTONE_ROOT}/runtime/lib/compression_mgr.c
+    ${MONOTONE_ROOT}/runtime/lib/encryption_aes.c
+    ${MONOTONE_ROOT}/runtime/lib/encryption_mgr.c
     ${MONOTONE_ROOT}/runtime/config/config.c)
 
 set(MONOTONE_SOURCES_CLOUD

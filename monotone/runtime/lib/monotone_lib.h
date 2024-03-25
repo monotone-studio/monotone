@@ -30,6 +30,11 @@
 #include "lib/compression_zstd.h"
 #include "lib/compression_mgr.h"
 
+// encryption
+#include "lib/encryption.h"
+#include "lib/encryption_aes.h"
+#include "lib/encryption_mgr.h"
+
 // heap
 #include "lib/memory_mgr.h"
 #include "lib/heap.h"

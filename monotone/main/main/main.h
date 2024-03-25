@@ -19,6 +19,7 @@ struct Main
 	CloudMgr       cloud_mgr;
 	MemoryMgr      memory_mgr;
 	CompressionMgr compression_mgr;
+	EncryptionMgr  encryption_mgr;
 	UuidMgr        uuid_mgr;
 	Comparator     comparator;
 	Logger         logger;
