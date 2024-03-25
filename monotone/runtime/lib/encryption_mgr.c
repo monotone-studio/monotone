@@ -59,3 +59,43 @@ encryption_mgr_of(Str* name)
 		return ENCRYPTION_AES;
 	return -1;
 }
+
+void
+encryption_mgr_prepare(EncryptionMgr* self, EncryptionConfig* config,
+                       UuidMgr* uuid_mgr)
+{
+	unused(self);
+
+	// validate encryption type
+	int id = encryption_mgr_of(config->type);
+	if (id == -1)
+		error("unknown encryption: %.*s", str_size(config->type),
+			  str_of(config->type));
+
+	if (id == ENCRYPTION_NONE)
+		return;
+
+	// validate or generate key
+	if (! str_empty(config->key))
+	{
+		if (str_size(config->key) != 32)
+			error("aes: 256bit key expected");
+	} else
+	{
+		uint8_t key[32];
+		uuid_mgr_random_alnum(uuid_mgr, key, sizeof(key));
+		str_strndup(config->key, key, sizeof(key));
+	}
+
+	// validate or generate iv
+	if (! str_empty(config->iv))
+	{
+		if (str_size(config->iv) != 16)
+			error("aes: 128bit iv expected");
+	} else
+	{
+		uint8_t iv[16];
+		uuid_mgr_random_alnum(uuid_mgr, iv, sizeof(iv));
+		str_strndup(config->iv, iv, sizeof(iv));
+	}
+}

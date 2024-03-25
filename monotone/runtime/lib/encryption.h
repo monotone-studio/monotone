@@ -18,6 +18,7 @@ enum
 
 struct EncryptionConfig
 {
+	Str* type;
 	Str* key;
 	Str* iv;
 };
