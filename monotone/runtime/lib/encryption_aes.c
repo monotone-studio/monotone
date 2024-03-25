@@ -29,7 +29,7 @@ encryption_aes_create(EncryptionIf* iface)
 		mn_free(self);
 		error("aes: EVP_CIPHER_CTX_new() failed");
 	}
-    if (! EVP_CipherInit_ex2(self->ctx, EVP_aes_256_cbc(), NULL, NULL, true, NULL))
+	if (! EVP_CipherInit_ex2(self->ctx, EVP_aes_256_cbc(), NULL, NULL, true, NULL))
 	{
 		EVP_CIPHER_CTX_free(self->ctx);
 		mn_free(self);

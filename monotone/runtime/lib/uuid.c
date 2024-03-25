@@ -95,6 +95,26 @@ uuid_mgr_random(UuidMgr* self)
 }
 
 void
+uuid_mgr_random_alnum(UuidMgr* self, uint8_t* data, int data_size)
+{
+	int data_pos = 0;
+	for (;;)
+	{
+		uint64_t rnd = uuid_mgr_random(self);
+		uint8_t* pos = (uint8_t*)&rnd;
+		for (int i = 0; i < 8; i++)
+		{
+			if (! isalnum(pos[i]))
+				continue;
+			data[data_pos] = pos[i];
+			data_pos++;
+			if (data_pos == data_size)
+				return;
+		}
+	}
+}
+
+void
 uuid_to_string(Uuid* self, char* string, int size)
 {
 	assert(size >= UUID_SZ);

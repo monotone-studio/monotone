@@ -30,6 +30,7 @@ void uuid_mgr_open(UuidMgr*);
 void uuid_mgr_generate(UuidMgr*, Uuid*);
 uint64_t
 uuid_mgr_random(UuidMgr*);
+void uuid_mgr_random_alnum(UuidMgr*, uint8_t*, int);
 
 static inline bool
 uuid_empty(Uuid* self)
