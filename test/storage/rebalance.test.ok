@@ -16,10 +16,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -67,10 +68,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -94,10 +96,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -121,10 +124,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -154,10 +158,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -181,10 +186,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -208,10 +214,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -241,10 +248,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -268,10 +276,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -295,10 +304,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -327,10 +337,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -354,10 +365,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -381,10 +393,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -412,10 +425,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -439,10 +453,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 10,
@@ -466,10 +481,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -501,10 +517,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -528,10 +545,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 10,
@@ -555,10 +573,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -586,10 +605,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -613,10 +633,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 500,
@@ -640,10 +661,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -690,10 +712,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -717,10 +740,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 500,
@@ -744,10 +768,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -775,10 +800,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -802,10 +828,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -829,10 +856,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -876,10 +904,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -903,10 +932,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -930,10 +960,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -961,10 +992,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -988,10 +1020,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1015,10 +1048,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1048,10 +1082,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1075,10 +1110,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -1102,10 +1138,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1135,10 +1172,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1162,10 +1200,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 0,
@@ -1189,10 +1228,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1226,10 +1266,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
@@ -1253,10 +1294,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": 10,
@@ -1280,10 +1322,11 @@ show storages debug
       "cloud": "",
       "sync": true,
       "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
       "compression": "",
       "compression_level": 0,
-      "refresh_wm": 41943040,
-      "region_size": 131072
+      "encryption": ""
     },
     "stats": {
       "min": -1,
