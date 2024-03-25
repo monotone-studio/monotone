@@ -29,7 +29,7 @@ struct EncryptionIf
 	Encryption* (*create)(EncryptionIf*);
 	void        (*free)(Encryption*);
 	void        (*encrypt)(Encryption*, EncryptionConfig*, Buf*, int, Buf**);
-	void        (*decrypt)(Encryption*, EncryptionConfig*, Buf*, uint8_t*, int, int);
+	void        (*decrypt)(Encryption*, EncryptionConfig*, Buf*, uint8_t*, int);
 };
 
 struct Encryption
@@ -69,11 +69,7 @@ static inline void
 encryption_decrypt(Encryption* self, EncryptionConfig* config,
                    Buf*        buf,
                    uint8_t*    data,
-                   int         data_size,
-                   int         data_size_unencrypted)
+                   int         data_size)
 {
-	self->iface->decrypt(self, config, buf,
-	                     data,
-	                     data_size,
-	                     data_size_unencrypted);
+	self->iface->decrypt(self, config, buf, data, data_size);
 }

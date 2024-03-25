@@ -91,11 +91,10 @@ encryption_aes_decrypt(Encryption*       ptr,
                        EncryptionConfig* config,
                        Buf*              buf,
                        uint8_t*          data,
-                       int               data_size,
-                       int               data_size_unencrypted)
+                       int               data_size)
 {
 	auto self = (EncryptionAes*)ptr;
-	buf_reserve(buf, data_size_unencrypted);
+	buf_reserve(buf, data_size);
 
 	// prepare cipher
 	if (! EVP_CipherInit_ex2(self->ctx, NULL,
