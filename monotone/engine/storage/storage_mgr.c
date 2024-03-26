@@ -232,8 +232,16 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 		return;
 	}
 
+	if (mask & SOURCE_ENCRYPTION ||
+	    mask & SOURCE_ENCRYPTION_KEY)
+	{
+		if (storage->list_count > 0)
+			error("storage '%.*s': storage is not empty", str_size(&source->name),
+			      str_of(&source->name));
+	}
+
 	// in case of cloud change, ensure all partitions are
-	// offloaded first
+	// downloaded first
 	if (mask & SOURCE_CLOUD)
 	{
 		list_foreach(&storage->list)
