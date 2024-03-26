@@ -61,41 +61,28 @@ encryption_mgr_of(Str* name)
 }
 
 void
-encryption_mgr_prepare(EncryptionMgr* self, EncryptionConfig* config,
-                       Random* random)
+encryption_mgr_prepare(EncryptionMgr* self, Random* random, Str* type, Str* key)
 {
 	unused(self);
 
 	// validate encryption type
-	int id = encryption_mgr_of(config->type);
+	int id = encryption_mgr_of(type);
 	if (id == -1)
-		error("unknown encryption: %.*s", str_size(config->type),
-			  str_of(config->type));
+		error("unknown encryption: %.*s", str_size(type),
+			  str_of(type));
 
 	if (id == ENCRYPTION_NONE)
 		return;
 
 	// validate or generate key
-	if (! str_empty(config->key))
+	if (! str_empty(key))
 	{
-		if (str_size(config->key) != 32)
+		if (str_size(key) != 32)
 			error("aes: 256bit key expected");
 	} else
 	{
-		uint8_t key[32];
-		random_generate_alnum(random, key, sizeof(key));
-		str_strndup(config->key, key, sizeof(key));
-	}
-
-	// validate or generate iv
-	if (! str_empty(config->iv))
-	{
-		if (str_size(config->iv) != 16)
-			error("aes: 128bit iv expected");
-	} else
-	{
-		uint8_t iv[16];
-		random_generate_alnum(random, iv, sizeof(iv));
-		str_strndup(config->iv, iv, sizeof(iv));
+		uint8_t data[32];
+		random_generate_alnum(random, data, sizeof(data));
+		str_strndup(key, data, sizeof(data));
 	}
 }

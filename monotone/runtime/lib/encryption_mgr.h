@@ -19,4 +19,4 @@ Encryption*
 encryption_mgr_pop(EncryptionMgr*, int);
 void encryption_mgr_push(EncryptionMgr*, Encryption*);
 int  encryption_mgr_of(Str*);
-void encryption_mgr_prepare(EncryptionMgr*, EncryptionConfig*, Random*);
+void encryption_mgr_prepare(EncryptionMgr*, Random*, Str*, Str*);

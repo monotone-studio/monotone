@@ -6,9 +6,8 @@
 // time-series storage
 //
 
-typedef struct EncryptionIf     EncryptionIf;
-typedef struct EncryptionConfig EncryptionConfig;
-typedef struct Encryption       Encryption;
+typedef struct EncryptionIf EncryptionIf;
+typedef struct Encryption   Encryption;
 
 enum
 {
@@ -16,20 +15,13 @@ enum
 	ENCRYPTION_AES  = 1
 };
 
-struct EncryptionConfig
-{
-	Str* type;
-	Str* key;
-	Str* iv;
-};
-
 struct EncryptionIf
 {
 	int          id;
 	Encryption* (*create)(EncryptionIf*);
 	void        (*free)(Encryption*);
-	void        (*encrypt)(Encryption*, EncryptionConfig*, Buf*, int, Buf**);
-	void        (*decrypt)(Encryption*, EncryptionConfig*, Buf*, uint8_t*, int);
+	void        (*encrypt)(Encryption*, Random*, Str*, Buf*, int, Buf**);
+	void        (*decrypt)(Encryption*, Str*, Buf*, uint8_t*, int);
 };
 
 struct Encryption
@@ -37,12 +29,6 @@ struct Encryption
 	EncryptionIf* iface;
 	List          link;
 };
-
-static inline void
-encryption_config_init(EncryptionConfig* self)
-{
-	memset(self, 0, sizeof(*self));
-}
 
 static inline Encryption*
 encryption_create(EncryptionIf* iface)
@@ -63,19 +49,20 @@ encryption_of(List* link)
 }
 
 static inline void
-encryption_encrypt(Encryption* self, EncryptionConfig* config,
+encryption_encrypt(Encryption* self, Random* random,
+                   Str*        key,
                    Buf*        buf,
                    int         argc,
                    Buf**       argv)
 {
-	self->iface->encrypt(self, config, buf, argc, argv);
+	self->iface->encrypt(self, random, key, buf, argc, argv);
 }
 
 static inline void
-encryption_decrypt(Encryption* self, EncryptionConfig* config,
+encryption_decrypt(Encryption* self, Str* key,
                    Buf*        buf,
                    uint8_t*    data,
                    int         data_size)
 {
-	self->iface->decrypt(self, config, buf, data, data_size);
+	self->iface->decrypt(self, key, buf, data, data_size);
 }
