@@ -40,10 +40,15 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 - **Transparent Compression**
 
-    Compress or recompress partitions automatically on refresh or partition move.
+    Compress and recompress partitions automatically on refresh or partition move.
 	Allow different compression types and compression level settings.
 	Everything is done transparently without blocking readers and writers.
 
+- **Transparent Encryption**
+	
+	Encrypt and decrypt partitions automatically using AES-256-GCM (with hardware support) on refresh, partition move, or read.
+	Compatible with compression and done transparently without blocking readers and writers.
+  
 - **Storages**
 
     Create storage to store data on different storage devices.
@@ -93,7 +98,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	--
 	CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
 	CREATE STORAGE hot (compression 'zstd')
-	CREATE STORAGE cold (cloud 's3', compression 'zstd')
+	CREATE STORAGE cold (cloud 's3', compression 'zstd', encryption 'aes')
 
 	ALTER PIPELINE hot (interval 1day), cold
 	```
