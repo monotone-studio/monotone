@@ -174,6 +174,7 @@ monotone_cursor(monotone_t* self, const char* options, monotone_event_t* key)
 	cursor->env  = self;
 	engine_cursor_init(&cursor->cursor);
 
+	bool error = false;
 	Exception e;
 	if (try(&e))
 	{
@@ -187,9 +188,19 @@ monotone_cursor(monotone_t* self, const char* options, monotone_event_t* key)
 		}
 		engine_cursor_skip_deletes(&cursor->cursor);
 	}
-	if (catch(&e)) {
-		monotone_free(cursor);
-		cursor = NULL;
+
+	if (catch(&e))
+		error = true;
+
+	if (unlikely(error))
+	{
+		if (try(&e)) {
+			engine_cursor_close(&cursor->cursor);
+			mn_free(cursor);
+			cursor = NULL;
+		}
+		if (catch(&e))
+		{ }
 	}
 
 	return cursor;
