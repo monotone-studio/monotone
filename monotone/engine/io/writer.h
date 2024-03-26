@@ -15,6 +15,7 @@ struct Writer
 	RegionWriter region_writer;
 	IndexWriter  index_writer;
 	Compression* compression;
+	Encryption*  encryption;
 	Source*      source;
 };
 

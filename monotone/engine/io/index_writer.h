@@ -15,6 +15,7 @@ struct IndexWriter
 	Buf          compressed;
 	Compression* compression;
 	int          compression_level;
+	Encryption*  encryption;
 	bool         crc;
 	Index        index;
 };
@@ -25,6 +26,7 @@ index_writer_init(IndexWriter* self)
 	self->active            = false;
 	self->compression       = NULL;
 	self->compression_level = 0;
+	self->encryption        = NULL;
 	self->crc               = false;
 	buf_init(&self->data);
 	buf_init(&self->compressed);
@@ -44,6 +46,7 @@ index_writer_reset(IndexWriter* self)
 	self->active            = false;
 	self->compression       = NULL;
 	self->compression_level = 0;
+	self->encryption        = NULL;
 	self->crc               = false;
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
@@ -60,10 +63,12 @@ static inline void
 index_writer_start(IndexWriter* self,
                    Compression* compression,
                    int          compression_level,
+                   Encryption*  encryption,
                    bool         crc)
 {
 	self->compression       = compression;
 	self->compression_level = compression_level;
+	self->encryption        = encryption;
 	self->crc               = crc;
 	self->active            = true;
 }
@@ -77,7 +82,7 @@ index_writer_stop(IndexWriter* self,
 {
 	auto index = &self->index;
 
-	// compress index (without index)
+	// compress index data (without index header)
 	uint32_t size_origin = index->size;
 	uint32_t size = size_origin;
 	int      compression_id;
@@ -91,6 +96,13 @@ index_writer_stop(IndexWriter* self,
 	} else {
 		compression_id = COMPRESSION_NONE;
 	}
+
+	// get encryption type
+	int encryption_id;
+	if (self->encryption)
+		encryption_id = self->encryption->iface->id;
+	else
+		encryption_id = ENCRYPTION_NONE;
 
 	// prepare index
 	index->crc               = 0;
@@ -107,6 +119,7 @@ index_writer_stop(IndexWriter* self,
 	index->time              = time;
 	index->lsn               = lsn;
 	index->compression       = compression_id;
+	index->encryption        = encryption_id;
 
 	// calculate index data crc
 	uint32_t crc = 0;
@@ -129,6 +142,9 @@ index_writer_add(IndexWriter*  self,
 	assert(region->events > 0);
 
 	uint32_t size;
+	if (self->encryption)
+		size = buf_size(&region_writer->encrypted);
+	else
 	if (self->compression)
 		size = buf_size(&region_writer->compressed);
 	else
@@ -141,13 +157,13 @@ index_writer_add(IndexWriter*  self,
 	// prepare meta region reference
 	buf_reserve(&self->data, sizeof(IndexRegion));
 	auto ref = (IndexRegion*)self->data.position;
-	ref->offset       = region_offset;
-	ref->crc          = crc;
-	ref->min          = region_writer_min(region_writer)->id;
-	ref->max          = region_writer_max(region_writer)->id;
-	ref->size_origin  = region->size;
-	ref->size         = size;
-	ref->events       = region->events;
+	ref->offset      = region_offset;
+	ref->crc         = crc;
+	ref->min         = region_writer_min(region_writer)->id;
+	ref->max         = region_writer_max(region_writer)->id;
+	ref->size        = size;
+	ref->size_origin = region->size;
+	ref->events      = region->events;
 	memset(ref->reserved, 0, sizeof(ref->reserved));
 	buf_advance(&self->data, sizeof(IndexRegion));
 

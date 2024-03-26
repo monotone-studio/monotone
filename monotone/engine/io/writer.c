@@ -16,6 +16,7 @@ writer_init(Writer* self)
 {
 	self->file        = NULL;
 	self->compression = NULL;
+	self->encryption  = NULL;
 	self->source      = NULL;
 	iov_init(&self->iov);
 	region_writer_init(&self->region_writer);
@@ -38,6 +39,11 @@ writer_reset(Writer* self)
 		compression_mgr_push(global()->compression_mgr, self->compression);
 		self->compression = NULL;
 	}
+	if (self->encryption)
+	{
+		encryption_mgr_push(global()->encryption_mgr, self->encryption);
+		self->encryption = NULL;
+	}
 	self->source = NULL;
 	iov_reset(&self->iov);
 	region_writer_reset(&self->region_writer);
@@ -57,7 +63,9 @@ writer_start_region(Writer* self)
 {
 	region_writer_reset(&self->region_writer);
 	region_writer_start(&self->region_writer, self->compression,
-	                    self->source->compression_level);
+	                    self->source->compression_level,
+	                    self->encryption,
+	                    &self->source->encryption_key);
 }
 
 hot static inline void
@@ -91,15 +99,24 @@ writer_start(Writer* self, Source* source, File* file)
 		self->compression =
 			compression_mgr_pop(global()->compression_mgr, compression_id);
 
+	// get encryption context
+	int encryption_id = encryption_mgr_of(&source->encryption);
+	if (encryption_id != COMPRESSION_NONE)
+		self->encryption =
+			encryption_mgr_pop(global()->encryption_mgr, encryption_id);
+
 	// start new index
 	index_writer_reset(&self->index_writer);
 	index_writer_start(&self->index_writer, self->compression,
-	                    source->compression_level,
-	                    source->crc);
+	                   source->compression_level,
+	                   self->encryption,
+	                   source->crc);
 }
 
 void
-writer_stop(Writer* self, Id* id, uint32_t refreshes, uint64_t time, uint64_t lsn, bool sync)
+writer_stop(Writer*  self, Id* id, uint32_t refreshes,
+            uint64_t time,
+            uint64_t lsn, bool sync)
 {
 	if (! index_writer_started(&self->index_writer))
 		return;
@@ -118,10 +135,17 @@ writer_stop(Writer* self, Id* id, uint32_t refreshes, uint64_t time, uint64_t ls
 	if (sync)
 		file_sync(self->file);
 
+	// cleanup
 	if (self->compression)
 	{
 		compression_mgr_push(global()->compression_mgr, self->compression);
 		self->compression = NULL;
+	}
+
+	if (self->encryption)
+	{
+		encryption_mgr_push(global()->encryption_mgr, self->encryption);
+		self->encryption = NULL;
 	}
 }
 

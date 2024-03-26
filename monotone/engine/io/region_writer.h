@@ -13,8 +13,11 @@ struct RegionWriter
 	Buf          meta;
 	Buf          data;
 	Buf          compressed;
+	Buf          encrypted;
 	Compression* compression;
 	int          compression_level;
+	Encryption*  encryption;
+	Str*         encryption_key;
 };
 
 static inline void
@@ -22,9 +25,11 @@ region_writer_init(RegionWriter* self)
 {
 	self->compression       = NULL;
 	self->compression_level = 0;
+	self->encryption        = NULL;
 	buf_init(&self->meta);
 	buf_init(&self->data);
 	buf_init(&self->compressed);
+	buf_init(&self->encrypted);
 }
 
 static inline void
@@ -33,6 +38,7 @@ region_writer_free(RegionWriter* self)
 	buf_free(&self->meta);
 	buf_free(&self->data);
 	buf_free(&self->compressed);
+	buf_free(&self->encrypted);
 }
 
 static inline void
@@ -40,9 +46,11 @@ region_writer_reset(RegionWriter* self)
 {
 	self->compression       = NULL;
 	self->compression_level = 0;
+	self->encryption        = NULL;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
+	buf_reset(&self->encrypted);
 }
 
 static inline Region*
@@ -67,10 +75,14 @@ region_writer_size(RegionWriter* self)
 static inline void
 region_writer_start(RegionWriter* self,
                     Compression*  compression,
-                    int           compression_level)
+                    int           compression_level,
+                    Encryption*   encryption,
+                    Str*          encryption_key)
 {
 	self->compression       = compression;
 	self->compression_level = compression_level;
+	self->encryption        = encryption;
+	self->encryption_key    = encryption_key;
 
 	// region header
 	buf_reserve(&self->meta, sizeof(Region));
@@ -86,11 +98,35 @@ region_writer_stop(RegionWriter* self)
 	header->size = region_writer_size(self);
 
 	// compress region
+	int  argc;
+	Buf* argv[2];
 	if (self->compression)
 	{
-		Buf* argv[] = { &self->meta, &self->data };
+		argc    = 2;
+		argv[0] = &self->meta;
+		argv[1] = &self->data;
 		compression_compress(self->compression, &self->compressed,
-		                     self->compression_level, 2, argv);
+		                     self->compression_level,
+		                     argc, argv);
+	}
+
+	// encrypt region using compressed or raw data
+	if (self->encryption)
+	{
+		if (self->compression)
+		{
+			argc    = 1;
+			argv[0] = &self->compressed;
+		} else
+		{
+			argc    = 2;
+			argv[0] = &self->meta;
+			argv[1] = &self->data;
+		}
+		encryption_encrypt(self->encryption, global()->random,
+		                   self->encryption_key,
+		                   &self->encrypted,
+		                   argc, argv);
 	}
 }
 
@@ -137,7 +173,11 @@ region_writer_last(RegionWriter* self)
 static inline void
 region_writer_add_to_iov(RegionWriter* self, Iov* iov)
 {
-	if (buf_size(&self->compressed) > 0)
+	if (self->encryption)
+	{
+		iov_add(iov, self->encrypted.start, buf_size(&self->encrypted));
+	} else
+	if (self->compression)
 	{
 		iov_add(iov, self->compressed.start, buf_size(&self->compressed));
 	} else
@@ -150,13 +190,17 @@ region_writer_add_to_iov(RegionWriter* self, Iov* iov)
 static inline uint32_t
 region_writer_crc(RegionWriter* self)
 {
-	uint32_t crc;
-	if (buf_size(&self->compressed) > 0)
+	uint32_t crc = 0;
+	if (self->encryption)
 	{
-		crc = crc32(0, self->compressed.start, buf_size(&self->compressed));
+		crc = crc32(crc, self->encrypted.start, buf_size(&self->encrypted));
+	} else
+	if (self->compression)
+	{
+		crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
 	} else
 	{
-		crc = crc32(0, self->meta.start, buf_size(&self->meta));
+		crc = crc32(crc, self->meta.start, buf_size(&self->meta));
 		crc = crc32(crc, self->data.start, buf_size(&self->data));
 	}
 	return crc;

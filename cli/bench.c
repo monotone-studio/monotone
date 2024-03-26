@@ -188,7 +188,7 @@ bench_reporter(void* arg)
 		{
 			auto ref = &self->instances[i];
 			char* result = NULL;
-			int rc = monotone_execute(ref->env, "show storage main", &result);
+			int rc = monotone_execute(ref->env, "show storages", &result);
 			if (rc == -1)
 			{
 				printf("error: %s\n", monotone_error(ref->env));

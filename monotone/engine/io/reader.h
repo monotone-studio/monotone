@@ -12,17 +12,21 @@ struct Reader
 {
 	Part*        part;
 	Compression* compression;
+	Encryption*  encryption;
 	Buf          buf;
-	Buf          buf_uncompressed;
+	Buf          buf_decrypted;
+	Buf          buf_decompressed;
 };
 
 static inline void
 reader_init(Reader* self)
 {
-	self->part = NULL;
+	self->part        = NULL;
 	self->compression = NULL;
+	self->encryption  = NULL;
 	buf_init(&self->buf);
-	buf_init(&self->buf_uncompressed);
+	buf_init(&self->buf_decrypted);
+	buf_init(&self->buf_decompressed);
 }
 
 static inline void
@@ -33,15 +37,22 @@ reader_reset(Reader* self)
 		compression_mgr_push(global()->compression_mgr, self->compression);
 		self->compression = NULL;
 	}
+	if (self->encryption)
+	{
+		encryption_mgr_push(global()->encryption_mgr, self->encryption);
+		self->encryption = NULL;
+	}
 	buf_reset(&self->buf);
-	buf_reset(&self->buf_uncompressed);
+	buf_reset(&self->buf_decrypted);
+	buf_reset(&self->buf_decompressed);
 }
 
 static inline void
 reader_free(Reader* self)
 {
 	buf_free(&self->buf);
-	buf_free(&self->buf_uncompressed);
+	buf_free(&self->buf_decrypted);
+	buf_free(&self->buf_decompressed);
 }
 
 static inline void
@@ -54,6 +65,12 @@ reader_open(Reader* self, Part* part)
 	if (compression_id != COMPRESSION_NONE)
 		self->compression =
 			compression_mgr_pop(global()->compression_mgr, compression_id);
+
+	// set encryption context
+	int encryption_id = part->index.encryption;
+	if (encryption_id != ENCRYPTION_NONE)
+		self->encryption =
+			encryption_mgr_pop(global()->encryption_mgr, encryption_id);
 }
 
 hot static inline Region*
@@ -62,7 +79,8 @@ reader_execute(Reader* self, IndexRegion* index_region)
 	auto part = self->part;
 
 	buf_reset(&self->buf);
-	buf_reset(&self->buf_uncompressed);
+	buf_reset(&self->buf_decrypted);
+	buf_reset(&self->buf_decompressed);
 
 	if (part_has(part, ID))
 	{
@@ -80,18 +98,35 @@ reader_execute(Reader* self, IndexRegion* index_region)
 	} else {
 		abort();
 	}
-	auto region = (Region*)self->buf.start;
+	Buf* origin = &self->buf;
+
+	// decrypt region
+	if (self->encryption)
+	{
+		encryption_decrypt(self->encryption,
+		                   &part->source->encryption_key,
+		                   &self->buf_decrypted,
+		                   origin->start,
+		                   buf_size(origin));
+		origin = &self->buf_decrypted;
+	}
 
 	// decompress region
 	if (self->compression)
 	{
 		compression_decompress(self->compression,
-		                       &self->buf_uncompressed,
-		                       (uint8_t*)region,
-		                       index_region->size,
+		                       &self->buf_decompressed,
+		                       origin->start,
+		                       buf_size(origin),
 		                       index_region->size_origin);
-		region = (Region*)self->buf_uncompressed.start;
+		origin = &self->buf_decompressed;
 	}
+
+	// consistency check
+	auto region = (Region*)origin->start;
+	if (region->size   != index_region->size_origin ||
+	    region->events != index_region->events)
+		error("read: region meta data mismatch");
 
 	return region;
 }
