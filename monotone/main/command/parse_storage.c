@@ -118,12 +118,6 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			parse_string(self, &name, &config->encryption_key);
 			mask |= SOURCE_ENCRYPTION_KEY;
 		} else
-		if (str_compare_raw(&name.string, "encryption_iv", 13))
-		{
-			// encryption_iv <string>
-			parse_string(self, &name, &config->encryption_iv);
-			mask |= SOURCE_ENCRYPTION_IV;
-		} else
 		{
 			error("%s: unknown option %.*s", command, str_size(&name.string),
 			      str_of(&name.string));
@@ -171,14 +165,9 @@ parse_storage_create(Lex* self)
 	parse_storage_options(self, cmd->config, "CREATE STORAGE");
 
 	// validate and set encryption
-	EncryptionConfig config =
-	{
-		.type = &cmd->config->encryption,
-		.key  = &cmd->config->encryption_key,
-		.iv   = &cmd->config->encryption_iv
-	};
-	encryption_mgr_prepare(global()->encryption_mgr, &config,
-	                       global()->random);
+	encryption_mgr_prepare(global()->encryption_mgr, global()->random,
+	                       &cmd->config->encryption,
+	                       &cmd->config->encryption_key);
 
 	unguard(&guard);
 	return &cmd->cmd;
@@ -234,8 +223,7 @@ parse_storage_alter_set(Lex* self, Cmd* arg)
 		error("storage uuid cannot be changed this way");
 
 	if (cmd->config_mask & SOURCE_ENCRYPTION ||
-	    cmd->config_mask & SOURCE_ENCRYPTION_KEY ||
-	    cmd->config_mask & SOURCE_ENCRYPTION_IV)
+	    cmd->config_mask & SOURCE_ENCRYPTION_KEY)
 		error("encryption settings cannot be changed");
 }
 

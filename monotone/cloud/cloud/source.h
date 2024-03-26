@@ -21,8 +21,7 @@ enum
 	SOURCE_COMPRESSION       = 1 << 8,
 	SOURCE_COMPRESSION_LEVEL = 1 << 9,
 	SOURCE_ENCRYPTION        = 1 << 10,
-	SOURCE_ENCRYPTION_KEY    = 1 << 11,
-	SOURCE_ENCRYPTION_IV     = 1 << 12
+	SOURCE_ENCRYPTION_KEY    = 1 << 11
 };
 
 struct Source
@@ -39,7 +38,6 @@ struct Source
 	int64_t compression_level;
 	Str     encryption;
 	Str     encryption_key;
-	Str     encryption_iv;
 };
 
 static inline Source*
@@ -58,7 +56,6 @@ source_allocate(void)
 	str_init(&self->compression);
 	str_init(&self->encryption);
 	str_init(&self->encryption_key);
-	str_init(&self->encryption_iv);
 	return self;
 }
 
@@ -71,7 +68,6 @@ source_free(Source* self)
 	str_free(&self->compression);
 	str_free(&self->encryption);
 	str_free(&self->encryption_key);
-	str_free(&self->encryption_iv);
 	mn_free(self);
 }
 
@@ -153,13 +149,6 @@ source_set_encryption_key(Source* self, Str* value)
 	str_copy(&self->encryption_key, value);
 }
 
-static inline void
-source_set_encryption_iv(Source* self, Str* value)
-{
-	str_free(&self->encryption_iv);
-	str_copy(&self->encryption_iv, value);
-}
-
 static inline Source*
 source_copy(Source* self)
 {
@@ -177,7 +166,6 @@ source_copy(Source* self)
 	source_set_compression_level(copy, self->compression_level);
 	source_set_encryption(copy, &self->encryption);
 	source_set_encryption_key(copy, &self->encryption_key);
-	source_set_encryption_iv(copy, &self->encryption_iv);
 	return unguard(&copy_guard);
 }
 
@@ -240,11 +228,6 @@ source_read(uint8_t** pos)
 	// encryption_key
 	data_skip(pos);
 	data_read_string_copy(pos, &self->encryption_key);
-
-	// encryption_iv
-	data_skip(pos);
-	data_read_string_copy(pos, &self->encryption_iv);
-
 	return unguard(&self_guard);
 }
 
@@ -255,7 +238,7 @@ source_write(Source* self, Buf* buf, bool safe, bool debug)
 	if (safe)
 		encode_map(buf, 11);
 	else
-		encode_map(buf, 13);
+		encode_map(buf, 12);
 
 	// uuid
 	encode_raw(buf, "uuid", 4);
@@ -314,10 +297,6 @@ source_write(Source* self, Buf* buf, bool safe, bool debug)
 		// encryption_key
 		encode_raw(buf, "encryption_key", 14);
 		encode_string(buf, &self->encryption_key);
-
-		// encryption_iv
-		encode_raw(buf, "encryption_iv", 13);
-		encode_string(buf, &self->encryption_iv);
 	}
 }
 
@@ -359,9 +338,6 @@ source_alter(Source* self, Source* alter, int mask)
 
 	if (mask & SOURCE_ENCRYPTION_KEY)
 		source_set_encryption_key(self, &alter->encryption_key);
-
-	if (mask & SOURCE_ENCRYPTION_IV)
-		source_set_encryption_iv(self, &alter->encryption_iv);
 }
 
 static inline void
