@@ -164,7 +164,7 @@ parse_storage_create(Lex* self)
 
 	/// generate uuid
 	Uuid uuid;
-	uuid_mgr_generate(global()->uuid_mgr, &uuid);
+	uuid_generate(&uuid, global()->random);
 	source_set_uuid(cmd->config, &uuid);
 
 	// [(options)]
@@ -178,7 +178,7 @@ parse_storage_create(Lex* self)
 		.iv   = &cmd->config->encryption_iv
 	};
 	encryption_mgr_prepare(global()->encryption_mgr, &config,
-	                       global()->uuid_mgr);
+	                       global()->random);
 
 	unguard(&guard);
 	return &cmd->cmd;

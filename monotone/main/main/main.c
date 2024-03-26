@@ -53,10 +53,10 @@ main_init(Main* self)
 	// global
 	self->global.config          = &self->config;
 	self->global.control         = &self->control;
-	self->global.memory_mgr      = &self->memory_mgr;
 	self->global.compression_mgr = &self->compression_mgr;
 	self->global.encryption_mgr  = &self->encryption_mgr;
-	self->global.uuid_mgr        = &self->uuid_mgr;
+	self->global.random          = &self->random;
+	self->global.memory_mgr      = &self->memory_mgr;
 
 	// runtime
 	self->context.log     = (LogFunction)logger_write;
@@ -65,7 +65,7 @@ main_init(Main* self)
 
 	comparator_init(&self->comparator);
 	logger_init(&self->logger);
-	uuid_mgr_init(&self->uuid_mgr);
+	random_init(&self->random);
 	memory_mgr_init(&self->memory_mgr, 2 * 1024 * 1024);
 	compression_mgr_init(&self->compression_mgr);
 	encryption_mgr_init(&self->encryption_mgr);
@@ -117,14 +117,14 @@ main_deploy(Main* self, Str* directory)
 	if (config_online())
 		log("already open");
 
-	// prepare uuid manager
-	uuid_mgr_open(&self->uuid_mgr);
+	// prepare random manager
+	random_open(&self->random);
 
 	// generate uuid, unless it is set
 	if (! var_string_is_set(&config()->uuid))
 	{
 		Uuid uuid;
-		uuid_mgr_generate(global()->uuid_mgr, &uuid);
+		uuid_generate(&uuid, global()->random);
 		char uuid_sz[UUID_SZ];
 		uuid_to_string(&uuid, uuid_sz, sizeof(uuid_sz));
 		var_string_set_raw(&config()->uuid, uuid_sz, sizeof(uuid_sz) - 1);

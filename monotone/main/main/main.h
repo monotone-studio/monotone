@@ -20,7 +20,7 @@ struct Main
 	MemoryMgr      memory_mgr;
 	CompressionMgr compression_mgr;
 	EncryptionMgr  encryption_mgr;
-	UuidMgr        uuid_mgr;
+	Random         random;
 	Comparator     comparator;
 	Logger         logger;
 	Context        context;

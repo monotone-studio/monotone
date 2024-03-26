@@ -12,10 +12,10 @@ struct Global
 {
 	Config*         config;
 	Control*        control;
-	MemoryMgr*      memory_mgr;
 	CompressionMgr* compression_mgr;
 	EncryptionMgr*  encryption_mgr;
-	UuidMgr*        uuid_mgr;
+	Random*         random;
+	MemoryMgr*      memory_mgr;
 };
 
 #define global() ((Global*)mn_runtime.context->global)

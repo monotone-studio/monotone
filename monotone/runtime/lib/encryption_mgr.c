@@ -62,7 +62,7 @@ encryption_mgr_of(Str* name)
 
 void
 encryption_mgr_prepare(EncryptionMgr* self, EncryptionConfig* config,
-                       UuidMgr* uuid_mgr)
+                       Random* random)
 {
 	unused(self);
 
@@ -83,7 +83,7 @@ encryption_mgr_prepare(EncryptionMgr* self, EncryptionConfig* config,
 	} else
 	{
 		uint8_t key[32];
-		uuid_mgr_random_alnum(uuid_mgr, key, sizeof(key));
+		random_generate_alnum(random, key, sizeof(key));
 		str_strndup(config->key, key, sizeof(key));
 	}
 
@@ -95,7 +95,7 @@ encryption_mgr_prepare(EncryptionMgr* self, EncryptionConfig* config,
 	} else
 	{
 		uint8_t iv[16];
-		uuid_mgr_random_alnum(uuid_mgr, iv, sizeof(iv));
+		random_generate_alnum(random, iv, sizeof(iv));
 		str_strndup(config->iv, iv, sizeof(iv));
 	}
 }

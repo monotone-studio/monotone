@@ -38,6 +38,12 @@ struct Encryption
 	List          link;
 };
 
+static inline void
+encryption_config_init(EncryptionConfig* self)
+{
+	memset(self, 0, sizeof(*self));
+}
+
 static inline Encryption*
 encryption_create(EncryptionIf* iface)
 {

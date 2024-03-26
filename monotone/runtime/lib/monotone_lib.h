@@ -18,8 +18,9 @@
 #include "lib/rbtree.h"
 
 // hashing
-#include "lib/crc.h"
+#include "lib/random.h"
 #include "lib/uuid.h"
+#include "lib/crc.h"
 
 // cache
 #include "lib/cache.h"

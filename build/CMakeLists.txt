@@ -83,8 +83,9 @@ set(MONOTONE_SOURCES_RUNTIME
     ${MONOTONE_ROOT}/runtime/runtime/logger.c
     ${MONOTONE_ROOT}/runtime/lib/json.c
     ${MONOTONE_ROOT}/runtime/lib/rbtree.c
-    ${MONOTONE_ROOT}/runtime/lib/crc.c
+    ${MONOTONE_ROOT}/runtime/lib/random.c
     ${MONOTONE_ROOT}/runtime/lib/uuid.c
+    ${MONOTONE_ROOT}/runtime/lib/crc.c
     ${MONOTONE_ROOT}/runtime/lib/compression_lz4.c
     ${MONOTONE_ROOT}/runtime/lib/compression_zstd.c
     ${MONOTONE_ROOT}/runtime/lib/compression_mgr.c
