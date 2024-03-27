@@ -55,6 +55,8 @@ encryption_mgr_of(Str* name)
 {
 	if (!name || str_empty(name))
 		return ENCRYPTION_NONE;
+	if (str_compare_raw(name, "none", 4))
+		return COMPRESSION_NONE;
 	if (str_compare_raw(name, "aes", 3))
 		return ENCRYPTION_AES;
 	return -1;

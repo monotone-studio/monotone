@@ -124,17 +124,10 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			parse_string(self, &name, &config->encryption_key);
 			mask |= SOURCE_ENCRYPTION_KEY;
 
-			// validate or generate key
-			if (str_empty(&config->encryption_key))
-			{
-				uint8_t data[32];
-				random_generate_alnum(global()->random, data, sizeof(data));
-				str_strndup(&config->encryption_key, data, sizeof(data));
-			} else
-			{
+			if (! str_empty(&config->encryption_key))
 				if (str_size(&config->encryption_key) != 32)
 					error("encryption key must be 256bit");
-			}
+
 		} else
 		{
 			error("%s: unknown option %.*s", command, str_size(&name.string),
@@ -171,16 +164,30 @@ parse_storage_create(Lex* self)
 		error("CREATE STORAGE <name> expected");
 
 	// create storage config
-	cmd->config = source_allocate();
-	source_set_name(cmd->config, &name.string);
+	auto config = source_allocate();
+	cmd->config = config;
+	source_set_name(config, &name.string);
 
 	/// generate uuid
 	Uuid uuid;
 	uuid_generate(&uuid, global()->random);
-	source_set_uuid(cmd->config, &uuid);
+	source_set_uuid(config, &uuid);
 
 	// [(options)]
-	parse_storage_options(self, cmd->config, "CREATE STORAGE");
+	parse_storage_options(self, config, "CREATE STORAGE");
+
+	// validate encryption settings
+	int id = encryption_mgr_of(&config->encryption);
+	if (id != ENCRYPTION_NONE)
+	{
+		// generate key
+		if (str_empty(&config->encryption_key))
+		{
+			uint8_t data[32];
+			random_generate_alnum(global()->random, data, sizeof(data));
+			str_strndup(&config->encryption_key, data, sizeof(data));
+		}
+	}
 
 	unguard(&guard);
 	return &cmd->cmd;

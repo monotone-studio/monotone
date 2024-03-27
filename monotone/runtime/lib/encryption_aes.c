@@ -58,6 +58,9 @@ encryption_aes_encrypt(Encryption* ptr,
 {
 	auto self = (EncryptionAes*)ptr;
 
+	if (unlikely(str_size(key) != 32))
+		error("aes: encryption key must be 256bit");
+
 	// [iv, tag, encrypted data]
 
 	// calculate total size
@@ -104,6 +107,10 @@ encryption_aes_decrypt(Encryption* ptr,
                        int         data_size)
 {
 	auto self = (EncryptionAes*)ptr;
+
+	if (unlikely(str_size(key) != 32))
+		error("aes: encryption key must be 256bit");
+
 	buf_reserve(buf, data_size);
 
 	// [iv, tag, encrypted data]
