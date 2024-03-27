@@ -24,11 +24,7 @@ merger_init(Merger* self)
 void
 merger_free(Merger* self)
 {
-	if (self->part)
-	{
-		part_free(self->part);
-		self->part = NULL;
-	}
+	merger_reset(self);
 	part_iterator_free(&self->part_iterator);
 	merge_iterator_free(&self->merge_iterator);
 	writer_free(&self->writer);

@@ -26,6 +26,7 @@ writer_init(Writer* self)
 void
 writer_free(Writer* self)
 {
+	writer_reset(self);
 	iov_free(&self->iov);
 	region_writer_free(&self->region_writer);
 	index_writer_free(&self->index_writer);

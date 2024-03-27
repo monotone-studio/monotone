@@ -197,7 +197,7 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 		if (self->state != ID_NONE)
 		{
 			// {}
-			encode_map(buf, 11);
+			encode_map(buf, 12);
 
 			// size
 			encode_raw(buf, "size", 4);
@@ -242,6 +242,10 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 			// compression
 			encode_raw(buf, "compression", 11);
 			encode_integer(buf, index->compression);
+
+			// encryption
+			encode_raw(buf, "encryption", 10);
+			encode_integer(buf, index->encryption);
 		} else
 		{
 			encode_null(buf);
