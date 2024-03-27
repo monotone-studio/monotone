@@ -124,7 +124,7 @@ Some arbitrary performance numbers for **single instance** using **single writer
 
 **With WAL**
 
-With recommended standard settings (100 bytes per event):
+With standard settings (100 bytes per event):
 
 ```
 monotone bench
@@ -159,7 +159,7 @@ read time:    14.2 secs
 
 **Without WAL**
 
-With recommended standard settings (100 bytes per event):
+With standard settings (100 bytes per event):
 
 ```
 monotone bench -n
