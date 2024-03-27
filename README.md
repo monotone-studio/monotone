@@ -15,11 +15,11 @@ Made to match the following requirements:
 - Delete or Update events by primary key when necessary (but rarely or never needed)
 - Read events serially or by time as fast as possible
 - Efficiently store and manage large volumes of data using partitions
-- Efficiently compress data
-- Transparently update partitions or recompress data without blocking readers and writers
+- Efficiently compress and encrypt data
+- Transparently update partitions and recompress, decrypt data without blocking readers and writers
 - Extend disk space without downtime by plugging additional storage
 - Transparently work on top of S3
-- Understand Hot and Cold data patterns
+- Make sense of Hot and Cold data patterns
 
 Monotone provides simple [C API](monotone/main/api/monotone.h).
 
@@ -46,13 +46,13 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 - **Transparent Encryption**
 	
-	Encrypt and decrypt partitions automatically using AES-256-GCM (with hardware support) on refresh, partition move, or read.
+	Encrypt and decrypt partitions automatically on refresh, partition move, or read.
 	Compatible with compression and done transparently without blocking readers and writers.
   
 - **Storages**
 
     Create storage to store data on different storage devices.
-	Set different storage settings, such as compression, associated cloud, etc.
+	Set different storage settings, such as compression, encryption, associated cloud, etc.
 	Manually or automatically move partitions between storages.
 	Automatic compaction is made when moving to change settings.
 	Create or drop storage online.
