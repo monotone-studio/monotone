@@ -1,0 +1,149 @@
+#
+
+init
+set workers to 0
+set interval to 10
+set serial to false
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+
+# test: create partition
+insert 0
+insert 1
+insert 3
+show partitions debug
+refresh partition 0
+select
+
+# test: alter storage set encryption (not empty)
+alter storage main set (encryption 'aes')
+show partitions debug
+
+# test: drop partition
+drop partition 0
+
+# test: alter storage set encryption_key (validate)
+alter storage main set (encryption_key '123')
+show storages
+
+# test: alter storage set encryption_key
+alter storage main set (encryption_key '01234567890123456789012345678912')
+show storages
+
+# test: alter storage set encryption (validate)
+alter storage main set (encryption '123')
+show storages
+
+# test: alter storage set encryption (none)
+alter storage main set (encryption 'none')
+show storages
+
+alter storage main set (encryption '')
+show storages
+
+# test: alter storage set encryption aes
+alter storage main set (encryption 'aes')
+show storages
+
+# test: create partitions
+insert 0
+insert 1
+insert 3
+insert 10
+insert 21
+insert 33
+
+show partitions debug
+
+refresh partition 0
+refresh partition 10
+refresh partition 20
+refresh partition 30
+
+show partitions debug
+
+# test: select (decrypt)
+select
+
+# test: insert (update)
+insert 1 x
+insert 3 y
+insert 8 z
+show partitions debug
+
+# test: select (decrypt + heap)
+select
+
+# test: refresh (decrypt + encrypt)
+refresh partition 0
+show partitions debug
+
+# test: select (decrypt)
+select
+
+# test: move (to decrypt)
+create storage test
+move partition 0 into test
+show partitions debug
+
+# test: select
+select
+
+# test: move (to encrypt)
+move partition 0 into main
+show partitions debug
+
+# test: select
+select
+
+# test: create storage (auto-generate key)
+create storage test2 (encryption 'aes')
+
+# test: move (to encrypt) #2
+move partition 0 into test2
+show partitions debug
+
+# test: select
+select
+
+# test: alter storage set compression (encrypted)
+alter storage test2 set (compression 'zstd')
+show storages debug
+
+# test: refresh (decrypt + compress + encrypt)
+refresh partition 0
+show partitions debug
+
+# test: select
+select
+
+# test: alter storage set encryption_key
+alter storage test2 set (encryption_key 'abc')
+
+# test: select
+select
+
+# test: alter storage set encryption_key #2
+alter storage test2 set (encryption_key '')
+
+# test: select
+select
+
+# test: alter storage set encryption_key #3
+drop partition 0
+alter storage test2 set (encryption_key '')
+
+# test: select
+select
+
+# test: move (bad key)
+move partition 20 into test2
+
+# test: move
+alter storage test2 set (encryption_key '01234567890123456789012345678912')
+move partition 20 into test2
+
+# test: select
+select
+
+close
