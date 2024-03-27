@@ -248,7 +248,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -314,7 +315,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -380,7 +382,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -446,7 +449,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -512,7 +516,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -600,7 +605,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -627,7 +633,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 drop partition 10 on storage
@@ -673,7 +680,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -700,7 +708,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: download partitions
@@ -746,7 +755,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -773,7 +783,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

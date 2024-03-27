@@ -204,7 +204,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 select
@@ -299,7 +300,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

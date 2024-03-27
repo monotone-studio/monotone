@@ -59,7 +59,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: refresh (compress)
@@ -90,7 +91,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 select
@@ -126,7 +128,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 # test: refresh
@@ -157,7 +160,8 @@ show partitions debug
     "events": 3,
     "refreshes": 3,
     "lsn": 3,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 select
@@ -193,7 +197,8 @@ show partitions debug
     "events": 3,
     "refreshes": 3,
     "lsn": 3,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 # test: refresh
@@ -224,7 +229,8 @@ show partitions debug
     "events": 3,
     "refreshes": 4,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -332,7 +338,8 @@ show partitions debug
     "events": 10,
     "refreshes": 1,
     "lsn": 14,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 select
@@ -562,7 +569,8 @@ show partitions debug
     "events": 10,
     "refreshes": 1,
     "lsn": 25,
-    "compression": 2
+    "compression": 2,
+    "encryption": 0
   }
 }]
 select

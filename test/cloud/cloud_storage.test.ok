@@ -375,7 +375,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 show storages debug
@@ -586,7 +587,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: alter storage set cloud none #2 (exists on cloud and storage)
@@ -738,7 +740,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: alter storage set cloud none #2 (exists on storage only)
@@ -828,7 +831,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -921,7 +925,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: upload
@@ -1011,7 +1016,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -1104,7 +1110,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

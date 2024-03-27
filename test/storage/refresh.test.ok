@@ -195,7 +195,8 @@ show partitions debug
     "events": 6,
     "refreshes": 2,
     "lsn": 6,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (updated region)
@@ -266,7 +267,8 @@ show partitions debug
     "events": 6,
     "refreshes": 3,
     "lsn": 6,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: set compression
@@ -330,7 +332,8 @@ show partitions debug
     "events": 6,
     "refreshes": 4,
     "lsn": 6,
-    "compression": 1
+    "compression": 1,
+    "encryption": 0
   }
 }]
 # test: select (compressed data)

@@ -23,6 +23,7 @@ test drop
 test rebalance
 test service
 test compression
+test encryption
 
 # cloud
 directory cloud

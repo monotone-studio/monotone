@@ -202,7 +202,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 show wal
@@ -244,7 +245,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select
@@ -295,7 +297,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 show wal
@@ -358,7 +361,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 show wal
@@ -407,7 +411,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 show wal
@@ -454,7 +459,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 show wal

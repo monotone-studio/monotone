@@ -134,7 +134,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -174,7 +175,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + cloud)
@@ -211,7 +213,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 5,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -251,7 +254,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 5,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: download
@@ -282,7 +286,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 5,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 files 00000000-0000-0000-0000-000000000000
@@ -323,7 +328,8 @@ show partitions debug
     "events": 3,
     "refreshes": 3,
     "lsn": 7,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

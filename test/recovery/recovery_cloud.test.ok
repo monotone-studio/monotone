@@ -50,7 +50,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 files 00000000-0000-0000-0000-000000000000
@@ -98,7 +99,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -135,7 +137,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: close/open
@@ -175,7 +178,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -224,7 +228,8 @@ show partitions debug
     "events": 4,
     "refreshes": 2,
     "lsn": 6,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

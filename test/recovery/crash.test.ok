@@ -55,7 +55,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 insert 0 x
@@ -103,7 +104,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -154,7 +156,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -204,7 +207,8 @@ show partitions debug
     "events": 4,
     "refreshes": 2,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -284,7 +288,8 @@ show partitions debug
     "events": 4,
     "refreshes": 2,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 refresh partition 0
@@ -334,7 +339,8 @@ show partitions debug
     "events": 4,
     "refreshes": 3,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -392,7 +398,8 @@ show partitions debug
     "events": 4,
     "refreshes": 3,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 drop partition 0 on cloud
@@ -422,7 +429,8 @@ show partitions debug
     "events": 4,
     "refreshes": 3,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 set error_upload to true
@@ -468,7 +476,8 @@ show partitions debug
     "events": 4,
     "refreshes": 3,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

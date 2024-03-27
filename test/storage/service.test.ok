@@ -90,7 +90,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: service #2 (noop)
@@ -121,7 +122,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -158,7 +160,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 insert 0 xxx
@@ -188,7 +191,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: service #1 (refresh)
@@ -219,7 +223,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: service #2 (noop)
@@ -250,7 +255,8 @@ show partitions debug
     "events": 3,
     "refreshes": 2,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

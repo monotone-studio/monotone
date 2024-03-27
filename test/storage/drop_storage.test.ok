@@ -211,7 +211,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: drop storage (with partition)

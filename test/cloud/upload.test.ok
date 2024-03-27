@@ -243,7 +243,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -309,7 +310,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -370,7 +372,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -436,7 +439,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -502,7 +506,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -569,7 +574,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -596,7 +602,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: drop partitions on cloud
@@ -642,7 +649,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -669,7 +677,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: upload partitions parsing
@@ -736,7 +745,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -763,7 +773,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: upload partitions #2
@@ -809,7 +820,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -836,7 +848,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select
@@ -888,7 +901,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -915,7 +929,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 50,
@@ -942,7 +957,8 @@ show partitions debug
     "events": 0,
     "refreshes": 1,
     "lsn": 0,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 close

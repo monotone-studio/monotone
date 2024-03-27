@@ -165,7 +165,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,
@@ -230,7 +231,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,
@@ -367,7 +369,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 1,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,
@@ -394,7 +397,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 2,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 20,
@@ -421,7 +425,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 3,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 30,
@@ -448,7 +453,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 300,
@@ -475,7 +481,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 5,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 3000,
@@ -502,7 +509,8 @@ show partitions debug
     "events": 1,
     "refreshes": 2,
     "lsn": 6,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 30000,
@@ -529,7 +537,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 7,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 300000,
@@ -556,7 +565,8 @@ show partitions debug
     "events": 1,
     "refreshes": 1,
     "lsn": 8,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 select

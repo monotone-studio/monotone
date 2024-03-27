@@ -86,7 +86,8 @@ show partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 files 00000000-0000-0000-0000-000000000000
@@ -178,7 +179,8 @@ show storages, partitions debug
     "events": 4,
     "refreshes": 1,
     "lsn": 4,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]]
 # test: select (memtable + region)
@@ -236,7 +238,8 @@ show partitions debug
     "events": 5,
     "refreshes": 2,
     "lsn": 6,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (region)
@@ -296,7 +299,8 @@ show partitions debug
     "events": 5,
     "refreshes": 2,
     "lsn": 6,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + region)
@@ -354,7 +358,8 @@ show partitions debug
     "events": 5,
     "refreshes": 3,
     "lsn": 7,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (region)
@@ -413,7 +418,8 @@ show partitions debug
     "events": 5,
     "refreshes": 3,
     "lsn": 7,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + region)
@@ -467,7 +473,8 @@ show partitions debug
     "events": 3,
     "refreshes": 4,
     "lsn": 9,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (region)
@@ -523,7 +530,8 @@ show partitions debug
     "events": 3,
     "refreshes": 4,
     "lsn": 9,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + region)
@@ -574,7 +582,8 @@ show partitions debug
     "events": 2,
     "refreshes": 5,
     "lsn": 10,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (region)
@@ -626,7 +635,8 @@ show partitions debug
     "events": 2,
     "refreshes": 5,
     "lsn": 10,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + region)
@@ -660,7 +670,8 @@ show partitions debug
     "events": 0,
     "refreshes": 6,
     "lsn": 12,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (empty region)
@@ -697,7 +708,8 @@ show partitions debug
     "events": 0,
     "refreshes": 6,
     "lsn": 12,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + region)
@@ -735,7 +747,8 @@ show partitions debug
     "events": 4,
     "refreshes": 7,
     "lsn": 16,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (region)
@@ -775,7 +788,8 @@ show partitions debug
     "events": 4,
     "refreshes": 7,
     "lsn": 16,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (memtable + region)
@@ -813,7 +827,8 @@ show partitions debug
     "events": 4,
     "refreshes": 8,
     "lsn": 19,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (region)
@@ -896,7 +911,8 @@ show partitions debug
     "events": 9,
     "refreshes": 1,
     "lsn": 29,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: select (regions)
@@ -1008,7 +1024,8 @@ show partitions debug
     "events": 9,
     "refreshes": 1,
     "lsn": 29,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,
@@ -1142,7 +1159,8 @@ show partitions debug
     "events": 9,
     "refreshes": 2,
     "lsn": 33,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,
@@ -1215,7 +1233,8 @@ show partitions debug
     "events": 4,
     "refreshes": 3,
     "lsn": 39,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,
@@ -1276,7 +1295,8 @@ show partitions debug
     "events": 0,
     "refreshes": 4,
     "lsn": 44,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }, {
   "min": 10,

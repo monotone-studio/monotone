@@ -74,7 +74,8 @@ show partitions debug
     "events": 3,
     "refreshes": 1,
     "lsn": 7,
-    "compression": 0
+    "compression": 0,
+    "encryption": 0
   }
 }]
 # test: drop #2
