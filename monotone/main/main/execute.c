@@ -40,7 +40,13 @@ execute_show_op(Executable* self, Buf* buf, CmdShowOp* op)
 		if (op->name.id == KNAME)
 			storage = &op->name.string;
 		engine_show(&self->main->engine, ENGINE_SHOW_STORAGES,
-		            storage, buf, op->debug);
+		            storage, -1, buf, op->debug);
+		break;
+	}
+	case SHOW_PARTITION:
+	{
+		engine_show(&self->main->engine, ENGINE_SHOW_PARTITION,
+		            NULL, op->name.integer, buf, op->debug);
 		break;
 	}
 	case SHOW_PARTITIONS:
@@ -49,7 +55,7 @@ execute_show_op(Executable* self, Buf* buf, CmdShowOp* op)
 		if (op->name.id == KNAME)
 			storage = &op->name.string;
 		engine_show(&self->main->engine, ENGINE_SHOW_PARTITIONS,
-		            storage, buf, op->debug);
+		            storage, -1, buf, op->debug);
 		break;
 	}
 	case SHOW_PIPELINE:

@@ -53,6 +53,12 @@ parse_show(Lex* self)
 		case KSTORAGES:
 			type = SHOW_STORAGES;
 			break;
+		case KPARTITION:
+			// show partition id
+			if (! lex_if(self, KINT, &tk))
+				error("SHOW PARTITION <id> expected");
+			type = SHOW_PARTITION;
+			break;
 		case KPARTITIONS:
 			// show partitions [storage]
 			lex_if(self, KNAME, &tk);
@@ -69,7 +75,8 @@ parse_show(Lex* self)
 			type = SHOW_NAME;
 			break;
 		default:
-			error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITIONS | PIPELINE | CONFIG | NAME>");
+			error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITION | PARTITIONS | "
+			      "PIPELINE | CONFIG | NAME>");
 		}
 
 		// [debug]

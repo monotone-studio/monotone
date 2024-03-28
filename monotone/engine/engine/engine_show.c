@@ -28,6 +28,16 @@ engine_show_storages(Engine* self, Storage* storage,
 }
 
 static void
+engine_show_partition(Engine* self, uint64_t min, Buf* buf, bool debug)
+{
+	auto slice = mapping_match(&self->mapping, min);
+	if (! slice)
+		error("partitoin %" PRIu64 " does not exists", min);
+	auto ref = ref_of(slice);
+	stats_show_part(ref->part, buf, debug);
+}
+
+static void
 engine_show_partitions(Engine* self, Storage* storage,
                        Buf*    buf,
                        bool    debug)
@@ -57,9 +67,12 @@ engine_show_partitions(Engine* self, Storage* storage,
 }
 
 void
-engine_show(Engine* self, int op, Str* storage_name,
-            Buf*    buf,
-            bool    debug)
+engine_show(Engine*  self,
+            int      op,
+            Str*     storage_name,
+            uint64_t min,
+            Buf*     buf,
+            bool     debug)
 {
 	control_lock_shared();
 	guard(cglguard, control_unlock_guard, NULL);
@@ -83,6 +96,9 @@ engine_show(Engine* self, int op, Str* storage_name,
 	switch (op) {
 	case ENGINE_SHOW_STORAGES:
 		engine_show_storages(self, storage, buf, debug);
+		break;
+	case ENGINE_SHOW_PARTITION:
+		engine_show_partition(self, min, buf, debug);
 		break;
 	case ENGINE_SHOW_PARTITIONS:
 		engine_show_partitions(self, storage, buf, debug);

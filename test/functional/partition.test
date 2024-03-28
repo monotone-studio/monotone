@@ -44,6 +44,9 @@ insert 3 x
 
 show storages, partitions debug
 
+show partition 0
+show partition 0 debug
+
 # test: select (memtable + region)
 select
 select 0
