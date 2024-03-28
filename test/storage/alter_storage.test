@@ -61,4 +61,8 @@ show storages debug
 # test: alter storage set uuid
 alter storage test set (uuid '00000000-0000-0000-0000-000000000000')
 
+# test: alter storage set path
+alter storage test set (path '__test__')
+show storages debug
+
 close

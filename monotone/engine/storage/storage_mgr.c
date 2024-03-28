@@ -136,18 +136,9 @@ storage_mgr_create_object(StorageMgr* self, Source* source, bool attach)
 	return storage;
 }
 
-bool
-storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
+static void
+storage_mgr_mkdir(Source* source)
 {
-	auto storage = storage_mgr_find(self, &source->name);
-	if (storage)
-	{
-		if (! if_not_exists)
-			error("storage '%.*s': already exists", str_size(&source->name),
-			      str_of(&source->name));
-		return false;
-	}
-
 	// create storage parent directory, if specified
 	char path[PATH_MAX];
 	if (! str_empty(&source->path))
@@ -173,6 +164,22 @@ storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
 		log("storage: new directory '%s'", path);
 		fs_mkdir(0755, "%s", path);
 	}
+}
+
+bool
+storage_mgr_create(StorageMgr* self, Source* source, bool if_not_exists)
+{
+	auto storage = storage_mgr_find(self, &source->name);
+	if (storage)
+	{
+		if (! if_not_exists)
+			error("storage '%.*s': already exists", str_size(&source->name),
+			      str_of(&source->name));
+		return false;
+	}
+
+	// create storage directory
+	storage_mgr_mkdir(source);
 
 	// create storage object
 	storage = storage_mgr_create_object(self, source, true);
@@ -230,6 +237,16 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 			error("storage '%.*s': not exists", str_size(&source->name),
 			      str_of(&source->name));
 		return;
+	}
+
+	if (mask & SOURCE_PATH)
+	{
+		if (storage->list_count > 0)
+			error("storage '%.*s': storage is not empty", str_size(&source->name),
+			      str_of(&source->name));
+
+		source_set_uuid(source, &storage->source->uuid);
+		storage_mgr_mkdir(source);
 	}
 
 	if (mask & SOURCE_ENCRYPTION ||
