@@ -2,6 +2,7 @@ init
 set workers to 0
 set interval to 10
 set serial to false
+set wal_enable to false
 set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: alter storage set cloud
@@ -68,6 +69,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
@@ -146,6 +148,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -197,6 +200,7 @@ close
 init
 set workers to 0
 set interval to 10
+set wal_enable to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000.cloud
@@ -237,5 +241,172 @@ select
 [1]
 [2, z]
 [3, z]
+(eof)
+# test: set compression
+alter storage main set (compression 'zstd')
+refresh partition 0
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 3,
+  "events": 4,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 203,
+  "size_uncompressed": 264,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 32,
+    "size_origin": 52,
+    "size_regions": 53,
+    "size_regions_origin": 94,
+    "size_total": 203,
+    "size_total_origin": 264,
+    "regions": 1,
+    "events": 4,
+    "refreshes": 3,
+    "lsn": 6,
+    "compression": 1,
+    "encryption": 0
+  }
+}]
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+set wal_enable to false
+open
+files 00000000-0000-0000-0000-000000000000
+00000000000000000000.cloud
+mock
+# test: validate partition
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 3,
+  "events": 4,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 203,
+  "size_uncompressed": 264,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 32,
+    "size_origin": 52,
+    "size_regions": 53,
+    "size_regions_origin": 94,
+    "size_total": 203,
+    "size_total_origin": 264,
+    "regions": 1,
+    "events": 4,
+    "refreshes": 3,
+    "lsn": 6,
+    "compression": 1,
+    "encryption": 0
+  }
+}]
+select
+[0]
+[1]
+[2, z]
+[3, z]
+(eof)
+# test: set compression and encryption
+alter storage main set (encryption 'aes')
+error: storage 'main': storage is not empty
+drop partition 0
+show partitions debug
+[]
+alter storage main set (encryption 'aes', encryption_key '01234567890123456789012345678912')
+insert 0
+insert 1
+insert 2
+refresh partition 0
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 1,
+  "events": 3,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 249,
+  "size_uncompressed": 245,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 64,
+    "size_origin": 52,
+    "size_regions": 67,
+    "size_regions_origin": 75,
+    "size_total": 249,
+    "size_total_origin": 245,
+    "regions": 1,
+    "events": 3,
+    "refreshes": 1,
+    "lsn": 9,
+    "compression": 1,
+    "encryption": 1
+  }
+}]
+# test: close/open
+close
+init
+set workers to 0
+set interval to 10
+set wal_enable to false
+open
+files 00000000-0000-0000-0000-000000000000
+00000000000000000000.cloud
+mock
+# test: validate partition
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 1,
+  "events": 3,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 249,
+  "size_uncompressed": 245,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": true,
+  "storage": "main",
+  "index": {
+    "size": 64,
+    "size_origin": 52,
+    "size_regions": 67,
+    "size_regions_origin": 75,
+    "size_total": 249,
+    "size_total_origin": 245,
+    "regions": 1,
+    "events": 3,
+    "refreshes": 1,
+    "lsn": 9,
+    "compression": 1,
+    "encryption": 1
+  }
+}]
+select
+[0]
+[1]
+[2]
 (eof)
 close

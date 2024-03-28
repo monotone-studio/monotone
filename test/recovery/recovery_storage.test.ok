@@ -1357,4 +1357,761 @@ select
 [10]
 [20]
 (eof)
+# test: create encrypted storage
+create storage test (encryption 'aes')
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "hot": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "hot",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 10,
+      "max": 30,
+      "partitions": 2,
+      "partitions_local": 2,
+      "partitions_cloud": 0,
+      "regions": 2,
+      "events": 2,
+      "events_heap": 0,
+      "size": 422,
+      "size_uncompressed": 422,
+      "size_heap": 0
+    }
+  },
+  "cold": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "cold",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 118,
+      "size_uncompressed": 118,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": "aes"
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  }
+}
+move partition 20 into test
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 3,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 118,
+  "size_uncompressed": 118,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "cold",
+  "index": {
+    "size": 0,
+    "size_origin": 0,
+    "size_regions": 0,
+    "size_regions_origin": 0,
+    "size_total": 118,
+    "size_total_origin": 118,
+    "regions": 0,
+    "events": 0,
+    "refreshes": 3,
+    "lsn": 4,
+    "compression": 0,
+    "encryption": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "created": "(filtered)",
+  "refreshes": 1,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 211,
+  "size_uncompressed": 211,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 52,
+    "size_origin": 52,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "size_total": 211,
+    "size_total_origin": 211,
+    "regions": 1,
+    "events": 1,
+    "refreshes": 1,
+    "lsn": 2,
+    "compression": 0,
+    "encryption": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "created": "(filtered)",
+  "refreshes": 2,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 275,
+  "size_uncompressed": 211,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "test",
+  "index": {
+    "size": 84,
+    "size_origin": 52,
+    "size_regions": 73,
+    "size_regions_origin": 41,
+    "size_total": 275,
+    "size_total_origin": 211,
+    "regions": 1,
+    "events": 1,
+    "refreshes": 2,
+    "lsn": 3,
+    "compression": 0,
+    "encryption": 1
+  }
+}]
+insert 21
+insert 22
+refresh partition 20
+# test: close/open (recover encrypted partition)
+close
+init
+set workers to 0
+set interval to 10
+set wal_enable to false
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partitions
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "hot": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "hot",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 10,
+      "max": 20,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 1,
+      "events_heap": 0,
+      "size": 211,
+      "size_uncompressed": 211,
+      "size_heap": 0
+    }
+  },
+  "cold": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "cold",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 118,
+      "size_uncompressed": 118,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": "aes"
+    },
+    "stats": {
+      "min": 20,
+      "max": 30,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 3,
+      "events_heap": 0,
+      "size": 309,
+      "size_uncompressed": 245,
+      "size_heap": 0
+    }
+  }
+}
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 3,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 118,
+  "size_uncompressed": 118,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "cold",
+  "index": {
+    "size": 0,
+    "size_origin": 0,
+    "size_regions": 0,
+    "size_regions_origin": 0,
+    "size_total": 118,
+    "size_total_origin": 118,
+    "regions": 0,
+    "events": 0,
+    "refreshes": 3,
+    "lsn": 4,
+    "compression": 0,
+    "encryption": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "created": "(filtered)",
+  "refreshes": 1,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 211,
+  "size_uncompressed": 211,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 52,
+    "size_origin": 52,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "size_total": 211,
+    "size_total_origin": 211,
+    "regions": 1,
+    "events": 1,
+    "refreshes": 1,
+    "lsn": 2,
+    "compression": 0,
+    "encryption": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "created": "(filtered)",
+  "refreshes": 3,
+  "events": 3,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 309,
+  "size_uncompressed": 245,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "test",
+  "index": {
+    "size": 84,
+    "size_origin": 52,
+    "size_regions": 107,
+    "size_regions_origin": 75,
+    "size_total": 309,
+    "size_total_origin": 245,
+    "regions": 1,
+    "events": 3,
+    "refreshes": 3,
+    "lsn": 6,
+    "compression": 0,
+    "encryption": 1
+  }
+}]
+select
+[10]
+[20]
+[21]
+[22]
+(eof)
+# test: set compression with encryption
+alter storage test set (compression 'zstd')
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "hot": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "hot",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 10,
+      "max": 20,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 1,
+      "events_heap": 0,
+      "size": 211,
+      "size_uncompressed": 211,
+      "size_heap": 0
+    }
+  },
+  "cold": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "cold",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 118,
+      "size_uncompressed": 118,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "zstd",
+      "compression_level": 0,
+      "encryption": "aes"
+    },
+    "stats": {
+      "min": 20,
+      "max": 30,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 3,
+      "events_heap": 0,
+      "size": 309,
+      "size_uncompressed": 245,
+      "size_heap": 0
+    }
+  }
+}
+refresh partition 20
+# test: close/open (recover encrypted and compressed partition)
+close
+init
+set workers to 0
+set interval to 10
+set wal_enable to false
+open
+files 00000000-0000-0000-0000-000000000000
+# test: validate partitions
+show storages debug
+{
+  "main": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "main",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": -1,
+      "max": 0,
+      "partitions": 0,
+      "partitions_local": 0,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 0,
+      "size_uncompressed": 0,
+      "size_heap": 0
+    }
+  },
+  "hot": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "hot",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 10,
+      "max": 20,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 1,
+      "events_heap": 0,
+      "size": 211,
+      "size_uncompressed": 211,
+      "size_heap": 0
+    }
+  },
+  "cold": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "cold",
+      "path": "",
+      "cloud": "",
+      "sync": false,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "",
+      "compression_level": 0,
+      "encryption": ""
+    },
+    "stats": {
+      "min": 0,
+      "max": 10,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 0,
+      "events": 0,
+      "events_heap": 0,
+      "size": 118,
+      "size_uncompressed": 118,
+      "size_heap": 0
+    }
+  },
+  "test": {
+    "config": {
+      "uuid": "(filtered)",
+      "name": "test",
+      "path": "",
+      "cloud": "",
+      "sync": true,
+      "crc": false,
+      "refresh_wm": 41943040,
+      "region_size": 131072,
+      "compression": "zstd",
+      "compression_level": 0,
+      "encryption": "aes"
+    },
+    "stats": {
+      "min": 20,
+      "max": 30,
+      "partitions": 1,
+      "partitions_local": 1,
+      "partitions_cloud": 0,
+      "regions": 1,
+      "events": 3,
+      "events_heap": 0,
+      "size": 256,
+      "size_uncompressed": 245,
+      "size_heap": 0
+    }
+  }
+}
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 3,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 118,
+  "size_uncompressed": 118,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "cold",
+  "index": {
+    "size": 0,
+    "size_origin": 0,
+    "size_regions": 0,
+    "size_regions_origin": 0,
+    "size_total": 118,
+    "size_total_origin": 118,
+    "regions": 0,
+    "events": 0,
+    "refreshes": 3,
+    "lsn": 4,
+    "compression": 0,
+    "encryption": 0
+  }
+}, {
+  "min": 10,
+  "max": 20,
+  "created": "(filtered)",
+  "refreshes": 1,
+  "events": 1,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 211,
+  "size_uncompressed": 211,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "hot",
+  "index": {
+    "size": 52,
+    "size_origin": 52,
+    "size_regions": 41,
+    "size_regions_origin": 41,
+    "size_total": 211,
+    "size_total_origin": 211,
+    "regions": 1,
+    "events": 1,
+    "refreshes": 1,
+    "lsn": 2,
+    "compression": 0,
+    "encryption": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "created": "(filtered)",
+  "refreshes": 4,
+  "events": 3,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 256,
+  "size_uncompressed": 245,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "test",
+  "index": {
+    "size": 67,
+    "size_origin": 52,
+    "size_regions": 71,
+    "size_regions_origin": 75,
+    "size_total": 256,
+    "size_total_origin": 245,
+    "regions": 1,
+    "events": 3,
+    "refreshes": 4,
+    "lsn": 6,
+    "compression": 1,
+    "encryption": 1
+  }
+}]
+select
+[10]
+[20]
+[21]
+[22]
+(eof)
 close

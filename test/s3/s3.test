@@ -16,7 +16,7 @@ create cloud s3 (type 's3', url 'localhost:9000', access_key 'minioadmin', secre
 show clouds
 
 # test: create storage with cloud s3 (create bucket)
-create storage test (cloud 's3', sync false, uuid '00000000-0000-0000-0000-000000000123')
+create storage test (cloud 's3', sync false, uuid '00000000-0000-0000-0000-000000000123', compression 'zstd', encryption 'aes')
 show storages
 
 alter pipeline set test
