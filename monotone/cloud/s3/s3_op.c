@@ -139,7 +139,7 @@ s3_op_read(S3Io*    self,
 {
 	char range[128];
 	snprintf(range, sizeof(range), "bytes=%" PRIu64 "-%" PRIu64,
-	         offset, offset + size);
+	         offset, offset + (size - 1));
 	S3Request req =
 	{
 		.io               = self,
