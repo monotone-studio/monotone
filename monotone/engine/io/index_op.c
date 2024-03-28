@@ -59,9 +59,68 @@ index_open(File*   self,
 }
 
 static inline void
+encryption_push_guard(Encryption* self)
+{
+	encryption_mgr_push(global()->encryption_mgr, self);
+}
+
+static inline void
 compression_push_guard(Compression* self)
 {
 	compression_mgr_push(global()->compression_mgr, self);
+}
+
+static Buf*
+index_decrypt(File*   self,
+              Source* source,
+              Index*  index,
+              Buf*    origin,
+              Buf*    buf)
+{
+	if (index->encryption == ENCRYPTION_NONE)
+		return origin;
+
+	// get encryption context
+	auto context = encryption_mgr_pop(global()->encryption_mgr, index->encryption);
+	if (context == NULL)
+		error("partition: file '%s' unknown encryption: %d",
+		      str_of(&self->path), index->encryption);
+	guard(guard, encryption_push_guard, context);
+
+	// decrypt
+	encryption_decrypt(context,
+	                   &source->encryption_key,
+	                   buf,
+	                   origin->start,
+	                   buf_size(origin));
+
+	return buf;
+}
+
+static Buf*
+index_decompress(File*   self,
+                 Source* source,
+                 Index*  index,
+                 Buf*    origin,
+                 Buf*    buf)
+{
+	unused(source);
+	if (index->compression == COMPRESSION_NONE)
+		return origin;
+
+	// get compression context
+	auto context = compression_mgr_pop(global()->compression_mgr, index->compression);
+	if (context == NULL)
+		error("partition: file '%s' unknown compression id: %d",
+		      str_of(&self->path), index->compression);
+	guard(guard, compression_push_guard, context);
+
+	// decompress
+	compression_decompress(context, buf, origin->start,
+	                       buf_size(origin),
+	                       index->size_origin);
+
+	return buf;
 }
 
 void
@@ -77,44 +136,37 @@ index_read(File*   self,
 	if (index->size == 0)
 		return;
 
-	// read uncompressed index
+	// read index data
 	uint64_t offset = self->size - (sizeof(Index) + index->size);
-	if (copy || index->compression == COMPRESSION_NONE)
-	{
-		// read index
-		file_pread_buf(self, index_data, index->size, offset);
-
-		// check index data crc
-		uint32_t crc = crc32(0, index_data->start, buf_size(index_data));
-		if (crc != index->crc_data)
-			error("partition: file index data '%s' crc mismatch",
-			      str_of(&self->path));
-		return;
-	}
-
-	// get compression context
-	auto cp = compression_mgr_pop(global()->compression_mgr, index->compression);
-	if (cp == NULL)
-		error("partition: file '%s' unknown compression id: %d",
-		      str_of(&self->path), index->compression);
-	guard(guard_cp, compression_push_guard, cp);
-
-	Buf data;
-	buf_init(&data);
-	guard(guard, buf_free, &data);
-	buf_reserve(&data, index->size);
-
-	// read compressed region
-	file_pread_buf(self, &data, index->size, offset);
+	file_pread_buf(self, index_data, index->size, offset);
 
 	// check index data crc
-	uint32_t crc = crc32(0, data.start, buf_size(&data));
+	uint32_t crc = crc32(0, index_data->start, buf_size(index_data));
 	if (crc != index->crc_data)
 		error("partition: file index data '%s' crc mismatch",
 		      str_of(&self->path));
 
-	// decompress region
-	compression_decompress(cp, index_data, data.start,
-	                       index->size,
-	                       index->size_origin);
+	if (copy)
+		return;
+
+	auto origin = index_data;
+
+	// decrypt index data
+	Buf buf_decrypted;
+	buf_init(&buf_decrypted);
+	guard(guard_buf_decrypted, buf_free, &buf_decrypted);
+	origin = index_decrypt(self, source, index, origin, &buf_decrypted);
+
+	// decompress index data
+	Buf buf_decompressed;
+	buf_init(&buf_decompressed);
+	guard(guard_buf_decompressed, buf_free, &buf_decompressed);
+	origin = index_decompress(self, source, index, origin, &buf_decompressed);
+
+	// return
+	if (origin != index_data)
+	{
+		buf_reset(index_data);
+		buf_write(index_data, origin->start, buf_size(origin));
+	}
 }

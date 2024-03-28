@@ -26,6 +26,7 @@ region_writer_init(RegionWriter* self)
 	self->compression       = NULL;
 	self->compression_level = 0;
 	self->encryption        = NULL;
+	self->encryption_key    = NULL;
 	buf_init(&self->meta);
 	buf_init(&self->data);
 	buf_init(&self->compressed);
@@ -47,6 +48,7 @@ region_writer_reset(RegionWriter* self)
 	self->compression       = NULL;
 	self->compression_level = 0;
 	self->encryption        = NULL;
+	self->encryption_key    = NULL;
 	buf_reset(&self->meta);
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);

@@ -15,7 +15,9 @@ struct IndexWriter
 	Buf          compressed;
 	Compression* compression;
 	int          compression_level;
+	Buf          encrypted;
 	Encryption*  encryption;
+	Str*         encryption_key;
 	bool         crc;
 	Index        index;
 };
@@ -27,9 +29,11 @@ index_writer_init(IndexWriter* self)
 	self->compression       = NULL;
 	self->compression_level = 0;
 	self->encryption        = NULL;
+	self->encryption_key    = NULL;
 	self->crc               = false;
 	buf_init(&self->data);
 	buf_init(&self->compressed);
+	buf_init(&self->encrypted);
 	memset(&self->index, 0, sizeof(self->index));
 }
 
@@ -38,6 +42,7 @@ index_writer_free(IndexWriter* self)
 {
 	buf_free(&self->data);
 	buf_free(&self->compressed);
+	buf_free(&self->encrypted);
 }
 
 static inline void
@@ -47,9 +52,11 @@ index_writer_reset(IndexWriter* self)
 	self->compression       = NULL;
 	self->compression_level = 0;
 	self->encryption        = NULL;
+	self->encryption_key    = NULL;
 	self->crc               = false;
 	buf_reset(&self->data);
 	buf_reset(&self->compressed);
+	buf_reset(&self->encrypted);
 	memset(&self->index, 0, sizeof(self->index));
 }
 
@@ -64,11 +71,13 @@ index_writer_start(IndexWriter* self,
                    Compression* compression,
                    int          compression_level,
                    Encryption*  encryption,
+                   Str*         encryption_key,
                    bool         crc)
 {
 	self->compression       = compression;
 	self->compression_level = compression_level;
 	self->encryption        = encryption;
+	self->encryption_key    = encryption_key;
 	self->crc               = crc;
 	self->active            = true;
 }
@@ -90,19 +99,33 @@ index_writer_stop(IndexWriter* self,
 	{
 		Buf* argv[] = { &self->data };
 		compression_compress(self->compression, &self->compressed,
-		                     self->compression_level, 1, argv);
+		                     self->compression_level,
+		                     1, argv);
 		size = buf_size(&self->compressed);
 		compression_id = self->compression->iface->id;
 	} else {
 		compression_id = COMPRESSION_NONE;
 	}
 
-	// get encryption type
+	// encrypt index data
 	int encryption_id;
 	if (self->encryption)
+	{
+		Buf* argv[1];
+		if (self->compression)
+			argv[0] = &self->compressed;
+		else
+			argv[0] = &self->data;
+		encryption_encrypt(self->encryption, global()->random,
+		                   self->encryption_key,
+		                   &self->encrypted,
+		                   1, argv);
+		size = buf_size(&self->encrypted);
 		encryption_id = self->encryption->iface->id;
-	else
+	} else
+	{
 		encryption_id = ENCRYPTION_NONE;
+	}
 
 	// prepare index
 	index->crc               = 0;
@@ -123,6 +146,9 @@ index_writer_stop(IndexWriter* self,
 
 	// calculate index data crc
 	uint32_t crc = 0;
+	if (self->encryption)
+		crc = crc32(crc, self->encrypted.start, buf_size(&self->encrypted));
+	else
 	if (self->compression)
 		crc = crc32(crc, self->compressed.start, buf_size(&self->compressed));
 	else
@@ -186,6 +212,9 @@ index_writer_copy(IndexWriter* self, Index* index, Buf* buf)
 static inline void
 index_writer_add_to_iov(IndexWriter* self, Iov* iov)
 {
+	if (self->encryption)
+		iov_add(iov, self->encrypted.start, buf_size(&self->encrypted));
+	else
 	if (self->compression)
 		iov_add(iov, self->compressed.start, buf_size(&self->compressed));
 	else

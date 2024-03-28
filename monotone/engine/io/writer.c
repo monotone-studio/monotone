@@ -111,6 +111,7 @@ writer_start(Writer* self, Source* source, File* file)
 	index_writer_start(&self->index_writer, self->compression,
 	                   source->compression_level,
 	                   self->encryption,
+	                   &source->encryption_key,
 	                   source->crc);
 }
 
