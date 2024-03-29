@@ -182,21 +182,21 @@ show partitions debug
 }]
 # test: drop partitions parsing
 drop partitions
-error: DROP PARTITIONS <FROM> min TO max
+error: DROP PARTITIONS <BETWEEN> min AND max
 drop partitions abc
-error: DROP PARTITIONS <FROM> min TO max
-drop partitions from
-error: DROP PARTITIONS FROM <min> TO max
-drop partitions from abc
-error: DROP PARTITIONS FROM <min> TO max
-drop partitions from 0
-error: DROP PARTITIONS FROM min <TO> max
-drop partitions from 0 to
-error: DROP PARTITIONS FROM min TO <max>
-drop partitions from 0 to abc
-error: DROP PARTITIONS FROM min TO <max>
+error: DROP PARTITIONS <BETWEEN> min AND max
+drop partitions between
+error: DROP PARTITIONS BETWEEN <min> AND max
+drop partitions between abc
+error: DROP PARTITIONS BETWEEN <min> AND max
+drop partitions between 0
+error: DROP PARTITIONS BETWEEN min <AND> max
+drop partitions between 0 and
+error: DROP PARTITIONS BETWEEN min AND <max>
+drop partitions between 0 and abc
+error: DROP PARTITIONS BETWEEN min AND <max>
 # test: drop partitions
-drop partitions from 0 to 50
+drop partitions between 0 and 50
 show partitions debug
 []
 # test: drop partitions (gap)
@@ -298,7 +298,7 @@ show storages debug
   }
 }
 # test: drop partitions
-drop partitions from 0 to 500
+drop partitions between 0 and 500
 show partitions debug
 []
 show storages debug

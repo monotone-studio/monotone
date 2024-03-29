@@ -382,19 +382,21 @@ show storages debug
 }
 # test: refresh partitions parsing
 refresh partitions
-error: REFRESH PARTITIONS <FROM> min TO max
+error: REFRESH PARTITIONS <BETWEEN> min AND max
 refresh partitions abc
-error: REFRESH PARTITIONS <FROM> min TO max
-refresh partitions from
-error: REFRESH PARTITIONS FROM <min> TO max
-refresh partitions from abc
-error: REFRESH PARTITIONS FROM <min> TO max
-refresh partitions from 0
-error: REFRESH PARTITIONS FROM min <TO> max
-refresh partitions from 0 to
-error: REFRESH PARTITIONS FROM min TO <max>
-refresh partitions from 0 to abc
-error: REFRESH PARTITIONS FROM min TO <max>
+error: REFRESH PARTITIONS <BETWEEN> min AND max
+refresh partitions between
+error: REFRESH PARTITIONS BETWEEN <min> AND max
+refresh partitions between abc
+error: REFRESH PARTITIONS BETWEEN <min> AND max
+refresh partitions between 0
+error: REFRESH PARTITIONS BETWEEN min <AND> max
+refresh partitions between 0 to
+error: REFRESH PARTITIONS BETWEEN min <AND> max
+refresh partitions between 0 and
+error: REFRESH PARTITIONS BETWEEN min AND <max>
+refresh partitions between 0 and abc
+error: REFRESH PARTITIONS BETWEEN min AND <max>
 # test: refresh partitions
 show partitions debug
 [{
@@ -471,7 +473,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }]
-refresh partitions from 0 to 40
+refresh partitions between 0 and 40
 show storages debug
 {
   "main": {
@@ -516,7 +518,7 @@ select
 [40]
 (eof)
 # test: refresh partitions #2
-refresh partitions from 40 to 50
+refresh partitions between 40 and 50
 show storages debug
 {
   "main": {

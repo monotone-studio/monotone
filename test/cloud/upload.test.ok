@@ -532,7 +532,7 @@ select
 (eof)
 # test: download partitions
 refresh partition 20
-download partitions from 10 to 30
+download partitions between 10 and 30
 show partitions debug
 [{
   "min": 0,
@@ -607,7 +607,7 @@ show partitions debug
   }
 }]
 # test: drop partitions on cloud
-drop partitions from 10 to 30 on cloud
+drop partitions between 10 and 30 on cloud
 show partitions debug
 [{
   "min": 0,
@@ -683,27 +683,27 @@ show partitions debug
 }]
 # test: upload partitions parsing
 upload partitions
-error: UPLOAD PARTITIONS <FROM> min TO max
+error: UPLOAD PARTITIONS <BETWEEN> min AND max
 upload partitions abc
-error: UPLOAD PARTITIONS <FROM> min TO max
-upload partitions from
-error: UPLOAD PARTITIONS FROM <min> TO max
-upload partitions from abc
-error: UPLOAD PARTITIONS FROM <min> TO max
-upload partitions from 0
-error: UPLOAD PARTITIONS FROM min <TO> max
-upload partitions from 10
-error: UPLOAD PARTITIONS FROM min <TO> max
-upload partitions from 10 abc
-error: UPLOAD PARTITIONS FROM min <TO> max
-upload partitions from 10 to
-error: UPLOAD PARTITIONS FROM min TO <max>
-upload partitions from 10 to abc
-error: UPLOAD PARTITIONS FROM min TO <max>
-upload partitions from 10 to 30 abc
+error: UPLOAD PARTITIONS <BETWEEN> min AND max
+upload partitions between
+error: UPLOAD PARTITIONS BETWEEN <min> AND max
+upload partitions between abc
+error: UPLOAD PARTITIONS BETWEEN <min> AND max
+upload partitions between 0
+error: UPLOAD PARTITIONS BETWEEN min <AND> max
+upload partitions between 10
+error: UPLOAD PARTITIONS BETWEEN min <AND> max
+upload partitions between 10 abc
+error: UPLOAD PARTITIONS BETWEEN min <AND> max
+upload partitions between 10 and
+error: UPLOAD PARTITIONS BETWEEN min AND <max>
+upload partitions between 10 and abc
+error: UPLOAD PARTITIONS BETWEEN min AND <max>
+upload partitions between 10 and 30 abc
 error: unexpected clause at the end of command
 # test: upload partitions #1
-upload partitions from 10 to 30
+upload partitions between 10 and 30
 show partitions debug
 [{
   "min": 0,
@@ -778,7 +778,7 @@ show partitions debug
   }
 }]
 # test: upload partitions #2
-upload partitions from 10 to 30
+upload partitions between 10 and 30
 show partitions debug
 [{
   "min": 0,

@@ -70,31 +70,31 @@ select
 
 # test: download partitions
 refresh partition 20
-download partitions from 10 to 30
+download partitions between 10 and 30
 show partitions debug
 
 # test: drop partitions on cloud
-drop partitions from 10 to 30 on cloud
+drop partitions between 10 and 30 on cloud
 show partitions debug
 
 # test: upload partitions parsing
 upload partitions
 upload partitions abc
-upload partitions from
-upload partitions from abc
-upload partitions from 0
-upload partitions from 10
-upload partitions from 10 abc
-upload partitions from 10 to
-upload partitions from 10 to abc
-upload partitions from 10 to 30 abc
+upload partitions between
+upload partitions between abc
+upload partitions between 0
+upload partitions between 10
+upload partitions between 10 abc
+upload partitions between 10 and
+upload partitions between 10 and abc
+upload partitions between 10 and 30 abc
 
 # test: upload partitions #1
-upload partitions from 10 to 30
+upload partitions between 10 and 30
 show partitions debug
 
 # test: upload partitions #2
-upload partitions from 10 to 30
+upload partitions between 10 and 30
 show partitions debug
 select
 

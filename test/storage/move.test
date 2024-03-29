@@ -48,15 +48,15 @@ show storages debug
 # test: move partitions parsing
 move partitions
 move partitions abc
-move partitions from
-move partitions from abc
-move partitions from 10
-move partitions from 10 to
-move partitions from 10 to 50
-move partitions from 10 to 50 into
+move partitions between
+move partitions between abc
+move partitions between 10
+move partitions between 10 and
+move partitions between 10 and 50
+move partitions between 10 and 50 into
 
 # test: move partitions
-move partitions from 10 to 50 into test
+move partitions between 10 and 50 into test
 show storages debug
 show partitions debug
 
@@ -67,7 +67,7 @@ select
 alter storage main set (compression 'zstd')
 
 # test: move partitions #2
-move partitions from 0 to 50 into main
+move partitions between 0 and 50 into main
 show storages debug
 show partitions debug
 

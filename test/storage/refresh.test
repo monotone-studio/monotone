@@ -74,22 +74,23 @@ show storages debug
 # test: refresh partitions parsing
 refresh partitions
 refresh partitions abc
-refresh partitions from
-refresh partitions from abc
-refresh partitions from 0
-refresh partitions from 0 to
-refresh partitions from 0 to abc
+refresh partitions between
+refresh partitions between abc
+refresh partitions between 0
+refresh partitions between 0 to
+refresh partitions between 0 and
+refresh partitions between 0 and abc
 
 # test: refresh partitions
 show partitions debug
-refresh partitions from 0 to 40
+refresh partitions between 0 and 40
 show storages debug
 
 # test: select
 select
 
 # test: refresh partitions #2
-refresh partitions from 40 to 50
+refresh partitions between 40 and 50
 show storages debug
 
 # test: select

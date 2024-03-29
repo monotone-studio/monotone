@@ -51,14 +51,14 @@ show partitions debug
 # test: drop partitions parsing
 drop partitions
 drop partitions abc
-drop partitions from
-drop partitions from abc
-drop partitions from 0
-drop partitions from 0 to
-drop partitions from 0 to abc
+drop partitions between
+drop partitions between abc
+drop partitions between 0
+drop partitions between 0 and
+drop partitions between 0 and abc
 
 # test: drop partitions
-drop partitions from 0 to 50
+drop partitions between 0 and 50
 show partitions debug
 
 # test: drop partitions (gap)
@@ -70,7 +70,7 @@ show partitions debug
 show storages debug
 
 # test: drop partitions
-drop partitions from 0 to 500
+drop partitions between 0 and 500
 show partitions debug
 show storages debug
 

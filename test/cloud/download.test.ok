@@ -542,24 +542,24 @@ select
 (eof)
 # test: download partitions parsing
 download partitions
-error: DOWNLOAD PARTITIONS <FROM> min TO max
+error: DOWNLOAD PARTITIONS <BETWEEN> min AND max
 download partitions abc
-error: DOWNLOAD PARTITIONS <FROM> min TO max
-download partitions from
-error: DOWNLOAD PARTITIONS FROM <min> TO max
-download partitions from abc
-error: DOWNLOAD PARTITIONS FROM <min> TO max
-download partitions from 0
-error: DOWNLOAD PARTITIONS FROM min <TO> max
-download partitions from 10
-error: DOWNLOAD PARTITIONS FROM min <TO> max
-download partitions from 10 abc
-error: DOWNLOAD PARTITIONS FROM min <TO> max
-download partitions from 10 to
-error: DOWNLOAD PARTITIONS FROM min TO <max>
-download partitions from 10 to abc
-error: DOWNLOAD PARTITIONS FROM min TO <max>
-download partitions from 10 to 30 abc
+error: DOWNLOAD PARTITIONS <BETWEEN> min AND max
+download partitions between
+error: DOWNLOAD PARTITIONS BETWEEN <min> AND max
+download partitions between abc
+error: DOWNLOAD PARTITIONS BETWEEN <min> AND max
+download partitions between 0
+error: DOWNLOAD PARTITIONS BETWEEN min <AND> max
+download partitions between 10
+error: DOWNLOAD PARTITIONS BETWEEN min <AND> max
+download partitions between 10 abc
+error: DOWNLOAD PARTITIONS BETWEEN min <AND> max
+download partitions between 10 and
+error: DOWNLOAD PARTITIONS BETWEEN min AND <max>
+download partitions between 10 and abc
+error: DOWNLOAD PARTITIONS BETWEEN min AND <max>
+download partitions between 10 and 30 abc
 error: unexpected clause at the end of command
 # test: drop from storage
 refresh partition 10
@@ -713,7 +713,7 @@ show partitions debug
   }
 }]
 # test: download partitions
-download partitions from 10 to 30
+download partitions between 10 and 30
 show partitions debug
 [{
   "min": 0,

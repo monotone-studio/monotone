@@ -74,14 +74,14 @@ select
 # test: download partitions parsing
 download partitions
 download partitions abc
-download partitions from
-download partitions from abc
-download partitions from 0
-download partitions from 10
-download partitions from 10 abc
-download partitions from 10 to
-download partitions from 10 to abc
-download partitions from 10 to 30 abc
+download partitions between
+download partitions between abc
+download partitions between 0
+download partitions between 10
+download partitions between 10 abc
+download partitions between 10 and
+download partitions between 10 and abc
+download partitions between 10 and 30 abc
 
 # test: drop from storage
 refresh partition 10
@@ -93,7 +93,7 @@ drop partition 20 on storage
 show partitions debug
 
 # test: download partitions
-download partitions from 10 to 30
+download partitions between 10 and 30
 show partitions debug
 select
 

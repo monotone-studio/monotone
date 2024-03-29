@@ -81,7 +81,7 @@ insert 90
 show partitions debug
 
 # test: refresh partitions
-refresh partitions from 0 to 100
+refresh partitions between 0 and 100
 show partitions debug
 
 # test: update partitions
@@ -97,7 +97,7 @@ insert 91
 show partitions debug
 
 # test: refresh partitions #2
-refresh partitions from 0 to 100
+refresh partitions between 0 and 100
 show partitions debug
 
 # test: select
@@ -125,7 +125,7 @@ drop storage test
 
 # cleanup
 alter pipeline reset
-drop partitions from 0 to 9999
+drop partitions between 0 and 9999
 
 drop storage test
 

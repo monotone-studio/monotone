@@ -539,7 +539,7 @@ show partitions debug
   "index": null
 }]
 # test: refresh partitions
-refresh partitions from 0 to 100
+refresh partitions between 0 and 100
 show partitions debug
 [{
   "min": 0,
@@ -1115,7 +1115,7 @@ show partitions debug
   }
 }]
 # test: refresh partitions #2
-refresh partitions from 0 to 100
+refresh partitions between 0 and 100
 show partitions debug
 [{
   "min": 0,
@@ -1810,6 +1810,6 @@ drop storage test
 error: storage 'test': has dependencies
 # test: drop storage (detach, drop bucket)
 alter pipeline reset
-drop partitions from 0 to 9999
+drop partitions between 0 and 9999
 drop storage test
 close
