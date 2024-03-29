@@ -1772,4 +1772,519 @@ select
 [10000]
 [20000]
 (eof)
+# test: set interval to 1
+set interval to 1
+insert 30000
+insert 30001
+insert 30002
+show partitions debug
+[{
+  "min": 0,
+  "max": 79,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 119,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 129,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 139,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 149,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 451,
+  "max": 500,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 501,
+  "max": 999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 1999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 2999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000,
+  "max": 9999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10000,
+  "max": 19999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20000,
+  "max": 29999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30000,
+  "max": 30000,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30001,
+  "max": 30001,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30002,
+  "max": 30002,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+[3000]
+[4000]
+[5000]
+[10000]
+[20000]
+[30000]
+[30001]
+[30002]
+(eof)
+# test: drop partition
+drop partition 30001
+show partitions debug
+[{
+  "min": 0,
+  "max": 79,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 80,
+  "max": 119,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 120,
+  "max": 129,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 130,
+  "max": 139,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 140,
+  "max": 149,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 150,
+  "max": 450,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 451,
+  "max": 500,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 501,
+  "max": 999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 0,
+  "events_heap": 0,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 0,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 1000,
+  "max": 1999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 5,
+  "events_heap": 5,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 2000,
+  "max": 2999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 2,
+  "events_heap": 2,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 3000,
+  "max": 9999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 10000,
+  "max": 19999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 20000,
+  "max": 29999,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30000,
+  "max": 30000,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30002,
+  "max": 30002,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+select
+[0]
+[120]
+[140]
+[1200]
+[1300]
+[1500]
+[1800]
+[1900]
+[2000]
+[2900]
+[3000]
+[4000]
+[5000]
+[10000]
+[20000]
+[30000]
+[30002]
+(eof)
 close

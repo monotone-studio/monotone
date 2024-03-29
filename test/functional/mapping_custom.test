@@ -86,4 +86,17 @@ insert 20000
 show partitions debug
 select
 
+# test: set interval to 1
+set interval to 1
+insert 30000
+insert 30001
+insert 30002
+show partitions debug
+select
+
+# test: drop partition
+drop partition 30001
+show partitions debug
+select
+
 close
