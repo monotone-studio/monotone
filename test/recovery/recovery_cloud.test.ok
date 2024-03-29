@@ -28,7 +28,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -78,7 +78,7 @@ mock
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -116,7 +116,7 @@ download partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -158,7 +158,7 @@ mock
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -209,7 +209,7 @@ mock
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 4,
@@ -248,7 +248,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 4,
@@ -289,7 +289,7 @@ mock
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 4,
@@ -336,7 +336,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -377,7 +377,7 @@ mock
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,

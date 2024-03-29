@@ -56,7 +56,7 @@ show wal
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 2,

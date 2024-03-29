@@ -131,8 +131,10 @@ engine_lock(Engine* self, uint64_t id, LockType lock,
 				return NULL;
 
 			// create one or more partitions using default interval
+
+			// interval is inclusive
 			auto min = config_interval_of(id);
-			auto max = min + config_interval();
+			auto max = (min + config_interval()) - 1;
 			engine_fill(self, min, max, false);
 
 			// retry search

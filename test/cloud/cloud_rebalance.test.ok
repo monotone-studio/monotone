@@ -40,7 +40,7 @@ insert 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -59,7 +59,7 @@ insert 10
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -74,7 +74,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -93,7 +93,7 @@ insert 20
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -108,7 +108,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -123,7 +123,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -142,7 +142,7 @@ rebalance
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -170,7 +170,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -185,7 +185,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -208,7 +208,7 @@ insert 300000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -236,7 +236,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -251,7 +251,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -266,7 +266,7 @@ show partitions debug
   "index": null
 }, {
   "min": 30,
-  "max": 40,
+  "max": 39,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -281,7 +281,7 @@ show partitions debug
   "index": null
 }, {
   "min": 300,
-  "max": 310,
+  "max": 309,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -296,7 +296,7 @@ show partitions debug
   "index": null
 }, {
   "min": 3000,
-  "max": 3010,
+  "max": 3009,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -311,7 +311,7 @@ show partitions debug
   "index": null
 }, {
   "min": 30000,
-  "max": 30010,
+  "max": 30009,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -326,7 +326,7 @@ show partitions debug
   "index": null
 }, {
   "min": 300000,
-  "max": 300010,
+  "max": 300009,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -346,7 +346,7 @@ rebalance
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -374,7 +374,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -402,7 +402,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -430,7 +430,7 @@ show partitions debug
   }
 }, {
   "min": 30,
-  "max": 40,
+  "max": 39,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -458,7 +458,7 @@ show partitions debug
   }
 }, {
   "min": 300,
-  "max": 310,
+  "max": 309,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -486,7 +486,7 @@ show partitions debug
   }
 }, {
   "min": 3000,
-  "max": 3010,
+  "max": 3009,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -514,7 +514,7 @@ show partitions debug
   }
 }, {
   "min": 30000,
-  "max": 30010,
+  "max": 30009,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -542,7 +542,7 @@ show partitions debug
   }
 }, {
   "min": 300000,
-  "max": 300010,
+  "max": 300009,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,

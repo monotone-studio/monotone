@@ -72,7 +72,7 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 	}
 
 	// validate range
-	if (unlikely(min >= max))
+	if (unlikely(min > max))
 		error("fill: invalid partition interval");
 
 	// empty
@@ -82,14 +82,14 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 		return;
 	}
 
-	// create one or more partitions to fill gap between
+	// create one or more partitions to fill the gap between
 	// min and max range
 	Buf gaps;
 	buf_init(&gaps);
 	guard(guard, buf_free, &gaps);
 
 	auto slice = mapping_seek(&self->mapping, min);
-	while (min < max)
+	while (min <= max)
 	{
 		if (slice)
 		{
@@ -102,14 +102,14 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 				if (max < slice->min)
 					gap.max = max;
 				else
-					gap.max = slice->min;
+					gap.max = slice->min - 1;
 				buf_write(&gaps, &gap, sizeof(gap));
 
-				min = slice->max;
+				min = slice->max + 1;
 			} else
 			if (slice_in(slice, min))
 			{
-				min = slice->max;
+				min = slice->max + 1;
 			}
 
 			slice = mapping_next(&self->mapping, slice);
@@ -145,7 +145,7 @@ engine_foreach(Engine* self, uint64_t* min, uint64_t* min_next, uint64_t max)
 	if (ref_min >= max)
 		return false;
 	*min = ref_min;
-	*min_next = ref_max;
+	*min_next = ref_max + 1;
 	return true;
 }
 

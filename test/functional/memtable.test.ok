@@ -11,7 +11,7 @@ insert 1
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -77,7 +77,7 @@ insert 5
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -128,7 +128,7 @@ insert 3 x
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -173,7 +173,7 @@ cursor_close c
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -216,7 +216,7 @@ delete 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -242,7 +242,7 @@ delete 3
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -315,7 +315,7 @@ insert 4
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,

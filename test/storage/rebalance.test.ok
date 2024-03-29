@@ -194,7 +194,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -284,7 +284,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 20,
+      "max": 19,
       "partitions": 2,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -373,7 +373,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 30,
+      "max": 29,
       "partitions": 3,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -461,7 +461,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 30,
+      "max": 29,
       "partitions": 2,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -489,7 +489,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -553,7 +553,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 610,
+      "max": 609,
       "partitions": 6,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -581,7 +581,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -641,7 +641,7 @@ show storages debug
     },
     "stats": {
       "min": 500,
-      "max": 610,
+      "max": 609,
       "partitions": 2,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -669,7 +669,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 50,
+      "max": 49,
       "partitions": 5,
       "partitions_local": 5,
       "partitions_cloud": 0,
@@ -748,7 +748,7 @@ show storages debug
     },
     "stats": {
       "min": 500,
-      "max": 610,
+      "max": 609,
       "partitions": 2,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -776,7 +776,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 50,
+      "max": 49,
       "partitions": 5,
       "partitions_local": 5,
       "partitions_cloud": 0,
@@ -864,7 +864,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 50,
+      "max": 49,
       "partitions": 5,
       "partitions_local": 5,
       "partitions_cloud": 0,
@@ -968,7 +968,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 50,
+      "max": 49,
       "partitions": 5,
       "partitions_local": 5,
       "partitions_cloud": 0,
@@ -1118,7 +1118,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -1208,7 +1208,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 20,
+      "max": 19,
       "partitions": 2,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -1302,7 +1302,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 30,
+      "max": 29,
       "partitions": 2,
       "partitions_local": 0,
       "partitions_cloud": 0,

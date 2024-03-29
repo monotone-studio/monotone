@@ -172,7 +172,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -188,7 +188,7 @@ show storages debug
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,

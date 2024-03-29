@@ -71,7 +71,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -87,7 +87,7 @@ show storages debug
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,
@@ -132,7 +132,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -148,7 +148,7 @@ show storages debug
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,
@@ -172,7 +172,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -212,7 +212,7 @@ drop partition 0 on storage
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 5,
@@ -250,7 +250,7 @@ drop partition 0 on cloud
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -284,7 +284,7 @@ download partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -346,7 +346,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -362,7 +362,7 @@ show storages debug
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,
@@ -386,7 +386,7 @@ checkpoint
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,

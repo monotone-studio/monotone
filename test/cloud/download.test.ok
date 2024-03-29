@@ -59,7 +59,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 0,
       "partitions_cloud": 0,
@@ -107,7 +107,7 @@ insert 20
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -122,7 +122,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -137,7 +137,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -156,7 +156,7 @@ download partition 10
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -171,7 +171,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -186,7 +186,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -210,7 +210,7 @@ refresh partition 10
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -225,7 +225,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -253,7 +253,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -277,7 +277,7 @@ download partition 10
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -292,7 +292,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -320,7 +320,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -344,7 +344,7 @@ download partition 10
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -359,7 +359,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -387,7 +387,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -411,7 +411,7 @@ drop partition 10 on storage
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -426,7 +426,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -454,7 +454,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -478,7 +478,7 @@ download partition 10
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -493,7 +493,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -521,7 +521,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -567,7 +567,7 @@ refresh partition 20
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -582,7 +582,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -610,7 +610,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -642,7 +642,7 @@ drop partition 20 on storage
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -657,7 +657,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -685,7 +685,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -717,7 +717,7 @@ download partitions from 10 to 30
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -732,7 +732,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -760,7 +760,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,

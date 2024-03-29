@@ -28,7 +28,7 @@ insert 120
 show partitions debug
 [{
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -62,7 +62,7 @@ insert 140
 show partitions debug
 [{
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -77,7 +77,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -111,7 +111,7 @@ create partition 120 170
 show partitions debug
 [{
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -126,7 +126,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -141,7 +141,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -175,7 +175,7 @@ create partition 80 500
 show partitions debug
 [{
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -190,7 +190,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -205,7 +205,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -220,7 +220,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -249,7 +249,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -275,7 +275,7 @@ insert 0
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -290,7 +290,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -305,7 +305,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -320,7 +320,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -335,7 +335,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -364,7 +364,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -379,8 +379,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -408,7 +408,7 @@ insert 1900
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -423,7 +423,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -438,7 +438,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -453,7 +453,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -468,7 +468,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -497,7 +497,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -512,8 +512,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -528,7 +528,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -557,7 +557,7 @@ insert 2000
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -572,7 +572,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -587,7 +587,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -602,7 +602,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -617,7 +617,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -646,7 +646,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -661,8 +661,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -677,7 +677,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -692,7 +692,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -723,7 +723,7 @@ insert 2900
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -738,7 +738,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -753,7 +753,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -768,7 +768,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -783,7 +783,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -812,7 +812,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -827,8 +827,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -843,7 +843,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -858,7 +858,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -889,7 +889,7 @@ drop partition 150
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -904,7 +904,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -919,7 +919,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -934,7 +934,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -949,7 +949,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -963,7 +963,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -978,8 +978,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -994,7 +994,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -1009,7 +1009,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -1040,7 +1040,7 @@ insert 150
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1055,7 +1055,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1070,7 +1070,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1085,7 +1085,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1100,7 +1100,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1129,7 +1129,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -1144,8 +1144,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1160,7 +1160,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -1175,7 +1175,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -1190,7 +1190,7 @@ show partitions debug
   "index": null
 }, {
   "min": 3000,
-  "max": 10000,
+  "max": 9999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1223,7 +1223,7 @@ drop partition 3000
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1238,7 +1238,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1253,7 +1253,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1268,7 +1268,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1283,7 +1283,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1297,7 +1297,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -1312,8 +1312,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1328,7 +1328,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -1343,7 +1343,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -1376,7 +1376,7 @@ insert 5000
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1391,7 +1391,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1406,7 +1406,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1421,7 +1421,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1436,7 +1436,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1465,7 +1465,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -1480,8 +1480,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1496,7 +1496,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -1511,7 +1511,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -1526,7 +1526,7 @@ show partitions debug
   "index": null
 }, {
   "min": 3000,
-  "max": 10000,
+  "max": 9999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,
@@ -1561,7 +1561,7 @@ insert 20000
 show partitions debug
 [{
   "min": 0,
-  "max": 80,
+  "max": 79,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1576,7 +1576,7 @@ show partitions debug
   "index": null
 }, {
   "min": 80,
-  "max": 120,
+  "max": 119,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1591,7 +1591,7 @@ show partitions debug
   "index": null
 }, {
   "min": 120,
-  "max": 130,
+  "max": 129,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1606,7 +1606,7 @@ show partitions debug
   "index": null
 }, {
   "min": 130,
-  "max": 140,
+  "max": 139,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1621,7 +1621,7 @@ show partitions debug
   "index": null
 }, {
   "min": 140,
-  "max": 150,
+  "max": 149,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1650,7 +1650,7 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 450,
+  "min": 451,
   "max": 500,
   "created": "(filtered)",
   "refreshes": 0,
@@ -1665,8 +1665,8 @@ show partitions debug
   "storage": "main",
   "index": null
 }, {
-  "min": 500,
-  "max": 1000,
+  "min": 501,
+  "max": 999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 0,
@@ -1681,7 +1681,7 @@ show partitions debug
   "index": null
 }, {
   "min": 1000,
-  "max": 2000,
+  "max": 1999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 5,
@@ -1696,7 +1696,7 @@ show partitions debug
   "index": null
 }, {
   "min": 2000,
-  "max": 3000,
+  "max": 2999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -1711,7 +1711,7 @@ show partitions debug
   "index": null
 }, {
   "min": 3000,
-  "max": 10000,
+  "max": 9999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,
@@ -1726,7 +1726,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10000,
-  "max": 20000,
+  "max": 19999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -1741,7 +1741,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20000,
-  "max": 30000,
+  "max": 29999,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,

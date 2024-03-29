@@ -91,7 +91,7 @@ engine_cursor_next(EngineCursor* self)
 	if (likely(part_cursor_has(&self->cursor)))
 		return;
 
-	uint64_t next_interval = self->ref->slice.max;
+	uint64_t next_interval = self->ref->slice.max + 1;
 
 	// close previous partition
 	part_cursor_close(&self->cursor);

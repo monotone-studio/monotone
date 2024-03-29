@@ -14,7 +14,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -62,7 +62,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -111,7 +111,7 @@ refresh partition 700
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -139,7 +139,7 @@ show partitions debug
   }
 }, {
   "min": 200,
-  "max": 210,
+  "max": 209,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -167,7 +167,7 @@ show partitions debug
   }
 }, {
   "min": 300,
-  "max": 310,
+  "max": 309,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -195,7 +195,7 @@ show partitions debug
   }
 }, {
   "min": 700,
-  "max": 710,
+  "max": 709,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -253,7 +253,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -281,7 +281,7 @@ show partitions debug
   }
 }, {
   "min": 200,
-  "max": 210,
+  "max": 209,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -309,7 +309,7 @@ show partitions debug
   }
 }, {
   "min": 300,
-  "max": 310,
+  "max": 309,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -337,7 +337,7 @@ show partitions debug
   }
 }, {
   "min": 700,
-  "max": 710,
+  "max": 709,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -404,7 +404,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -432,7 +432,7 @@ show partitions debug
   }
 }, {
   "min": 200,
-  "max": 210,
+  "max": 209,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -460,7 +460,7 @@ show partitions debug
   }
 }, {
   "min": 300,
-  "max": 310,
+  "max": 309,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 3,
@@ -488,7 +488,7 @@ show partitions debug
   }
 }, {
   "min": 700,
-  "max": 710,
+  "max": 709,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -533,7 +533,7 @@ drop partition 300
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -561,7 +561,7 @@ show partitions debug
   }
 }, {
   "min": 200,
-  "max": 210,
+  "max": 209,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -589,7 +589,7 @@ show partitions debug
   }
 }, {
   "min": 700,
-  "max": 710,
+  "max": 709,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -635,7 +635,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 4,
@@ -663,7 +663,7 @@ show partitions debug
   }
 }, {
   "min": 200,
-  "max": 210,
+  "max": 209,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -691,7 +691,7 @@ show partitions debug
   }
 }, {
   "min": 700,
-  "max": 710,
+  "max": 709,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -874,7 +874,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -919,7 +919,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -947,7 +947,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -986,7 +986,7 @@ rebalance
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -1014,7 +1014,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1042,7 +1042,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1081,7 +1081,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -1109,7 +1109,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1137,7 +1137,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1175,7 +1175,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 0,
@@ -1203,7 +1203,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1231,7 +1231,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1270,7 +1270,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 0,
@@ -1298,7 +1298,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1326,7 +1326,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1405,7 +1405,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 30,
+      "max": 29,
       "partitions": 2,
       "partitions_local": 2,
       "partitions_cloud": 0,
@@ -1433,7 +1433,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1478,7 +1478,7 @@ move partition 20 into test
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 0,
@@ -1506,7 +1506,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1534,7 +1534,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 2,
   "events": 1,
@@ -1619,7 +1619,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 20,
+      "max": 19,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1647,7 +1647,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1675,7 +1675,7 @@ show storages debug
     },
     "stats": {
       "min": 20,
-      "max": 30,
+      "max": 29,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1691,7 +1691,7 @@ show storages debug
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 0,
@@ -1719,7 +1719,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -1747,7 +1747,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 3,
@@ -1828,7 +1828,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 20,
+      "max": 19,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1856,7 +1856,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1884,7 +1884,7 @@ show storages debug
     },
     "stats": {
       "min": 20,
-      "max": 30,
+      "max": 29,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1953,7 +1953,7 @@ show storages debug
     },
     "stats": {
       "min": 10,
-      "max": 20,
+      "max": 19,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -1981,7 +1981,7 @@ show storages debug
     },
     "stats": {
       "min": 0,
-      "max": 10,
+      "max": 9,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -2009,7 +2009,7 @@ show storages debug
     },
     "stats": {
       "min": 20,
-      "max": 30,
+      "max": 29,
       "partitions": 1,
       "partitions_local": 1,
       "partitions_cloud": 0,
@@ -2025,7 +2025,7 @@ show storages debug
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 3,
   "events": 0,
@@ -2053,7 +2053,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
@@ -2081,7 +2081,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 4,
   "events": 3,

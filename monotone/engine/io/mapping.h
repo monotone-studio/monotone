@@ -33,7 +33,7 @@ slice_init(Slice* self, uint64_t min, uint64_t max)
 always_inline static inline bool
 slice_in(Slice* self, uint64_t min)
 {
-	return self->min <= min && min < self->max;
+	return self->min <= min && min <= self->max;
 }
 
 static inline void
@@ -135,7 +135,7 @@ mapping_gte(Mapping* self, uint64_t id)
 	if (unlikely(self->tree_count == 0))
 		return NULL;
 	auto slice = mapping_seek(self, id);
-	if (slice->max <= id)
+	if (slice->max < id)
 		return mapping_next(self, slice);
 	return slice;
 }

@@ -45,7 +45,7 @@ insert 21
 show partitions debug
 [{
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 3,
@@ -60,7 +60,7 @@ show partitions debug
   "index": null
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 2,
@@ -140,7 +140,7 @@ files 00000000-0000-0000-0000-000000000000
 show partitions debug
 [{
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -168,7 +168,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 2,
@@ -217,7 +217,7 @@ insert 9
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 10,
@@ -232,7 +232,7 @@ show partitions debug
   "index": null
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -260,7 +260,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 2,
@@ -291,7 +291,7 @@ refresh partition 0
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 10,
@@ -319,7 +319,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -347,7 +347,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 2,
@@ -405,7 +405,7 @@ insert 4096
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 10,
@@ -433,7 +433,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -461,7 +461,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 2,
@@ -489,7 +489,7 @@ show partitions debug
   }
 }, {
   "min": 4090,
-  "max": 4100,
+  "max": 4099,
   "created": "(filtered)",
   "refreshes": 0,
   "events": 1,
@@ -507,7 +507,7 @@ refresh partition 4096
 show partitions debug
 [{
   "min": 0,
-  "max": 10,
+  "max": 9,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 10,
@@ -535,7 +535,7 @@ show partitions debug
   }
 }, {
   "min": 10,
-  "max": 20,
+  "max": 19,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 3,
@@ -563,7 +563,7 @@ show partitions debug
   }
 }, {
   "min": 20,
-  "max": 30,
+  "max": 29,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 2,
@@ -591,7 +591,7 @@ show partitions debug
   }
 }, {
   "min": 4090,
-  "max": 4100,
+  "max": 4099,
   "created": "(filtered)",
   "refreshes": 1,
   "events": 1,
