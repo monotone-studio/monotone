@@ -396,6 +396,81 @@ error: REFRESH PARTITIONS FROM min TO <max>
 refresh partitions from 0 to abc
 error: REFRESH PARTITIONS FROM min TO <max>
 # test: refresh partitions
+show partitions debug
+[{
+  "min": 0,
+  "max": 10,
+  "created": "(filtered)",
+  "refreshes": 4,
+  "events": 6,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 208,
+  "size_uncompressed": 296,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 32,
+    "size_origin": 52,
+    "size_regions": 58,
+    "size_regions_origin": 126,
+    "size_total": 208,
+    "size_total_origin": 296,
+    "regions": 1,
+    "events": 6,
+    "refreshes": 4,
+    "lsn": 6,
+    "compression": 1,
+    "encryption": 0
+  }
+}, {
+  "min": 20,
+  "max": 30,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 30,
+  "max": 40,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}, {
+  "min": 40,
+  "max": 50,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 1,
+  "events_heap": 1,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
 refresh partitions from 0 to 40
 show storages debug
 {

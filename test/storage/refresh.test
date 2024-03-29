@@ -81,6 +81,7 @@ refresh partitions from 0 to
 refresh partitions from 0 to abc
 
 # test: refresh partitions
+show partitions debug
 refresh partitions from 0 to 40
 show storages debug
 

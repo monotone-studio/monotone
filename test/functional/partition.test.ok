@@ -183,22 +183,6 @@ show storages, partitions debug
     "encryption": 0
   }
 }]]
-show partition 0
-{
-  "min": 0,
-  "max": 10,
-  "created": 1711644428550144,
-  "refreshes": 1,
-  "events": 6,
-  "events_heap": 2,
-  "regions": 1,
-  "size": 262,
-  "size_uncompressed": 262,
-  "size_heap": 2097152,
-  "on_storage": true,
-  "on_cloud": false,
-  "storage": "main"
-}
 show partition 0 debug
 {
   "min": 0,
