@@ -72,24 +72,24 @@ parse_partition_drop(Lex* self)
 Cmd*
 parse_partition_drop_range(Lex* self)
 {
-	// DROP PARTITIONS FROM <min> TO <max> [ON STORAGE | ON CLOUD]
+	// DROP PARTITIONS BETWEEN <min> AND <max> [ON STORAGE | ON CLOUD]
 
 	// from
-	if (! lex_if(self, KFROM, NULL))
-		error("DROP PARTITIONS <FROM> min TO max");
+	if (! lex_if(self, KBETWEEN, NULL))
+		error("DROP PARTITIONS <BETWEEN> min AND max");
 
 	// min
 	Token min;
 	if (! lex_if(self, KINT, &min))
-		error("DROP PARTITIONS FROM <min> TO max");
+		error("DROP PARTITIONS BETWEEN <min> AND max");
 
 	// to
-	if (! lex_if(self, KTO, NULL))
-		error("DROP PARTITIONS FROM min <TO> max");
+	if (! lex_if(self, KAND, NULL))
+		error("DROP PARTITIONS BETWEEN min <AND> max");
 
 	Token max;
 	if (! lex_if(self, KINT, &max))
-		error("DROP PARTITIONS FROM min TO <max>");
+		error("DROP PARTITIONS BETWEEN min AND <max>");
 
 	// [on storage | on cloud]
 	int mask = ID|ID_CLOUD;
@@ -101,7 +101,7 @@ parse_partition_drop_range(Lex* self)
 		if (lex_if(self, KCLOUD, NULL))
 			mask = ID_CLOUD;
 		else
-			error("DROP PARTITION FROM min TO max <ON STORAGE | ON CLOUD> expected");
+			error("DROP PARTITION BETWEEN min AND max <ON STORAGE | ON CLOUD> expected");
 	}
 
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_DROP_RANGE);
@@ -143,33 +143,33 @@ parse_partition_move(Lex* self)
 Cmd*
 parse_partition_move_range(Lex* self)
 {
-	// MOVE PARTITIONS FROM <min> TO <max> INTO <name>
+	// MOVE PARTITIONS BETWEEN <min> AND <max> INTO <name>
 
 	// from
-	if (! lex_if(self, KFROM, NULL))
-		error("MOVE PARTITIONS <FROM> min TO max INTO name");
+	if (! lex_if(self, KBETWEEN, NULL))
+		error("MOVE PARTITIONS <BETWEEN> min AND max INTO name");
 
 	// min
 	Token min;
 	if (! lex_if(self, KINT, &min))
-		error("MOVE PARTITIONS FROM <min> TO max INTO name");
+		error("MOVE PARTITIONS BETWEEN <min> AND max INTO name");
 
 	// to
-	if (! lex_if(self, KTO, NULL))
-		error("MOVE PARTITIONS FROM min <TO> max INTO name");
+	if (! lex_if(self, KAND, NULL))
+		error("MOVE PARTITIONS BETWEEN min <AND> max INTO name");
 
 	Token max;
 	if (! lex_if(self, KINT, &max))
-		error("MOVE PARTITIONS FROM min TO <max> INTO name");
+		error("MOVE PARTITIONS BETWEEN min AND <max> INTO name");
 
 	// into
 	if (! lex_if(self, KINTO, NULL))
-		error("MOVE PARTITIONS FROM min TO max <INTO> name");
+		error("MOVE PARTITIONS BETWEEN min AND max <INTO> name");
 
 	// storage name
 	Token name;
 	if (! lex_if(self, KNAME, &name))
-		error("MOVE PARTITIONS FROM min TO max INTO <name>");
+		error("MOVE PARTITIONS BETWEEN min AND max INTO <name>");
 
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_MOVE_RANGE);
 	cmd->min     = min.integer;
@@ -200,24 +200,24 @@ parse_partition_refresh(Lex* self)
 Cmd*
 parse_partition_refresh_range(Lex* self)
 {
-	// REFRESH PARTITIONS FROM <min> TO <max>
+	// REFRESH PARTITIONS BETWEEN <min> AND <max>
 
 	// from
-	if (! lex_if(self, KFROM, NULL))
-		error("REFRESH PARTITIONS <FROM> min TO max");
+	if (! lex_if(self, KBETWEEN, NULL))
+		error("REFRESH PARTITIONS <BETWEEN> min AND max");
 
 	// min
 	Token min;
 	if (! lex_if(self, KINT, &min))
-		error("REFRESH PARTITIONS FROM <min> TO max");
+		error("REFRESH PARTITIONS BETWEEN <min> AND max");
 
 	// to
-	if (! lex_if(self, KTO, NULL))
-		error("REFRESH PARTITIONS FROM min <TO> max");
+	if (! lex_if(self, KAND, NULL))
+		error("REFRESH PARTITIONS BETWEEN min <AND> max");
 
 	Token max;
 	if (! lex_if(self, KINT, &max))
-		error("REFRESH PARTITIONS FROM min TO <max>");
+		error("REFRESH PARTITIONS BETWEEN min AND <max>");
 
 	auto cmd = cmd_partition_allocate(CMD_PARTITION_REFRESH_RANGE);
 	cmd->min = min.integer;
@@ -251,24 +251,24 @@ parse_partition_download(Lex* self)
 Cmd*
 parse_partition_download_range(Lex* self)
 {
-	// DOWNLOAD PARTITIONS FROM <min> TO <max> [IF CLOUD]
+	// DOWNLOAD PARTITIONS BETWEEN <min> AND <max> [IF CLOUD]
 
 	// from
-	if (! lex_if(self, KFROM, NULL))
-		error("DOWNLOAD PARTITIONS <FROM> min TO max");
+	if (! lex_if(self, KBETWEEN, NULL))
+		error("DOWNLOAD PARTITIONS <BETWEEN> min AND max");
 
 	// min
 	Token min;
 	if (! lex_if(self, KINT, &min))
-		error("DOWNLOAD PARTITIONS FROM <min> TO max");
+		error("DOWNLOAD PARTITIONS BETWEEN <min> AND max");
 
 	// to
-	if (! lex_if(self, KTO, NULL))
-		error("DOWNLOAD PARTITIONS FROM min <TO> max");
+	if (! lex_if(self, KAND, NULL))
+		error("DOWNLOAD PARTITIONS BETWEEN min <AND> max");
 
 	Token max;
 	if (! lex_if(self, KINT, &max))
-		error("DOWNLOAD PARTITIONS FROM min TO <max>");
+		error("DOWNLOAD PARTITIONS BETWEEN min AND <max>");
 
 	// [if cloud]
 	bool if_cloud = parse_if_cloud(self);
@@ -306,24 +306,24 @@ parse_partition_upload(Lex* self)
 Cmd*
 parse_partition_upload_range(Lex* self)
 {
-	// UPLOAD PARTITIONS FROM <min> TO <max> [IF CLOUD]
+	// UPLOAD PARTITIONS BETWEEN <min> AND <max> [IF CLOUD]
 
 	// from
-	if (! lex_if(self, KFROM, NULL))
-		error("UPLOAD PARTITIONS <FROM> min TO max");
+	if (! lex_if(self, KBETWEEN, NULL))
+		error("UPLOAD PARTITIONS <BETWEEN> min AND max");
 
 	// min
 	Token min;
 	if (! lex_if(self, KINT, &min))
-		error("UPLOAD PARTITIONS FROM <min> TO max");
+		error("UPLOAD PARTITIONS BETWEEN <min> AND max");
 
 	// to
-	if (! lex_if(self, KTO, NULL))
-		error("UPLOAD PARTITIONS FROM min <TO> max");
+	if (! lex_if(self, KAND, NULL))
+		error("UPLOAD PARTITIONS BETWEEN min <AND> max");
 
 	Token max;
 	if (! lex_if(self, KINT, &max))
-		error("UPLOAD PARTITIONS FROM min TO <max>");
+		error("UPLOAD PARTITIONS BETWEEN min AND <max>");
 
 	// [if cloud]
 	bool if_cloud = parse_if_cloud(self);

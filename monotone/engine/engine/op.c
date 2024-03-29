@@ -135,18 +135,20 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 static inline bool
 engine_foreach(Engine* self, uint64_t* min, uint64_t* min_next, uint64_t max)
 {
-	// get next reference >= min and < max
+	// get next reference >= min and <= max
 	auto ref = engine_lock(self, *min, LOCK_ACCESS, true, false);
 	if (ref == NULL)
 		return false;
 	uint64_t ref_min = ref->slice.min;
 	uint64_t ref_max = ref->slice.max;
 	engine_unlock(self, ref, LOCK_ACCESS);
-	if (ref_min >= max)
-		return false;
-	*min = ref_min;
-	*min_next = ref_max + 1;
-	return true;
+	if (ref_min >= *min && ref_max <= max)
+	{
+		*min = ref_min;
+		*min_next = ref_max + 1;
+		return true;
+	}
+	return false;
 }
 
 static bool
