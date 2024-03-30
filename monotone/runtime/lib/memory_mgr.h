@@ -44,8 +44,6 @@ memory_mgr_reset(MemoryMgr* self)
 	self->free_list       = NULL;
 	self->free_list_count = 0;
 	spinlock_unlock(&self->lock);
-
-	page = self->free_list;
 	while (page)
 	{
 		auto next = page->next;
@@ -98,16 +96,7 @@ memory_mgr_pop(MemoryMgr* self)
 }
 
 static inline void
-memory_mgr_push(MemoryMgr* self, Page* page)
-{
-	spinlock_lock(&self->lock);
-	self->free_list = page;
-	self->free_list_count++;
-	spinlock_unlock(&self->lock);
-}
-
-static inline void
-memory_mgr_push_list(MemoryMgr* self, Page* page, Page* page_tail, int count)
+memory_mgr_push(MemoryMgr* self, Page* page, Page* page_tail, int count)
 {
 	spinlock_lock(&self->lock);
 	page_tail->next = self->free_list;

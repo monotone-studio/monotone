@@ -30,10 +30,10 @@ heap_reset(Heap* self)
 {
 	uint32_t count = atomic_u32_of(&self->list_count);
 	if (count > 0)
-		memory_mgr_push_list(self->memory_mgr,
-		                     self->list,
-		                     self->list_tail,
-		                     count);
+		memory_mgr_push(self->memory_mgr,
+		                self->list,
+		                self->list_tail,
+		                count);
 	self->list      = NULL;
 	self->list_tail = NULL;
 	atomic_u32_set(&self->list_count, 0);
