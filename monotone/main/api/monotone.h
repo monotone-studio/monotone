@@ -26,12 +26,17 @@ typedef int64_t (*monotone_compare_t)(monotone_event_t*,
                                       monotone_event_t*,
                                       void*);
 
+enum
+{
+	MONOTONE_DELETE = 1
+};
+
 struct monotone_event
 {
 	uint64_t id;
 	void*    data;
 	size_t   data_size;
-	bool     remove;
+	int      flags;
 };
 
 // environment

@@ -37,14 +37,14 @@ compare(Comparator* self, Event* a, Event* b)
 		.id        = a->id,
 		.data_size = a->data_size,
 		.data      = a->data,
-		.remove    = a->is_delete
+		.flags     = a->flags
 	};
 	EventArg r =
 	{
 		.id        = b->id,
 		.data_size = b->data_size,
 		.data      = b->data,
-		.remove    = b->is_delete
+		.flags     = b->flags
 	};
 	return self->compare(&l, &r, self->compare_arg);
 }

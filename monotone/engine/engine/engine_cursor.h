@@ -109,7 +109,7 @@ engine_cursor_skip_deletes(EngineCursor* self)
 	while (engine_cursor_has(self))
 	{
 		auto at = engine_cursor_at(self);
-		if (at && !at->is_delete)
+		if (at && !event_is_delete(at))
 			break;
 		engine_cursor_next(self);
 	}

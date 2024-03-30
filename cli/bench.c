@@ -89,7 +89,7 @@ instance_writer(void* arg)
 			ev->id        = UINT64_MAX;
 			ev->data      = data;
 			ev->data_size = sizeof(data);
-			ev->remove    = false;
+			ev->flags     = 0;
 		}
 
 		int rc;
@@ -269,10 +269,10 @@ bench_select(Bench* self, uint64_t from, uint64_t count)
 	uint64_t total_size = 0;
 
 	monotone_event_t key;
-	key.id = from;
-	key.data = NULL;
+	key.id        = from;
+	key.data      = NULL;
 	key.data_size = 0;
-	key.remove = false;
+	key.flags     = 0;
 
 	auto cursor = monotone_cursor(current->env, NULL, &key);
 	if (cursor == NULL)

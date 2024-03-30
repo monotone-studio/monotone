@@ -206,10 +206,10 @@ test_suite_cmd_insert(TestSuite* self, char* arg)
 
 	monotone_event_t event =
 	{
-		.id   = strtoull(arg_id, NULL, 10),
-		.data = arg_value,
+		.id        = strtoull(arg_id, NULL, 10),
+		.data      = arg_value,
 		.data_size = arg_value ? strlen(arg_value) : 0,
-		.remove = false
+		.flags     = 0
 	};
 	int rc = monotone_write(self->env, &event, 1);
 	if (rc == -1)
@@ -239,10 +239,10 @@ test_suite_cmd_delete(TestSuite* self, char* arg)
 
 	monotone_event_t event =
 	{
-		.id = strtoull(arg_id, NULL, 10),
-		.data = arg_value,
+		.id        = strtoull(arg_id, NULL, 10),
+		.data      = arg_value,
 		.data_size = arg_value ? strlen(arg_value) : 0,
-		.remove = true
+		.flags     = MONOTONE_DELETE
 	};
 	int rc = monotone_write(self->env, &event, 1);
 	if (rc == -1)

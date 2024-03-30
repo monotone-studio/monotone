@@ -9,19 +9,23 @@
 typedef struct EventArg EventArg;
 typedef struct Event    Event;
 
+enum
+{
+	MN_DELETE = 1
+};
+
 struct EventArg
 {
 	uint64_t id;
 	void*    data;
 	size_t   data_size;
-	bool     remove;
+	int      flags;
 };
 
 struct Event
 {
 	uint64_t id;
-	uint8_t  is_delete:1;
-	uint8_t  flags:7;
+	uint8_t  flags;
 	uint32_t data_size;
 	uint8_t  data[];
 } packed;
@@ -32,12 +36,18 @@ event_size(Event* self)
 	return sizeof(Event) + self->data_size;
 }
 
+
+always_inline hot static inline int
+event_is_delete(Event* self)
+{
+	return self->flags & MN_DELETE;
+}
+
 hot static inline void
 event_init(Event* self, EventArg* arg)
 {
 	self->id        = arg->id;
-	self->is_delete = arg->remove;
-	self->flags     = 0;
+	self->flags     = arg->flags;
 	self->data_size = arg->data_size;
 	if (arg->data)
 		memcpy(self->data, arg->data, arg->data_size);

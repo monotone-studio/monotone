@@ -45,7 +45,7 @@ main(int argc, char* argv[])
 			event->id        = UINT64_MAX;
 			event->data      = NULL;
 			event->data_size = 0;
-			event->remove    = false;
+			event->flags     = 0;
 		}
 		rc = monotone_write(env, batch, batch_size);
 		if (rc == -1)
@@ -62,7 +62,7 @@ main(int argc, char* argv[])
 		.id        = 0,
 		.data      = NULL,
 		.data_size = 0,
-		.remove    = false
+		.flags     = 0
 	};
 	monotone_cursor_t* cursor = monotone_cursor(env, NULL, &key);
 	if (cursor == NULL)

@@ -58,7 +58,7 @@ merger_write(Merger* self, MergerReq* req)
 		auto event = merge_iterator_at(it);
 		if (unlikely(event == NULL))
 			break;
-		if (event->is_delete)
+		if (event_is_delete(event))
 		{
 			merge_iterator_next(it);
 			continue;

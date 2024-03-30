@@ -236,11 +236,12 @@ monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 			event->id        = at->id;
 			event->data_size = at->data_size;
 			event->data      = at->data;
+			event->flags     = at->flags;
 			rc = 1;
 
 			// this situation is possible on concurrent delete
 			// from the same thread
-			if (unlikely(at->is_delete))
+			if (unlikely(event_is_delete(at)))
 			{
 				event->id        = 0;
 				event->data_size = 0;
