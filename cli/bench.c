@@ -13,7 +13,7 @@ static int
 instance_open(Instance* self, BenchConfig* config, int id)
 {
 	self->config = config;
-	self->env = monotone_init(NULL, NULL);
+	self->env = monotone_init();
 	if (self->env == NULL)
 	{
 		printf("error: monotone_init() failed\n");

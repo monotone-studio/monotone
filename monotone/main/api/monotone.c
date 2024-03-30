@@ -35,7 +35,7 @@ monotone_enter(monotone_t* self)
 }
 
 MONOTONE_API monotone_t*
-monotone_init(monotone_compare_t compare, void* compare_arg)
+monotone_init(void)
 {
 	monotone_t* self = malloc(sizeof(monotone_t));
 	if (unlikely(self == NULL))
@@ -47,7 +47,7 @@ monotone_init(monotone_compare_t compare, void* compare_arg)
 	Exception e;
 	if (try(&e))
 	{
-		main_prepare(&self->main, (Compare)compare, compare_arg);
+		main_prepare(&self->main);
 	}
 	if (catch(&e)) {
 		main_free(&self->main);
@@ -111,6 +111,22 @@ monotone_error(monotone_t* self)
 {
 	unused(self);
 	return mn_runtime.error.text;
+}
+
+MONOTONE_API int
+monotone_set_compare(monotone_t* self, monotone_compare_t compare, void* arg)
+{
+	int rc = 0;
+	monotone_enter(self);
+	Exception e;
+	if (try(&e))
+	{
+		main_set_compare(&self->main, (Compare)compare, arg);
+	}
+	if (catch(&e)) {
+		rc = -1;
+	}
+	return rc;
 }
 
 MONOTONE_API int

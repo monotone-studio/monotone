@@ -36,13 +36,16 @@ struct monotone_event
 
 // environment
 MONOTONE_API monotone_t*
-monotone_init(monotone_compare_t, void* compare_arg);
+monotone_init(void);
 
 MONOTONE_API void
 monotone_free(void*);
 
 MONOTONE_API const char*
 monotone_error(monotone_t*);
+
+MONOTONE_API int
+monotone_set_compare(monotone_t*, monotone_compare_t, void* arg);
 
 MONOTONE_API int
 monotone_open(monotone_t*, const char* path);

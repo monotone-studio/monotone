@@ -12,7 +12,7 @@ int
 main(int argc, char* argv[])
 {
 	// create environment
-	monotone_t* env = monotone_init(NULL, NULL);
+	monotone_t* env = monotone_init();
 	if (env == NULL)
 	{
 		fprintf(stderr, "monotone_init() failed\n");

@@ -101,21 +101,28 @@ main_free(Main* self)
 }
 
 void
-main_prepare(Main* self, Compare compare, void* compare_arg)
+main_prepare(Main* self)
 {
+	// set default configuration
+	config_prepare(&self->config);
+}
+
+void
+main_set_compare(Main* self, Compare compare, void* compare_arg)
+{
+	if (config_online())
+		log("environment is already open");
+
 	auto comparator = &self->comparator;
 	comparator->compare     = compare;
 	comparator->compare_arg = compare_arg;
-
-	// set default configuration
-	config_prepare(&self->config);
 }
 
 static void
 main_deploy(Main* self, Str* directory)
 {
 	if (config_online())
-		log("already open");
+		log("environment is already open");
 
 	// prepare random manager
 	random_open(&self->random);

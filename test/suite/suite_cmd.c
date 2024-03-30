@@ -126,7 +126,7 @@ test_suite_cmd_init(TestSuite* self, char* arg)
 		return -1;
 	}
 
-	auto env = monotone_init(NULL, NULL);
+	auto env = monotone_init();
 	if (env == NULL) {
 		test_error(self, "line %d: init: monotone_init() failed",
 		           self->current_line);
