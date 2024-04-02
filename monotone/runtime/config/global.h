@@ -57,6 +57,12 @@ config_workers(void)
 	return var_int_of(&config()->workers);
 }
 
+static inline int
+config_workers_upload(void)
+{
+	return var_int_of(&config()->workers_upload);
+}
+
 // ssn
 static inline uint64_t
 config_ssn(void)

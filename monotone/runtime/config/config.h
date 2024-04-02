@@ -23,6 +23,7 @@ struct Config
 	Var  serial;
 	Var  interval;
 	Var  workers;
+	Var  workers_upload;
 	// wal
 	Var  wal_enable;
 	Var  wal_rotate_wm;

@@ -216,7 +216,7 @@ execute_service(Executable* self)
 	refresh_init(&refresh, engine);
 	Exception e;
 	if (try(&e)) {
-		engine_service(engine, &refresh, false);
+		engine_service(engine, &refresh, SERVICE_ANY, false);
 	}
 	refresh_free(&refresh);
 	if (catch(&e))

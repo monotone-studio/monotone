@@ -86,6 +86,7 @@ config_prepare(Config* self)
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
 		{ "interval",                VAR_INT,    VAR_C|VAR_R,          &self->interval,                NULL,        3000000          },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
+		{ "workers_upload",          VAR_INT,    VAR_C,                &self->workers_upload,          NULL,        0                },
 		// wal
 		{ "wal_enable",              VAR_BOOL,   VAR_C,                &self->wal_enable,              NULL,        true             },
 		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },

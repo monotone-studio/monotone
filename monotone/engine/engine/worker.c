@@ -23,7 +23,7 @@ worker_main(void* arg)
 
 	for (;;)
 	{
-		bool shutdown = engine_service(self->engine, &self->refresh, true);
+		bool shutdown = engine_service(self->engine, &self->refresh, self->filter, true);
 		if (shutdown)
 			break;
 	}
@@ -32,9 +32,10 @@ worker_main(void* arg)
 }
 
 void
-worker_init(Worker* self, Engine* engine)
+worker_init(Worker* self, Engine* engine, ServiceFilter filter)
 {
 	self->engine  = engine;
+	self->filter  = filter;
 	self->context = NULL;
 	refresh_init(&self->refresh, engine);
 	thread_init(&self->thread);

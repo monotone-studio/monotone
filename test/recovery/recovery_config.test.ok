@@ -28,6 +28,7 @@ show all
   "serial": false,
   "interval": 10,
   "workers": 0,
+  "workers_upload": 0,
   "wal_enable": true,
   "wal_rotate_wm": 104857600,
   "wal_sync_on_rotate": true,

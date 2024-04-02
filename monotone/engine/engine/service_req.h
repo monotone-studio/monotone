@@ -12,7 +12,6 @@ typedef struct ServiceReq ServiceReq;
 typedef enum
 {
 	ACTION_NONE,
-	ACTION_SHUTDOWN,
 	ACTION_ROTATE,
 	ACTION_GC,
 	ACTION_REBALANCE,
@@ -54,4 +53,10 @@ static inline void
 service_req_free(ServiceReq* self)
 {
 	mn_free(self);
+}
+
+static inline bool
+service_req_is_upload(ServiceReq* self)
+{
+	return self->actions[self->current].type == ACTION_UPLOAD;
 }

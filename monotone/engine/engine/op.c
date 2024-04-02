@@ -637,10 +637,10 @@ engine_gc(Engine* self)
 }
 
 bool
-engine_service(Engine* self, Refresh* refresh, bool wait)
+engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 {
 	ServiceReq* req = NULL;
-	bool shutdown = service_next(self->service, wait, &req);
+	bool shutdown = service_next(self->service, filter, wait, &req);
 	if (shutdown)
 		return true;
 	if (req == NULL)
@@ -651,6 +651,15 @@ engine_service(Engine* self, Refresh* refresh, bool wait)
 	{
 		while (req->current < req->actions_count)
 		{
+			// if current action does not apply to current worker type,
+			// reschedule request
+			if (! service_filter(req, filter))
+			{
+				service_schedule(self->service, req);
+				req = NULL;
+				break;
+			}
+
 			auto action = &req->actions[req->current];
 			switch (action->type) {
 			case ACTION_ROTATE:

@@ -25,4 +25,4 @@ void engine_checkpoint(Engine*);
 void engine_gc(Engine*);
 
 // service
-bool engine_service(Engine*, Refresh*, bool);
+bool engine_service(Engine*, Refresh*, ServiceFilter, bool);
