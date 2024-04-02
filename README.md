@@ -1,7 +1,7 @@
 
 ![image description](.github/logo.png)
 
-## Storage for Sequential data
+### Storage for Sequential data
 
 Monotone is a modern embeddable data storage designed from the ground up precisely
 for sequential workloads, such as append write and range scans.
@@ -27,7 +27,9 @@ hybrid engine.
 
 Learn more about its [Architecture](ARCHITECTURE.md).
 
-## Features
+----
+
+### Features
 
 - **Automatic Range Partitioning**
 
@@ -102,20 +104,24 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	ALTER STORAGE main (cloud 's3', compression 'zstd')
 	```
 
-## API
+----
+
+### API
 
 Monotone provides simple [C API](monotone/main/api/monotone.h).
 
 Insert (and replace/delete) is done in batches using the event id associated with raw data.
 Data are read using cursors.
 Data management, administration and monitoring are done by using `SQL-style` DDL commands.
- 
-## Interactive Benchmarking
+
+----
+
+#### Interactive Benchmarking
 
 Monotone ships with the client application, which can do simple interactive benchmarking and
 execute commands in runtime: `monotone bench.` You can use it to experiment with settings and data management commands and get a sense of performance.
 
-## Performance
+#### Performance
 
 Some arbitrary performance numbers for **single instance** using **single writer thread**:
 
@@ -165,7 +171,7 @@ write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00
 
 ![image description](.github/bench.gif)
 
-## Beast Mode
+#### Beast Mode
 
 Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
 Write is in-memory. Partitions are compressed, flushed, and synced ASAP by background workers to disk.
@@ -182,7 +188,9 @@ Those results depend on your hardware and can be scaled further by playing with 
 to the independent storage instances.
 Please note that writing 5+ GiB into memory requires appropriate memory capacity to fit the updates until it is flushed to disk.
 
-## Build
+----
+
+#### Build
 
 #### OS
 
