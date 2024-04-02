@@ -65,11 +65,12 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	All are done automatically or manually.
 
 	```SQL
+ 	--
  	-- Create and keep all new partitions on SSD storage for a short duration
 	-- of time for a faster refresh and read. Automatically move partitions
 	-- to cold HDD storage when hot storage reaches its limit. Automatically
 	-- Delete older partitions from cold storage when they reach their limit.
- 
+ 	--
 	CREATE STORAGE hot (path '/mnt/ssd', compression 'zstd')
 	CREATE STORAGE cold (path '/mnt/hdd', compression 'zstd')
 
@@ -89,7 +90,6 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 	```SQL
  	-- Store recent data on SSD for one day, then move to S3.
-
 	CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
 	CREATE STORAGE hot (compression 'zstd')
 	CREATE STORAGE cold (cloud 's3', compression 'zstd', encryption 'aes')
@@ -99,7 +99,6 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 
 	```SQL
 	-- Work on top of S3.
-
  	CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
 	ALTER STORAGE main (cloud 's3', compression 'zstd')
 	```
