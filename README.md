@@ -4,10 +4,10 @@
 ## Storage for Sequential data
 
 Monotone is a modern embeddable data storage designed from the ground up precisely
-for sequential workloads, such as append write and range scans. The storage architecture is inspired by a Log-Structured approach and implements a custom-made `memory-disk-cloud`
-hybrid engine.
+for sequential workloads, such as append write and range scans.
 
-Typical use cases can include IoT, events, time series, crypto, blockchain, finance, monitoring, logs collection, Kafka-style workloads.
+Typical use cases include `IoT, events, time series, crypto, blockchain, finance, monitoring,
+logs collection, and Kafka-style workloads`.
 
 Made to match the following requirements:
 
@@ -22,11 +22,8 @@ Made to match the following requirements:
 - Seamlessly work on top of S3
 - Make sense of Hot and Cold data patterns using Data Tiering
 
-Monotone provides simple [C API](monotone/main/api/monotone.h).
-
-Insert (and replace/delete) is done in batches using the event id associated with raw data.
-Data are read using cursors.
-Data management, administration and monitoring are done by using `SQL-style` DDL commands.
+The storage architecture is inspired by a Log-Structured approach and implements a custom-made `memory-disk-cloud`
+hybrid engine.
 
 Learn more about its [Architecture](ARCHITECTURE.md).
 
@@ -104,6 +101,14 @@ Learn more about its [Architecture](ARCHITECTURE.md).
  	CREATE CLOUD s3 (type 's3', access_key 'minioadmin', secret_key 'minioadmin', url 'localhost:9000')
 	ALTER STORAGE main (cloud 's3', compression 'zstd')
 	```
+
+## API
+
+Monotone provides simple [C API](monotone/main/api/monotone.h).
+
+Insert (and replace/delete) is done in batches using the event id associated with raw data.
+Data are read using cursors.
+Data management, administration and monitoring are done by using `SQL-style` DDL commands.
  
 ## Interactive Benchmarking
 
