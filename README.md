@@ -14,7 +14,7 @@ Made to match the following requirements:
 - Collect and process events in large volumes serially or by time (auto-increment by default)
 - Write events as fast as possible, maintaining order and persistence
 - Delete or Update events by primary key when necessary (but rarely or never needed)
-- Read any range of events as fast as possible using a primary key
+- Read any range of events as fast as possible using the primary key
 - Efficiently store and manage large volumes of data using partitions
 - Efficiently compress and encrypt data
 - Transparently update partitions and recompress, decrypt data without blocking readers and writers
