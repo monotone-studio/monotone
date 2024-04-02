@@ -37,6 +37,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	Transparently create partitions on write.
 	Support partitions in the past and future.
 	Automatically or manually refresh partitions on disk or cloud after being updated.
+	Automatically exclude unrelated partitions during reading.
 
 - **Transparent Compression**
 
