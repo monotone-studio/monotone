@@ -143,7 +143,7 @@ engine_lock(Engine* self, uint64_t id, LockType lock,
 
 			// schedule refresh for previous head
 			if (head && head->min < min)
-				service_refresh(self->service, head->min);
+				service_refresh(self->service, ref_of(head)->part);
 		}
 	}
 

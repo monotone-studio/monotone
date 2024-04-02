@@ -592,8 +592,9 @@ engine_checkpoint(Engine* self)
 		auto ref = ref_of(slice);
 		if (!ref->part->refresh && heap_used(&ref->part->memtable->heap) > 0)
 		{
-			service_refresh(self->service, slice->min);
-			ref->part->refresh = true;
+			auto part = ref->part;
+			service_refresh(self->service, part);
+			part->refresh = true;
 		}
 		slice = mapping_next(&self->mapping, slice);
 	}
@@ -639,41 +640,54 @@ bool
 engine_service(Engine* self, Refresh* refresh, bool wait)
 {
 	ServiceReq* req = NULL;
-	auto type = service_next(self->service, wait, &req);
-	if (type == SERVICE_NONE)
-		return false;
-	if (type == SERVICE_SHUTDOWN)
+	bool shutdown = service_next(self->service, wait, &req);
+	if (shutdown)
 		return true;
+	if (req == NULL)
+		return false;
 
 	Exception e;
 	if (try(&e))
 	{
-		switch (type) {
-		case SERVICE_ROTATE:
+		while (req->current < req->actions_count)
 		{
-			auto wm = var_int_of(&config()->wal_rotate_wm);
-			wal_rotate(self->wal, wm);
-			break;
+			auto action = &req->actions[req->current];
+			switch (action->type) {
+			case ACTION_ROTATE:
+			{
+				auto wm = var_int_of(&config()->wal_rotate_wm);
+				wal_rotate(self->wal, wm);
+				break;
+			}
+			case ACTION_GC:
+				engine_gc(self);
+				break;
+			case ACTION_REBALANCE:
+				engine_rebalance(self, refresh);
+				break;
+			case ACTION_DROP_ON_STORAGE:
+				// drop partition file from storage, only if the file
+				// has been uploaded
+				engine_drop_file(self, req->id, true, true, ID);
+				break;
+			case ACTION_DROP_ON_CLOUD:
+				engine_drop(self, req->id, true, ID_CLOUD);
+				break;
+			case ACTION_REFRESH:
+				refresh_reset(refresh);
+				refresh_run(refresh, req->id, NULL, true);
+				break;
+			case ACTION_DOWNLOAD:
+				engine_download(self, req->id, true, true);
+				break;
+			case ACTION_UPLOAD:
+				engine_upload(self, req->id, true, true);
+				break;
+			default:
+				break;
+			}
+			req->current++;
 		}
-		case SERVICE_REBALANCE:
-		{
-			engine_rebalance(self, refresh);
-			break;
-		}
-		case SERVICE_REFRESH:
-		{
-			// do rebalance first
-			engine_rebalance(self, refresh);
-			if (type == SERVICE_REFRESH)
-				engine_refresh(self, refresh, req->min, NULL, true);
-			break;
-		}
-		default:
-			break;
-		}
-
-		// garbage collect wals
-		engine_gc(self);
 	}
 	if (catch(&e))
 	{ }

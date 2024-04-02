@@ -51,7 +51,7 @@ engine_commit(Engine* self, Log* log)
 			// schedule refresh
 			if (part_refresh_ready(part))
 			{
-				service_refresh(self->service, part->id.min);
+				service_refresh(self->service, part);
 				part->refresh = true;
 			}
 

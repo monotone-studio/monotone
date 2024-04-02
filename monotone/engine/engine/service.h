@@ -8,23 +8,12 @@
 
 typedef struct Service Service;
 
-typedef enum
-{
-	SERVICE_NONE,
-	SERVICE_SHUTDOWN,
-	SERVICE_ROTATE,
-	SERVICE_REBALANCE,
-	SERVICE_REFRESH
-} ServiceType;
-
 struct Service
 {
 	Mutex   lock;
 	CondVar cond_var;
 	List    list;
 	int     list_count;
-	bool    rotate;
-	bool    rebalance;
 	bool    shutdown;
 };
 
@@ -33,8 +22,6 @@ service_init(Service* self)
 {
 	self->list_count = 0;
 	self->shutdown   = false;
-	self->rotate     = false;
-	self->rebalance  = false;
 	mutex_init(&self->lock);
 	cond_var_init(&self->cond_var);
 	list_init(&self->list);
@@ -62,27 +49,13 @@ service_shutdown(Service* self)
 }
 
 static inline void
-service_rotate(Service* self)
+service_add(Service* self, uint64_t id, int count, ...)
 {
-	mutex_lock(&self->lock);
-	self->rotate = true;
-	cond_var_signal(&self->cond_var);
-	mutex_unlock(&self->lock);
-}
+	va_list args;
+	va_start(args, count);
+	auto req = service_req_allocate(id, count, args);
+	va_end(args);
 
-static inline void
-service_rebalance(Service* self)
-{
-	mutex_lock(&self->lock);
-	self->rebalance = true;
-	cond_var_signal(&self->cond_var);
-	mutex_unlock(&self->lock);
-}
-
-static inline void
-service_refresh(Service* self, uint64_t min)
-{
-	auto req = service_req_allocate(min);
 	mutex_lock(&self->lock);
 	list_append(&self->list, &req->link);
 	self->list_count++;
@@ -90,46 +63,70 @@ service_refresh(Service* self, uint64_t min)
 	mutex_unlock(&self->lock);
 }
 
-static inline ServiceType
+static inline void
+service_rotate(Service* self)
+{
+	service_add(self, UINT64_MAX, 2,
+	            ACTION_ROTATE,
+	            ACTION_GC);
+}
+
+static inline void
+service_rebalance(Service* self)
+{
+	service_add(self, UINT64_MAX, 2,
+	            ACTION_REBALANCE,
+	            ACTION_GC);
+}
+
+static inline void
+service_refresh(Service* self, Part* part)
+{
+	if (! part->cloud)
+	{
+		service_add(self, part->id.min, 3,
+		            ACTION_REBALANCE,
+		            ACTION_REFRESH,
+		            ACTION_GC);
+		return;
+	}
+	service_add(self, part->id.min, 7,
+	            ACTION_REBALANCE,
+	            ACTION_DOWNLOAD,
+	            ACTION_DROP_ON_CLOUD,
+	            ACTION_REFRESH,
+	            ACTION_UPLOAD,
+	            ACTION_DROP_ON_STORAGE,
+	            ACTION_GC);
+}
+
+static inline bool
 service_next(Service* self, bool wait, ServiceReq** req)
 {
 	mutex_lock(&self->lock);
 
-	ServiceType type;
+	bool shutdown = false;
 	for (;;)
 	{
 		if (unlikely(self->shutdown))
 		{
-			type = SERVICE_SHUTDOWN;
+			shutdown = true;
 			break;
 		}
-		if (unlikely(self->rotate))
-		{
-			self->rotate = false;
-			type = SERVICE_ROTATE;
-			break;
-		}
-		if (self->rebalance)
-		{
-			self->rebalance = false;
-			type = SERVICE_REBALANCE;
-			break;
-		}
+
 		if (self->list_count > 0)
 		{
 			*req = container_of(list_pop(&self->list), ServiceReq, link);
 			self->list_count--;
-			type = SERVICE_REFRESH;
 			break;
 		}
+
 		if (! wait)
-		{
-			type = SERVICE_NONE;
 			break;
-		}
+
 		cond_var_wait(&self->cond_var, &self->lock);
 	}
 
 	mutex_unlock(&self->lock);
-	return type;
+	return shutdown;
 }
