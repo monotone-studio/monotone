@@ -1,5 +1,6 @@
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 set serial to false
@@ -19,6 +20,7 @@ close
 # test: recover
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -73,6 +75,7 @@ close
 # test: recover
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -125,6 +128,7 @@ close
 # test: recover
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -176,6 +180,7 @@ close
 # test: recover
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -308,6 +313,7 @@ close
 # test: recover
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -445,6 +451,7 @@ close
 # test: recover
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open

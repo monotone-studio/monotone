@@ -1,5 +1,6 @@
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 set serial to false
@@ -53,6 +54,7 @@ select
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -241,6 +243,7 @@ select
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -392,6 +395,7 @@ refresh partition 700
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -624,6 +628,7 @@ files 00000000-0000-0000-0000-000000000000
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -736,6 +741,7 @@ drop partition 700
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -753,6 +759,7 @@ alter pipeline set hot (partitions 2), cold
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -869,6 +876,7 @@ refresh partition 0
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -914,6 +922,7 @@ refresh partition 10
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -1076,6 +1085,7 @@ show partitions debug
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -1265,6 +1275,7 @@ show partitions debug
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -1575,6 +1586,7 @@ refresh partition 20
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -1917,6 +1929,7 @@ refresh partition 20
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open

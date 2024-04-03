@@ -1,5 +1,6 @@
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
@@ -15,6 +16,7 @@ show wal
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 show wal
@@ -67,6 +69,7 @@ debug 'wal_read'
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 show lsn
@@ -100,6 +103,7 @@ show wal
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: select
@@ -134,6 +138,7 @@ debug 'wal_read'
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: select
@@ -216,6 +221,7 @@ show wal
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: ensure no heap used
@@ -268,6 +274,7 @@ show wal
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: select
@@ -382,6 +389,7 @@ select
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: select
@@ -496,6 +504,7 @@ debug "wal_read"
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: ensure partition drop

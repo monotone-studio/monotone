@@ -2,6 +2,7 @@
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set serial to false
 set wal_enable to false
@@ -29,6 +30,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -47,6 +49,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -66,6 +69,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -86,6 +90,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open
@@ -115,6 +120,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set wal_enable to false
 open

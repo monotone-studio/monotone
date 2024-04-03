@@ -1,5 +1,6 @@
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set serial to true
 set uuid to '00000000-0000-0000-0000-000000000000'
@@ -10,6 +11,7 @@ show ssn
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 show ssn
@@ -26,6 +28,7 @@ select
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 show ssn
@@ -87,6 +90,7 @@ show partitions debug
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: select
@@ -110,6 +114,7 @@ select
 close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 # test: select

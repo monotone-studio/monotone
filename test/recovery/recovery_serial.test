@@ -2,6 +2,7 @@
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set serial to true
 set uuid to '00000000-0000-0000-0000-000000000000'
@@ -14,6 +15,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 
@@ -31,6 +33,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 
@@ -58,6 +61,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 
@@ -77,6 +81,7 @@ close
 
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 

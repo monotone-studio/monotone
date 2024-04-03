@@ -3,6 +3,7 @@
 # test: open/close
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 set uuid to 'c14fb1d4-d1f7-5bf1-f256-4ad89bc47379'
 set serial to false
@@ -13,6 +14,7 @@ close
 # test: open
 init
 set workers to 0
+set workers_upload to 0
 set interval to 10
 open
 show all
