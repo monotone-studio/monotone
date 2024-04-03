@@ -14,7 +14,7 @@ struct TierConfig
 	int64_t partitions;
 	int64_t size;
 	int64_t events;
-	int64_t interval;
+	int64_t duration;
 	List    link;
 };
 
@@ -25,7 +25,7 @@ tier_config_allocate(void)
 	self->partitions = -1;
 	self->size       = -1;
 	self->events     = -1;
-	self->interval   = -1;
+	self->duration   = -1;
 	str_init(&self->name);
 	list_init(&self->link);
 	return self;
@@ -64,9 +64,9 @@ tier_config_set_events(TierConfig* self, int64_t value)
 }
 
 static inline void
-tier_config_set_interval(TierConfig* self, int64_t value)
+tier_config_set_duration(TierConfig* self, int64_t value)
 {
-	self->interval = value;
+	self->duration = value;
 }
 
 static inline TierConfig*
@@ -78,7 +78,7 @@ tier_config_copy(TierConfig* self)
 	tier_config_set_partitions(copy, self->partitions);
 	tier_config_set_size(copy, self->size);
 	tier_config_set_events(copy, self->events);
-	tier_config_set_interval(copy, self->interval);
+	tier_config_set_duration(copy, self->duration);
 	return unguard(&copy_guard);
 }
 
@@ -108,9 +108,9 @@ tier_config_read(uint8_t** pos)
 	data_skip(pos);
 	data_read_integer(pos, &self->events);
 
-	// interval
+	// duration
 	data_skip(pos);
-	data_read_integer(pos, &self->interval);
+	data_read_integer(pos, &self->duration);
 	return unguard(&self_guard);
 }
 
@@ -136,7 +136,7 @@ tier_config_write(TierConfig* self, Buf* buf)
 	encode_raw(buf, "events", 6);
 	encode_integer(buf, self->events);
 
-	// interval
-	encode_raw(buf, "interval", 8);
-	encode_integer(buf, self->interval);
+	// duration
+	encode_raw(buf, "duration", 8);
+	encode_integer(buf, self->duration);
 }

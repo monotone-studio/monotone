@@ -500,14 +500,14 @@ engine_rebalance_tier_next(Tier* tier)
 		if (tier->storage->events > tier->config->events)
 			return storage_oldest(tier->storage);
 
-	// rebalance by interval
-	if (tier->config->interval >= 0)
+	// rebalance by duration
+	if (tier->config->duration >= 0)
 	{
 		auto part = storage_oldest(tier->storage);
 		if (! part)
 			return NULL;
 		auto now = time_us();
-		if ((now - part->time) >= (uint64_t)tier->config->interval)
+		if ((now - part->time) >= (uint64_t)tier->config->duration)
 			return part;
 	}
 

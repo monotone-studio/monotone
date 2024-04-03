@@ -102,8 +102,8 @@ show pipeline
 alter pipeline set hot (partitions 2, size 100MiB)
 show pipeline
 
-# test: alter pipeline set interval
-alter pipeline set hot (interval 1day)
+# test: alter pipeline set duration
+alter pipeline set hot (duration 1day)
 show pipeline
 
 close

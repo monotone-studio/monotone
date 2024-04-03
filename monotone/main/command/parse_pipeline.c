@@ -93,10 +93,10 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 				// events <int>
 				parse_int(self, &name, &config->events);
 			} else
-			if (str_compare_raw(&name.string, "interval", 8))
+			if (str_compare_raw(&name.string, "duration", 8))
 			{
-				// interval <int>
-				parse_int(self, &name, &config->interval);
+				// duration <int>
+				parse_int(self, &name, &config->duration);
 			} else
 			{
 				error("ALTER PIPELINE: unknown option %.*s", str_size(&name.string),

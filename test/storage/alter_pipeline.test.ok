@@ -188,7 +188,7 @@ show pipeline
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: insert (primary changed)
 insert 40 z
@@ -436,7 +436,7 @@ show pipeline
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 show storages debug
 {
@@ -537,7 +537,7 @@ show pipeline
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 show storages debug
 {
@@ -887,13 +887,13 @@ show pipeline
   "partitions": 2,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }, {
   "name": "cold",
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: alter pipeline set partitions (both)
 alter pipeline set hot (partitions 2), cold (partitions 0)
@@ -903,13 +903,13 @@ show pipeline
   "partitions": 2,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }, {
   "name": "cold",
   "partitions": 0,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: alter pipeline set events
 alter pipeline set hot (events 100)
@@ -919,7 +919,7 @@ show pipeline
   "partitions": -1,
   "size": -1,
   "events": 100,
-  "interval": -1
+  "duration": -1
 }]
 # test: alter pipeline set partitions, size
 alter pipeline set hot (partitions 2, size 100MiB)
@@ -929,16 +929,16 @@ show pipeline
   "partitions": 2,
   "size": 104857600,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
-# test: alter pipeline set interval
-alter pipeline set hot (interval 1day)
+# test: alter pipeline set duration
+alter pipeline set hot (duration 1day)
 show pipeline
 [{
   "name": "hot",
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": 86400000000
+  "duration": 86400000000
 }]
 close

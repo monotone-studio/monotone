@@ -781,7 +781,7 @@ show pipeline
   "partitions": 0,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: close/open
 close
@@ -794,7 +794,7 @@ show pipeline
   "partitions": 0,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 show storages debug
 {

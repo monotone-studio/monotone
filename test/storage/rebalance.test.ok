@@ -50,13 +50,13 @@ show pipeline
   "partitions": 2,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }, {
   "name": "cold",
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: rebalance #1 (empty, <= partitions)
 rebalance
@@ -722,7 +722,7 @@ show pipeline
   "partitions": 0,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: rebalance (auto drop)
 show storages debug
@@ -914,13 +914,13 @@ show pipeline
   "partitions": 2,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }, {
   "name": "cold",
   "partitions": 0,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: rebalance #1 (auto drop existing)
 show storages debug

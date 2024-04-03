@@ -861,13 +861,13 @@ show pipeline
   "partitions": 2,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }, {
   "name": "cold",
   "partitions": -1,
   "size": -1,
   "events": -1,
-  "interval": -1
+  "duration": -1
 }]
 # test: create partition #1 (< partitions)
 insert 0
