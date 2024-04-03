@@ -152,7 +152,9 @@ engine_foreach(Engine* self, uint64_t* min, uint64_t* min_next, uint64_t max)
 }
 
 static bool
-engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int mask)
+engine_drop_file(Engine* self, uint64_t min, bool if_exists,
+                 bool    cloud_drop_local,
+                 int     mask)
 {
 	// find the original partition
 	auto ref = engine_lock(self, min, LOCK_SERVICE, false, false);
@@ -164,11 +166,15 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists, bool if_cloud, int 
 	}
 	auto part = ref->part;
 
-	// execute drop only if file is on cloud
-	if (if_cloud && !part_has(part, ID_CLOUD))
+	// execute automatic drop only, if file is on cloud and allowed
+	// by the partition source
+	if (cloud_drop_local)
 	{
-		engine_unlock(self, ref, LOCK_SERVICE);
-		return false;
+		if (!part->source->cloud_drop_local || !part_has(part, ID_CLOUD))
+		{
+			engine_unlock(self, ref, LOCK_SERVICE);
+			return false;
+		}
 	}
 
 	// get access lock

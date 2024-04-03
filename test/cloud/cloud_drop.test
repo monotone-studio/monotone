@@ -103,4 +103,22 @@ service
 show partitions debug
 select
 
+# test: alter storage set cloud_drop_local
+show storages debug
+alter storage main set (cloud_drop_local false)
+show storages debug
+
+# test: create partition
+insert 0
+insert 1
+insert 2
+show storages debug
+show partitions debug
+select
+
+# test: refresh (upload on cloud, keep locally)
+refresh partition 0
+show partitions debug
+select
+
 close

@@ -112,6 +112,7 @@ service_refresh(Service* self, Part* part)
 		            ACTION_GC);
 		return;
 	}
+
 	service_add(self, part->id.min, 7,
 	            ACTION_REBALANCE,
 	            ACTION_DOWNLOAD,
