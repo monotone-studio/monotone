@@ -155,10 +155,6 @@ main_deploy(Main* self, Str* directory)
 	snprintf(path, sizeof(path), "%s/config.json", config_directory());
 	config_open(&self->config, path);
 
-	// set memory manager settings
-	memory_mgr_set(&self->memory_mgr,
-	               var_int_of(&config()->mm_page_size));
-
 	// configure logger
 	auto logger = &self->logger;
 	logger_set_enable(logger, var_int_of(&config()->log_enable));
@@ -168,6 +164,13 @@ main_deploy(Main* self, Str* directory)
 		snprintf(path, sizeof(path), "%s/log", config_directory());
 		logger_open(logger, path);
 	}
+
+	// set memory manager settings
+	memory_mgr_set(&self->memory_mgr,
+	               var_int_of(&config()->mm_page_size),
+	               var_int_of(&config()->mm_limit),
+	               &config()->mm_limit_behaviour.string,
+	               var_int_of(&config()->mm_limit_wm));
 }
 
 static void

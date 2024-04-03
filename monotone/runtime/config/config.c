@@ -76,13 +76,15 @@ config_prepare(Config* self)
 		// main
 		{ "version",                 VAR_STRING, VAR_E,                &self->version,                 "0.0",       0                },
 		{ "uuid",                    VAR_STRING, VAR_C,                &self->uuid,                    NULL,        0                },
-		{ "online",                  VAR_BOOL,   VAR_E,                &self->online,                  NULL,        false            },
 		{ "directory",               VAR_STRING, VAR_E,                &self->directory,               NULL,        0                },
 		// log
 		{ "log_enable",              VAR_BOOL,   VAR_C,                &self->log_enable,              NULL,        true             },
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
 		{ "log_to_stdout",           VAR_BOOL,   VAR_C,                &self->log_to_stdout,           NULL,        false            },
 		// memory manager
+		{ "mm_limit",                VAR_BOOL,   VAR_C,                &self->mm_limit,                NULL,        false            },
+		{ "mm_limit_wm",             VAR_INT,    VAR_C,                &self->mm_limit_wm,             NULL,        8589934592       },
+		{ "mm_limit_behaviour",      VAR_STRING, VAR_C,                &self->mm_limit_behaviour,      "block",     0                },
 		{ "mm_page_size",            VAR_INT,    VAR_C,                &self->mm_page_size,            NULL,        2097152          },
 		// engine
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
@@ -94,9 +96,10 @@ config_prepare(Config* self)
 		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
 		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },
-		// state
+		// runtime state
 		{ "ssn",                     VAR_INT,    VAR_E|VAR_R,          &self->ssn,                     NULL,        0                },
 		{ "lsn",                     VAR_INT,    VAR_E,                &self->lsn,                     NULL,        0                },
+		// persistent state
 		{ "clouds",                  VAR_DATA,   VAR_C|VAR_H,          &self->clouds,                  NULL,        0                },
 		{ "storages",                VAR_DATA,   VAR_C|VAR_H,          &self->storages,                NULL,        0                },
 		{ "pipeline",                VAR_DATA,   VAR_C|VAR_H,          &self->pipeline,                NULL,        0                },

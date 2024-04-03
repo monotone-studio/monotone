@@ -23,6 +23,9 @@ struct MemoryMgr
 	Page*    free_list;
 	int      free_list_count;
 	int      page_size;
+	bool     limit;
+	bool     limit_error;
+	uint64_t limit_wm;
 };
 
 static inline void
@@ -32,13 +35,28 @@ memory_mgr_init(MemoryMgr* self)
 	self->free_list       = NULL;
 	self->free_list_count = 0;
 	self->page_size       = 2097152 - sizeof(Page);
+	self->limit           = false;
+	self->limit_error     = false;
+	self->limit_wm        = 8589934592; // 8GiB
 	spinlock_init(&self->lock);
 }
 
 static inline void
-memory_mgr_set(MemoryMgr* self, int page_size)
+memory_mgr_set(MemoryMgr* self, int page_size,
+               bool       limit,
+               Str*       limit_behaviour,
+               uint64_t   limit_wm)
 {
-	self->page_size = page_size - sizeof(Page);
+	self->page_size   = page_size - sizeof(Page);
+	self->limit       = limit;
+	self->limit_wm    = limit_wm;
+	if (str_compare_raw(limit_behaviour, "block", 5))
+		self->limit_error = false;
+	else
+	if (str_compare_raw(limit_behaviour, "error", 5))
+		self->limit_error = true;
+	else
+		error("mm: unrecognized memory limit behaviour");
 }
 
 static inline void

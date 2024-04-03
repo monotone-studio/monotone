@@ -20,6 +20,9 @@ struct Config
 	Var  log_to_file;
 	Var  log_to_stdout;
 	// memory manager
+	Var  mm_limit;
+	Var  mm_limit_wm;
+	Var  mm_limit_behaviour;
 	Var  mm_page_size;
 	// engine
 	Var  serial;
