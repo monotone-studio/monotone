@@ -95,7 +95,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	CREATE STORAGE hot (compression 'zstd')
 	CREATE STORAGE cold (cloud 's3', compression 'zstd', encryption 'aes')
 
-	ALTER PIPELINE hot (interval 1day), cold
+	ALTER PIPELINE hot (duration 1day), cold
 	```
 
 	```SQL
@@ -176,7 +176,7 @@ write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00
 Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
 Write is in-memory. Partitions are compressed, flushed, and synced ASAP by background workers to disk.
 
-The expected compression rate using `zstd` is `25-96x`, and write performance is more than `1 billion` metrics per second for a
+The expected compression rate using `zstd` is `25-86x`, and write performance is more than `1 billion` metrics per second for a
 single thread writer.
 
 ```
