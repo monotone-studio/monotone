@@ -62,6 +62,12 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			parse_string(self, &name, &config->cloud);
 			mask |= SOURCE_CLOUD;
 		} else
+		if (str_compare_raw(&name.string, "cloud_drop_local", 16))
+		{
+			// cloud_drop_local <bool>
+			parse_bool(self, &name, &config->cloud_drop_local);
+			mask |= SOURCE_CLOUD_DROP_LOCAL;
+		} else
 		if (str_compare_raw(&name.string, "sync", 4))
 		{
 			// sync <bool>

@@ -239,6 +239,7 @@ show storages debug
       "name": "main",
       "path": "",
       "cloud": "mock",
+      "cloud_drop_local": true,
       "sync": false,
       "crc": false,
       "refresh_wm": 41943040,

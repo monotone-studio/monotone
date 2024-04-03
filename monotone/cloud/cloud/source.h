@@ -14,14 +14,15 @@ enum
 	SOURCE_NAME              = 1 << 1,
 	SOURCE_PATH              = 1 << 2,
 	SOURCE_CLOUD             = 1 << 3,
-	SOURCE_SYNC              = 1 << 4,
-	SOURCE_CRC               = 1 << 5,
-	SOURCE_REFRESH_WM        = 1 << 6,
-	SOURCE_REGION_SIZE       = 1 << 7,
-	SOURCE_COMPRESSION       = 1 << 8,
-	SOURCE_COMPRESSION_LEVEL = 1 << 9,
-	SOURCE_ENCRYPTION        = 1 << 10,
-	SOURCE_ENCRYPTION_KEY    = 1 << 11
+	SOURCE_CLOUD_DROP_LOCAL  = 1 << 4,
+	SOURCE_SYNC              = 1 << 5,
+	SOURCE_CRC               = 1 << 6,
+	SOURCE_REFRESH_WM        = 1 << 7,
+	SOURCE_REGION_SIZE       = 1 << 8,
+	SOURCE_COMPRESSION       = 1 << 9,
+	SOURCE_COMPRESSION_LEVEL = 1 << 10,
+	SOURCE_ENCRYPTION        = 1 << 11,
+	SOURCE_ENCRYPTION_KEY    = 1 << 12
 };
 
 struct Source
@@ -30,6 +31,7 @@ struct Source
 	Str     name;
 	Str     path;
 	Str     cloud;
+	bool    cloud_drop_local;
 	bool    sync;
 	bool    crc;
 	int64_t refresh_wm;
@@ -44,6 +46,7 @@ static inline Source*
 source_allocate(void)
 {
 	auto self = (Source*)mn_malloc(sizeof(Source));
+	self->cloud_drop_local  = true;
 	self->sync              = true;
 	self->crc               = false;
 	self->compression_level = 0;
@@ -96,6 +99,12 @@ source_set_cloud(Source* self, Str* value)
 {
 	str_free(&self->cloud);
 	str_copy(&self->cloud, value);
+}
+
+static inline void
+source_set_cloud_drop_local(Source* self, bool value)
+{
+	self->cloud_drop_local = value;
 }
 
 static inline void
@@ -158,6 +167,7 @@ source_copy(Source* self)
 	source_set_name(copy, &self->name);
 	source_set_path(copy, &self->path);
 	source_set_cloud(copy, &self->cloud);
+	source_set_cloud_drop_local(copy, self->cloud_drop_local);
 	source_set_sync(copy, self->sync);
 	source_set_crc(copy, self->crc);
 	source_set_refresh_wm(copy, self->refresh_wm);
@@ -196,6 +206,10 @@ source_read(uint8_t** pos)
 	// cloud
 	data_skip(pos);
 	data_read_string_copy(pos, &self->cloud);
+
+	// cloud_drop_local
+	data_skip(pos);
+	data_read_bool(pos, &self->cloud_drop_local);
 
 	// sync
 	data_skip(pos);
@@ -236,9 +250,9 @@ source_write(Source* self, Buf* buf, bool safe, bool debug)
 {
 	// map
 	if (safe)
-		encode_map(buf, 11);
-	else
 		encode_map(buf, 12);
+	else
+		encode_map(buf, 13);
 
 	// uuid
 	encode_raw(buf, "uuid", 4);
@@ -263,6 +277,10 @@ source_write(Source* self, Buf* buf, bool safe, bool debug)
 	// cloud
 	encode_raw(buf, "cloud", 5);
 	encode_string(buf, &self->cloud);
+
+	// cloud_drop_local
+	encode_raw(buf, "cloud_drop_local", 16);
+	encode_bool(buf, self->cloud_drop_local);
 
 	// sync
 	encode_raw(buf, "sync", 4);
@@ -314,6 +332,9 @@ source_alter(Source* self, Source* alter, int mask)
 
 	if (mask & SOURCE_CLOUD)
 		source_set_cloud(self, &alter->cloud);
+
+	if (mask & SOURCE_CLOUD_DROP_LOCAL)
+		source_set_cloud_drop_local(self, alter->cloud_drop_local);
 
 	if (mask & SOURCE_SYNC)
 		source_set_sync(self, alter->sync);
