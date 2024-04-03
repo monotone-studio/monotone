@@ -19,6 +19,8 @@ struct Config
 	Var  log_enable;
 	Var  log_to_file;
 	Var  log_to_stdout;
+	// memory manager
+	Var  mm_page_size;
 	// engine
 	Var  serial;
 	Var  interval;

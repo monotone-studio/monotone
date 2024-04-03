@@ -26,13 +26,19 @@ struct MemoryMgr
 };
 
 static inline void
-memory_mgr_init(MemoryMgr* self, int page_size)
+memory_mgr_init(MemoryMgr* self)
 {
 	self->count           = 0;
 	self->free_list       = NULL;
 	self->free_list_count = 0;
-	self->page_size       = page_size - sizeof(Page);
+	self->page_size       = 2097152 - sizeof(Page);
 	spinlock_init(&self->lock);
+}
+
+static inline void
+memory_mgr_set(MemoryMgr* self, int page_size)
+{
+	self->page_size = page_size - sizeof(Page);
 }
 
 static inline void

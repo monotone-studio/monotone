@@ -66,7 +66,7 @@ main_init(Main* self)
 	comparator_init(&self->comparator);
 	logger_init(&self->logger);
 	random_init(&self->random);
-	memory_mgr_init(&self->memory_mgr, 2 * 1024 * 1024);
+	memory_mgr_init(&self->memory_mgr);
 	compression_mgr_init(&self->compression_mgr);
 	encryption_mgr_init(&self->encryption_mgr);
 	config_init(&self->config);
@@ -154,6 +154,10 @@ main_deploy(Main* self, Str* directory)
 	char path[PATH_MAX];
 	snprintf(path, sizeof(path), "%s/config.json", config_directory());
 	config_open(&self->config, path);
+
+	// set memory manager settings
+	memory_mgr_set(&self->memory_mgr,
+	               var_int_of(&config()->mm_page_size));
 
 	// configure logger
 	auto logger = &self->logger;

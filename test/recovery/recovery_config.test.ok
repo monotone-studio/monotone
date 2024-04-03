@@ -27,6 +27,7 @@ show all
   "log_enable": true,
   "log_to_file": true,
   "log_to_stdout": false,
+  "mm_page_size": 2097152,
   "serial": false,
   "interval": 10,
   "workers": 0,

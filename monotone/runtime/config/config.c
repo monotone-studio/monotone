@@ -82,6 +82,8 @@ config_prepare(Config* self)
 		{ "log_enable",              VAR_BOOL,   VAR_C,                &self->log_enable,              NULL,        true             },
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
 		{ "log_to_stdout",           VAR_BOOL,   VAR_C,                &self->log_to_stdout,           NULL,        false            },
+		// memory manager
+		{ "mm_page_size",            VAR_INT,    VAR_C,                &self->mm_page_size,            NULL,        2097152          },
 		// engine
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
 		{ "interval",                VAR_INT,    VAR_C|VAR_R,          &self->interval,                NULL,        3000000          },
