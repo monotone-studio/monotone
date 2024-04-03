@@ -26,3 +26,4 @@ void engine_gc(Engine*);
 
 // service
 bool engine_service(Engine*, Refresh*, ServiceFilter, bool);
+void engine_resume(Engine*);

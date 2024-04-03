@@ -123,6 +123,15 @@ service_refresh(Service* self, Part* part)
 	            ACTION_GC);
 }
 
+static inline void
+service_upload(Service* self, Part* part)
+{
+	service_add(self, part->id.min, 3,
+	            ACTION_UPLOAD,
+	            ACTION_DROP_ON_STORAGE,
+	            ACTION_GC);
+}
+
 static inline ServiceReq*
 service_fetch(Service* self, ServiceFilter filter)
 {

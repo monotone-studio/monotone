@@ -712,3 +712,25 @@ engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 
 	return false;
 }
+
+void
+engine_resume(Engine* self)
+{
+	// resume operations after restart
+
+	// take exclusive control lock
+	control_lock_exclusive();
+	guard(guard, control_unlock_guard, NULL);
+
+	// resume upload
+	auto slice = mapping_min(&self->mapping);
+	while (slice)
+	{
+		auto ref  = ref_of(slice);
+		auto part = ref->part;
+		if (part->cloud && !part_has(part, ID_CLOUD))
+			service_upload(self->service, part);
+
+		slice = mapping_next(&self->mapping, slice);
+	}
+}

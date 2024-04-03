@@ -241,6 +241,9 @@ main_start(Main* self, const char* directory)
 	if (config_serial())
 		engine_set_serial(&self->engine);
 
+	// reschedule background operations after restart
+	engine_resume(&self->engine);
+
 	// start compaction workers
 	worker_mgr_start(&self->worker_mgr, &self->engine);
 
