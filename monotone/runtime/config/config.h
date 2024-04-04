@@ -24,16 +24,16 @@ struct Config
 	Var  mm_limit_wm;
 	Var  mm_limit_behaviour;
 	Var  mm_page_size;
-	// engine
-	Var  serial;
-	Var  interval;
-	Var  workers;
-	Var  workers_upload;
 	// wal
 	Var  wal_enable;
 	Var  wal_rotate_wm;
 	Var  wal_sync_on_rotate;
 	Var  wal_sync_on_write;
+	// engine
+	Var  serial;
+	Var  interval;
+	Var  workers;
+	Var  workers_upload;
 	// state
 	Var  ssn;
 	Var  lsn;

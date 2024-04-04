@@ -18,7 +18,8 @@ struct Page
 
 struct MemoryMgr
 {
-	Spinlock lock;
+	Mutex    lock;
+	CondVar  cond_var;
 	int      count;
 	Page*    free_list;
 	int      free_list_count;
@@ -26,6 +27,7 @@ struct MemoryMgr
 	bool     limit;
 	bool     limit_error;
 	uint64_t limit_wm;
+	uint64_t limit_hits;
 };
 
 static inline void
@@ -38,7 +40,9 @@ memory_mgr_init(MemoryMgr* self)
 	self->limit           = false;
 	self->limit_error     = false;
 	self->limit_wm        = 8589934592; // 8GiB
-	spinlock_init(&self->lock);
+	self->limit_hits      = 0;
+	mutex_init(&self->lock);
+	cond_var_init(&self->cond_var);
 }
 
 static inline void
@@ -47,9 +51,9 @@ memory_mgr_set(MemoryMgr* self, int page_size,
                Str*       limit_behaviour,
                uint64_t   limit_wm)
 {
-	self->page_size   = page_size - sizeof(Page);
-	self->limit       = limit;
-	self->limit_wm    = limit_wm;
+	self->page_size = page_size - sizeof(Page);
+	self->limit     = limit;
+	self->limit_wm  = limit_wm;
 	if (str_compare_raw(limit_behaviour, "block", 5))
 		self->limit_error = false;
 	else
@@ -62,12 +66,13 @@ memory_mgr_set(MemoryMgr* self, int page_size,
 static inline void
 memory_mgr_reset(MemoryMgr* self)
 {
-	spinlock_lock(&self->lock);
+	mutex_lock(&self->lock);
 	auto page = self->free_list;
 	self->count          -= self->free_list_count;
 	self->free_list       = NULL;
 	self->free_list_count = 0;
-	spinlock_unlock(&self->lock);
+	mutex_unlock(&self->lock);
+
 	while (page)
 	{
 		auto next = page->next;
@@ -89,26 +94,58 @@ memory_mgr_free(MemoryMgr* self)
 	self->free_list       = NULL;
 	self->free_list_count = 0;
 
-	spinlock_free(&self->lock);
+	mutex_free(&self->lock);
+	cond_var_free(&self->cond_var);
+}
+
+static inline Page*
+memory_mgr_pop_cache(MemoryMgr* self)
+{
+	assert(self->free_list);
+	auto page = self->free_list;
+	self->free_list_count--;
+	self->free_list = page->next;
+	page->used = 0;
+	page->next = NULL;
+	return page;
 }
 
 static inline Page*
 memory_mgr_pop(MemoryMgr* self)
 {
-	spinlock_lock(&self->lock);
+	mutex_lock(&self->lock);
+
 	if (likely(self->free_list))
 	{
-		auto page = self->free_list;
-		self->free_list_count--;
-		self->free_list = page->next;
-		spinlock_unlock(&self->lock);
-
-		page->used = 0;
-		page->next = NULL;
+		auto page = memory_mgr_pop_cache(self);
+		mutex_unlock(&self->lock);
 		return page;
 	}
+
+	if (self->limit)
+	{
+		uint64_t used = self->count * (uint64_t)self->page_size;
+		if (unlikely(used >= self->limit_wm))
+		{
+			self->limit_hits++;
+			if (self->limit_error)
+			{
+				mutex_unlock(&self->lock);
+				error("mm: memory limit reached");
+			}
+
+			// wait for free page
+			while (! self->free_list)
+				cond_var_wait(&self->cond_var, &self->lock);
+
+			auto page = memory_mgr_pop_cache(self);
+			mutex_unlock(&self->lock);
+			return page;
+		}
+	}
+
 	self->count++;
-	spinlock_unlock(&self->lock);
+	mutex_unlock(&self->lock);
 
 	Page* page;
 	page = vfs_mmap(-1, sizeof(Page) + self->page_size);
@@ -122,25 +159,30 @@ memory_mgr_pop(MemoryMgr* self)
 static inline void
 memory_mgr_push(MemoryMgr* self, Page* page, Page* page_tail, int count)
 {
-	spinlock_lock(&self->lock);
+	mutex_lock(&self->lock);
 	page_tail->next = self->free_list;
 	self->free_list = page;
 	self->free_list_count += count;
-	spinlock_unlock(&self->lock);
+	cond_var_broadcast(&self->cond_var);
+	mutex_unlock(&self->lock);
 }
 
 static inline void
 memory_mgr_show(MemoryMgr* self, Buf* buf)
 {
-	spinlock_lock(&self->lock);
-	int pages      = self->count;
-	int pages_used = self->count - self->free_list_count;
-	int pages_free = self->free_list_count;
-	int page_size  = self->page_size + sizeof(Page);
-	spinlock_unlock(&self->lock);
+	mutex_lock(&self->lock);
+	int      pages        = self->count;
+	int      pages_used   = self->count - self->free_list_count;
+	int      pages_free   = self->free_list_count;
+	int      page_size    = self->page_size + sizeof(Page);
+	bool     limit        = self->limit;
+	uint64_t limit_wm     = self->limit_wm;
+	bool     limit_error  = self->limit_error;
+	uint64_t limit_hits   = self->limit_hits;
+	mutex_unlock(&self->lock);
 
 	// map
-	encode_map(buf, 4);
+	encode_map(buf, 8);
 
 	// pages
 	encode_raw(buf, "pages", 5);
@@ -157,4 +199,23 @@ memory_mgr_show(MemoryMgr* self, Buf* buf)
 	// page_size
 	encode_raw(buf, "page_size", 9);
 	encode_integer(buf, page_size);
+
+	// limit
+	encode_raw(buf, "limit", 5);
+	encode_bool(buf, limit);
+
+	// limit_wm
+	encode_raw(buf, "limit_wm", 8);
+	encode_integer(buf, limit_wm);
+
+	// limit_behaviour
+	encode_raw(buf, "limit_behaviour", 15);
+	if (limit_error)
+		encode_raw(buf, "error", 5);
+	else
+		encode_raw(buf, "block", 5);
+
+	// limit_hits
+	encode_raw(buf, "limit_hits", 10);
+	encode_integer(buf, limit_hits);
 }

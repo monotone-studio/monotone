@@ -30,14 +30,14 @@ show all
   "mm_limit_wm": 8589934592,
   "mm_limit_behaviour": "block",
   "mm_page_size": 2097152,
-  "serial": false,
-  "interval": 10,
-  "workers": 0,
-  "workers_upload": 0,
   "wal_enable": true,
   "wal_rotate_wm": 104857600,
   "wal_sync_on_rotate": true,
   "wal_sync_on_write": false,
+  "serial": false,
+  "interval": 10,
+  "workers": 0,
+  "workers_upload": 0,
   "ssn": 0,
   "lsn": 0
 }
