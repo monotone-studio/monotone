@@ -25,8 +25,16 @@ refresh partition 0
 show partitions debug
 select
 
+# test: drop partition
+drop partition 0
+
 # test: alter storage set compression, crc
 alter storage main set (compression 'zstd', crc true)
+insert 0
+insert 1
+insert 3
+show partitions debug
+refresh partition 0
 show partitions debug
 
 # test: refresh
@@ -34,8 +42,8 @@ refresh partition 0
 show partitions debug
 select
 
-# test: alter storage set crc
-alter storage main set (compression '', crc true)
+# test: alter storage set compression (with crc)
+alter storage main set (compression '')
 show partitions debug
 
 # test: refresh

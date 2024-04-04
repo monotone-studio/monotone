@@ -238,10 +238,18 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 			      str_of(&source->name));
 		return;
 	}
+	bool is_empty = (storage->list_count == 0);
+
+	if (mask & SOURCE_CRC)
+	{
+		if (! is_empty)
+			error("storage '%.*s': storage is not empty", str_size(&source->name),
+			      str_of(&source->name));
+	}
 
 	if (mask & SOURCE_PATH)
 	{
-		if (storage->list_count > 0)
+		if (! is_empty)
 			error("storage '%.*s': storage is not empty", str_size(&source->name),
 			      str_of(&source->name));
 
@@ -252,7 +260,7 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 	if (mask & SOURCE_ENCRYPTION ||
 	    mask & SOURCE_ENCRYPTION_KEY)
 	{
-		if (storage->list_count > 0)
+		if (! is_empty)
 			error("storage '%.*s': storage is not empty", str_size(&source->name),
 			      str_of(&source->name));
 	}

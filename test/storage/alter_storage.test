@@ -66,4 +66,14 @@ alter storage test set (uuid '00000000-0000-0000-0000-000000000000')
 alter storage test set (path '__test__')
 show storages debug
 
+# test: alter storage set crc (must be empty)
+alter pipeline set test
+insert 0
+insert 1
+insert 2
+refresh partition 0
+
+alter storage test set (crc false)
+show storages debug
+
 close

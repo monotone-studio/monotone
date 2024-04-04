@@ -101,8 +101,63 @@ select
 [1]
 [3]
 (eof)
+# test: drop partition
+drop partition 0
 # test: alter storage set compression, crc
 alter storage main set (compression 'zstd', crc true)
+insert 0
+insert 1
+insert 3
+show partitions debug
+[{
+  "min": 0,
+  "max": 9,
+  "created": "(filtered)",
+  "refreshes": 0,
+  "events": 3,
+  "events_heap": 3,
+  "regions": 0,
+  "size": 0,
+  "size_uncompressed": 0,
+  "size_heap": 2097152,
+  "on_storage": false,
+  "on_cloud": false,
+  "storage": "main",
+  "index": null
+}]
+refresh partition 0
+show partitions debug
+[{
+  "min": 0,
+  "max": 9,
+  "created": "(filtered)",
+  "refreshes": 1,
+  "events": 3,
+  "events_heap": 0,
+  "regions": 1,
+  "size": 190,
+  "size_uncompressed": 245,
+  "size_heap": 0,
+  "on_storage": true,
+  "on_cloud": false,
+  "storage": "main",
+  "index": {
+    "size": 37,
+    "size_origin": 52,
+    "size_regions": 35,
+    "size_regions_origin": 75,
+    "size_total": 190,
+    "size_total_origin": 245,
+    "regions": 1,
+    "events": 3,
+    "refreshes": 1,
+    "lsn": 7,
+    "compression": 1,
+    "encryption": 0
+  }
+}]
+# test: refresh
+refresh partition 0
 show partitions debug
 [{
   "min": 0,
@@ -112,38 +167,6 @@ show partitions debug
   "events": 3,
   "events_heap": 0,
   "regions": 1,
-  "size": 183,
-  "size_uncompressed": 245,
-  "size_heap": 0,
-  "on_storage": true,
-  "on_cloud": false,
-  "storage": "main",
-  "index": {
-    "size": 30,
-    "size_origin": 52,
-    "size_regions": 35,
-    "size_regions_origin": 75,
-    "size_total": 183,
-    "size_total_origin": 245,
-    "regions": 1,
-    "events": 3,
-    "refreshes": 2,
-    "lsn": 3,
-    "compression": 1,
-    "encryption": 0
-  }
-}]
-# test: refresh
-refresh partition 0
-show partitions debug
-[{
-  "min": 0,
-  "max": 9,
-  "created": "(filtered)",
-  "refreshes": 3,
-  "events": 3,
-  "events_heap": 0,
-  "regions": 1,
   "size": 190,
   "size_uncompressed": 245,
   "size_heap": 0,
@@ -159,8 +182,8 @@ show partitions debug
     "size_total_origin": 245,
     "regions": 1,
     "events": 3,
-    "refreshes": 3,
-    "lsn": 3,
+    "refreshes": 2,
+    "lsn": 7,
     "compression": 1,
     "encryption": 0
   }
@@ -170,14 +193,14 @@ select
 [1]
 [3]
 (eof)
-# test: alter storage set crc
-alter storage main set (compression '', crc true)
+# test: alter storage set compression (with crc)
+alter storage main set (compression '')
 show partitions debug
 [{
   "min": 0,
   "max": 9,
   "created": "(filtered)",
-  "refreshes": 3,
+  "refreshes": 2,
   "events": 3,
   "events_heap": 0,
   "regions": 1,
@@ -196,8 +219,8 @@ show partitions debug
     "size_total_origin": 245,
     "regions": 1,
     "events": 3,
-    "refreshes": 3,
-    "lsn": 3,
+    "refreshes": 2,
+    "lsn": 7,
     "compression": 1,
     "encryption": 0
   }
@@ -209,7 +232,7 @@ show partitions debug
   "min": 0,
   "max": 9,
   "created": "(filtered)",
-  "refreshes": 4,
+  "refreshes": 3,
   "events": 3,
   "events_heap": 0,
   "regions": 1,
@@ -228,8 +251,8 @@ show partitions debug
     "size_total_origin": 245,
     "regions": 1,
     "events": 3,
-    "refreshes": 4,
-    "lsn": 3,
+    "refreshes": 3,
+    "lsn": 7,
     "compression": 0,
     "encryption": 0
   }
@@ -340,7 +363,7 @@ show partitions debug
     "regions": 1,
     "events": 10,
     "refreshes": 1,
-    "lsn": 14,
+    "lsn": 18,
     "compression": 1,
     "encryption": 0
   }
@@ -577,7 +600,7 @@ show partitions debug
     "regions": 1,
     "events": 10,
     "refreshes": 1,
-    "lsn": 25,
+    "lsn": 29,
     "compression": 2,
     "encryption": 0
   }
