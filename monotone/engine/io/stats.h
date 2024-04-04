@@ -129,9 +129,9 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 
 	// {}
 	if (debug)
-		encode_map(buf, 14);
+		encode_map(buf, 15);
 	else
-		encode_map(buf, 13);
+		encode_map(buf, 14);
 
 	// min
 	encode_raw(buf, "min", 3);
@@ -140,17 +140,6 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 	// max
 	encode_raw(buf, "max", 3);
 	encode_integer(buf, self->id.max);
-
-	// created
-	encode_raw(buf, "created", 7);
-	if (debug)
-		encode_raw(buf, "(filtered)", 10);
-	else
-		encode_integer(buf, self->time);
-
-	// refreshes
-	encode_raw(buf, "refreshes", 9);
-	encode_integer(buf, self->index.refreshes);
 
 	// events
 	encode_raw(buf, "events", 6);
@@ -175,6 +164,26 @@ stats_show_part(Part* self, Buf* buf, bool debug)
 	// size_heap
 	encode_raw(buf, "size_heap", 9);
 	encode_integer(buf, stats.size_heap);
+
+	// created
+	if (debug)
+	{
+		encode_raw(buf, "created", 7);
+		encode_raw(buf, "(filtered)", 10);
+		encode_raw(buf, "refreshed", 9);
+		encode_raw(buf, "(filtered)", 10);
+	} else
+	{
+		encode_raw(buf, "created", 7);
+		encode_integer(buf, self->time_create);
+		encode_raw(buf, "refreshed", 9);
+		encode_integer(buf, self->time_refresh);
+	}
+
+	// refreshes
+	encode_raw(buf, "refreshes", 9);
+	encode_integer(buf, self->index.refreshes);
+
 
 	// on_storage
 	encode_raw(buf, "on_storage", 10);

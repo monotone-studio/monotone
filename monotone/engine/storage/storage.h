@@ -118,7 +118,7 @@ storage_oldest(Storage* self)
 		if (min == NULL)
 			min = part;
 		else
-		if (part->time < min->time)
+		if (part->time_create < min->time_create)
 			min = part;
 	}
 	return min;

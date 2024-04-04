@@ -86,7 +86,8 @@ static inline void
 index_writer_stop(IndexWriter* self,
                   Id*          id,
                   uint32_t     refreshes,
-                  uint64_t     time,
+                  uint64_t     time_create,
+                  uint64_t     time_refresh,
                   uint64_t     lsn)
 {
 	auto index = &self->index;
@@ -139,8 +140,9 @@ index_writer_stop(IndexWriter* self,
 		index->size_regions + index->size + sizeof(Index);
 	index->size_total_origin =
 		index->size_regions_origin + index->size_origin + sizeof(Index);
+	index->time_create       = time_create;
+	index->time_refresh      = time_refresh;
 	index->refreshes         = refreshes;
-	index->time              = time;
 	index->lsn               = lsn;
 	index->compression       = compression_id;
 	index->encryption        = encryption_id;

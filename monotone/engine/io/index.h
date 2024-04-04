@@ -39,8 +39,9 @@ struct Index
 	uint64_t size_total_origin;
 	uint32_t regions;
 	uint64_t events;
+	uint64_t time_create;
+	uint64_t time_refresh;
 	uint32_t refreshes;
-	uint64_t time;
 	uint64_t lsn;
 	uint8_t  compression;
 	uint8_t  encryption;

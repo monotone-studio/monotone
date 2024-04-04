@@ -558,8 +558,8 @@ show storages debug
       "regions": 1,
       "events": 3,
       "events_heap": 0,
-      "size": 249,
-      "size_uncompressed": 249,
+      "size": 257,
+      "size_uncompressed": 257,
       "size_heap": 0
     }
   }

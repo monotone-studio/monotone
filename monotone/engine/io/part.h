@@ -12,7 +12,8 @@ struct Part
 {
 	Id          id;
 	int         state;
-	uint64_t    time;
+	uint64_t    time_create;
+	uint64_t    time_refresh;
 	bool        refresh;
 	Memtable*   memtable;
 	Memtable    memtable_a;
@@ -56,9 +57,15 @@ part_has(Part* self, int mask)
 }
 
 static inline void
-part_set_time(Part* self, uint64_t time)
+part_set_time_create(Part* self, uint64_t time)
 {
-	self->time = time;
+	self->time_create = time;
+}
+
+static inline void
+part_set_time_refresh(Part* self, uint64_t time)
+{
+	self->time_refresh = time;
 }
 
 static inline void

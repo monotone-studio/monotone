@@ -117,7 +117,8 @@ writer_start(Writer* self, Source* source, File* file)
 
 void
 writer_stop(Writer*  self, Id* id, uint32_t refreshes,
-            uint64_t time,
+            uint64_t time_create,
+            uint64_t time_refresh,
             uint64_t lsn, bool sync)
 {
 	if (! index_writer_started(&self->index_writer))
@@ -126,7 +127,9 @@ writer_stop(Writer*  self, Id* id, uint32_t refreshes,
 	if (region_writer_started(&self->region_writer))
 		writer_stop_region(self);
 
-	index_writer_stop(&self->index_writer, id, refreshes, time, lsn);
+	index_writer_stop(&self->index_writer, id, refreshes,
+	                  time_create, time_refresh,
+	                  lsn);
 
 	// write index
 	iov_reset(&self->iov);

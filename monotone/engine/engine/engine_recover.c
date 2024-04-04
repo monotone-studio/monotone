@@ -224,7 +224,8 @@ engine_recover(Engine* self)
 
 			// sync metrics
 			part->id = part->index.id;
-			part_set_time(part, part->index.time);
+			part_set_time_create(part, part->index.time_create);
+			part_set_time_refresh(part, part->index.time_refresh);
 			config_lsn_follow(part->index.lsn);
 			storage_add_metrics(storage, part);
 

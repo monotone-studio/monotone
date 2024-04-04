@@ -29,7 +29,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 		.max = max
 	};
 	auto part = part_allocate(self->comparator, NULL, &id);
-	part_set_time(part, time_us());
+	part_set_time_create(part, time_us());
 	ref_prepare(ref, &self->lock, &self->cond_var, part);
 
 	// update mapping
@@ -507,7 +507,7 @@ engine_rebalance_tier_next(Tier* tier)
 		if (! part)
 			return NULL;
 		auto now = time_us();
-		if ((now - part->time) >= (uint64_t)tier->config->duration)
+		if ((now - part->time_create) >= (uint64_t)tier->config->duration)
 			return part;
 	}
 

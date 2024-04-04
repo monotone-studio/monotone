@@ -15,13 +15,14 @@ Part*
 part_allocate(Comparator* comparator, Source* source, Id* id)
 {
 	auto self = (Part*)mn_malloc(sizeof(Part));
-	self->id         = *id;
-	self->state      = ID_NONE;
-	self->time       = 0;
-	self->refresh    = false;
-	self->cloud      = NULL;
-	self->source     = source;
-	self->comparator = comparator;
+	self->id           = *id;
+	self->state        = ID_NONE;
+	self->time_create  = 0;
+	self->time_refresh = 0;
+	self->refresh      = false;
+	self->cloud        = NULL;
+	self->source       = source;
+	self->comparator   = comparator;
 	file_init(&self->file);
 	self->memtable = &self->memtable_a;
 	memtable_init(&self->memtable_a, 512, 508, comparator);

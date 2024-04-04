@@ -49,10 +49,11 @@ merger_write(Merger* self, MergerReq* req)
 {
 	auto writer   = &self->writer;
 	auto it       = &self->merge_iterator;
+	auto part     = self->part;
 	auto origin   = req->origin;
 	auto memtable = req->memtable;
 
-	writer_start(writer, req->source, &self->part->file);
+	writer_start(writer, req->source, &part->file);
 	for (;;)
 	{
 		auto event = merge_iterator_at(it);
@@ -76,14 +77,16 @@ merger_write(Merger* self, MergerReq* req)
 			lsn = origin->index.lsn;
 	}
 
-	auto id = &self->part->id;
-	writer_stop(writer, id, refreshes, self->part->time, lsn,
+	auto id = &part->id;
+	writer_stop(writer, id, refreshes, part->time_create,
+	            part->time_refresh,
+	            lsn,
 	            req->source->sync);
 
 	// copy index to the partition
 	index_writer_copy(&self->writer.index_writer,
-	                  &self->part->index,
-	                  &self->part->index_data);
+	                  &part->index,
+	                  &part->index_data);
 }
 
 hot void
@@ -110,7 +113,8 @@ merger_execute(Merger* self, MergerReq* req)
 	self->part = part_allocate(origin->comparator, req->source, &id);
 	part_create(self->part, ID_INCOMPLETE);
 	part_set(self->part, ID_INCOMPLETE);
-	part_set_time(self->part, time_us());
+	part_set_time_create(self->part, origin->time_create);
+	part_set_time_refresh(self->part, time_us());
 
 	// write partition file
 	merger_write(self, req);
