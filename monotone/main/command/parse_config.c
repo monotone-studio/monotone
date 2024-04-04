@@ -69,6 +69,11 @@ parse_show(Lex* self)
 			break;
 		case KCONFIG:
 		case KALL:
+			// show config [name]
+			if (lex_if_name(self, &tk) || lex_if(self, KSTRING, &tk)) {
+				type = SHOW_NAME;
+				break;
+			}
 			type = SHOW_CONFIG;
 			break;
 		case KNAME:
@@ -105,10 +110,8 @@ parse_set(Lex* self)
 
 	// name
 	Token name;
-	lex_keywords(self, false);
-	if (! lex_if(self, KNAME, &name))
+	if (! lex_if_name(self, &name))
 		error("SET <name> expected");
-	lex_keywords(self, true);
 
 	// to
 	if (! lex_if(self, KTO, NULL))

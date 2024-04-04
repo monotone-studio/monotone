@@ -363,3 +363,12 @@ lex_if(Lex* self, int id, Token* tk)
 	lex_push(self, token);
 	return false;
 }
+
+bool
+lex_if_name(Lex* self, Token* tk)
+{
+	lex_keywords(self, false);
+	bool match = lex_if(self, KNAME, tk);
+	lex_keywords(self, true);
+	return match;
+}

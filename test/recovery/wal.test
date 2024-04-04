@@ -9,6 +9,8 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 
 # test: create wal on start
+show config wal
+show "wal"
 show wal
 
 # test: restart

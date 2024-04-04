@@ -109,3 +109,4 @@ void lex_keywords(Lex*, bool);
 void lex_next(Lex*, Token*);
 void lex_push(Lex*, Token*);
 bool lex_if(Lex*, int, Token*);
+bool lex_if_name(Lex*, Token*);
