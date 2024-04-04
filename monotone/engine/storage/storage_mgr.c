@@ -35,7 +35,7 @@ storage_mgr_save(StorageMgr* self)
 {
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 
 	// create dump
 	encode_array(&buf, self->list_count);
@@ -68,7 +68,7 @@ storage_mgr_open(StorageMgr* self)
 	{
 		// create source
 		auto source = source_read(&pos);
-		guard(guard, source_free, source);
+		guard(source_free, source);
 
 		// create storage
 		auto storage = storage_mgr_create_object(self, source, false);
@@ -82,7 +82,7 @@ storage_mgr_create_main(StorageMgr* self)
 {
 	// create main storage, if not exists
 	auto config = source_allocate();
-	guard(guard, source_free, config);
+	guard(source_free, config);
 
 	// use instance uuid as main uuid
 	Uuid uuid;

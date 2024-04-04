@@ -75,10 +75,10 @@ engine_show(Engine*  self,
             bool     debug)
 {
 	control_lock_shared();
-	guard(cglguard, control_unlock_guard, NULL);
+	guard(control_unlock_guard, NULL);
 
 	mutex_lock(&self->lock);
-	guard(unlock, mutex_unlock, &self->lock);
+	guard(mutex_unlock, &self->lock);
 
 	// find storage, if specified
 	Storage* storage = NULL;

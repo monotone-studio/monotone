@@ -90,7 +90,7 @@ index_decrypt(File*   self,
 	if (context == NULL)
 		error("partition: file '%s' unknown encryption: %d",
 		      str_of(&self->path), index->encryption);
-	guard(guard, encryption_push_guard, context);
+	guard(encryption_push_guard, context);
 
 	// decrypt
 	encryption_decrypt(context,
@@ -118,7 +118,7 @@ index_decompress(File*   self,
 	if (context == NULL)
 		error("partition: file '%s' unknown compression id: %d",
 		      str_of(&self->path), index->compression);
-	guard(guard, compression_push_guard, context);
+	guard(compression_push_guard, context);
 
 	// decompress
 	compression_decompress(context, buf, origin->start,
@@ -159,13 +159,13 @@ index_read(File*   self,
 	// decrypt index data
 	Buf buf_decrypted;
 	buf_init(&buf_decrypted);
-	guard(guard_buf_decrypted, buf_free, &buf_decrypted);
+	guard(buf_free, &buf_decrypted);
 	origin = index_decrypt(self, source, index, origin, &buf_decrypted);
 
 	// decompress index data
 	Buf buf_decompressed;
 	buf_init(&buf_decompressed);
-	guard(guard_buf_decompressed, buf_free, &buf_decompressed);
+	guard(buf_free, &buf_decompressed);
 	origin = index_decompress(self, source, index, origin, &buf_decompressed);
 
 	// return

@@ -60,7 +60,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 	DIR* dir = opendir(path);
 	if (unlikely(dir == NULL))
 		error("storage: directory '%s' open error", path);
-	guard(dir_guard, closedir, dir);
+	guard(closedir, dir);
 	for (;;)
 	{
 		auto entry = readdir(dir);

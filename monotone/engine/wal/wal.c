@@ -96,7 +96,7 @@ wal_gc(Wal* self, uint64_t snapshot)
 
 	Buf list;
 	buf_init(&list);
-	guard(list_guard, buf_free, &list);
+	guard(buf_free, &list);
 
 	int list_count;
 	list_count = wal_id_gc_between(&self->list, &list, min);
@@ -138,7 +138,7 @@ wal_recover(Wal* self, char *path)
 	DIR* dir = opendir(path);
 	if (unlikely(dir == NULL))
 		error("wal: directory '%s' open error", path);
-	guard(dir_guard, closedir, dir);
+	guard(closedir, dir);
 	for (;;)
 	{
 		auto entry = readdir(dir);
@@ -186,7 +186,7 @@ hot bool
 wal_write(Wal* self, Log* log)
 {
 	mutex_lock(&self->lock);
-	guard(unlock, mutex_unlock, &self->lock);
+	guard(mutex_unlock, &self->lock);
 
 	// assign next lsn
 	log->write.lsn = config_lsn() + 1;
@@ -207,7 +207,7 @@ hot bool
 wal_write_op(Wal* self, LogWrite* write)
 {
 	mutex_lock(&self->lock);
-	guard(unlock, mutex_unlock, &self->lock);
+	guard(mutex_unlock, &self->lock);
 
 	// assign next lsn
 	write->lsn = config_lsn() + 1;

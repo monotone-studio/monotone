@@ -20,7 +20,7 @@ parse_show(Lex* self)
 {
 	// SHOW op [, ...]
 	auto cmd = cmd_show_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	for (;;)
 	{

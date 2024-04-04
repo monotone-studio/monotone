@@ -43,7 +43,7 @@ pipeline_save(Pipeline* self)
 {
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 
 	// create dump
 	encode_array(&buf, self->list_count);
@@ -73,7 +73,7 @@ pipeline_open(Pipeline* self)
 	{
 		// create tier config
 		auto config = tier_config_read(&pos);
-		guard(guard, tier_config_free, config);
+		guard(tier_config_free, config);
 
 		// create tier
 		auto tier = tier_allocate(config);

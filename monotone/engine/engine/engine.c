@@ -105,10 +105,10 @@ engine_lock(Engine* self, uint64_t id, LockType lock,
 {
 	// take shared control lock to avoid exclusive operations
 	control_lock_shared();
-	guard(cglguard, control_unlock_guard, NULL);
+	guard_as(cglguard, control_unlock_guard, NULL);
 
 	mutex_lock(&self->lock);
-	guard(unlock, mutex_unlock, &self->lock);
+	guard(mutex_unlock, &self->lock);
 
 	Slice* slice;
 	if (gte)
@@ -161,7 +161,7 @@ void
 engine_unlock(Engine* self, Ref* ref, LockType lock)
 {
 	mutex_lock(&self->lock);
-	guard(unlock, mutex_unlock, &self->lock);
+	guard(mutex_unlock, &self->lock);
 
 	ref_unlock(ref, lock);
 

@@ -20,7 +20,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 {
 	// create new reference
 	auto ref = ref_allocate(min, max);
-	guard(guard, ref_free, ref);
+	guard_as(guard, ref_free, ref);
 
 	// create new partition
 	Id id =
@@ -61,14 +61,15 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 void
 engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 {
+	// TODO: FIXME
 	if (lock)
 	{
 		// take shared control lock to avoid exclusive operations
 		control_lock_shared();
-		guard(cglguard, control_unlock_guard, NULL);
+		guard(control_unlock_guard, NULL);
 
 		mutex_lock(&self->lock);
-		guard(unlock, mutex_unlock, &self->lock);
+		guard(mutex_unlock, &self->lock);
 	}
 
 	// validate range
@@ -86,7 +87,7 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 	// min and max range
 	Buf gaps;
 	buf_init(&gaps);
-	guard(guard, buf_free, &gaps);
+	guard(buf_free, &gaps);
 
 	auto slice = mapping_seek(&self->mapping, min);
 	while (min <= max)
@@ -537,7 +538,7 @@ engine_rebalance_next(Engine* self, uint64_t* min, Str* storage)
 {
 	// take control shared lock
 	control_lock_shared();
-	guard(lock_guard, control_unlock_guard, NULL);
+	guard(control_unlock_guard, NULL);
 
 	if (pipeline_empty(&self->pipeline))
 		return false;
@@ -573,7 +574,7 @@ engine_rebalance(Engine* self, Refresh* refresh)
 	{
 		Str storage;
 		str_init(&storage);
-		guard(guard, str_free, &storage);
+		guard(str_free, &storage);
 		uint64_t min;
 		if (! engine_rebalance_next(self, &min, &storage))
 			break;
@@ -589,7 +590,7 @@ engine_checkpoint(Engine* self)
 {
 	// take exclusive control lock
 	control_lock_exclusive();
-	guard(guard, control_unlock_guard, NULL);
+	guard(control_unlock_guard, NULL);
 
 	// schedule refresh
 	auto slice = mapping_min(&self->mapping);
@@ -614,7 +615,7 @@ engine_gc(Engine* self)
 
 	// take control shared lock
 	control_lock_shared();
-	guard(lock_guard, control_unlock_guard, NULL);
+	guard(control_unlock_guard, NULL);
 
 	// get minimum lsn currently used by any memtable
 	uint64_t lsn_min = UINT64_MAX;
@@ -720,7 +721,7 @@ engine_resume(Engine* self)
 
 	// take exclusive control lock
 	control_lock_exclusive();
-	guard(guard, control_unlock_guard, NULL);
+	guard(control_unlock_guard, NULL);
 
 	// resume upload
 	auto slice = mapping_min(&self->mapping);

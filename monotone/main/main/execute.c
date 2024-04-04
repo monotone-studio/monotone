@@ -86,7 +86,7 @@ execute_show(Executable* self)
 
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 
 	// []
 	if (cmd->list_count > 1)
@@ -183,7 +183,7 @@ execute_debug(Executable* self)
 	{
 		WalCursor cursor;
 		wal_cursor_init(&cursor);
-		guard(cursor_guard, wal_cursor_close, &cursor);
+		guard(wal_cursor_close, &cursor);
 		wal_cursor_open(&cursor, &self->main->wal, 0);
 		for (;;)
 		{
@@ -555,7 +555,7 @@ main_execute(Main* self, const char* command, char** result)
 
 	Buf output;
 	buf_init(&output);
-	guard(guard, buf_free, &output);
+	guard_as(guard, buf_free, &output);
 
 	Executable arg =
 	{

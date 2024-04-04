@@ -41,7 +41,7 @@ storage_allocate(Source* source)
 	self->events     = 0;
 	self->list_count = 0;
 	list_init(&self->list);
-	guard(self_guard, storage_free, self);
+	guard_as(self_guard, storage_free, self);
 	self->source     = source_copy(source);
 	return unguard(&self_guard);
 }

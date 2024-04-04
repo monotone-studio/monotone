@@ -159,7 +159,7 @@ parse_storage_create(Lex* self)
 {
 	// CREATE STORAGE [IF NOT EXISTS] name (options)
 	auto cmd = cmd_storage_create_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	// if not exists
 	cmd->if_not_exists = parse_if_not_exists(self);
@@ -204,7 +204,7 @@ parse_storage_drop(Lex* self)
 {
 	// DROP STORAGE [IF EXISTS] name
 	auto cmd = cmd_storage_drop_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	// if exists
 	cmd->if_exists = parse_if_exists(self);
@@ -255,7 +255,7 @@ parse_storage_alter(Lex* self)
 	// ALTER STORAGE [IF EXISTS] name RENAME TO name
 	// ALTER STORAGE [IF EXISTS] name SET (options)
 	auto cmd = cmd_storage_alter_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	// if exists
 	cmd->if_exists = parse_if_exists(self);

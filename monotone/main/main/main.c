@@ -179,7 +179,7 @@ main_replay(Main* self)
 {
 	WalCursor cursor;
 	wal_cursor_init(&cursor);
-	guard(cursor_guard, wal_cursor_close, &cursor);
+	guard(wal_cursor_close, &cursor);
 
 	wal_cursor_open(&cursor, &self->wal, 0);
 	uint64_t total = 0;

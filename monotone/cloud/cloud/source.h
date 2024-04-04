@@ -162,7 +162,7 @@ static inline Source*
 source_copy(Source* self)
 {
 	auto copy = source_allocate();
-	guard(copy_guard, source_free, copy);
+	guard_as(copy_guard, source_free, copy);
 	source_set_uuid(copy, &self->uuid);
 	source_set_name(copy, &self->name);
 	source_set_path(copy, &self->path);
@@ -183,7 +183,7 @@ static inline Source*
 source_read(uint8_t** pos)
 {
 	auto self = source_allocate();
-	guard(self_guard, source_free, self);
+	guard_as(self_guard, source_free, self);
 
 	// map
 	int count;

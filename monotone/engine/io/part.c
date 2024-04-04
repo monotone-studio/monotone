@@ -61,7 +61,7 @@ part_open(Part* self, int state, bool read_index)
 		// open and validate partition cloud file
 		File file;
 		file_init(&file);
-		guard(close, file_close, &file);
+		guard(file_close, &file);
 
 		index_open(&file, self->source, &self->id, state, &self->index);
 		index_read(&file, self->source, &self->index,
@@ -96,11 +96,11 @@ part_create(Part* self, int state)
 
 		File file;
 		file_init(&file);
-		guard(close, file_close, &file);
+		guard(file_close, &file);
 
 		Buf index_data;
 		buf_init(&index_data);
-		guard(buf_guard, buf_free, &index_data);
+		guard(buf_free, &index_data);
 
 		Index index;
 		index_open(&file, self->source, &self->id, ID, &index);

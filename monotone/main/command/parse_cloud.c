@@ -111,7 +111,7 @@ parse_cloud_create(Lex* self)
 {
 	// CREATE CLOUD [IF NOT EXISTS] name (options)
 	auto cmd = cmd_cloud_create_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	// if not exists
 	cmd->if_not_exists = parse_if_not_exists(self);
@@ -137,7 +137,7 @@ parse_cloud_drop(Lex* self)
 {
 	// DROP CLOUD [IF EXISTS] name
 	auto cmd = cmd_cloud_drop_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	// if exists
 	cmd->if_exists = parse_if_exists(self);
@@ -189,7 +189,7 @@ parse_cloud_alter(Lex* self)
 	// ALTER CLOUD [IF EXISTS] name RENAME TO name
 	// ALTER CLOUD [IF EXISTS] name SET (options)
 	auto cmd = cmd_cloud_alter_allocate();
-	guard(guard, cmd_free, &cmd->cmd);
+	guard_as(guard, cmd_free, &cmd->cmd);
 
 	// if exists
 	cmd->if_exists = parse_if_exists(self);

@@ -199,7 +199,7 @@ monotone_cursor(monotone_t* self, const char* options, monotone_event_t* key)
 		} else
 		{
 			auto copy = event_malloc((EventArg*)key);
-			guard(guard, event_free, copy);
+			guard(event_free, copy);
 			engine_cursor_open(&cursor->cursor, &self->main.engine, copy);
 		}
 		engine_cursor_skip_deletes(&cursor->cursor);

@@ -33,7 +33,7 @@ mock_create(CloudIf* iface, CloudConfig* config)
 	self->iface  = iface;
 	self->config = NULL;
 	list_init(&self->link);
-	guard(self_guard, mock_free, self);
+	guard_as(self_guard, mock_free, self);
 	self->config = cloud_config_copy(config);
 	return unguard(&self_guard);
 }
@@ -82,7 +82,7 @@ mock_download(Cloud* self, Source* source, Id* id)
 	// read mock file
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 	file_import(&buf, "%s", path_from);
 
 	// in case previous attempt failed without crash
@@ -92,7 +92,7 @@ mock_download(Cloud* self, Source* source, Id* id)
 	// create incomplete file
 	File file;
 	file_init(&file);
-	guard(guard_file, file_close, &file);
+	guard(file_close, &file);
 	file_create(&file, path_to);
 	file_write_buf(&file, &buf);
 
@@ -122,7 +122,7 @@ mock_upload(Cloud* self, Source* source, Id* id)
 	// read storage file
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 	file_import(&buf, "%s", path_from);
 
 	// crash case 5
@@ -131,7 +131,7 @@ mock_upload(Cloud* self, Source* source, Id* id)
 	// create mock file
 	File file;
 	file_init(&file);
-	guard(guard_file, file_close, &file);
+	guard(file_close, &file);
 	file_create(&file, path_to);
 	file_write_buf(&file, &buf);
 }
@@ -161,7 +161,7 @@ mock_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
 	// open and read mock file
 	File file;
 	file_init(&file);
-	guard(guard_file, file_close, &file);
+	guard(file_close, &file);
 	file_open(&file, path);
 	file_pread_buf(&file, buf, size, offset);
 }

@@ -44,7 +44,7 @@ cloud_mgr_save(CloudMgr* self)
 {
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 
 	// create dump
 	encode_array(&buf, self->list_count);
@@ -90,7 +90,7 @@ cloud_mgr_open(CloudMgr* self)
 	{
 		// create cloud config
 		auto config = cloud_config_read(&pos);
-		guard(guard, cloud_config_free, config);
+		guard(cloud_config_free, config);
 
 		// create cloud object
 		cloud_mgr_create_object(self, config);

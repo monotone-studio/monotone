@@ -28,7 +28,7 @@ unguard(Guard* self)
 	return self->function_arg;
 }
 
-#define guard(self, func, func_arg) \
+#define guard_as(self, func, func_arg) \
 	Guard __attribute((cleanup(guard_runner))) self = { \
 		.function = (GuardFunction)func, \
 		.function_arg = func_arg, \
@@ -39,3 +39,12 @@ unguard(Guard* self)
 			prev; \
 		}) \
 	}
+
+#define guard_auto_def(name, line, func, func_arg) \
+	guard_as(name##line, func, func_arg)
+
+#define guard_auto(name, line, func, func_arg) \
+	guard_auto_def(name, line, func, func_arg)
+
+#define guard(func, func_arg) \
+	guard_auto(_guard_, __LINE__, func, func_arg)

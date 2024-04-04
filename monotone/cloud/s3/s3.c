@@ -55,7 +55,7 @@ s3_create(CloudIf* iface, CloudConfig* config)
 	cloud->config = NULL;
 	list_init(&cloud->link);
 
-	guard(self_guard, s3_free, self);
+	guard_as(self_guard, s3_free, self);
 	cloud->config = cloud_config_copy(config);
 
 	unguard(&self_guard);
@@ -78,7 +78,7 @@ s3_attach(Cloud* self, Source* source)
 
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard(guard_io, s3_io_free, io);
+	guard_as(guard_io, s3_io_free, io);
 
 	// create bucket, if not exists
 	s3_op_create_bucket(io, source);
@@ -95,7 +95,7 @@ s3_detach(Cloud* self, Source* source)
 
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard(guard_io, s3_io_free, io);
+	guard_as(guard_io, s3_io_free, io);
 
 	// drop bucket
 	s3_op_drop_bucket(io, source);
@@ -119,12 +119,12 @@ s3_download(Cloud* self, Source* source, Id* id)
 		fs_unlink("%s", path);
 	File file;
 	file_init(&file);
-	guard(guard_file, file_close, &file);
+	guard(file_close, &file);
 	file_create(&file, path);
 
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard(guard_io, s3_io_free, io);
+	guard_as(guard_io, s3_io_free, io);
 
 	// execute GET and write content to the file
 	s3_op_download(io, source, id, &file);
@@ -153,12 +153,12 @@ s3_upload(Cloud* self, Source* source, Id* id)
 	id_path(id, source, ID, path);
 	File file;
 	file_init(&file);
-	guard(guard_file, file_close, &file);
+	guard(file_close, &file);
 	file_open(&file, path);
 	
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard(guard_io, s3_io_free, io);
+	guard_as(guard_io, s3_io_free, io);
 
 	// execute PUT and transfer file content
 	s3_op_upload(io, source, id, &file);
@@ -175,7 +175,7 @@ s3_remove(Cloud* self, Source* source, Id* id)
 	
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard(guard_io, s3_io_free, io);
+	guard_as(guard_io, s3_io_free, io);
 
 	// execute DELETE
 	s3_op_delete(io, source, id);
@@ -193,7 +193,7 @@ s3_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
 	
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard(guard_io, s3_io_free, io);
+	guard_as(guard_io, s3_io_free, io);
 
 	// execute GET and read partial file range to the buffer
 	s3_op_read(io, source, id, buf, size, offset);

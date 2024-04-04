@@ -192,7 +192,7 @@ config_set(Config* self, Str* options)
 {
 	Json json;
 	json_init(&json);
-	guard(json_guard, json_free, &json);
+	guard(json_free, &json);
 	json_parse(&json, options);
 	uint8_t* pos = json.buf.start;
 	config_set_data(self, &pos);
@@ -218,20 +218,20 @@ config_save_to(Config* self, const char* path)
 	// get a list of variables
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 	config_list_persistent(self, &buf);
 
 	// convert to json
 	Buf text;
 	buf_init(&text);
-	guard(guard_text, buf_free, &text);
+	guard(buf_free, &text);
 	uint8_t* pos = buf.start;
 	json_export_pretty(&text, &pos);
 
 	// create config file
 	File file;
 	file_init(&file);
-	guard(file_guard, file_close, &file);
+	guard(file_close, &file);
 	file_open_as(&file, path, O_CREAT|O_RDWR, 0600);
 	file_write_buf(&file, &text);
 
@@ -245,7 +245,7 @@ config_save(Config* self, const char* path)
 	// remove old saved config, if exists
 	Buf buf;
 	buf_init(&buf);
-	guard(guard, buf_free, &buf);
+	guard(buf_free, &buf);
 	if (fs_exists("%s.old", path))
 		fs_unlink("%s.old", path);
 
@@ -266,7 +266,7 @@ config_open(Config* self, const char* path)
 	{
 		Buf buf;
 		buf_init(&buf);
-		guard(guard, buf_free, &buf);
+		guard(buf_free, &buf);
 		file_import(&buf, "%s", path);
 		Str options;
 		str_init(&options);

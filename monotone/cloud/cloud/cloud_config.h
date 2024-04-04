@@ -97,7 +97,7 @@ static inline CloudConfig*
 cloud_config_copy(CloudConfig* self)
 {
 	auto copy = cloud_config_allocate();
-	guard(copy_guard, cloud_config_free, copy);
+	guard_as(copy_guard, cloud_config_free, copy);
 	cloud_config_set_name(copy, &self->name);
 	cloud_config_set_type(copy, &self->type);
 	cloud_config_set_login(copy, &self->login);
@@ -111,7 +111,7 @@ static inline CloudConfig*
 cloud_config_read(uint8_t** pos)
 {
 	auto self = cloud_config_allocate();
-	guard(self_guard, cloud_config_free, self);
+	guard_as(self_guard, cloud_config_free, self);
 
 	// map
 	int count;
