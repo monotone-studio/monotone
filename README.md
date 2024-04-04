@@ -6,7 +6,7 @@
 Monotone is a modern embeddable data storage designed from the ground up precisely
 for sequential workloads, such as append write and range scans.
 
-Typical use cases include `IoT, events, time series, crypto, blockchain, finance, monitoring,
+Sequential workloads are at the foundation of the following use cases: `IoT, events, time series, crypto, blockchain, finance, monitoring,
 logs collection, and Kafka-style workloads`.
 
 Made to match the following requirements:
