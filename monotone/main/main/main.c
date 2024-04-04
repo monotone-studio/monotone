@@ -165,9 +165,10 @@ main_deploy(Main* self, Str* directory)
 		logger_open(logger, path);
 	}
 
-	// set memory manager settings
+	// configure memory manager
 	memory_mgr_set(&self->memory_mgr,
 	               var_int_of(&config()->mm_page_size),
+	               var_int_of(&config()->mm_cache),
 	               var_int_of(&config()->mm_limit),
 	               &config()->mm_limit_behaviour.string,
 	               var_int_of(&config()->mm_limit_wm));

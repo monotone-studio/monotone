@@ -82,10 +82,11 @@ config_prepare(Config* self)
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
 		{ "log_to_stdout",           VAR_BOOL,   VAR_C,                &self->log_to_stdout,           NULL,        false            },
 		// memory manager
+		{ "mm_page_size",            VAR_INT,    VAR_C,                &self->mm_page_size,            NULL,        2097152          },
 		{ "mm_limit",                VAR_BOOL,   VAR_C,                &self->mm_limit,                NULL,        false            },
 		{ "mm_limit_wm",             VAR_INT,    VAR_C,                &self->mm_limit_wm,             NULL,        8589934592       },
 		{ "mm_limit_behaviour",      VAR_STRING, VAR_C,                &self->mm_limit_behaviour,      "block",     0                },
-		{ "mm_page_size",            VAR_INT,    VAR_C,                &self->mm_page_size,            NULL,        2097152          },
+		{ "mm_cache",                VAR_INT,    VAR_C,                &self->mm_cache,                NULL,        8589934592       },
 		// wal
 		{ "wal_enable",              VAR_BOOL,   VAR_C,                &self->wal_enable,              NULL,        true             },
 		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
