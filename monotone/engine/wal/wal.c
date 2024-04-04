@@ -231,7 +231,23 @@ wal_show(Wal* self, Buf* buf)
 	wal_id_stats(&self->list, &list_count, &list_min);
 
 	// map
-	encode_map(buf, 3);
+	encode_map(buf, 7);
+
+	// active
+	encode_raw(buf, "active", 6);
+	encode_bool(buf, var_int_of(&config()->wal_enable));
+
+	// rotate_wm
+	encode_raw(buf, "rotate_wm", 9);
+	encode_integer(buf, var_int_of(&config()->wal_rotate_wm));
+
+	// sync_on_rotate
+	encode_raw(buf, "sync_on_rotate", 14);
+	encode_bool(buf, var_int_of(&config()->wal_sync_on_rotate));
+
+	// sync_on_write
+	encode_raw(buf, "sync_on_write", 13);
+	encode_bool(buf, var_int_of(&config()->wal_sync_on_write));
 
 	// lsn
 	encode_raw(buf, "lsn", 3);

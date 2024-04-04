@@ -52,6 +52,10 @@ debug "wal_gc"
 debug "wal_read"
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 2,
   "lsn_min": 3,
   "files": 1

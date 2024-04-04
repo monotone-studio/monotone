@@ -8,6 +8,10 @@ open
 # test: create wal on start
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 0,
   "lsn_min": 1,
   "files": 1
@@ -21,6 +25,10 @@ set interval to 10
 open
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 0,
   "lsn_min": 1,
   "files": 1
@@ -31,6 +39,10 @@ show lsn
 1
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 1,
   "lsn_min": 1,
   "files": 1
@@ -43,6 +55,10 @@ show lsn
 2
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 2,
   "lsn_min": 1,
   "files": 1
@@ -56,6 +72,10 @@ show lsn
 3
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -76,6 +96,10 @@ show lsn
 3
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 1
@@ -95,6 +119,10 @@ select
 debug 'wal_create'
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 2
@@ -109,6 +137,10 @@ open
 # test: select
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 3,
   "lsn_min": 1,
   "files": 2
@@ -124,6 +156,10 @@ show lsn
 4
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -144,6 +180,10 @@ open
 # test: select
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -158,6 +198,10 @@ select
 debug 'wal_gc'
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -213,6 +257,10 @@ show partitions debug
 }]
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 4,
   "lsn_min": 1,
   "files": 2
@@ -266,6 +314,10 @@ select
 debug 'wal_gc'
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 4,
   "lsn_min": 4,
   "files": 1
@@ -310,6 +362,10 @@ show partitions debug
 }]
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 4,
   "lsn_min": 4,
   "files": 1
@@ -374,6 +430,10 @@ show partitions debug
 }]
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 5,
   "lsn_min": 4,
   "files": 1
@@ -425,6 +485,10 @@ show partitions debug
 }]
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 5,
   "lsn_min": 4,
   "files": 1
@@ -473,6 +537,10 @@ show partitions debug
 }]
 show wal
 {
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
   "lsn": 8,
   "lsn_min": 4,
   "files": 1
