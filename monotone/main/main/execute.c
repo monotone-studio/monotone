@@ -362,7 +362,7 @@ execute_partition_create(Executable* self)
 	auto cmd = cmd_partition_of(self->cmd);
 
 	// create one or more partitions
-	engine_fill(&self->main->engine, cmd->min, cmd->max, true);
+	engine_fill(&self->main->engine, cmd->min, cmd->max);
 }
 
 static void

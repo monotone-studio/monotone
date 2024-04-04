@@ -59,19 +59,8 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 }
 
 void
-engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
+engine_fill_unlocked(Engine* self, uint64_t min, uint64_t max)
 {
-	// TODO: FIXME
-	if (lock)
-	{
-		// take shared control lock to avoid exclusive operations
-		control_lock_shared();
-		guard(control_unlock_guard, NULL);
-
-		mutex_lock(&self->lock);
-		guard(mutex_unlock, &self->lock);
-	}
-
 	// validate range
 	if (unlikely(min > max))
 		error("fill: invalid partition interval");
@@ -131,6 +120,19 @@ engine_fill(Engine* self, uint64_t min, uint64_t max, bool lock)
 	auto end = (Id*)gaps.position;
 	for (; pos < end; pos++)
 		engine_create(self, pos->min, pos->max);
+}
+
+void
+engine_fill(Engine* self, uint64_t min, uint64_t max)
+{
+	// take shared control lock to avoid exclusive operations
+	control_lock_shared();
+	guard(control_unlock_guard, NULL);
+
+	mutex_lock(&self->lock);
+	guard(mutex_unlock, &self->lock);
+
+	engine_fill_unlocked(self, min, max);
 }
 
 static inline bool

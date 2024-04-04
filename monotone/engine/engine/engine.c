@@ -135,7 +135,7 @@ engine_lock(Engine* self, uint64_t id, LockType lock,
 			// interval is inclusive
 			auto min = config_interval_of(id);
 			auto max = (min + config_interval()) - 1;
-			engine_fill(self, min, max, false);
+			engine_fill_unlocked(self, min, max);
 
 			// retry search
 			slice = mapping_match(&self->mapping, id);
