@@ -50,7 +50,7 @@ Learn more about its [Architecture](ARCHITECTURE.md).
 	Encrypt and decrypt partitions automatically on refresh, partition move, or read.
 	Compatible with compression and done transparently without blocking readers and writers.
   
-- **Storages**
+- **Multiple Storages**
 
     Create storage to store data on different storage devices.
 	Set different storage settings, such as compression, encryption, associated cloud, etc.
