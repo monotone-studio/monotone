@@ -215,11 +215,11 @@ execute_service(Executable* self)
 	Refresh refresh;
 	refresh_init(&refresh, engine);
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		engine_service(engine, &refresh, SERVICE_ANY, false);
 	}
 	refresh_free(&refresh);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }
 
@@ -230,11 +230,11 @@ execute_rebalance(Executable* self)
 	Refresh refresh;
 	refresh_init(&refresh, engine);
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		engine_rebalance(engine, &refresh);
 	}
 	refresh_free(&refresh);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }
 
@@ -393,13 +393,12 @@ execute_partition_move(Executable* self)
 	Refresh refresh;
 	refresh_init(&refresh, engine);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		engine_refresh(engine, &refresh, cmd->min, &cmd->storage.string,
 		               cmd->if_exists);
 	}
 	refresh_free(&refresh);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }
 
@@ -413,13 +412,12 @@ execute_partition_move_range(Executable* self)
 	Refresh refresh;
 	refresh_init(&refresh, engine);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		engine_refresh_range(engine, &refresh, cmd->min, cmd->max,
 		                     &cmd->storage.string);
 	}
 	refresh_free(&refresh);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }
 
@@ -433,12 +431,11 @@ execute_partition_refresh(Executable* self)
 	Refresh refresh;
 	refresh_init(&refresh, engine);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		engine_refresh(engine, &refresh, cmd->min, NULL, cmd->if_exists);
 	}
 	refresh_free(&refresh);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }
 
@@ -452,12 +449,11 @@ execute_partition_refresh_range(Executable* self)
 	Refresh refresh;
 	refresh_init(&refresh, engine);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		engine_refresh_range(engine, &refresh, cmd->min, cmd->max, NULL);
 	}
 	refresh_free(&refresh);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }
 
@@ -566,15 +562,13 @@ main_execute(Main* self, const char* command, char** result)
 
 	// execute
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		execute->function(&arg);
 	}
-
 	if (execute->lock != EXECUTE_LOCK_NONE)
 		control_unlock();
 	cmd_free(cmd);
-
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 
 	if (result && buf_size(&output) > 0)

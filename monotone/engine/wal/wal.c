@@ -56,12 +56,12 @@ wal_rotate(Wal* self, uint64_t wm)
 	// create new wal file
 	WalFile* file = NULL;
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		file = wal_file_allocate(next_lsn);
 		wal_file_create(file);
 	}
-	if (catch(&e))
+	if (leave(&e))
 	{
 		if (file)
 		{

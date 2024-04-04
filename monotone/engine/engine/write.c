@@ -71,7 +71,7 @@ engine_write(Engine* self, EventArg* events, int count)
 	log_init(&log);
 
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		for (int i = 0; i < count; i++)
 		{
@@ -115,7 +115,7 @@ engine_write(Engine* self, EventArg* events, int count)
 		}
 	}
 
-	if (catch(&e))
+	if (leave(&e))
 	{
 		engine_rollback(self, &log);
 		log_free(&log);
@@ -133,7 +133,7 @@ engine_write_replay(Engine* self, LogWrite* write)
 	log_init(&log);
 
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		auto pos = log_write_first(write);
 		for (; pos; pos = log_write_next(write, pos))
@@ -168,7 +168,7 @@ engine_write_replay(Engine* self, LogWrite* write)
 		log.write.lsn = write->lsn;
 	}
 
-	if (catch(&e))
+	if (leave(&e))
 	{
 		engine_rollback(self, &log);
 		log_free(&log);

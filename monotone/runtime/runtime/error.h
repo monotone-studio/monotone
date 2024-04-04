@@ -42,12 +42,12 @@ error_reset(Error* self)
 }
 
 static inline void no_return
-error_throw(Error*        self,
-            ExceptionMgr* mgr,
-            const char*   file,
-            const char*   function, int line,
-            const char*   fmt,
-            ...)
+error_throw_as(Error*        self,
+               ExceptionMgr* mgr,
+               const char*   file,
+               const char*   function, int line,
+               const char*   fmt,
+              ...)
 {
 	va_list args;
 	if (self->log)

@@ -45,11 +45,10 @@ monotone_init(void)
 
 	monotone_enter(self);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		main_prepare(&self->main);
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		main_free(&self->main);
 		free(self);
 		self = NULL;
@@ -66,12 +65,12 @@ monotone_free(void* ptr)
 		monotone_t* self = ptr;
 		monotone_enter(self);
 		Exception e;
-		if (try(&e))
+		if (enter(&e))
 		{
 			main_stop(&self->main);
 			main_free(&self->main);
 		}
-		if (catch(&e))
+		if (leave(&e))
 		{ }
 		break;
 	}
@@ -81,10 +80,10 @@ monotone_free(void* ptr)
 		monotone_t* env = self->env;
 		monotone_enter(env);
 		Exception e;
-		if (try(&e)) {
+		if (enter(&e)) {
 			engine_cursor_close(&self->cursor);
 		}
-		if (catch(&e))
+		if (leave(&e))
 		{ }
 		break;
 	}
@@ -119,11 +118,10 @@ monotone_set_compare(monotone_t* self, monotone_compare_t compare, void* arg)
 	int rc = 0;
 	monotone_enter(self);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		main_set_compare(&self->main, (Compare)compare, arg);
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		rc = -1;
 	}
 	return rc;
@@ -135,11 +133,10 @@ monotone_open(monotone_t* self, const char* directory)
 	int rc = 0;
 	monotone_enter(self);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		main_start(&self->main, directory);
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		rc = -1;
 	}
 	return rc;
@@ -151,11 +148,10 @@ monotone_execute(monotone_t* self, const char* command, char** result)
 	int rc = 0;
 	monotone_enter(self);
 	Exception e;
-	if (try(&e))
-	{
+	if (enter(&e)) {
 		main_execute(&self->main, command, result);
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		rc = -1;
 	}
 	return rc;
@@ -167,10 +163,10 @@ monotone_write(monotone_t* self, monotone_event_t* events, int count)
 	monotone_enter(self);
 	int rc = 0;
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		engine_write(&self->main.engine, (EventArg*)events, count);
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		rc = -1;
 	}
 	return rc;
@@ -190,9 +186,8 @@ monotone_cursor(monotone_t* self, const char* options, monotone_event_t* key)
 	cursor->env  = self;
 	engine_cursor_init(&cursor->cursor);
 
-	bool error = false;
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		if (key == NULL) {
 			engine_cursor_open(&cursor->cursor, &self->main.engine, NULL);
@@ -205,17 +200,17 @@ monotone_cursor(monotone_t* self, const char* options, monotone_event_t* key)
 		engine_cursor_skip_deletes(&cursor->cursor);
 	}
 
-	if (catch(&e))
-		error = true;
+	if (leave(&e))
+	{ }
 
-	if (unlikely(error))
+	if (unlikely(e.triggered))
 	{
-		if (try(&e)) {
+		if (enter(&e)) {
 			engine_cursor_close(&cursor->cursor);
 			mn_free(cursor);
 			cursor = NULL;
 		}
-		if (catch(&e))
+		if (leave(&e))
 		{ }
 	}
 
@@ -228,7 +223,7 @@ monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 	monotone_enter(self->env);
 	int rc;
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		auto at = engine_cursor_at(&self->cursor);
 		if (likely(at))
@@ -253,7 +248,7 @@ monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 			rc = 0;
 		}
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		rc = -1;
 	}
 	return rc;
@@ -265,12 +260,12 @@ monotone_next(monotone_cursor_t* self)
 	monotone_enter(self->env);
 	int rc;
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		engine_cursor_next(&self->cursor);
 		engine_cursor_skip_deletes(&self->cursor);
 		rc = engine_cursor_has(&self->cursor);
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		rc = -1;
 	}
 	return rc;

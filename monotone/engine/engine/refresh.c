@@ -208,7 +208,7 @@ refresh_run(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 		return;
 
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		// step 2. create new partition by merging existing partition
 		// file with the memtable
@@ -225,6 +225,6 @@ refresh_run(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 	engine_unlock(self->engine, self->ref, LOCK_SERVICE);
 	self->ref = NULL;
 
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 }

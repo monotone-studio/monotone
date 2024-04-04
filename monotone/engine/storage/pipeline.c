@@ -98,7 +98,7 @@ pipeline_alter(Pipeline* self, List* configs)
 	list_init(&list);
 
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		list_foreach(configs)
 		{
@@ -108,7 +108,7 @@ pipeline_alter(Pipeline* self, List* configs)
 			tier_resolve(tier, self->storage_mgr);
 		}
 	}
-	if (catch(&e))
+	if (leave(&e))
 	{
 		list_foreach_safe(&list)
 		{

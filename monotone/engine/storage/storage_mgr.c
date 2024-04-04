@@ -125,10 +125,10 @@ storage_mgr_create_object(StorageMgr* self, Source* source, bool attach)
 
 	// find cloud object, if defined
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		storage_set_cloud(self, storage, attach);
 	}
-	if (catch(&e))
+	if (leave(&e))
 	{
 		storage_free(storage);
 		rethrow();

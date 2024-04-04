@@ -122,9 +122,9 @@ s3_op_read_cb(void* ptr, size_t len, size_t nmemb, void* arg)
 	Buf* buf = arg;
 	size_t read = len * nmemb;
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 		buf_write(buf, ptr, len * nmemb);
-	if (catch(&e))
+	if (leave(&e))
 		read = 0;
 	return read;
 }

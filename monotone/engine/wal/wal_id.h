@@ -36,10 +36,10 @@ wal_id_add(WalId* self, uint64_t id)
 	spinlock_lock(&self->lock);
 
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		buf_reserve(&self->list, sizeof(id));
 	}
-	if (catch(&e)) {
+	if (leave(&e)) {
 		spinlock_unlock(&self->lock);
 		rethrow();
 	}
@@ -84,7 +84,7 @@ wal_id_copy(WalId* self, Buf* dest, uint64_t limit)
 	spinlock_lock(&self->lock);
 
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		// copy <= limit
 		auto list = (uint64_t*)self->list.start;
@@ -98,7 +98,7 @@ wal_id_copy(WalId* self, Buf* dest, uint64_t limit)
 	}
 
 	spinlock_unlock(&self->lock);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 
 	return count;
@@ -193,7 +193,6 @@ static inline int
 wal_id_gc_between(WalId* self, Buf* dest, uint64_t id)
 {
 	spinlock_lock(&self->lock);
-
 	auto list = buf_u64(&self->list);
 
 	int i = 0;
@@ -213,7 +212,7 @@ wal_id_gc_between(WalId* self, Buf* dest, uint64_t id)
 
 	// copy removed region
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		int size = i * sizeof(uint64_t);
 		buf_write(dest, self->list.start, size);
@@ -226,7 +225,7 @@ wal_id_gc_between(WalId* self, Buf* dest, uint64_t id)
 	}
 
 	spinlock_unlock(&self->lock);
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 
 	return i;

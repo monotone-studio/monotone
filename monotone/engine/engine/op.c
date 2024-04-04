@@ -187,7 +187,7 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists,
 
 	// delete partition file on storage or cloud
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		if (mask & ID_CLOUD)
 		{
@@ -223,7 +223,7 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists,
 
 	engine_unlock(self, ref, LOCK_SERVICE);
 
-	if (catch(&e))
+	if (leave(&e))
 		rethrow();
 
 	return true;
@@ -355,10 +355,10 @@ engine_download(Engine* self, uint64_t min,
 
 	// download and open partition file
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		part_download(part);
 	}
-	if (catch(&e))
+	if (leave(&e))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		rethrow();
@@ -425,10 +425,10 @@ engine_upload(Engine* self, uint64_t min,
 
 	// create cloud file and upload data file
 	Exception e;
-	if (try(&e)) {
+	if (enter(&e)) {
 		part_upload(part);
 	}
-	if (catch(&e))
+	if (leave(&e))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		rethrow();
@@ -656,7 +656,7 @@ engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 		return false;
 
 	Exception e;
-	if (try(&e))
+	if (enter(&e))
 	{
 		while (req->current < req->actions_count)
 		{
@@ -707,7 +707,7 @@ engine_service(Engine* self, Refresh* refresh, ServiceFilter filter, bool wait)
 			req->current++;
 		}
 	}
-	if (catch(&e))
+	if (leave(&e))
 	{ }
 
 	if (req)
