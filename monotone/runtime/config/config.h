@@ -16,7 +16,7 @@ struct Config
 	Var  online;
 	Var  directory;
 	// log
-	Var  log_enable;
+	Var  log;
 	Var  log_to_file;
 	Var  log_to_stdout;
 	// memory manager
@@ -26,7 +26,7 @@ struct Config
 	Var  mm_limit_behaviour;
 	Var  mm_cache;
 	// wal
-	Var  wal_enable;
+	Var  wal;
 	Var  wal_rotate_wm;
 	Var  wal_sync_on_rotate;
 	Var  wal_sync_on_write;

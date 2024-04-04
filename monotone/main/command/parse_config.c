@@ -72,6 +72,7 @@ parse_show(Lex* self)
 			type = SHOW_CONFIG;
 			break;
 		case KNAME:
+		case KSTRING:
 			type = SHOW_NAME;
 			break;
 		default:
@@ -104,8 +105,10 @@ parse_set(Lex* self)
 
 	// name
 	Token name;
+	lex_keywords(self, false);
 	if (! lex_if(self, KNAME, &name))
 		error("SET <name> expected");
+	lex_keywords(self, true);
 
 	// to
 	if (! lex_if(self, KTO, NULL))

@@ -78,7 +78,7 @@ config_prepare(Config* self)
 		{ "uuid",                    VAR_STRING, VAR_C,                &self->uuid,                    NULL,        0                },
 		{ "directory",               VAR_STRING, VAR_E,                &self->directory,               NULL,        0                },
 		// log
-		{ "log_enable",              VAR_BOOL,   VAR_C,                &self->log_enable,              NULL,        true             },
+		{ "log",                     VAR_BOOL,   VAR_C,                &self->log,                     NULL,        true             },
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
 		{ "log_to_stdout",           VAR_BOOL,   VAR_C,                &self->log_to_stdout,           NULL,        false            },
 		// memory manager
@@ -88,7 +88,7 @@ config_prepare(Config* self)
 		{ "mm_limit_behaviour",      VAR_STRING, VAR_C,                &self->mm_limit_behaviour,      "block",     0                },
 		{ "mm_cache",                VAR_INT,    VAR_C,                &self->mm_cache,                NULL,        8589934592       },
 		// wal
-		{ "wal_enable",              VAR_BOOL,   VAR_C,                &self->wal_enable,              NULL,        true             },
+		{ "wal",                     VAR_BOOL,   VAR_C,                &self->wal,                     NULL,        true             },
 		{ "wal_rotate_wm",           VAR_INT,    VAR_C|VAR_R,          &self->wal_rotate_wm,           NULL,        104857600        },
 		{ "wal_sync_on_rotate",      VAR_BOOL,   VAR_C,                &self->wal_sync_on_rotate,      NULL,        true             },
 		{ "wal_sync_on_write",       VAR_BOOL,   VAR_C,                &self->wal_sync_on_write,       NULL,        false            },

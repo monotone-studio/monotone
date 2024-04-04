@@ -157,7 +157,7 @@ main_deploy(Main* self, Str* directory)
 
 	// configure logger
 	auto logger = &self->logger;
-	logger_set_enable(logger, var_int_of(&config()->log_enable));
+	logger_set_enable(logger, var_int_of(&config()->log));
 	logger_set_to_stdout(logger, var_int_of(&config()->log_to_stdout));
 	if (var_int_of(&config()->log_to_file))
 	{
@@ -239,7 +239,7 @@ main_start(Main* self, const char* directory)
 	engine_open(&self->engine);
 
 	// open wal and replay
-	if (var_int_of(&config()->wal_enable))
+	if (var_int_of(&config()->wal))
 	{
 		wal_open(&self->wal);
 		main_replay(self);

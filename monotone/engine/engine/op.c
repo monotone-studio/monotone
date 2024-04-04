@@ -263,7 +263,7 @@ engine_drop_reference(Engine* self, uint64_t min)
 	ref_free(ref);
 
 	// wal write
-	if (var_int_of(&config()->wal_enable))
+	if (var_int_of(&config()->wal))
 	{
 		LogDrop drop;
 		log_drop_init(&drop);
@@ -609,7 +609,7 @@ engine_checkpoint(Engine* self)
 hot void
 engine_gc(Engine* self)
 {
-	if (! var_int_of(&config()->wal_enable))
+	if (! var_int_of(&config()->wal))
 		return;
 
 	// take control shared lock

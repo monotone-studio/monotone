@@ -235,7 +235,7 @@ wal_show(Wal* self, Buf* buf)
 
 	// active
 	encode_raw(buf, "active", 6);
-	encode_bool(buf, var_int_of(&config()->wal_enable));
+	encode_bool(buf, var_int_of(&config()->wal));
 
 	// rotate_wm
 	encode_raw(buf, "rotate_wm", 9);

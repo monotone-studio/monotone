@@ -2,7 +2,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
 open
@@ -56,7 +56,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -245,7 +245,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -397,7 +397,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -630,7 +630,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -743,7 +743,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -761,7 +761,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate storages
@@ -878,7 +878,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -924,7 +924,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1087,7 +1087,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1277,7 +1277,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1588,7 +1588,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1931,7 +1931,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
-set wal_enable to false
+set wal to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions

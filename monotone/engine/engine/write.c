@@ -98,7 +98,7 @@ engine_write(Engine* self, EventArg* events, int count)
 		}
 
 		// wal write
-		if (var_int_of(&config()->wal_enable))
+		if (var_int_of(&config()->wal))
 		{
 			// wal write error test case
 			error_injection(error_wal);
