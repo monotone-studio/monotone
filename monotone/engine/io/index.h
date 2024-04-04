@@ -9,7 +9,8 @@
 typedef struct IndexRegion IndexRegion;
 typedef struct Index       Index;
 
-#define INDEX_MAGIC 0x20849615
+#define INDEX_MAGIC   0x20849615
+#define INDEX_VERSION 0
 
 struct IndexRegion
 {
@@ -28,6 +29,7 @@ struct Index
 	uint32_t crc;
 	uint32_t crc_data;
 	uint32_t magic;
+	uint32_t version;
 	Id       id;
 	uint32_t size;
 	uint32_t size_origin;

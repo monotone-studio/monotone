@@ -56,6 +56,11 @@ index_open(File*   self,
 	if (! valid)
 		error("partition: file '%s' size mismatch",
 		      str_of(&self->path));
+
+	// check index format version
+	if (unlikely(index->version > INDEX_VERSION))
+		error("partition: file '%s' index format is not compatible",
+		      str_of(&self->path));
 }
 
 static inline void

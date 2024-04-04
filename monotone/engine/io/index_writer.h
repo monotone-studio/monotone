@@ -131,6 +131,7 @@ index_writer_stop(IndexWriter* self,
 	index->crc               = 0;
 	index->crc_data          = 0;
 	index->magic             = INDEX_MAGIC;
+	index->version           = INDEX_VERSION;
 	index->id                = *id;
 	index->size              = size;
 	index->size_origin       = size_origin;
