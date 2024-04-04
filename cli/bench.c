@@ -32,7 +32,7 @@ instance_open(Instance* self, BenchConfig* config, int id)
 	monotone_execute(self->env, sz, NULL);
 
 	// wal
-	snprintf(sz, sizeof(sz), "set wal_enable to %s", config->wal ? "true": "false");
+	snprintf(sz, sizeof(sz), "set wal to %s", config->wal ? "true": "false");
 	monotone_execute(self->env, sz, NULL);
 
 	mkdir(config->path, 0755);
