@@ -29,7 +29,7 @@ struct Exception
 
 struct ExceptionMgr
 {
-	Exception*  last;
+	Exception* last;
 };
 
 static inline void

@@ -59,7 +59,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 }
 
 void
-engine_fill_unlocked(Engine* self, uint64_t min, uint64_t max)
+engine_fill_nolock(Engine* self, uint64_t min, uint64_t max)
 {
 	// validate range
 	if (unlikely(min > max))
@@ -132,7 +132,7 @@ engine_fill(Engine* self, uint64_t min, uint64_t max)
 	mutex_lock(&self->lock);
 	guard(mutex_unlock, &self->lock);
 
-	engine_fill_unlocked(self, min, max);
+	engine_fill_nolock(self, min, max);
 }
 
 static inline bool
