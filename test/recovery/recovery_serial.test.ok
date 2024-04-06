@@ -56,6 +56,7 @@ show wal
   "rotate_wm": 104857600,
   "sync_on_rotate": true,
   "sync_on_write": false,
+  "crc": false,
   "lsn": 2,
   "lsn_min": 3,
   "files": 1

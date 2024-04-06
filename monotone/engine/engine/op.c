@@ -269,8 +269,7 @@ engine_drop_reference(Engine* self, uint64_t min)
 	if (var_int_of(&config()->wal))
 	{
 		LogDrop drop;
-		log_drop_init(&drop);
-		drop.id = min;
+		log_drop_init(&drop, min);
 		auto rotate_ready = wal_write_op(self->wal, &drop.write);
 
 		// schedule wal rotation

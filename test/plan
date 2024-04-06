@@ -43,6 +43,7 @@ test cloud_rebalance
 directory recovery
 group recovery
 test wal
+test wal_crc
 test recovery_config
 test recovery_storage
 test recovery_cloud

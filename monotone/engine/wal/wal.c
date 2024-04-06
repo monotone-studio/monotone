@@ -190,6 +190,7 @@ wal_write(Wal* self, Log* log)
 
 	// assign next lsn
 	log->write.lsn = config_lsn() + 1;
+	log_write_seal(&log->write);
 
 	// write wal file
 	wal_file_writev(self->current, iov_pointer(&log->iov),
@@ -211,6 +212,7 @@ wal_write_op(Wal* self, LogWrite* write)
 
 	// assign next lsn
 	write->lsn = config_lsn() + 1;
+	log_write_seal(write);
 
 	// write wal file
 	wal_file_write(self->current, write, write->size);
@@ -231,7 +233,7 @@ wal_show(Wal* self, Buf* buf)
 	wal_id_stats(&self->list, &list_count, &list_min);
 
 	// map
-	encode_map(buf, 7);
+	encode_map(buf, 8);
 
 	// active
 	encode_raw(buf, "active", 6);
@@ -248,6 +250,10 @@ wal_show(Wal* self, Buf* buf)
 	// sync_on_write
 	encode_raw(buf, "sync_on_write", 13);
 	encode_bool(buf, var_int_of(&config()->wal_sync_on_write));
+
+	// crc
+	encode_raw(buf, "crc", 3);
+	encode_bool(buf, var_int_of(&config()->wal_crc));
 
 	// lsn
 	encode_raw(buf, "lsn", 3);

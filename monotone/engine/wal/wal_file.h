@@ -100,5 +100,19 @@ wal_file_pread(WalFile* self, uint64_t offset, Buf* buf)
 	uint32_t size_data;
 	size_data = size - size_header;
 	file_pread_buf(&self->file, buf, size_data, offset + size_header);
+
+	// check crc
+	if (var_int_of(&config()->wal_crc))
+	{
+		auto write = (LogWrite*)(buf->start + start);
+		uint32_t crc = 0;
+		crc = crc32(crc, buf->start + start + size_header, size_data);
+		crc = crc32(crc, (char*)write + sizeof(uint32_t), size_header - sizeof(uint32_t));
+		if (crc != write->crc)
+			error("wal: file '%s' crc mismatch at offset %" PRIu64 " (lsn %" PRIu64 ")",
+			      str_of(&self->file.path),
+			      offset, write->lsn);
+	}
+
 	return true;
 }

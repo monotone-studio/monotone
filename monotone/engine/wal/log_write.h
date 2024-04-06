@@ -16,6 +16,7 @@ enum
 
 struct LogWrite
 {
+	uint32_t crc;
 	uint64_t lsn;
 	uint8_t  type;
 	uint32_t count;
@@ -25,6 +26,7 @@ struct LogWrite
 static inline void
 log_write_init(LogWrite* self)
 {
+	self->crc   = 0;
 	self->lsn   = 0;
 	self->type  = LOG_WRITE;
 	self->count = 0;
@@ -34,6 +36,7 @@ log_write_init(LogWrite* self)
 static inline void
 log_write_reset(LogWrite* self)
 {
+	self->crc   = 0;
 	self->lsn   = 0;
 	self->type  = LOG_WRITE;
 	self->count = 0;
@@ -54,4 +57,12 @@ log_write_next(LogWrite* self, Event* at)
 	if (next >= eof)
 		return NULL;
 	return (Event*)next;
+}
+
+static inline void
+log_write_seal(LogWrite* self)
+{
+	if (var_int_of(&config()->wal_crc))
+		self->crc = crc32(self->crc, (char*)self + sizeof(uint32_t),
+		                  sizeof(LogWrite) - sizeof(uint32_t));
 }

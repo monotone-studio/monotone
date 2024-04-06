@@ -1,0 +1,49 @@
+#
+
+# test: wal crc
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set serial to false
+set wal_crc to true
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+
+# test: insert
+insert 1
+
+show lsn
+show wal
+debug 'wal_read'
+
+insert 2
+
+show lsn
+show wal
+debug 'wal_read'
+
+insert 3
+
+show lsn
+show wal
+debug 'wal_read'
+
+select
+
+# test: restart (validate crc during replay)
+close
+
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set serial to false
+set wal_crc to true
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+
+show wal
+select
+
+close

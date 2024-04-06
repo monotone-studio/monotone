@@ -30,6 +30,7 @@ struct Config
 	Var  wal_rotate_wm;
 	Var  wal_sync_on_rotate;
 	Var  wal_sync_on_write;
+	Var  wal_crc;
 	// engine
 	Var  serial;
 	Var  interval;

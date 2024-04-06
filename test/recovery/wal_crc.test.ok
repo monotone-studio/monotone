@@ -1,0 +1,96 @@
+# test: wal crc
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set serial to false
+set wal_crc to true
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+# test: insert
+insert 1
+show lsn
+1
+show wal
+{
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
+  "crc": true,
+  "lsn": 1,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 34]
+
+insert 2
+show lsn
+2
+show wal
+{
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
+  "crc": true,
+  "lsn": 2,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 34]
+[2, 0, 1, 34]
+
+insert 3
+show lsn
+3
+show wal
+{
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
+  "crc": true,
+  "lsn": 3,
+  "lsn_min": 1,
+  "files": 1
+}
+debug 'wal_read'
+[1, 0, 1, 34]
+[2, 0, 1, 34]
+[3, 0, 1, 34]
+
+select
+[1]
+[2]
+[3]
+(eof)
+# test: restart (validate crc during replay)
+close
+init
+set workers to 0
+set workers_upload to 0
+set interval to 10
+set serial to false
+set wal_crc to true
+set uuid to '00000000-0000-0000-0000-000000000000'
+open
+show wal
+{
+  "active": true,
+  "rotate_wm": 104857600,
+  "sync_on_rotate": true,
+  "sync_on_write": false,
+  "crc": true,
+  "lsn": 3,
+  "lsn_min": 1,
+  "files": 1
+}
+select
+[1]
+[2]
+[3]
+(eof)
+close

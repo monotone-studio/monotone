@@ -3,7 +3,7 @@
 //
 // monotone
 //
-// time-series part
+// time-series storage
 //
 
 typedef struct Stats Stats;

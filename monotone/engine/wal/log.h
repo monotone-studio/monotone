@@ -108,6 +108,10 @@ log_add_event(Log* self, LogOp* op, Event* event)
 	iov_add(&self->iov, event, event_size(event));
 	op->event = event;
 	self->write.size += event_size(event);
+
+	// calculate crc
+	if (var_int_of(&config()->wal_crc))
+		self->write.crc = crc32(self->write.crc, event, event_size(event));
 }
 
 hot static inline void
