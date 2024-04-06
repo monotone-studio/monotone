@@ -105,6 +105,12 @@ str_compare_raw(Str* self, const void* string, int size)
 }
 
 static inline bool
+str_compare_cstr(Str* self, const void* string)
+{
+	return str_compare_raw(self, string, strlen(string));
+}
+
+static inline bool
 str_compare(Str* self, Str* with)
 {
 	return str_compare_raw(self, str_of(with), str_size(with));

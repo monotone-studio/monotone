@@ -6,14 +6,6 @@
 // time-series storage
 //
 
-// data serialization
-#include "lib/data.h"
-#include "lib/data_op.h"
-#include "lib/encode.h"
-
-// json
-#include "lib/json.h"
-
 // data structures
 #include "lib/rbtree.h"
 
@@ -21,6 +13,15 @@
 #include "lib/random.h"
 #include "lib/uuid.h"
 #include "lib/crc.h"
+
+// marshaling
+#include "lib/data.h"
+#include "lib/data_op.h"
+#include "lib/encode.h"
+#include "lib/decode.h"
+
+// json
+#include "lib/json.h"
 
 // cache
 #include "lib/cache.h"

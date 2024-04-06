@@ -184,64 +184,24 @@ source_read(uint8_t** pos)
 {
 	auto self = source_allocate();
 	guard_as(self_guard, source_free, self);
-
-	// map
-	int count;
-	data_read_map(pos, &count);
-
-	// uuid
-	data_skip(pos);
-	Str uuid;
-	data_read_string(pos, &uuid);
-	uuid_from_string(&self->uuid, &uuid);
-
-	// name
-	data_skip(pos);
-	data_read_string_copy(pos, &self->name);
-
-	// path
-	data_skip(pos);
-	data_read_string_copy(pos, &self->path);
-
-	// cloud
-	data_skip(pos);
-	data_read_string_copy(pos, &self->cloud);
-
-	// cloud_drop_local
-	data_skip(pos);
-	data_read_bool(pos, &self->cloud_drop_local);
-
-	// sync
-	data_skip(pos);
-	data_read_bool(pos, &self->sync);
-
-	// crc
-	data_skip(pos);
-	data_read_bool(pos, &self->crc);
-
-	// refresh_wm
-	data_skip(pos);
-	data_read_integer(pos, &self->refresh_wm);
-
-	// region_size
-	data_skip(pos);
-	data_read_integer(pos, &self->region_size);
-
-	// compression
-	data_skip(pos);
-	data_read_string_copy(pos, &self->compression);
-
-	// compression_level
-	data_skip(pos);
-	data_read_integer(pos, &self->compression_level);
-
-	// encryption
-	data_skip(pos);
-	data_read_string_copy(pos, &self->encryption);
-
-	// encryption_key
-	data_skip(pos);
-	data_read_string_copy(pos, &self->encryption_key);
+	Decode map[] =
+	{
+		{ DECODE_UUID,   "uuid",              &self->uuid              },
+		{ DECODE_STRING, "name",              &self->name              },
+		{ DECODE_STRING, "path",              &self->path              },
+		{ DECODE_STRING, "cloud",             &self->cloud             },
+		{ DECODE_BOOL,   "cloud_drop_local",  &self->cloud_drop_local  },
+		{ DECODE_BOOL,   "sync",              &self->sync              },
+		{ DECODE_BOOL,   "crc",               &self->crc               },
+		{ DECODE_INT,    "refresh_wm",        &self->refresh_wm        },
+		{ DECODE_INT,    "region_size",       &self->region_size       },
+		{ DECODE_STRING, "compression",       &self->compression       },
+		{ DECODE_INT,    "compression_level", &self->compression_level },
+		{ DECODE_STRING, "encryption",        &self->encryption        },
+		{ DECODE_STRING, "encryption_key",    &self->encryption_key    },
+		{ 0,              NULL,               NULL                     },
+	};
+	decode_map(map, pos);
 	return unguard(&self_guard);
 }
 

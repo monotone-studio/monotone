@@ -112,34 +112,17 @@ cloud_config_read(uint8_t** pos)
 {
 	auto self = cloud_config_allocate();
 	guard_as(self_guard, cloud_config_free, self);
-
-	// map
-	int count;
-	data_read_map(pos, &count);
-
-	// name
-	data_skip(pos);
-	data_read_string_copy(pos, &self->name);
-
-	// type
-	data_skip(pos);
-	data_read_string_copy(pos, &self->type);
-
-	// login
-	data_skip(pos);
-	data_read_string_copy(pos, &self->login);
-
-	// password
-	data_skip(pos);
-	data_read_string_copy(pos, &self->password);
-
-	// url
-	data_skip(pos);
-	data_read_string_copy(pos, &self->url);
-
-	// debug
-	data_skip(pos);
-	data_read_bool(pos, &self->debug);
+	Decode map[] =
+	{
+		{ DECODE_STRING, "name",     &self->name     },
+		{ DECODE_STRING, "type",     &self->type     },
+		{ DECODE_STRING, "login",    &self->login    },
+		{ DECODE_STRING, "password", &self->password },
+		{ DECODE_STRING, "url",      &self->url      },
+		{ DECODE_BOOL,   "debug",    &self->debug    },
+		{ 0,              NULL,       NULL           },
+	};
+	decode_map(map, pos);
 	return unguard(&self_guard);
 }
 

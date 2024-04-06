@@ -87,30 +87,16 @@ tier_config_read(uint8_t** pos)
 {
 	auto self = tier_config_allocate();
 	guard_as(self_guard, tier_config_free, self);
-
-	// map
-	int count;
-	data_read_map(pos, &count);
-
-	// name
-	data_skip(pos);
-	data_read_string_copy(pos, &self->name);
-
-	// partitions
-	data_skip(pos);
-	data_read_integer(pos, &self->partitions);
-
-	// size
-	data_skip(pos);
-	data_read_integer(pos, &self->size);
-
-	// events
-	data_skip(pos);
-	data_read_integer(pos, &self->events);
-
-	// duration
-	data_skip(pos);
-	data_read_integer(pos, &self->duration);
+	Decode map[] =
+	{
+		{ DECODE_STRING, "name",       &self->name       },
+		{ DECODE_INT,    "partitions", &self->partitions },
+		{ DECODE_INT,    "size",       &self->size       },
+		{ DECODE_INT,    "events",     &self->events     },
+		{ DECODE_INT,    "duration",   &self->duration   },
+		{ 0,              NULL,        NULL              },
+	};
+	decode_map(map, pos);
 	return unguard(&self_guard);
 }
 
