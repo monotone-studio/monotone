@@ -11,11 +11,11 @@ typedef struct Id Id;
 enum
 {
 	ID_NONE             = 0,
-	ID                  = 1,
-	ID_INCOMPLETE       = 2,
-	ID_COMPLETE         = 4,
-	ID_CLOUD            = 8,
-	ID_CLOUD_INCOMPLETE = 16
+	ID                  = 1 << 0,
+	ID_INCOMPLETE       = 1 << 1,
+	ID_COMPLETE         = 1 << 2,
+	ID_CLOUD            = 1 << 3,
+	ID_CLOUD_INCOMPLETE = 1 << 4
 };
 
 struct Id
