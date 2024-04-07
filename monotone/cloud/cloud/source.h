@@ -332,7 +332,7 @@ static inline void
 source_pathfmt(Source* self, char* path, int path_size, char* fmt, ...)
 {
 	// set storage relative directory
-	char relative[PATH_MAX];
+	char relative[512];
 	va_list args;
 	va_start(args, fmt);
 	vsnprintf(relative, sizeof(relative), fmt, args);

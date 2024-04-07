@@ -139,13 +139,19 @@ wal_file_id_of(const char* path)
 }
 
 static void
+closedir_guard(DIR* self)
+{
+	closedir(self);
+}
+
+static void
 wal_recover(Wal* self, char *path)
 {
 	// open and read log directory
 	DIR* dir = opendir(path);
 	if (unlikely(dir == NULL))
 		error("wal: directory '%s' open error", path);
-	guard(closedir, dir);
+	guard(closedir_guard, dir);
 	for (;;)
 	{
 		auto entry = readdir(dir);

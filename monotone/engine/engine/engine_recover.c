@@ -56,6 +56,12 @@ engine_recover_id(const char* path, uint64_t* id)
 }
 
 static void
+closedir_guard(DIR* self)
+{
+	closedir(self);
+}
+
+static void
 engine_recover_storage(Engine* self, Storage* storage)
 {
 	auto source = storage->source;
@@ -67,7 +73,7 @@ engine_recover_storage(Engine* self, Storage* storage)
 	DIR* dir = opendir(path);
 	if (unlikely(dir == NULL))
 		error("storage: directory '%s' open error", path);
-	guard(closedir, dir);
+	guard(closedir_guard, dir);
 	for (;;)
 	{
 		auto entry = readdir(dir);

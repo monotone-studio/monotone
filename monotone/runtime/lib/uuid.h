@@ -32,7 +32,7 @@ int  uuid_from_string_nothrow(Uuid*, Str*);
 static inline bool
 uuid_empty(Uuid* self)
 {
-	return self->a == self->b == 0;
+	return self->a == 0 && self->b == 0;
 }
 
 static inline bool

@@ -15,7 +15,7 @@
 
 typedef struct Comparator Comparator;
 
-typedef int (*Compare)(EventArg*, EventArg*, void*);
+typedef int64_t (*Compare)(EventArg*, EventArg*, void*);
 
 struct Comparator
 {

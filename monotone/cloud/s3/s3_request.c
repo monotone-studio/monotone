@@ -177,7 +177,7 @@ s3_request_execute(S3Request* self)
 	struct curl_slist* headers = NULL;
 
 	// date
-	char data[256];
+	char data[512];
 	snprintf(data, sizeof(data), "Date: %s", self->date);
 	headers = curl_slist_append(headers, data);
 

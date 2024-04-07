@@ -223,10 +223,9 @@ service_next(Service*      self,
 static inline bool
 service_filter(ServiceReq* req, ServiceFilter filter)
 {
-	bool pass;
+	bool pass = true;
 	switch (filter) {
 	case SERVICE_ANY:
-		pass = true;
 		break;
 	case SERVICE_WITHOUT_UPLOAD:
 		pass = !service_req_is_upload(req);

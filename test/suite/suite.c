@@ -327,12 +327,12 @@ test_suite_execute(TestSuite* self, Test* test, char* options)
 	}
 
 	char test_result_file[PATH_MAX];
-	snprintf(test_result_file, sizeof(test_result_file),
-	         "%s.result", test_file);
+	snprintf(test_result_file, sizeof(test_result_file), "%s/%s.test.result",
+	         test->group->directory, test->name);
 
 	char test_ok_file[PATH_MAX];
-	snprintf(test_ok_file, sizeof(test_ok_file),
-	         "%s.ok", test_file);
+	snprintf(test_ok_file, sizeof(test_ok_file), "%s/%s.test.ok",
+	         test->group->directory, test->name);
 
 	struct stat ok_stat;
 	int  rc;
