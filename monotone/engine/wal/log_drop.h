@@ -25,6 +25,7 @@ static inline void
 log_drop_init(LogDrop* self, uint64_t id)
 {
 	auto write = &self->write;
+	write->crc   = 0;
 	write->lsn   = 0;
 	write->type  = LOG_DROP;
 	write->count = 0;

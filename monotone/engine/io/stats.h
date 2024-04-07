@@ -84,7 +84,7 @@ stats_show(Stats* self, Buf* buf)
 
 	// min
 	encode_raw(buf, "min", 3);
-	encode_integer(buf, self->min);
+	encode_integer(buf, !self->partitions ? 0 : self->min);
 
 	// max
 	encode_raw(buf, "max", 3);

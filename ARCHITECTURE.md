@@ -5,8 +5,6 @@
 Monotone architecture is inspired by the Log-Structured approach and implements a custom-made memory-disk-cloud
 hybrid data storage engine.
 
-The overall design shares a combination of ideas and use cases from Sophia, PostgreSQL (Timescale), and Kafka.
-
 The whole database can be seen as a 64-bit range sparse array of ordered events.
 Data is stored in sorted partition files.
 Each partition has an associated `[min, max]` range. Partitions never overlap.
