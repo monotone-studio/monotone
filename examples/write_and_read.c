@@ -1,8 +1,13 @@
 
 //
-// monotone
+// monotone.
 //
-// time-series storage
+// embeddable cloud-native storage for events
+// and time-series data.
+//
+
+//
+// This file is a Public Domain.
 //
 
 #include <monotone_private.h>
