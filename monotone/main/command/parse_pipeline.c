@@ -33,7 +33,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 		// storage name
 		Token name;
 		if (! lex_if(self, KNAME, &name))
-			error("ALTER PIPELINE SET <storage name> expected");
+			error("ALTER PIPELINE SET 'storage name' expected");
 
 		// create tier config
 		auto config = tier_config_allocate();
@@ -58,7 +58,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 
 		// (
 		if (! lex_if(self, '(', NULL))
-			error("ALTER PIPELINE SET name <(> expected");
+			error("ALTER PIPELINE SET name '(' expected");
 
 		// [)]
 		if (lex_if(self, ')', NULL))
@@ -80,7 +80,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 			case KNAME:
 				break;
 			default:
-				error("ALTER PIPELINE SET name (<name> value) expected");
+				error("ALTER PIPELINE SET name ('name' value) expected");
 				break;
 			}
 
@@ -106,7 +106,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 				parse_int(self, &name, &config->duration);
 			} else
 			{
-				error("ALTER PIPELINE: unknown option %.*s", str_size(&name.string),
+				error("ALTER PIPELINE: unknown option '%.*s'", str_size(&name.string),
 				      str_of(&name.string));
 			}
 
@@ -116,7 +116,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 
 			// )
 			if (! lex_if(self, ')', NULL))
-				error("ALTER PIPELINE SET name (...<)> expected");
+				error("ALTER PIPELINE SET name (...')' expected");
 
 			break;
 		}
@@ -131,7 +131,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 		if (lex_if(self, KEOF, NULL))
 			break;
 
-		error("ALTER PIPELINE SET name() <,> expected");
+		error("ALTER PIPELINE SET name() ',' expected");
 	}
 }
 
@@ -149,7 +149,7 @@ parse_pipeline_alter(Lex* self)
 	} else
 	{
 		if (! lex_if(self, KSET, NULL))
-			error("ALTER PIPELINE <SET | RESET> expected");
+			error("ALTER PIPELINE 'SET | RESET' expected");
 
 		// SET storage (options), ...
 		parse_pipeline_set(self, &cmd->cmd);

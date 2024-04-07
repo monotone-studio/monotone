@@ -78,7 +78,7 @@ parse(Lex* self)
 		if (lex_if(self, KPARTITION, NULL))
 			cmd = parse_partition_create(self);
 		else
-			error("CREATE <CLOUD|STORAGE|PARTITION> expected");
+			error("CREATE 'CLOUD|STORAGE|PARTITION' expected");
 		break;
 	}
 	case KDROP:
@@ -96,7 +96,7 @@ parse(Lex* self)
 		if (lex_if(self, KPARTITIONS, NULL))
 			cmd = parse_partition_drop_range(self);
 		else
-			error("DROP <STORAGE|PARTITION|PARTITIONS> expected");
+			error("DROP 'STORAGE|PARTITION|PARTITIONS' expected");
 		break;
 	}
 	case KALTER:
@@ -111,7 +111,7 @@ parse(Lex* self)
 		if (lex_if(self, KPIPELINE, NULL))
 			cmd = parse_pipeline_alter(self);
 		else
-			error("ALTER <STORAGE|PIPELINE> expected");
+			error("ALTER 'STORAGE|PIPELINE' expected");
 		break;
 	}
 	case KMOVE:
@@ -124,7 +124,7 @@ parse(Lex* self)
 		if (lex_if(self, KPARTITIONS, NULL))
 			cmd = parse_partition_move_range(self);
 		else
-			error("MOVE <PARTITION|PARTITIONS> expected");
+			error("MOVE 'PARTITION|PARTITIONS' expected");
 		break;
 	}
 	case KREFRESH:
@@ -136,7 +136,7 @@ parse(Lex* self)
 		if (lex_if(self, KPARTITIONS, NULL))
 			cmd = parse_partition_refresh_range(self);
 		else
-			error("REFRESH <PARTITION|PARTITIONS> expected");
+			error("REFRESH 'PARTITION|PARTITIONS' expected");
 		break;
 	}
 	case KDOWNLOAD:
@@ -148,7 +148,7 @@ parse(Lex* self)
 		if (lex_if(self, KPARTITIONS, NULL))
 			cmd = parse_partition_download_range(self);
 		else
-			error("DOWNLOAD <PARTITION|PARTITIONS> expected");
+			error("DOWNLOAD 'PARTITION|PARTITIONS' expected");
 		break;
 	}
 	case KUPLOAD:
@@ -160,7 +160,7 @@ parse(Lex* self)
 		if (lex_if(self, KPARTITIONS, NULL))
 			cmd = parse_partition_upload_range(self);
 		else
-			error("UPLOAD <PARTITION|PARTITIONS> expected");
+			error("UPLOAD 'PARTITION|PARTITIONS' expected");
 		break;
 	}
 	case KEOF:

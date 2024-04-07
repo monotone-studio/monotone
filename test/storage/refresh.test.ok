@@ -7,16 +7,16 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: refresh parsing
 refresh
-error: REFRESH <PARTITION|PARTITIONS> expected
+error: REFRESH 'PARTITION|PARTITIONS' expected
 refresh abc
-error: REFRESH <PARTITION|PARTITIONS> expected
+error: REFRESH 'PARTITION|PARTITIONS' expected
 refresh partition
-error: REFRESH PARTITION <id>
+error: REFRESH PARTITION 'id'
 refresh partition abc
-error: REFRESH PARTITION <id>
+error: REFRESH PARTITION 'id'
 # test: refresh partition does not exists
 refresh partition 0
-error: download: partition <0> not found
+error: download: partition '0' not found
 # test: refresh partition if exists
 refresh partition if exists 0
 # test: create partition
@@ -393,21 +393,21 @@ show storages debug
 }
 # test: refresh partitions parsing
 refresh partitions
-error: REFRESH PARTITIONS <BETWEEN> min AND max
+error: REFRESH PARTITIONS 'BETWEEN' min AND max
 refresh partitions abc
-error: REFRESH PARTITIONS <BETWEEN> min AND max
+error: REFRESH PARTITIONS 'BETWEEN' min AND max
 refresh partitions between
-error: REFRESH PARTITIONS BETWEEN <min> AND max
+error: REFRESH PARTITIONS BETWEEN 'min' AND max
 refresh partitions between abc
-error: REFRESH PARTITIONS BETWEEN <min> AND max
+error: REFRESH PARTITIONS BETWEEN 'min' AND max
 refresh partitions between 0
-error: REFRESH PARTITIONS BETWEEN min <AND> max
+error: REFRESH PARTITIONS BETWEEN min 'AND' max
 refresh partitions between 0 to
-error: REFRESH PARTITIONS BETWEEN min <AND> max
+error: REFRESH PARTITIONS BETWEEN min 'AND' max
 refresh partitions between 0 and
-error: REFRESH PARTITIONS BETWEEN min AND <max>
+error: REFRESH PARTITIONS BETWEEN min AND 'max'
 refresh partitions between 0 and abc
-error: REFRESH PARTITIONS BETWEEN min AND <max>
+error: REFRESH PARTITIONS BETWEEN min AND 'max'
 # test: refresh partitions
 show partitions debug
 [{

@@ -171,15 +171,15 @@ show storages debug
 }
 # test: alter pipeline parsing
 alter
-error: ALTER <STORAGE|PIPELINE> expected
+error: ALTER 'STORAGE|PIPELINE' expected
 alter pipeline
-error: ALTER PIPELINE <SET | RESET> expected
+error: ALTER PIPELINE 'SET | RESET' expected
 alter pipeline abc
-error: ALTER PIPELINE <SET | RESET> expected
+error: ALTER PIPELINE 'SET | RESET' expected
 alter pipeline set
-error: ALTER PIPELINE SET <storage name> expected
+error: ALTER PIPELINE SET 'storage name' expected
 alter pipeline set 123
-error: ALTER PIPELINE SET <storage name> expected
+error: ALTER PIPELINE SET 'storage name' expected
 # test: alter pipeline set
 alter pipeline set hot
 show pipeline

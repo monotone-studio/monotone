@@ -7,18 +7,18 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: move parsing
 move
-error: MOVE <PARTITION|PARTITIONS> expected
+error: MOVE 'PARTITION|PARTITIONS' expected
 move abc
-error: MOVE <PARTITION|PARTITIONS> expected
+error: MOVE 'PARTITION|PARTITIONS' expected
 move partition
-error: MOVE PARTITION <id> INTO name
+error: MOVE PARTITION 'id' INTO name
 move partition abc
-error: MOVE PARTITION <id> INTO name
+error: MOVE PARTITION 'id' INTO name
 # test: move partition does not exists
 move partition 0 into
-error: MOVE PARTITION id INTO <name>
+error: MOVE PARTITION id INTO 'name'
 move partition 0 into main
-error: download: partition <0> not found
+error: download: partition '0' not found
 # test: move partition if exists
 move partition if exists 0 into main
 # test: create partition
@@ -229,21 +229,21 @@ show storages debug
 }
 # test: move partitions parsing
 move partitions
-error: MOVE PARTITIONS <BETWEEN> min AND max INTO name
+error: MOVE PARTITIONS 'BETWEEN' min AND max INTO name
 move partitions abc
-error: MOVE PARTITIONS <BETWEEN> min AND max INTO name
+error: MOVE PARTITIONS 'BETWEEN' min AND max INTO name
 move partitions between
-error: MOVE PARTITIONS BETWEEN <min> AND max INTO name
+error: MOVE PARTITIONS BETWEEN 'min' AND max INTO name
 move partitions between abc
-error: MOVE PARTITIONS BETWEEN <min> AND max INTO name
+error: MOVE PARTITIONS BETWEEN 'min' AND max INTO name
 move partitions between 10
-error: MOVE PARTITIONS BETWEEN min <AND> max INTO name
+error: MOVE PARTITIONS BETWEEN min 'AND' max INTO name
 move partitions between 10 and
-error: MOVE PARTITIONS BETWEEN min AND <max> INTO name
+error: MOVE PARTITIONS BETWEEN min AND 'max' INTO name
 move partitions between 10 and 50
-error: MOVE PARTITIONS BETWEEN min AND max <INTO> name
+error: MOVE PARTITIONS BETWEEN min AND max 'INTO' name
 move partitions between 10 and 50 into
-error: MOVE PARTITIONS BETWEEN min AND max INTO <name>
+error: MOVE PARTITIONS BETWEEN min AND max INTO 'name'
 # test: move partitions
 move partitions between 10 and 50 into test
 show storages debug

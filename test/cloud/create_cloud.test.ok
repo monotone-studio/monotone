@@ -11,37 +11,37 @@ show clouds
 }
 # test: create cloud parsing
 create
-error: CREATE <CLOUD|STORAGE|PARTITION> expected
+error: CREATE 'CLOUD|STORAGE|PARTITION' expected
 create cloud
-error: CREATE CLOUD <name> expected
+error: CREATE CLOUD 'name' expected
 create cloud if
-error: IF <NOT> EXISTS expected
+error: IF 'NOT' EXISTS expected
 create cloud if abc
-error: IF <NOT> EXISTS expected
+error: IF 'NOT' EXISTS expected
 create cloud if not abc
-error: IF NOT <EXISTS> expected
+error: IF NOT 'EXISTS' expected
 create cloud if not exists
-error: CREATE CLOUD <name> expected
+error: CREATE CLOUD 'name' expected
 create cloud 123
-error: CREATE CLOUD <name> expected
+error: CREATE CLOUD 'name' expected
 create cloud test junk
 error: unexpected clause at the end of command
 create cloud test (
-error: CREATE CLOUD (<name> expected
+error: CREATE CLOUD ('name' expected
 create cloud test (123
-error: CREATE CLOUD (<name> expected
+error: CREATE CLOUD ('name' expected
 create cloud test (name
-error: CREATE CLOUD: unknown option name
+error: CREATE CLOUD: unknown option 'name'
 create cloud test (type
-error: type <string> expected
+error: type 'string'expected
 create cloud test (type int
-error: type <string> expected
+error: type 'string'expected
 create cloud test (type false
-error: type <string> expected
+error: type 'string'expected
 create cloud test (type '',
-error: CREATE CLOUD (<name> expected
+error: CREATE CLOUD ('name' expected
 create cloud test (type '',)
-error: CREATE CLOUD (<name> expected
+error: CREATE CLOUD ('name' expected
 # test: create cloud (no options)
 create cloud test
 error: cloud 'test': unknown cloud type
@@ -89,9 +89,9 @@ show clouds
 # test: create cloud (options)
 drop cloud test
 create cloud test (type
-error: type <string> expected
+error: type 'string'expected
 create cloud test (type 123
-error: type <string> expected
+error: type 'string'expected
 create cloud test (type '')
 error: cloud 'test': unknown cloud type
 show clouds
@@ -103,7 +103,7 @@ show clouds
 {
 }
 create cloud test (type 'mock', url 123)
-error: url <string> expected
+error: url 'string'expected
 create cloud test (type 'mock', url 'http://127.0.0.1:9000')
 show clouds
 {
@@ -118,7 +118,7 @@ show clouds
 }
 drop cloud test
 create cloud test (type 'mock', login 123)
-error: login <string> expected
+error: login 'string'expected
 create cloud test (type 'mock', login 'login')
 show clouds
 {
@@ -133,7 +133,7 @@ show clouds
 }
 drop cloud test
 create cloud test (type 'mock', password 123)
-error: password <string> expected
+error: password 'string'expected
 create cloud test (type 'mock', password 'password')
 show clouds
 {
@@ -148,7 +148,7 @@ show clouds
 }
 drop cloud test
 create cloud test (type 'mock', access_key 123)
-error: access_key <string> expected
+error: access_key 'string'expected
 create cloud test (type 'mock', access_key 'login')
 show clouds
 {
@@ -163,7 +163,7 @@ show clouds
 }
 drop cloud test
 create cloud test (type 'mock', secret_key 123)
-error: secret_key <string> expected
+error: secret_key 'string'expected
 create cloud test (type 'mock', secret_key 'password')
 show clouds
 {

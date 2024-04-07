@@ -7,21 +7,21 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: drop storage parsing
 drop
-error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+error: DROP 'STORAGE|PARTITION|PARTITIONS' expected
 drop storage
-error: DROP STORAGE <name> expected
+error: DROP STORAGE 'name' expected
 drop storage if
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 drop storage if 123
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 drop storage if not
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 drop storage if exists
-error: DROP STORAGE <name> expected
+error: DROP STORAGE 'name' expected
 drop storage if exists 123
-error: DROP STORAGE <name> expected
+error: DROP STORAGE 'name' expected
 drop storage 123
-error: DROP STORAGE <name> expected
+error: DROP STORAGE 'name' expected
 # test: drop storage
 create storage test
 show storages debug

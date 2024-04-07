@@ -7,24 +7,24 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: download parsing
 download
-error: DOWNLOAD <PARTITION|PARTITIONS> expected
+error: DOWNLOAD 'PARTITION|PARTITIONS' expected
 download abc
-error: DOWNLOAD <PARTITION|PARTITIONS> expected
+error: DOWNLOAD 'PARTITION|PARTITIONS' expected
 download partition
-error: DOWNLOAD PARTITION <id>
+error: DOWNLOAD PARTITION 'id'
 download partition abc
-error: DOWNLOAD PARTITION <id>
+error: DOWNLOAD PARTITION 'id'
 download partition 0 junk
 error: unexpected clause at the end of command
 # test: download (partition does not exists)
 download partition 0
-error: download: partition <0> not found
+error: download: partition '0' not found
 # test: download if exists
 download partition if exists 0
 # test: download from storage without cloud
 insert 0
 download partition 0
-error: download: partition <0> has no associated cloud
+error: download: partition '0' has no associated cloud
 # test: download if cloud
 insert 0
 download partition 0 if cloud
@@ -566,23 +566,23 @@ select
 (eof)
 # test: download partitions parsing
 download partitions
-error: DOWNLOAD PARTITIONS <BETWEEN> min AND max
+error: DOWNLOAD PARTITIONS 'BETWEEN' min AND max
 download partitions abc
-error: DOWNLOAD PARTITIONS <BETWEEN> min AND max
+error: DOWNLOAD PARTITIONS 'BETWEEN' min AND max
 download partitions between
-error: DOWNLOAD PARTITIONS BETWEEN <min> AND max
+error: DOWNLOAD PARTITIONS BETWEEN 'min' AND max
 download partitions between abc
-error: DOWNLOAD PARTITIONS BETWEEN <min> AND max
+error: DOWNLOAD PARTITIONS BETWEEN 'min' AND max
 download partitions between 0
-error: DOWNLOAD PARTITIONS BETWEEN min <AND> max
+error: DOWNLOAD PARTITIONS BETWEEN min 'AND' max
 download partitions between 10
-error: DOWNLOAD PARTITIONS BETWEEN min <AND> max
+error: DOWNLOAD PARTITIONS BETWEEN min 'AND' max
 download partitions between 10 abc
-error: DOWNLOAD PARTITIONS BETWEEN min <AND> max
+error: DOWNLOAD PARTITIONS BETWEEN min 'AND' max
 download partitions between 10 and
-error: DOWNLOAD PARTITIONS BETWEEN min AND <max>
+error: DOWNLOAD PARTITIONS BETWEEN min AND 'max'
 download partitions between 10 and abc
-error: DOWNLOAD PARTITIONS BETWEEN min AND <max>
+error: DOWNLOAD PARTITIONS BETWEEN min AND 'max'
 download partitions between 10 and 30 abc
 error: unexpected clause at the end of command
 # test: drop from storage

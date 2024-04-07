@@ -39,7 +39,7 @@ engine_show_partition(Engine* self, uint64_t min, Buf* buf, bool debug)
 {
 	auto slice = mapping_match(&self->mapping, min);
 	if (! slice)
-		error("partitoin %" PRIu64 " does not exists", min);
+		error("partition '%" PRIu64 "': not exists", min);
 	auto ref = ref_of(slice);
 	stats_show_part(ref->part, buf, debug);
 }

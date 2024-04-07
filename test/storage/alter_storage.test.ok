@@ -7,19 +7,19 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: alter storage parsing
 alter
-error: ALTER <STORAGE|PIPELINE> expected
+error: ALTER 'STORAGE|PIPELINE' expected
 alter storage
-error: ALTER STORAGE <name> expected
+error: ALTER STORAGE 'name' expected
 alter storage if
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 alter storage if abc
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 alter storage if not abc
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 alter storage if exists
-error: ALTER STORAGE <name> expected
+error: ALTER STORAGE 'name' expected
 alter storage if exists test abc
-error: ALTER STORAGE name <RENAME or SET> expected
+error: ALTER STORAGE name 'RENAME or SET' expected
 # test: alter storage rename (already exists)
 create storage test
 show storages debug
@@ -84,9 +84,9 @@ show storages debug
   }
 }
 alter storage test rename
-error: ALTER STORAGE RENAME <name> expected
+error: ALTER STORAGE RENAME 'name' expected
 alter storage test rename to
-error: ALTER STORAGE RENAME <name> expected
+error: ALTER STORAGE RENAME 'name' expected
 alter storage test rename to test
 error: storage 'test': already exists
 alter storage test rename to main
@@ -230,19 +230,19 @@ alter storage test set
 alter storage test set abc
 error: unexpected clause at the end of command
 alter storage test set (
-error: ALTER STORAGE (<name> expected
+error: ALTER STORAGE ('name' expected
 alter storage test set (sync
-error: sync <true/false> expected
+error: sync 'true|false' expected
 alter storage test set (sync,
-error: sync <true/false> expected
+error: sync 'true|false' expected
 alter storage test set (sync,)
-error: sync <true/false> expected
+error: sync 'true|false' expected
 alter storage test set (sync 123
-error: sync <true/false> expected
+error: sync 'true|false' expected
 alter storage test set (sync true,
-error: ALTER STORAGE (<name> expected
+error: ALTER STORAGE ('name' expected
 alter storage test set (sync true,)
-error: ALTER STORAGE (<name> expected
+error: ALTER STORAGE ('name' expected
 alter storage test set (sync false)
 show storages debug
 {

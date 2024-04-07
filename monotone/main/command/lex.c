@@ -268,7 +268,7 @@ reread_as_float:
 		errno = 0;
 		tk->real = strtod(start, &end);
 		if (errno == ERANGE)
-			error("config: bad float number");
+			error("bad float number");
 		self->pos = end;
 		return;
 	}
@@ -329,7 +329,7 @@ reread_as_float:
 				break;
 			}
 			if (*self->pos == '\n')
-				error("config: unterminated string");
+				error("unterminated string");
 			if (*self->pos == '\\') {
 				slash = !slash;
 				escape = true;
@@ -339,7 +339,7 @@ reread_as_float:
 			self->pos++;
 		}
 		if (unlikely(self->pos == self->end))
-			error("config: unterminated string");
+			error("unterminated string");
 
 		tk->id = KSTRING;
 		tk->string_escape = escape;
@@ -349,7 +349,7 @@ reread_as_float:
 	}
 
 	// error
-	error("config: bad token");
+	error("bad token");
 }
 
 void

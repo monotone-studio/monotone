@@ -112,7 +112,7 @@ storage_set_cloud(StorageMgr* self, Storage* storage, bool attach)
 
 	auto cloud = cloud_mgr_find(self->cloud_mgr, &source->cloud);
 	if (! cloud)
-		error("storage '%.*s': cloud '%.*s' does not exists",
+		error("storage '%.*s': cloud '%.*s' not exists",
 		      str_size(&source->name),
 		      str_of(&source->name),
 		      str_size(&source->cloud),
@@ -280,7 +280,7 @@ storage_mgr_alter(StorageMgr* self, Source* source, int mask, bool if_exists)
 		{
 			auto part = list_at(Part, link);
 			if (part_has(part, ID_CLOUD))
-				error("storage '%.*s': some partitions are still remain on cloud",
+				error("storage '%.*s': some partitions are still remain on the cloud",
 				      str_size(&source->name),
 				      str_of(&source->name));
 		}

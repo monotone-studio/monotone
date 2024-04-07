@@ -19,9 +19,9 @@ parse_if_not_exists(Lex* self)
 	if (! lex_if(self, KIF, NULL))
 		return false;
 	if (! lex_if(self, KNOT, NULL))
-		error("IF <NOT> EXISTS expected");
+		error("IF 'NOT' EXISTS expected");
 	if (! lex_if(self, KEXISTS, NULL))
-		error("IF NOT <EXISTS> expected");
+		error("IF NOT 'EXISTS' expected");
 	return true;
 }
 
@@ -31,7 +31,7 @@ parse_if_exists(Lex* self)
 	if (! lex_if(self, KIF, NULL))
 		return false;
 	if (! lex_if(self, KEXISTS, NULL))
-		error("IF <EXISTS> expected");
+		error("IF 'EXISTS' expected");
 	return true;
 }
 
@@ -41,7 +41,7 @@ parse_if_cloud(Lex* self)
 	if (! lex_if(self, KIF, NULL))
 		return false;
 	if (! lex_if(self, KCLOUD, NULL))
-		error("IF <CLOUD> expected");
+		error("IF 'CLOUD' expected");
 	return true;
 }
 
@@ -51,7 +51,7 @@ parse_int(Lex* self, Token* name, int64_t* value)
 	// int
 	Token tk;
 	if (! lex_if(self, KINT, &tk))
-		error("%.*s <integer> expected", str_size(&name->string),
+		error("%.*s 'integer' expected", str_size(&name->string),
 		      str_of(&name->string));
 
 	*value = tk.integer;
@@ -69,7 +69,7 @@ parse_bool(Lex* self, Token* name, bool* value)
 	{
 		*value = false;
 	} else {
-		error("%.*s <true/false> expected", str_size(&name->string),
+		error("%.*s 'true|false' expected", str_size(&name->string),
 		      str_of(&name->string));
 	}
 }
@@ -80,7 +80,7 @@ parse_string(Lex* self, Token* name, Str* value)
 	// string
 	Token tk;
 	if (! lex_if(self, KSTRING, &tk))
-		error("%.*s <string> expected", str_size(&name->string),
+		error("%.*s 'string'expected", str_size(&name->string),
 		      str_of(&name->string));
 
 	str_free(value);
@@ -93,7 +93,7 @@ parse_uuid(Lex* self, Token* name, Uuid* value)
 	// string
 	Token tk;
 	if (! lex_if(self, KSTRING, &tk))
-		error("%.*s <string> expected", str_size(&name->string),
+		error("%.*s 'string' expected", str_size(&name->string),
 		      str_of(&name->string));
 
 	uuid_from_string(value, &tk.string);

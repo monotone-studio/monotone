@@ -151,7 +151,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 			if (ref)
 			{
 				if (! part_has(ref, ID))
-					error("partition <%" PRIu64"> has unexpected state: %d",
+					error("partition '%" PRIu64"' has unexpected state: %d",
 					      ref->id.min, ref->state);
 
 				// parent still exists, remove incomplete partition
@@ -186,7 +186,7 @@ engine_recover_validate(Engine* self, Storage* storage)
 			break;
 
 		default:
-			error("partition <%" PRIu64"> has unexpected state: %d",
+			error("partition '%" PRIu64"' has unexpected state: %d",
 			      part->id.min, part->state);
 			break;
 		}

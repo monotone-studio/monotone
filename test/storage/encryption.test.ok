@@ -140,7 +140,7 @@ show storages
 }
 # test: alter storage set encryption (validate)
 alter storage main set (encryption '123')
-error: unknown encryption: 123
+error: unknown encryption: '123'
 show storages
 {
   "main": {

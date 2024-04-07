@@ -7,16 +7,16 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: drop parsing
 drop
-error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+error: DROP 'STORAGE|PARTITION|PARTITIONS' expected
 drop abc
-error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+error: DROP 'STORAGE|PARTITION|PARTITIONS' expected
 drop partition
-error: DROP PARTITION <id>
+error: DROP PARTITION 'id'
 drop partition abc
-error: DROP PARTITION <id>
+error: DROP PARTITION 'id'
 # test: drop partition does not exists
 drop partition 0
-error: drop: partition <0> not found
+error: drop: partition '0' not found
 # test: drop partition if exists
 drop partition if exists 0
 # test: create partition (no file)
@@ -190,19 +190,19 @@ show partitions debug
 }]
 # test: drop partitions parsing
 drop partitions
-error: DROP PARTITIONS <BETWEEN> min AND max
+error: DROP PARTITIONS 'BETWEEN' min AND max
 drop partitions abc
-error: DROP PARTITIONS <BETWEEN> min AND max
+error: DROP PARTITIONS 'BETWEEN' min AND max
 drop partitions between
-error: DROP PARTITIONS BETWEEN <min> AND max
+error: DROP PARTITIONS BETWEEN 'min' AND max
 drop partitions between abc
-error: DROP PARTITIONS BETWEEN <min> AND max
+error: DROP PARTITIONS BETWEEN 'min' AND max
 drop partitions between 0
-error: DROP PARTITIONS BETWEEN min <AND> max
+error: DROP PARTITIONS BETWEEN min 'AND' max
 drop partitions between 0 and
-error: DROP PARTITIONS BETWEEN min AND <max>
+error: DROP PARTITIONS BETWEEN min AND 'max'
 drop partitions between 0 and abc
-error: DROP PARTITIONS BETWEEN min AND <max>
+error: DROP PARTITIONS BETWEEN min AND 'max'
 # test: drop partitions
 drop partitions between 0 and 50
 show partitions debug

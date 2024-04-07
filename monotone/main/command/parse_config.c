@@ -45,7 +45,7 @@ parse_show(Lex* self)
 		case KCLOUD:
 			// show cloud storage
 			if (! lex_if(self, KNAME, &tk))
-				error("SHOW CLOUD <name> expected");
+				error("SHOW CLOUD 'name' expected");
 			type = SHOW_CLOUDS;
 			break;
 		case KCLOUDS:
@@ -54,7 +54,7 @@ parse_show(Lex* self)
 		case KSTORAGE:
 			// show storage storage
 			if (! lex_if(self, KNAME, &tk))
-				error("SHOW STORAGE <name> expected");
+				error("SHOW STORAGE 'name' expected");
 			type = SHOW_STORAGES;
 			break;
 		case KSTORAGES:
@@ -63,7 +63,7 @@ parse_show(Lex* self)
 		case KPARTITION:
 			// show partition id
 			if (! lex_if(self, KINT, &tk))
-				error("SHOW PARTITION <id> expected");
+				error("SHOW PARTITION 'id' expected");
 			type = SHOW_PARTITION;
 			break;
 		case KPARTITIONS:
@@ -88,8 +88,8 @@ parse_show(Lex* self)
 			type = SHOW_NAME;
 			break;
 		default:
-			error("SHOW <MEMORY | WAL | CLOUDS | STORAGES | PARTITION | PARTITIONS | "
-			      "PIPELINE | CONFIG | NAME>");
+			error("SHOW 'MEMORY | WAL | CLOUDS | STORAGES | PARTITION | PARTITIONS | "
+			      "PIPELINE | CONFIG | NAME'");
 		}
 
 		// [debug]
@@ -118,11 +118,11 @@ parse_set(Lex* self)
 	// name
 	Token name;
 	if (! lex_if_name(self, &name))
-		error("SET <name> expected");
+		error("SET 'name' expected");
 
 	// to
 	if (! lex_if(self, KTO, NULL))
-		error("SET name <TO> expected");
+		error("SET name 'TO' expected");
 
 	// value
 	Token value;

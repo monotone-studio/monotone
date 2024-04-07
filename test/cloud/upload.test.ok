@@ -7,24 +7,24 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: upload parsing
 upload
-error: UPLOAD <PARTITION|PARTITIONS> expected
+error: UPLOAD 'PARTITION|PARTITIONS' expected
 upload abc
-error: UPLOAD <PARTITION|PARTITIONS> expected
+error: UPLOAD 'PARTITION|PARTITIONS' expected
 upload partition
-error: UPLOAD PARTITION <id>
+error: UPLOAD PARTITION 'id'
 upload partition abc
-error: UPLOAD PARTITION <id>
+error: UPLOAD PARTITION 'id'
 upload partition 0 junk
 error: unexpected clause at the end of command
 # test: upload (partition does not exists)
 upload partition 0
-error: upload: partition <0> not found
+error: upload: partition '0' not found
 # test: upload if exists
 upload partition if exists 0
 # test: upload without cloud
 insert 0
 upload partition 0
-error: upload: partition <0> storage has no associated cloud
+error: upload: partition '0' storage has no associated cloud
 # test: upload if cloud
 upload partition 0 if cloud
 # test: create storage with cloud
@@ -158,7 +158,7 @@ show partitions debug
 }]
 # test: upload (without storage file)
 upload partition 10
-error: upload: partition <10> file not yet exists
+error: upload: partition '10' file does not exist locally
 show partitions debug
 [{
   "min": 0,
@@ -713,23 +713,23 @@ show partitions debug
 }]
 # test: upload partitions parsing
 upload partitions
-error: UPLOAD PARTITIONS <BETWEEN> min AND max
+error: UPLOAD PARTITIONS 'BETWEEN' min AND max
 upload partitions abc
-error: UPLOAD PARTITIONS <BETWEEN> min AND max
+error: UPLOAD PARTITIONS 'BETWEEN' min AND max
 upload partitions between
-error: UPLOAD PARTITIONS BETWEEN <min> AND max
+error: UPLOAD PARTITIONS BETWEEN 'min' AND max
 upload partitions between abc
-error: UPLOAD PARTITIONS BETWEEN <min> AND max
+error: UPLOAD PARTITIONS BETWEEN 'min' AND max
 upload partitions between 0
-error: UPLOAD PARTITIONS BETWEEN min <AND> max
+error: UPLOAD PARTITIONS BETWEEN min 'AND' max
 upload partitions between 10
-error: UPLOAD PARTITIONS BETWEEN min <AND> max
+error: UPLOAD PARTITIONS BETWEEN min 'AND' max
 upload partitions between 10 abc
-error: UPLOAD PARTITIONS BETWEEN min <AND> max
+error: UPLOAD PARTITIONS BETWEEN min 'AND' max
 upload partitions between 10 and
-error: UPLOAD PARTITIONS BETWEEN min AND <max>
+error: UPLOAD PARTITIONS BETWEEN min AND 'max'
 upload partitions between 10 and abc
-error: UPLOAD PARTITIONS BETWEEN min AND <max>
+error: UPLOAD PARTITIONS BETWEEN min AND 'max'
 upload partitions between 10 and 30 abc
 error: unexpected clause at the end of command
 # test: upload partitions #1

@@ -7,9 +7,9 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: create partition parsing
 create partition
-error: CREATE PARTITION <min> max
+error: CREATE PARTITION 'min' max
 create partition abc
-error: CREATE PARTITION <min> max
+error: CREATE PARTITION 'min' max
 # test: create partition (default interval)
 create partition 30
 show partitions debug

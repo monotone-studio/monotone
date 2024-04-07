@@ -40,39 +40,39 @@ show storages debug
 }
 # test: create storage parsing
 create
-error: CREATE <CLOUD|STORAGE|PARTITION> expected
+error: CREATE 'CLOUD|STORAGE|PARTITION' expected
 create storage
-error: CREATE STORAGE <name> expected
+error: CREATE STORAGE 'name' expected
 create storage if
-error: IF <NOT> EXISTS expected
+error: IF 'NOT' EXISTS expected
 create storage if abc
-error: IF <NOT> EXISTS expected
+error: IF 'NOT' EXISTS expected
 create storage if not abc
-error: IF NOT <EXISTS> expected
+error: IF NOT 'EXISTS' expected
 create storage if not exists
-error: CREATE STORAGE <name> expected
+error: CREATE STORAGE 'name' expected
 create storage 123
-error: CREATE STORAGE <name> expected
+error: CREATE STORAGE 'name' expected
 create storage test junk
 error: unexpected clause at the end of command
 create storage test (
-error: CREATE STORAGE (<name> expected
+error: CREATE STORAGE ('name' expected
 create storage test (123
-error: CREATE STORAGE (<name> expected
+error: CREATE STORAGE ('name' expected
 create storage test (name
-error: CREATE STORAGE: unknown option name
+error: CREATE STORAGE: unknown option: 'name'
 create storage test (sync
-error: sync <true/false> expected
+error: sync 'true|false' expected
 create storage test (sync int
-error: sync <true/false> expected
+error: sync 'true|false' expected
 create storage test (sync false
-error: CREATE STORAGE name (...<)> expected
+error: CREATE STORAGE name (...')' expected
 create storage test (sync false,
-error: CREATE STORAGE (<name> expected
+error: CREATE STORAGE ('name' expected
 create storage test (sync false,)
-error: CREATE STORAGE (<name> expected
+error: CREATE STORAGE ('name' expected
 create storage test (sync false, sync false
-error: CREATE STORAGE name (...<)> expected
+error: CREATE STORAGE name (...')' expected
 create storage test (sync false, sync false) junk
 error: unexpected clause at the end of command
 # test: create storage (no options)
@@ -237,9 +237,9 @@ show storages debug
 # test: create storage (with options)
 drop storage test
 create storage test (sync
-error: sync <true/false> expected
+error: sync 'true|false' expected
 create storage test (sync 123
-error: sync <true/false> expected
+error: sync 'true|false' expected
 create storage test (sync false)
 show storages debug
 {
@@ -304,9 +304,9 @@ show storages debug
 }
 drop storage test
 create storage test (crc
-error: crc <true/false> expected
+error: crc 'true|false' expected
 create storage test (crc 123
-error: crc <true/false> expected
+error: crc 'true|false' expected
 create storage test (crc true)
 show storages debug
 {
@@ -371,9 +371,9 @@ show storages debug
 }
 drop storage test
 create storage test (refresh_wm
-error: refresh_wm <integer> expected
+error: refresh_wm 'integer' expected
 create storage test (refresh_wm false
-error: refresh_wm <integer> expected
+error: refresh_wm 'integer' expected
 create storage test (refresh_wm 0)
 show storages debug
 {
@@ -438,9 +438,9 @@ show storages debug
 }
 drop storage test
 create storage test (region_size
-error: region_size <integer> expected
+error: region_size 'integer' expected
 create storage test (region_size false
-error: region_size <integer> expected
+error: region_size 'integer' expected
 create storage test (region_size 4096)
 show storages debug
 {
@@ -505,11 +505,11 @@ show storages debug
 }
 drop storage test
 create storage test (compression
-error: compression <string> expected
+error: compression 'string'expected
 create storage test (compression false
-error: compression <string> expected
+error: compression 'string'expected
 create storage test (compression 1)
-error: compression <string> expected
+error: compression 'string'expected
 create storage test (compression 'none')
 show storages debug
 {
@@ -574,9 +574,9 @@ show storages debug
 }
 drop storage test
 create storage test (compression_level
-error: compression_level <integer> expected
+error: compression_level 'integer' expected
 create storage test (compression_level false
-error: compression_level <integer> expected
+error: compression_level 'integer' expected
 create storage test (compression_level 9)
 show storages debug
 {
@@ -641,9 +641,9 @@ show storages debug
 }
 drop storage test
 create storage test (path
-error: path <string> expected
+error: path 'string'expected
 create storage test (path false
-error: path <string> expected
+error: path 'string'expected
 create storage test (path 'on_base')
 show storages debug
 {
@@ -708,13 +708,13 @@ show storages debug
 }
 drop storage test
 create storage test (cloud
-error: cloud <string> expected
+error: cloud 'string'expected
 create storage test (cloud false
-error: cloud <string> expected
+error: cloud 'string'expected
 create storage test (cloud 'undef')
-error: storage 'test': cloud 'undef' does not exists
+error: storage 'test': cloud 'undef' not exists
 create storage test (cloud 'mock')
-error: storage 'test': cloud 'mock' does not exists
+error: storage 'test': cloud 'mock' not exists
 # test: create storage set path
 create storage test (path '__dir')
 drop storage test

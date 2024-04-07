@@ -7,7 +7,7 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: create storage with cloud (not found)
 create storage test (cloud 'unknown')
-error: storage 'test': cloud 'unknown' does not exists
+error: storage 'test': cloud 'unknown' not exists
 # test: create storage with cloud
 create cloud mock (type 'mock')
 show clouds
@@ -148,7 +148,7 @@ show storages debug
 }
 # test: alter storage set cloud (unknown)
 alter storage test set (cloud 'undef')
-error: storage 'test': cloud 'undef' does not exists
+error: storage 'test': cloud 'undef' not exists
 # test: alter storage set cloud (no partitions)
 alter storage test set (cloud 'mock')
 show storages debug
@@ -455,7 +455,7 @@ show storages debug
 }
 # test: alter storage set cloud none #1 (exists on cloud)
 alter storage test set (cloud '')
-error: storage 'test': some partitions are still remain on cloud
+error: storage 'test': some partitions are still remain on the cloud
 show storages debug
 {
   "main": {
@@ -613,7 +613,7 @@ show partitions debug
 }]
 # test: alter storage set cloud none #2 (exists on cloud and storage)
 alter storage test set (cloud '')
-error: storage 'test': some partitions are still remain on cloud
+error: storage 'test': some partitions are still remain on the cloud
 show storages debug
 {
   "main": {

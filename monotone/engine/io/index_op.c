@@ -45,7 +45,7 @@ index_open(File*   self,
 
 	// check index magic
 	if (unlikely(index->magic != INDEX_MAGIC))
-		error("partition: file '%s' corrupted", str_of(&self->path));
+		error("partition: file '%s' is corrupted", str_of(&self->path));
 
 	// check index crc
 	uint32_t crc;

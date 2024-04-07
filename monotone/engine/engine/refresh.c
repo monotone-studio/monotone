@@ -62,7 +62,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
-			error("refresh: partition <%" PRIu64 "> not found", min);
+			error("refresh: partition '%" PRIu64 "' not found", min);
 		return false;
 	}
 
@@ -70,7 +70,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 	if (part_has(ref->part, ID_CLOUD))
 	{
 		engine_unlock(engine, ref, LOCK_SERVICE);
-		error("refresh: partition <%" PRIu64 "> must be dropped from cloud first", min);
+		error("refresh: partition '%" PRIu64 "' must be dropped from the cloud first", min);
 	}
 
 	// match storage, if provided by request
@@ -80,7 +80,7 @@ refresh_begin(Refresh* self, uint64_t min, Str* storage, bool if_exists)
 		if (unlikely(! self->storage))
 		{
 			engine_unlock(engine, ref, LOCK_SERVICE);
-			error("refresh: storage <%.*s> not found", str_size(storage),
+			error("refresh: storage '%.*s' not found", str_size(storage),
 			      str_of(storage));
 		}
 	}

@@ -46,7 +46,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 		case KNAME:
 			break;
 		default:
-			error("%s (<name> expected", command);
+			error("%s ('name' expected", command);
 			break;
 		}
 
@@ -108,7 +108,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			// validate compression name
 			int compression_id = compression_mgr_of(&config->compression);
 			if (compression_id == -1)
-				error("unknown compression: %.*s", str_size(&config->compression),
+				error("unknown compression: '%.*s'", str_size(&config->compression),
 				      str_of(&config->compression));
 		} else
 		if (str_compare_raw(&name.string, "compression_level", 17))
@@ -127,7 +127,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			// validate encryption name
 			int id = encryption_mgr_of(&config->encryption);
 			if (id == -1)
-				error("unknown encryption: %.*s", str_size(&config->encryption),
+				error("unknown encryption: '%.*s'", str_size(&config->encryption),
 				      str_of(&config->encryption));
 
 		} else
@@ -143,7 +143,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 
 		} else
 		{
-			error("%s: unknown option %.*s", command, str_size(&name.string),
+			error("%s: unknown option: '%.*s'", command, str_size(&name.string),
 			      str_of(&name.string));
 		}
 
@@ -153,7 +153,7 @@ parse_storage_options(Lex* self, Source* config, char* command)
 
 		// )
 		if (! lex_if(self, ')', NULL))
-			error("%s name (...<)> expected", command);
+			error("%s name (...')' expected", command);
 
 		break;
 	}
@@ -174,7 +174,7 @@ parse_storage_create(Lex* self)
 	// name
 	Token name;
 	if (! lex_if(self, KNAME, &name))
-		error("CREATE STORAGE <name> expected");
+		error("CREATE STORAGE 'name' expected");
 
 	// create storage config
 	auto config = source_allocate();
@@ -218,7 +218,7 @@ parse_storage_drop(Lex* self)
 
 	// name
 	if (! lex_if(self, KNAME, &cmd->name))
-		error("DROP STORAGE <name> expected");
+		error("DROP STORAGE 'name' expected");
 
 	unguard(&guard);
 	return &cmd->cmd;
@@ -235,7 +235,7 @@ parse_storage_alter_rename(Lex* self, Cmd* arg)
 
 	// name
 	if (! lex_if(self, KNAME, &cmd->name_new))
-		error("ALTER STORAGE RENAME <name> expected");
+		error("ALTER STORAGE RENAME 'name' expected");
 }
 
 static void
@@ -269,7 +269,7 @@ parse_storage_alter(Lex* self)
 
 	// name
 	if (! lex_if(self, KNAME, &cmd->name))
-		error("ALTER STORAGE <name> expected");
+		error("ALTER STORAGE 'name' expected");
 
 	// RENAME | SET
 	if (lex_if(self, KRENAME, NULL))
@@ -278,7 +278,7 @@ parse_storage_alter(Lex* self)
 	if (lex_if(self, KSET, NULL))
 		parse_storage_alter_set(self, &cmd->cmd);
 	else
-		error("ALTER STORAGE name <RENAME or SET> expected");
+		error("ALTER STORAGE name 'RENAME or SET' expected");
 
 	unguard(&guard);
 	return &cmd->cmd;

@@ -29,7 +29,7 @@ parse_debug(Lex* self)
 	int id;
 	Token name;
 	if (! lex_if(self, KSTRING, &name))
-		error("DEBUG <name> expected");
+		error("DEBUG 'name' expected");
 
 	// DEBUG WAL CREATE
 	// DEBUG WAL GC

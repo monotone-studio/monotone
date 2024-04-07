@@ -171,7 +171,7 @@ engine_drop_file(Engine* self, uint64_t min, bool if_exists,
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
-			error("drop: partition <%" PRIu64 "> not found", min);
+			error("drop: partition '%" PRIu64 "' not found", min);
 		return false;
 	}
 	auto part = ref->part;
@@ -332,7 +332,7 @@ engine_download(Engine* self, uint64_t min,
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
-			error("download: partition <%" PRIu64 "> not found", min);
+			error("download: partition '%" PRIu64 "' not found", min);
 		return;
 	}
 	auto part = ref->part;
@@ -341,7 +341,7 @@ engine_download(Engine* self, uint64_t min,
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		if (! if_cloud)
-			error("download: partition <%" PRIu64 "> has no associated cloud", min);
+			error("download: partition '%" PRIu64 "' has no associated cloud", min);
 		return;
 	}
 
@@ -401,7 +401,7 @@ engine_upload(Engine* self, uint64_t min,
 	if (unlikely(! ref))
 	{
 		if (! if_exists)
-			error("upload: partition <%" PRIu64 "> not found", min);
+			error("upload: partition '%" PRIu64 "' not found", min);
 		return;
 	}
 	auto part = ref->part;
@@ -410,7 +410,7 @@ engine_upload(Engine* self, uint64_t min,
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
 		if (! if_cloud)
-			error("upload: partition <%" PRIu64 "> storage has no associated cloud", min);
+			error("upload: partition '%" PRIu64 "' storage has no associated cloud", min);
 		return;
 	}
 
@@ -425,7 +425,7 @@ engine_upload(Engine* self, uint64_t min,
 	if (! part_has(part, ID))
 	{
 		engine_unlock(self, ref, LOCK_SERVICE);
-		error("upload: partition <%" PRIu64 "> file not yet exists", min);
+		error("upload: partition '%" PRIu64 "' file does not exist locally", min);
 		return;
 	}
 

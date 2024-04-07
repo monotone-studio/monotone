@@ -7,21 +7,21 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: drop cloud parsing
 drop
-error: DROP <STORAGE|PARTITION|PARTITIONS> expected
+error: DROP 'STORAGE|PARTITION|PARTITIONS' expected
 drop cloud
-error: DROP CLOUD <name> expected
+error: DROP CLOUD 'name' expected
 drop cloud if
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 drop cloud if 123
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 drop cloud if not
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 drop cloud if exists
-error: DROP CLOUD <name> expected
+error: DROP CLOUD 'name' expected
 drop cloud if exists 123
-error: DROP CLOUD <name> expected
+error: DROP CLOUD 'name' expected
 drop cloud 123
-error: DROP CLOUD <name> expected
+error: DROP CLOUD 'name' expected
 # test: drop cloud
 create cloud test (type 'mock')
 show clouds

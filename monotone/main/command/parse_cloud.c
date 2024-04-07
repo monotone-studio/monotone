@@ -47,7 +47,7 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 		case KNAME:
 			break;
 		default:
-			error("%s (<name> expected", command);
+			error("%s ('name' expected", command);
 			break;
 		}
 
@@ -95,7 +95,7 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 			mask |= CLOUD_DEBUG;
 		} else
 		{
-			error("%s: unknown option %.*s", command, str_size(&name.string),
+			error("%s: unknown option '%.*s'", command, str_size(&name.string),
 			      str_of(&name.string));
 		}
 
@@ -105,7 +105,7 @@ parse_cloud_options(Lex* self, CloudConfig* config, char* command)
 
 		// )
 		if (! lex_if(self, ')', NULL))
-			error("%s name (...<)> expected", command);
+			error("%s name (...')' expected", command);
 
 		break;
 	}
@@ -126,7 +126,7 @@ parse_cloud_create(Lex* self)
 	// name
 	Token name;
 	if (! lex_if(self, KNAME, &name))
-		error("CREATE CLOUD <name> expected");
+		error("CREATE CLOUD 'name' expected");
 
 	// create cloud config
 	cmd->config = cloud_config_allocate();
@@ -151,7 +151,7 @@ parse_cloud_drop(Lex* self)
 
 	// name
 	if (! lex_if(self, KNAME, &cmd->name))
-		error("DROP CLOUD <name> expected");
+		error("DROP CLOUD 'name' expected");
 
 	unguard(&guard);
 	return &cmd->cmd;
@@ -168,7 +168,7 @@ parse_cloud_alter_rename(Lex* self, Cmd* arg)
 
 	// name
 	if (! lex_if(self, KNAME, &cmd->name_new))
-		error("ALTER CLOUD RENAME <name> expected");
+		error("ALTER CLOUD RENAME 'name' expected");
 }
 
 static void
@@ -203,7 +203,7 @@ parse_cloud_alter(Lex* self)
 
 	// name
 	if (! lex_if(self, KNAME, &cmd->name))
-		error("ALTER CLOUD <name> expected");
+		error("ALTER CLOUD 'name' expected");
 
 	// RENAME | SET
 	if (lex_if(self, KRENAME, NULL))
@@ -212,7 +212,7 @@ parse_cloud_alter(Lex* self)
 	if (lex_if(self, KSET, NULL))
 		parse_cloud_alter_set(self, &cmd->cmd);
 	else
-		error("ALTER CLOUD name <RENAME or SET> expected");
+		error("ALTER CLOUD name 'RENAME or SET' expected");
 
 	unguard(&guard);
 	return &cmd->cmd;

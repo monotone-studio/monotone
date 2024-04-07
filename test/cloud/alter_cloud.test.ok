@@ -7,19 +7,19 @@ set uuid to '00000000-0000-0000-0000-000000000000'
 open
 # test: alter cloud parsing
 alter
-error: ALTER <STORAGE|PIPELINE> expected
+error: ALTER 'STORAGE|PIPELINE' expected
 alter cloud
-error: ALTER CLOUD <name> expected
+error: ALTER CLOUD 'name' expected
 alter cloud if
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 alter cloud if abc
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 alter cloud if not abc
-error: IF <EXISTS> expected
+error: IF 'EXISTS' expected
 alter cloud if exists
-error: ALTER CLOUD <name> expected
+error: ALTER CLOUD 'name' expected
 alter cloud if exists test abc
-error: ALTER CLOUD name <RENAME or SET> expected
+error: ALTER CLOUD name 'RENAME or SET' expected
 # test: alter cloud rename (already exists)
 create cloud test2 (type 'mock')
 create cloud test (type 'mock')
@@ -43,9 +43,9 @@ show clouds
   }
 }
 alter cloud test rename
-error: ALTER CLOUD RENAME <name> expected
+error: ALTER CLOUD RENAME 'name' expected
 alter cloud test rename to
-error: ALTER CLOUD RENAME <name> expected
+error: ALTER CLOUD RENAME 'name' expected
 alter cloud test rename to test
 error: cloud 'test': already exists
 alter cloud test rename to test2
@@ -215,15 +215,15 @@ alter cloud test set
 alter cloud test set abc
 error: unexpected clause at the end of command
 alter cloud test set (
-error: ALTER CLOUD (<name> expected
+error: ALTER CLOUD ('name' expected
 alter cloud test set (type
-error: type <string> expected
+error: type 'string'expected
 alter cloud test set (url,)
-error: url <string> expected
+error: url 'string'expected
 alter cloud test set (url 123
-error: url <string> expected
+error: url 'string'expected
 alter cloud test set (url '',
-error: ALTER CLOUD (<name> expected
+error: ALTER CLOUD ('name' expected
 alter cloud test set (url 'localhost')
 show clouds
 {
