@@ -108,4 +108,12 @@ show pipeline
 alter pipeline set hot (duration 1day)
 show pipeline
 
+# test: alter pipeline set (duplicate)
+alter pipeline set hot, hot
+show pipeline
+
+# test: alter pipeline set (no condition)
+alter pipeline set hot, cold
+show pipeline
+
 close

@@ -98,9 +98,33 @@ pipeline_empty(Pipeline* self)
 	return !self->list_count;
 }
 
+static void
+pipeline_alter_validate(List* configs)
+{
+	list_foreach(configs)
+	{
+		auto config = list_at(TierConfig, link);
+		if (list_is_last(configs, _i))
+			break;
+
+		// cannot use same storage
+		auto next = container_of(_i->next, TierConfig, link);
+		if (str_compare(&config->name, &next->name))
+			error("pipeline: tier '%.*s' is duplicated", str_size(&config->name),
+			      str_of(&config->name));
+
+		// ensure conditions are set to use next
+		if (tier_config_terminal(config))
+			error("pipeline: tier '%.*s' is terminal and has no conditions",
+			      str_size(&config->name), str_of(&config->name));
+	}
+}
+
 void
 pipeline_alter(Pipeline* self, List* configs)
 {
+	pipeline_alter_validate(configs);
+
 	List list;
 	list_init(&list);
 

@@ -133,3 +133,12 @@ tier_config_write(TierConfig* self, Buf* buf)
 	encode_raw(buf, "duration", 8);
 	encode_integer(buf, self->duration);
 }
+
+static inline bool
+tier_config_terminal(TierConfig* self)
+{
+	return self->partitions == -1 &&
+	       self->size       == -1 &&
+	       self->events     == -1 &&
+	       self->duration   == -1;
+}

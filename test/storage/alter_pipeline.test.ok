@@ -943,4 +943,26 @@ show pipeline
   "events": -1,
   "duration": 86400000000
 }]
+# test: alter pipeline set (duplicate)
+alter pipeline set hot, hot
+error: pipeline: tier 'hot' is duplicated
+show pipeline
+[{
+  "name": "hot",
+  "partitions": -1,
+  "size": -1,
+  "events": -1,
+  "duration": 86400000000
+}]
+# test: alter pipeline set (no condition)
+alter pipeline set hot, cold
+error: pipeline: tier 'hot' is terminal and has no conditions
+show pipeline
+[{
+  "name": "hot",
+  "partitions": -1,
+  "size": -1,
+  "events": -1,
+  "duration": 86400000000
+}]
 close
