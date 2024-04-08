@@ -287,6 +287,9 @@ select
 [120]
 [140]
 (eof)
+# test: set zero interval
+set interval to 0
+error: SET 'interval': variable cannot be set zero
 # test: set interval
 set interval to 1000
 # test: insert

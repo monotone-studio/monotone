@@ -31,6 +31,9 @@ create partition 80 500
 show partitions debug
 select
 
+# test: set zero interval
+set interval to 0
+
 # test: set interval
 set interval to 1000
 

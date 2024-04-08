@@ -18,15 +18,17 @@ typedef struct Var Var;
 enum
 {
 	// can be set
-	VAR_C = 1,
+	VAR_C = 1 << 0,
 	// can be set in runtime
-	VAR_R = 2,
+	VAR_R = 1 << 1,
 	// hidden
-	VAR_H = 4,
+	VAR_H = 1 << 2,
 	// secret
-	VAR_S = 8,
+	VAR_S = 1 << 3,
 	// excluded from config
-	VAR_E = 16
+	VAR_E = 1 << 4,
+	// cannot be zero
+	VAR_Z = 1 << 5
 };
 
 typedef enum

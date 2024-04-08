@@ -103,7 +103,7 @@ config_prepare(Config* self)
 		{ "wal_crc",                 VAR_BOOL,   VAR_C,                &self->wal_crc,                 NULL,        false            },
 		// engine
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
-		{ "interval",                VAR_INT,    VAR_C|VAR_R,          &self->interval,                NULL,        3000000          },
+		{ "interval",                VAR_INT,    VAR_C|VAR_R|VAR_Z,    &self->interval,                NULL,        3000000          },
 		{ "compression",             VAR_STRING, VAR_C|VAR_R,          &self->compression,             "zstd",      0                },
 		{ "compression_level",       VAR_INT,    VAR_C|VAR_R,          &self->compression_level,       NULL,        0                },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },

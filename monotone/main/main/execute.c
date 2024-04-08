@@ -151,6 +151,9 @@ execute_set(Executable* self)
 		if (value->id != KINT)
 			error("SET '%.*s': integer value expected", str_size(name),
 			      str_of(name));
+		if (var_is(var, VAR_Z) && value->integer == 0)
+			error("SET '%.*s': variable cannot be set zero", str_size(name),
+			      str_of(name));
 		var_int_set(var, value->integer);
 		break;
 	}
