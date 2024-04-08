@@ -5,6 +5,7 @@ set interval to 10
 set wal to false
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
+set config_sync to false
 open
 # test: create partition
 insert 0
@@ -58,6 +59,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -252,6 +254,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -408,6 +411,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -648,6 +652,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 00000000000000000000
@@ -764,6 +769,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -782,6 +788,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate storages
@@ -899,6 +906,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -946,6 +954,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1114,6 +1123,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1310,6 +1320,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1627,6 +1638,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions
@@ -1973,6 +1985,7 @@ set workers to 0
 set workers_upload to 0
 set interval to 10
 set wal to false
+set config_sync to false
 open
 files 00000000-0000-0000-0000-000000000000
 # test: validate partitions

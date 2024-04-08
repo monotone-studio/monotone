@@ -6,6 +6,7 @@ set workers_upload to 0
 set interval to 10
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
+set config_sync to false
 open
 
 # test: no clouds after create

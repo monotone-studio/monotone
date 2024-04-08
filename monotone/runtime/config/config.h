@@ -20,8 +20,10 @@ struct Config
 	// main
 	Var  version;
 	Var  uuid;
-	Var  online;
 	Var  directory;
+	Var  online;
+	// config
+	Var  config_sync;
 	// log
 	Var  log;
 	Var  log_to_file;

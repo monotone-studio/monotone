@@ -34,7 +34,7 @@ config_add(Config* self, ConfigDef* def)
 	list_append(&self->list, &var->link);
 	self->count++;
 
-	if (! (var_is(var, VAR_H) || var_is(var, VAR_H)))
+	if (! (var_is(var, VAR_S) || var_is(var, VAR_H)))
 		self->count_visible++;
 	if (var_is(var, VAR_C))
 		self->count_config++;
@@ -84,6 +84,8 @@ config_prepare(Config* self)
 		{ "version",                 VAR_STRING, VAR_E,                &self->version,                 "0.0",       0                },
 		{ "uuid",                    VAR_STRING, VAR_C,                &self->uuid,                    NULL,        0                },
 		{ "directory",               VAR_STRING, VAR_E,                &self->directory,               NULL,        0                },
+		// config
+		{ "config_sync",             VAR_BOOL,   VAR_E|VAR_C|VAR_H,    &self->config_sync,             NULL,        true             },
 		// log
 		{ "log",                     VAR_BOOL,   VAR_C,                &self->log,                     NULL,        true             },
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
@@ -244,7 +246,8 @@ config_save_to(Config* self, const char* path)
 	file_write_buf(&file, &text);
 
 	// sync
-	file_sync(&file);
+	if (var_int_of(&self->config_sync))
+		file_sync(&file);
 }
 
 void

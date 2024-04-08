@@ -6,6 +6,7 @@ set interval to 10
 set serial to false
 set wal_crc to true
 set uuid to '00000000-0000-0000-0000-000000000000'
+set config_sync to false
 open
 # test: insert
 insert 1
@@ -76,6 +77,7 @@ set interval to 10
 set serial to false
 set wal_crc to true
 set uuid to '00000000-0000-0000-0000-000000000000'
+set config_sync to false
 open
 show wal
 {

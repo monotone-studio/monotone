@@ -5,6 +5,7 @@ set workers_upload to 0
 set interval to 10
 set uuid to 'c14fb1d4-d1f7-5bf1-f256-4ad89bc47379'
 set serial to false
+set config_sync to false
 open
 files
 wal
@@ -17,6 +18,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 show all
 {
@@ -146,6 +148,7 @@ show storages debug
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure storage exists
 show storages debug
@@ -214,6 +217,7 @@ alter storage test set (compression 'zstd')
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: validate storage settings
 show storages debug
@@ -343,6 +347,7 @@ show storages debug
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: validate storage settings
 show storages debug
@@ -443,6 +448,7 @@ show storages debug
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure storage does not exists
 show storages debug
@@ -493,6 +499,7 @@ show clouds
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure cloud exists
 show clouds
@@ -511,6 +518,7 @@ alter cloud mock set (url 'localhost')
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: validate cloud settings
 show clouds
@@ -540,6 +548,7 @@ show clouds
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: validate storage settings
 show clouds
@@ -561,6 +570,7 @@ show clouds
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure cloud does not exists
 show clouds
@@ -644,6 +654,7 @@ show storages debug
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure storage exists
 show storages debug
@@ -744,6 +755,7 @@ show storages debug
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure storage does not exists
 show storages debug
@@ -791,6 +803,7 @@ show pipeline
 # test: close/open
 close
 init
+set config_sync to false
 open
 # test: ensure pipeline settings remain
 show pipeline

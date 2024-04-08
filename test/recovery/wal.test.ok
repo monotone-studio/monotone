@@ -4,6 +4,7 @@ set workers_upload to 0
 set interval to 10
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
+set config_sync to false
 open
 # test: create wal on start
 show config wal
@@ -27,6 +28,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 show wal
 {
@@ -100,6 +102,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 show lsn
 3
@@ -144,6 +147,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 # test: select
 show wal
@@ -189,6 +193,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 # test: select
 show wal
@@ -289,6 +294,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 # test: ensure no heap used
 show partitions debug
@@ -348,6 +354,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 # test: select
 show partitions debug
@@ -475,6 +482,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 # test: select
 show partitions debug
@@ -602,6 +610,7 @@ init
 set workers to 0
 set workers_upload to 0
 set interval to 10
+set config_sync to false
 open
 # test: ensure partition drop
 show partitions debug
