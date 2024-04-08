@@ -104,6 +104,8 @@ config_prepare(Config* self)
 		// engine
 		{ "serial",                  VAR_BOOL,   VAR_C,                &self->serial,                  NULL,        true             },
 		{ "interval",                VAR_INT,    VAR_C|VAR_R,          &self->interval,                NULL,        3000000          },
+		{ "compression",             VAR_STRING, VAR_C|VAR_R,          &self->compression,             "zstd",      0                },
+		{ "compression_level",       VAR_INT,    VAR_C|VAR_R,          &self->compression_level,       NULL,        0                },
 		{ "workers",                 VAR_INT,    VAR_C,                &self->workers,                 NULL,        3                },
 		{ "workers_upload",          VAR_INT,    VAR_C,                &self->workers_upload,          NULL,        1                },
 		// runtime state

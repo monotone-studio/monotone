@@ -42,6 +42,8 @@ struct Config
 	// engine
 	Var  serial;
 	Var  interval;
+	Var  compression;
+	Var  compression_level;
 	Var  workers;
 	Var  workers_upload;
 	// state

@@ -100,6 +100,16 @@ storage_mgr_create_main(StorageMgr* self)
 	Str name;
 	str_set_cstr(&name, "main");
 	source_set_name(config, &name);
+
+	// set default compression
+	auto default_compression = &config()->compression.string;
+	if (! str_empty(default_compression))
+	{
+		source_set_compression(config, &config()->compression.string);
+		auto level = var_int_of(&config()->compression_level);
+		source_set_compression_level(config, level);
+	}
+
 	return storage_mgr_create(self, config, true);
 }
 

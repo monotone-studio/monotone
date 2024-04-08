@@ -98,6 +98,8 @@ parse_storage_options(Lex* self, Source* config, char* command)
 			// region_size <int>
 			parse_int(self, &name, &config->region_size);
 			mask |= SOURCE_REGION_SIZE;
+			if (config->region_size == 0)
+				error("invalid region_size value");
 		} else
 		if (str_compare_raw(&name.string, "compression", 11))
 		{
@@ -185,6 +187,15 @@ parse_storage_create(Lex* self)
 	Uuid uuid;
 	uuid_generate(&uuid, global()->random);
 	source_set_uuid(config, &uuid);
+
+	// set default compression
+	auto default_compression = &config()->compression.string;
+	if (! str_empty(default_compression))
+	{
+		source_set_compression(config, &config()->compression.string);
+		auto level = var_int_of(&config()->compression_level);
+		source_set_compression_level(config, level);
+	}
 
 	// [(options)]
 	parse_storage_options(self, config, "CREATE STORAGE");

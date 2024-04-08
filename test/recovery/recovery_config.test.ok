@@ -5,6 +5,7 @@ set workers_upload to 0
 set interval to 10
 set uuid to 'c14fb1d4-d1f7-5bf1-f256-4ad89bc47379'
 set serial to false
+set compression to ''
 set sync to false
 open
 files
@@ -40,6 +41,8 @@ show all
   "wal_crc": false,
   "serial": false,
   "interval": 10,
+  "compression": "",
+  "compression_level": 0,
   "workers": 0,
   "workers_upload": 0,
   "ssn": 0,
