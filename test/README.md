@@ -3,26 +3,34 @@
 
 ### Monotone QA and Testing
 
-Monotone is using custom made test suite.
+Monotone is using a custom-made test suite.
 
-#### Testing
+Test [Plan](plan).
 
-- functional
+#### Testing Groups
+
+- `functional`
 
   Basic CRUD and Partition mapping.
 
-- storage
+- `storage` 
 
-  Storage specific DDL commands.
+  Storage-specific DDL commands, data management, compression, and encryption.
 
-- cloud
+- `cloud`
 
-  Storage specific DDL commands using cloud mock.
+  Cloud-specific DDL commands are tested using the cloud mock interface.
 
-- recovery
+- `recovery`
 
-  Storage behaviour after restart, crash recovery and error injections.
+  Storage behavior after restart, WAL, crash recovery, and error injections.
 
-- s3
+- `s3`
 
-  Actual S3 testing using `minio` (which is required to be run locally)
+  S3 testing using `minio` (which is required to be run locally). These tests must be run explicitly.
+
+#### Memory testing
+
+`Valgrind` is an essential tool for memory testing.
+
+Our policy is that Valgrind should have no warnings or leaks when running the test suite.
