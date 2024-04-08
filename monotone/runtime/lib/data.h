@@ -388,151 +388,6 @@ data_is_integer(uint8_t* data)
 	return *data >= MN_INTV0 && *data <= MN_INT64;
 }
 
-// string
-always_inline hot static inline int
-data_size_string(int value)
-{
-	return data_size_of(value) + value;
-}
-
-always_inline hot static inline int
-data_size_string32(void)
-{
-	return data_size32();
-}
-
-always_inline hot static inline void
-data_read_raw(uint8_t** pos, char** value, int* size)
-{
-	switch (**pos) {
-	case MN_STRINGV0 ... MN_STRINGV31:
-		*size = **pos - MN_STRINGV0;
-		*pos += data_size_type();
-		break;
-	case MN_STRING8:
-		*size = *(int8_t*)(*pos + data_size_type());
-		*pos += data_size8();
-		break;
-	case MN_STRING16:
-		*size = *(int16_t*)(*pos + data_size_type());
-		*pos += data_size16();
-		break;
-	case MN_STRING32:
-		*size = *(int32_t*)(*pos + data_size_type());
-		*pos += data_size32();
-		break;
-	default:
-		data_error(*pos, MN_STRINGV0);
-		break;
-	}
-	*value = *(char**)pos;
-	*pos += *size;
-}
-
-always_inline hot static inline void
-data_read_string(uint8_t** pos, Str* string)
-{
-	char* value;
-	int   value_size;
-	data_read_raw(pos, &value, &value_size);
-	str_set(string, value, value_size);
-}
-
-always_inline hot static inline void
-data_read_string_copy(uint8_t** pos, Str* string)
-{
-	char* value;
-	int   value_size;
-	data_read_raw(pos, &value, &value_size);
-	str_strndup(string, value, value_size);
-}
-
-always_inline hot static inline void
-data_write_raw(uint8_t** pos, const char* value, uint32_t size)
-{
-	uint8_t* data = *pos;
-	if (size <= 31)
-	{
-		*data = MN_STRINGV0 + size;
-		*pos += data_size_type();
-	} else
-	if (size <= INT8_MAX)
-	{
-		*data = MN_STRING8;
-		*(int8_t*)(data + data_size_type()) = size;
-		*pos += data_size8();
-	} else
-	if (size <= INT16_MAX)
-	{
-		*data = MN_STRING16;
-		*(int16_t*)(data + data_size_type()) = size;
-		*pos += data_size16();
-	} else
-	{
-		*data = MN_STRING32;
-		*(int32_t*)(data + data_size_type()) = size;
-		*pos += data_size32();
-	}
-	if (size > 0)
-		memcpy(*pos, value, size);
-	*pos += size;
-}
-
-always_inline hot static inline void
-data_write_string(uint8_t** pos, Str* string)
-{
-	data_write_raw(pos, str_of(string), str_size(string));
-}
-
-always_inline hot static inline void
-data_write_string_cat(uint8_t** pos, char* a, char* b, int a_size, int b_size)
-{
-	uint8_t* data = *pos;
-	uint32_t size = a_size + b_size;
-	if (size <= 31)
-	{
-		*data = MN_STRINGV0 + size;
-		*pos += data_size_type();
-	} else
-	if (size <= INT8_MAX)
-	{
-		*data = MN_STRING8;
-		*(int8_t*)(data + data_size_type()) = size;
-		*pos += data_size8();
-	} else
-	if (size <= INT16_MAX)
-	{
-		*data = MN_STRING16;
-		*(int16_t*)(data + data_size_type()) = size;
-		*pos += data_size16();
-	} else
-	if (size <= INT32_MAX)
-	{
-		*data = MN_STRING32;
-		*(int32_t*)(data + data_size_type()) = size;
-		*pos += data_size32();
-	}
-	memcpy(*pos, a, a_size);
-	*pos += a_size;
-	memcpy(*pos, b, b_size);
-	*pos += b_size;
-}
-
-always_inline hot static inline void
-data_write_string32(uint8_t** pos, uint32_t size)
-{
-	uint8_t* data = *pos;
-	*data = MN_STRING32;
-	*(int32_t*)(data + data_size_type()) = size;
-	*pos += data_size32();
-}
-
-always_inline hot static inline bool
-data_is_string(uint8_t* data)
-{
-	return *data >= MN_STRINGV0 && *data <= MN_STRING32;
-}
-
 // bool
 always_inline hot static inline int
 data_size_bool(void)
@@ -663,6 +518,117 @@ always_inline hot static inline bool
 data_is_null(uint8_t* data)
 {
 	return *data == MN_NULL;
+}
+
+// string
+always_inline hot static inline int
+data_size_string(int value)
+{
+	return data_size_of(value) + value;
+}
+
+always_inline hot static inline int
+data_size_string32(void)
+{
+	return data_size32();
+}
+
+always_inline hot static inline void
+data_read_raw(uint8_t** pos, char** value, int* size)
+{
+	switch (**pos) {
+	case MN_STRINGV0 ... MN_STRINGV31:
+		*size = **pos - MN_STRINGV0;
+		*pos += data_size_type();
+		break;
+	case MN_STRING8:
+		*size = *(int8_t*)(*pos + data_size_type());
+		*pos += data_size8();
+		break;
+	case MN_STRING16:
+		*size = *(int16_t*)(*pos + data_size_type());
+		*pos += data_size16();
+		break;
+	case MN_STRING32:
+		*size = *(int32_t*)(*pos + data_size_type());
+		*pos += data_size32();
+		break;
+	default:
+		data_error(*pos, MN_STRINGV0);
+		break;
+	}
+	*value = (char*)*pos;
+	*pos += *size;
+}
+
+always_inline hot static inline void
+data_read_string(uint8_t** pos, Str* string)
+{
+	char* value;
+	int   value_size;
+	data_read_raw(pos, &value, &value_size);
+	str_set(string, value, value_size);
+}
+
+always_inline hot static inline void
+data_read_string_copy(uint8_t** pos, Str* string)
+{
+	char* value;
+	int   value_size;
+	data_read_raw(pos, &value, &value_size);
+	str_strndup(string, value, value_size);
+}
+
+always_inline hot static inline void
+data_write_raw(uint8_t** pos, const char* value, int size)
+{
+	uint8_t* data = *pos;
+	if (size <= 31)
+	{
+		*data = MN_STRINGV0 + size;
+		*pos += data_size_type();
+	} else
+	if (size <= INT8_MAX)
+	{
+		*data = MN_STRING8;
+		*(int8_t*)(data + data_size_type()) = size;
+		*pos += data_size8();
+	} else
+	if (size <= INT16_MAX)
+	{
+		*data = MN_STRING16;
+		*(int16_t*)(data + data_size_type()) = size;
+		*pos += data_size16();
+	} else
+	{
+		*data = MN_STRING32;
+		*(int32_t*)(data + data_size_type()) = size;
+		*pos += data_size32();
+	}
+	if (size > 0)
+		memcpy(*pos, value, size);
+	*pos += size;
+}
+
+always_inline hot static inline void
+data_write_string(uint8_t** pos, Str* string)
+{
+	data_write_raw(pos, str_of(string), str_size(string));
+}
+
+always_inline hot static inline void
+data_write_string32(uint8_t** pos, uint32_t size)
+{
+	uint8_t* data = *pos;
+	*data = MN_STRING32;
+	*(int32_t*)(data + data_size_type()) = size;
+	*pos += data_size32();
+}
+
+always_inline hot static inline bool
+data_is_string(uint8_t* data)
+{
+	return *data >= MN_STRINGV0 && *data <= MN_STRING32;
 }
 
 // misc
