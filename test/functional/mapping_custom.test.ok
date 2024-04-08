@@ -289,7 +289,7 @@ select
 (eof)
 # test: set zero interval
 set interval to 0
-error: SET 'interval': variable cannot be set zero
+error: SET 'interval': variable cannot be set to zero
 # test: set interval
 set interval to 1000
 # test: insert
