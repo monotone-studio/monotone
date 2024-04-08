@@ -53,6 +53,8 @@ decode_map(Decode* self, uint8_t** pos)
 			switch (ref->flags & ~DECODE_FOUND) {
 			case DECODE_UUID:
 			{
+				if (unlikely(! data_is_string(*pos)))
+					error("config: string expected for '%s'", ref->key);
 				auto value = (Uuid*)ref->value;
 				Str uuid;
 				data_read_string(pos, &uuid);
@@ -61,6 +63,8 @@ decode_map(Decode* self, uint8_t** pos)
 			}
 			case DECODE_STRING:
 			{
+				if (unlikely(! data_is_string(*pos)))
+					error("config: string expected for '%s'", ref->key);
 				auto value = (Str*)ref->value;
 				str_free(value);
 				data_read_string_copy(pos, value);
@@ -68,24 +72,32 @@ decode_map(Decode* self, uint8_t** pos)
 			}
 			case DECODE_INT:
 			{
+				if (unlikely(! data_is_integer(*pos)))
+					error("config: integer expected for '%s'", ref->key);
 				auto value = (int64_t*)ref->value;
 				data_read_integer(pos, value);
 				break;
 			}
 			case DECODE_BOOL:
 			{
+				if (unlikely(! data_is_bool(*pos)))
+					error("config: bool expected for '%s'", ref->key);
 				auto value = (bool*)ref->value;
 				data_read_bool(pos, value);
 				break;
 			}
 			case DECODE_REAL:
 			{
+				if (unlikely(! data_is_bool(*pos)))
+					error("config: real expected for '%s'", ref->key);
 				auto value = (double*)ref->value;
 				data_read_real(pos, value);
 				break;
 			}
 			case DECODE_NULL:
 			{
+				if (unlikely(! data_is_bool(*pos)))
+					error("config: null expected for '%s'", ref->key);
 				data_read_null(pos);
 				break;
 			}
@@ -102,7 +114,7 @@ decode_map(Decode* self, uint8_t** pos)
 		if (! found)
 		{
 			data_skip(pos);
-			log("unknown config key '%.*s'", str_size(&key),
+			log("config: unknown key '%.*s'", str_size(&key),
 			    str_of(&key));
 		}
 	}
@@ -111,6 +123,6 @@ decode_map(Decode* self, uint8_t** pos)
 	for (auto ref = self; ref->key; ref++)
 	{
 		if (! (ref->flags & DECODE_FOUND))
-			error("config key '%s' is not found", ref->key);
+			error("config: key '%s' is not found", ref->key);
 	}
 }
