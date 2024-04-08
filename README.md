@@ -163,7 +163,7 @@ read time:    14.2 secs
 **Without WAL**
 
 Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
-Write is in-memory. Partitions are compressed, flushed, and synced ASAP by background workers to disk.
+Write is in-memory. Partitions are compressed, flushed, and synced to disk ASAP by background workers.
 
 With standard settings (100 bytes per event):
 
@@ -209,7 +209,7 @@ Currently only Linux environments are supported.
 #### Dependencies
 
 - cmake
-- clang/gcc
+- gcc (recommended) or clang
 - libcurl
 - openssl
 - zstd
