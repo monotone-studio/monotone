@@ -41,6 +41,12 @@ config_online(void)
 }
 
 static inline bool
+config_sync(void)
+{
+	return var_int_of(&config()->sync);
+}
+
+static inline bool
 config_serial(void)
 {
 	return var_int_of(&config()->serial);

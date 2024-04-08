@@ -4,9 +4,8 @@ set workers_upload to 0
 set interval to 10
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
-set config_sync to false
+set sync to false
 open
-alter storage main set (sync false)
 show storages debug
 {
   "main": {
@@ -16,7 +15,7 @@ show storages debug
       "path": "",
       "cloud": "",
       "cloud_drop_local": true,
-      "sync": false,
+      "sync": true,
       "crc": false,
       "refresh_wm": 41943040,
       "region_size": 131072,
@@ -138,7 +137,7 @@ show storages, partitions debug
       "path": "",
       "cloud": "",
       "cloud_drop_local": true,
-      "sync": false,
+      "sync": true,
       "crc": false,
       "refresh_wm": 41943040,
       "region_size": 131072,
@@ -903,7 +902,7 @@ show storages debug
       "path": "",
       "cloud": "",
       "cloud_drop_local": true,
-      "sync": false,
+      "sync": true,
       "crc": false,
       "refresh_wm": 41943040,
       "region_size": 60,

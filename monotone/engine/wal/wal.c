@@ -89,7 +89,7 @@ wal_rotate(Wal* self, uint64_t wm)
 	// sync and close prev file
 	if (file_prev)
 	{
-		if (var_int_of(&config()->wal_sync_on_rotate))
+		if (var_int_of(&config()->wal_sync_on_rotate) && config_sync())
 			file_sync(&file_prev->file);
 		wal_file_close(file_prev);
 		wal_file_free(file_prev);

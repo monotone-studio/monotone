@@ -137,7 +137,7 @@ s3_download(Cloud* self, Source* source, Id* id)
 	s3_op_download(io, source, id, &file);
 
 	// sync
-	if (source->sync)
+	if (source->sync && config_sync())
 		file_sync(&file);
 
 	// rename as completed

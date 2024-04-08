@@ -126,7 +126,8 @@ void
 writer_stop(Writer*  self, Id* id, uint32_t refreshes,
             uint64_t time_create,
             uint64_t time_refresh,
-            uint64_t lsn, bool sync)
+            uint64_t lsn,
+            bool     sync)
 {
 	if (! index_writer_started(&self->index_writer))
 		return;
@@ -144,7 +145,7 @@ writer_stop(Writer*  self, Id* id, uint32_t refreshes,
 	file_writev(self->file, iov_pointer(&self->iov), self->iov.iov_count);
 	
 	// sync
-	if (sync)
+	if (sync && config_sync())
 		file_sync(self->file);
 
 	// cleanup

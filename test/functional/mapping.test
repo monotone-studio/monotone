@@ -6,10 +6,10 @@ set workers_upload to 0
 set interval to 10
 set serial to false
 set uuid to '00000000-0000-0000-0000-000000000000'
-set config_sync to false
+set sync to false
 open
 
-alter storage main set (sync false, region_size 60)
+alter storage main set (region_size 60)
 show storages debug
 
 # test: create partitions

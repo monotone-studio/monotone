@@ -84,8 +84,7 @@ config_prepare(Config* self)
 		{ "version",                 VAR_STRING, VAR_E,                &self->version,                 "0.0",       0                },
 		{ "uuid",                    VAR_STRING, VAR_C,                &self->uuid,                    NULL,        0                },
 		{ "directory",               VAR_STRING, VAR_E,                &self->directory,               NULL,        0                },
-		// config
-		{ "config_sync",             VAR_BOOL,   VAR_E|VAR_C|VAR_H,    &self->config_sync,             NULL,        true             },
+		{ "sync",                    VAR_BOOL,   VAR_E|VAR_C|VAR_H,    &self->sync,                    NULL,        true             },
 		// log
 		{ "log",                     VAR_BOOL,   VAR_C,                &self->log,                     NULL,        true             },
 		{ "log_to_file",             VAR_BOOL,   VAR_C,                &self->log_to_file,             NULL,        true             },
@@ -246,7 +245,7 @@ config_save_to(Config* self, const char* path)
 	file_write_buf(&file, &text);
 
 	// sync
-	if (var_int_of(&self->config_sync))
+	if (var_int_of(&self->sync))
 		file_sync(&file);
 }
 

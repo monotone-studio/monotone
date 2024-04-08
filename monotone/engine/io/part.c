@@ -124,7 +124,7 @@ part_create(Part* self, int state)
 		if (buf_size(&index_data) > 0)
 			file_write_buf(&file, &index_data);
 		file_write(&file, &index, sizeof(index));
-		if (self->source->sync)
+		if (self->source->sync && config_sync())
 			file_sync(&file);
 		file_close(&file);
 		break;

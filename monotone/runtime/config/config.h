@@ -22,8 +22,7 @@ struct Config
 	Var  uuid;
 	Var  directory;
 	Var  online;
-	// config
-	Var  config_sync;
+	Var  sync;
 	// log
 	Var  log;
 	Var  log_to_file;
