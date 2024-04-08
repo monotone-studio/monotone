@@ -162,6 +162,9 @@ read time:    14.2 secs
 
 **Without WAL**
 
+Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
+Write is in-memory. Partitions are compressed, flushed, and synced ASAP by background workers to disk.
+
 With standard settings (100 bytes per event):
 
 ```
@@ -173,22 +176,22 @@ write: 10954400 rps (10.95 million events/sec, 309.46 million metrics/sec), 1180
 
 #### Five Seconds to Mars
 
-Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
-Write is in-memory. Partitions are compressed, flushed, and synced ASAP by background workers to disk.
+Following results depend on your hardware (ram / cpu) and can be scaled further by playing with the benchmark settings.
 
-The expected compression rate using `zstd` is `25-86x`, and write performance is more than `1.5 billion` metrics per second for a
-single thread writer.
+Maxing out metrics: (1000 bytes per event = 250 metrics per event):
 
 ```
 monotone bench -n -s 1000
 write: 6949800 rps (6.95 million events/sec, 1760.04 million metrics/sec), 6714.01 MiB/sec
 ```
 
+The expected compression rate using `zstd` is `25-86x`, and write performance is more than `1.5 billion` metrics per second for a
+single thread writer.
+
 Please note that writing 5+ GiB into memory requires appropriate memory capacity to fit the updates until
 it is flushed to disk.
 
-Those results depend on your hardware and can be scaled further by playing with the benchmark settings,
-like doing parallel writing to the independent storage instances:
+Parallel writing to two independent storage instances:
 
 ```
 monotone bench -n -s 1000 -i2
