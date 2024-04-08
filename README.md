@@ -140,9 +140,9 @@ Maxing out metrics: (1000 bytes per event = 250 metrics per event):
 monotone bench -s 1000
 write: 1867200 rps (1.87 million events/sec, 472.87 million metrics/sec), 1803.85 MiB/sec
 ```
-Writing 1.5GiB to WAL (uncompressed), performance depends on your storage device throughput.
+Writing 1.5+ GiB to WAL (uncompressed), performance depends on your storage device throughput.
 
-Max event throughput, with data size set to zero:
+Max event throughput with WAL (data size set to zero, 1000 events per write):
 
 ```
 monotone bench -s 0 -b 1000
