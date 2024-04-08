@@ -131,23 +131,23 @@ With standard settings (100 bytes per event):
 
 ```
 monotone bench
-write: 4763000 rps (4.76 million events/sec, 134.55 million metrics/sec), 513.29 MiB/sec
-```
-
-Max event throughput, with data size set to zero:
-
-```
-monotone bench -s 0 -b 800
-write: 6012800 rps (6.01 million events/sec, 0.00 million metrics/sec), 74.55 MiB/sec
+write: 5847000 rps (5.85 million events/sec, 165.18 million metrics/sec), 630.10 MiB/sec
 ```
 
 Maxing out metrics: (1000 bytes per event = 250 metrics per event):
 
 ```
 monotone bench -s 1000
-write: 1599600 rps (1.60 million events/sec, 405.10 million metrics/sec), 1545.33 MiB/sec
+write: 1867200 rps (1.87 million events/sec, 472.87 million metrics/sec), 1803.85 MiB/sec
 ```
 Writing 1.5GiB to WAL (uncompressed), performance depends on your storage device throughput.
+
+Max event throughput, with data size set to zero:
+
+```
+monotone bench -s 0 -b 1000
+write: 8059000 rps (8.06 million events/sec, 0.00 million metrics/sec), 99.91 MiB/sec
+```
 
 Read all events:
 
@@ -166,27 +166,34 @@ With standard settings (100 bytes per event):
 
 ```
 monotone bench -n
-write: 7191600 rps (7.19 million events/sec, 203.16 million metrics/sec), 775.00 MiB/sec
+write: 10954400 rps (10.95 million events/sec, 309.46 million metrics/sec), 1180.50 MiB/sec
 ```
 
 ![image description](.github/bench.gif)
 
-#### Beast Mode
+#### Five Seconds to Mars
 
 Disabling WAL allows us to get maximum out of the storage performance and not get bound by IO.
 Write is in-memory. Partitions are compressed, flushed, and synced ASAP by background workers to disk.
 
-The expected compression rate using `zstd` is `25-86x`, and write performance is more than `1 billion` metrics per second for a
+The expected compression rate using `zstd` is `25-86x`, and write performance is more than `1.5 billion` metrics per second for a
 single thread writer.
 
 ```
 monotone bench -n -s 1000
-write: 5522800 rps (5.52 million events/sec, 1398.65 million metrics/sec), 5335.42 MiB/sec
+write: 6949800 rps (6.95 million events/sec, 1760.04 million metrics/sec), 6714.01 MiB/sec
 ```
 
-Those results depend on your hardware and can be scaled further by playing with the benchmark settings, like doing parallel writing
-to the independent storage instances.
-Please note that writing 5+ GiB into memory requires appropriate memory capacity to fit the updates until it is flushed to disk.
+Please note that writing 5+ GiB into memory requires appropriate memory capacity to fit the updates until
+it is flushed to disk.
+
+Those results depend on your hardware and can be scaled further by playing with the benchmark settings,
+like doing parallel writing to the independent storage instances:
+
+```
+monotone bench -n -s 1000 -i2
+write: 9007800 rps (9.01 million events/sec, 2281.23 million metrics/sec), 8702.18 MiB/sec
+```
 
 ----
 
