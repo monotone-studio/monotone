@@ -9,6 +9,8 @@ for sequential workloads, such as append write and range scans.
 Sequential workloads are at the foundation of the following use cases: `IoT, events, time series, crypto, blockchain, finance, monitoring,
 logs collection, and Kafka-style workloads`.
 
+Using Monotone, you can create high-performance serverless solutions for storage and processing data directly within your application.
+
 Made to match the following requirements:
 
 - Collect and process events in large volumes serially or by time (auto-increment by default)
