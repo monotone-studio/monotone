@@ -370,8 +370,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -382,10 +382,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,
@@ -449,8 +449,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -513,8 +513,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -576,8 +576,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -589,8 +589,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -601,10 +601,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,
@@ -671,8 +671,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -734,8 +734,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -747,8 +747,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -759,10 +759,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,
@@ -828,8 +828,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -841,8 +841,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -853,10 +853,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,
@@ -925,8 +925,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -938,8 +938,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -950,10 +950,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,
@@ -1019,8 +1019,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -1032,8 +1032,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -1044,10 +1044,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,
@@ -1116,8 +1116,8 @@ show storages debug
       "regions": 1,
       "events": 1,
       "events_heap": 0,
-      "size": 223,
-      "size_uncompressed": 223,
+      "size": 224,
+      "size_uncompressed": 224,
       "size_heap": 0
     }
   }
@@ -1129,8 +1129,8 @@ show partitions debug
   "events": 1,
   "events_heap": 0,
   "regions": 1,
-  "size": 223,
-  "size_uncompressed": 223,
+  "size": 224,
+  "size_uncompressed": 224,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -1141,10 +1141,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 41,
-    "size_regions_origin": 41,
-    "size_total": 223,
-    "size_total_origin": 223,
+    "size_regions": 42,
+    "size_regions_origin": 42,
+    "size_total": 224,
+    "size_total_origin": 224,
     "regions": 1,
     "events": 1,
     "refreshes": 1,

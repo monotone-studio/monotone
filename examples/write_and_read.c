@@ -47,10 +47,12 @@ main(int argc, char* argv[])
 			// set id to UINT64_MAX for the serial mode, id will be assigned
 			// automatically
 			monotone_event_t* event = &batch[j];
-			event->id        = UINT64_MAX;
-			event->data      = NULL;
-			event->data_size = 0;
-			event->flags     = 0;
+			event->flags      = 0;
+			event->id         = UINT64_MAX;
+			event->key        = NULL;
+			event->key_size   = 0;
+			event->value      = NULL;
+			event->value_size = 0;
 		}
 		rc = monotone_write(env, batch, batch_size);
 		if (rc == -1)
@@ -64,10 +66,12 @@ main(int argc, char* argv[])
 	// read all events, starting from zero
 	monotone_event_t key =
 	{
-		.id        = 0,
-		.data      = NULL,
-		.data_size = 0,
-		.flags     = 0
+		.flags      = 0,
+		.id         = 0,
+		.key        = NULL,
+		.key_size   = 0,
+		.value      = NULL,
+		.value_size = 0
 	};
 	monotone_cursor_t* cursor = monotone_cursor(env, NULL, &key);
 	if (cursor == NULL)

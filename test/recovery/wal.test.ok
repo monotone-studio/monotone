@@ -58,7 +58,7 @@ show wal
   "files": 1
 }
 debug 'wal_read'
-[1, 0, 1, 34]
+[1, 0, 1, 35]
 
 insert 2
 show lsn
@@ -75,8 +75,8 @@ show wal
   "files": 1
 }
 debug 'wal_read'
-[1, 0, 1, 34]
-[2, 0, 1, 34]
+[1, 0, 1, 35]
+[2, 0, 1, 35]
 
 insert 3
 show lsn
@@ -93,9 +93,9 @@ show wal
   "files": 1
 }
 debug 'wal_read'
-[1, 0, 1, 34]
-[2, 0, 1, 34]
-[3, 0, 1, 34]
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
 
 # test: restart
 close
@@ -119,9 +119,9 @@ show wal
   "files": 1
 }
 debug 'wal_read'
-[1, 0, 1, 34]
-[2, 0, 1, 34]
-[3, 0, 1, 34]
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
 
 # test: select
 select
@@ -183,10 +183,10 @@ show wal
   "files": 2
 }
 debug 'wal_read'
-[1, 0, 1, 34]
-[2, 0, 1, 34]
-[3, 0, 1, 34]
-[4, 0, 1, 34]
+[1, 0, 1, 35]
+[2, 0, 1, 35]
+[3, 0, 1, 35]
+[4, 0, 1, 35]
 
 # test: restart
 close
@@ -254,8 +254,8 @@ show partitions debug
   "events": 4,
   "events_heap": 0,
   "regions": 1,
-  "size": 274,
-  "size_uncompressed": 274,
+  "size": 278,
+  "size_uncompressed": 278,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -266,10 +266,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 92,
-    "size_regions_origin": 92,
-    "size_total": 274,
-    "size_total_origin": 274,
+    "size_regions": 96,
+    "size_regions_origin": 96,
+    "size_total": 278,
+    "size_total_origin": 278,
     "regions": 1,
     "events": 4,
     "refreshes": 1,
@@ -305,8 +305,8 @@ show partitions debug
   "events": 4,
   "events_heap": 0,
   "regions": 1,
-  "size": 274,
-  "size_uncompressed": 274,
+  "size": 278,
+  "size_uncompressed": 278,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -317,10 +317,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 92,
-    "size_regions_origin": 92,
-    "size_total": 274,
-    "size_total_origin": 274,
+    "size_regions": 96,
+    "size_regions_origin": 96,
+    "size_total": 278,
+    "size_total_origin": 278,
     "regions": 1,
     "events": 4,
     "refreshes": 1,
@@ -365,8 +365,8 @@ show partitions debug
   "events": 4,
   "events_heap": 0,
   "regions": 1,
-  "size": 274,
-  "size_uncompressed": 274,
+  "size": 278,
+  "size_uncompressed": 278,
   "size_heap": 0,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -377,10 +377,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 92,
-    "size_regions_origin": 92,
-    "size_total": 274,
-    "size_total_origin": 274,
+    "size_regions": 96,
+    "size_regions_origin": 96,
+    "size_total": 278,
+    "size_total_origin": 278,
     "regions": 1,
     "events": 4,
     "refreshes": 1,
@@ -435,8 +435,8 @@ show partitions debug
   "events": 5,
   "events_heap": 1,
   "regions": 1,
-  "size": 274,
-  "size_uncompressed": 274,
+  "size": 278,
+  "size_uncompressed": 278,
   "size_heap": 2097152,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -447,10 +447,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 92,
-    "size_regions_origin": 92,
-    "size_total": 274,
-    "size_total_origin": 274,
+    "size_regions": 96,
+    "size_regions_origin": 96,
+    "size_total": 278,
+    "size_total_origin": 278,
     "regions": 1,
     "events": 4,
     "refreshes": 1,
@@ -493,8 +493,8 @@ show partitions debug
   "events": 5,
   "events_heap": 1,
   "regions": 1,
-  "size": 274,
-  "size_uncompressed": 274,
+  "size": 278,
+  "size_uncompressed": 278,
   "size_heap": 2097152,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -505,10 +505,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 92,
-    "size_regions_origin": 92,
-    "size_total": 274,
-    "size_total_origin": 274,
+    "size_regions": 96,
+    "size_regions_origin": 96,
+    "size_total": 278,
+    "size_total_origin": 278,
     "regions": 1,
     "events": 4,
     "refreshes": 1,
@@ -547,8 +547,8 @@ show partitions debug
   "events": 7,
   "events_heap": 3,
   "regions": 1,
-  "size": 274,
-  "size_uncompressed": 274,
+  "size": 278,
+  "size_uncompressed": 278,
   "size_heap": 2097152,
   "created": "(filtered)",
   "refreshed": "(filtered)",
@@ -559,10 +559,10 @@ show partitions debug
   "index": {
     "size": 52,
     "size_origin": 52,
-    "size_regions": 92,
-    "size_regions_origin": 92,
-    "size_total": 274,
-    "size_total_origin": 274,
+    "size_regions": 96,
+    "size_regions_origin": 96,
+    "size_total": 278,
+    "size_total_origin": 278,
     "regions": 1,
     "events": 4,
     "refreshes": 1,
@@ -598,11 +598,11 @@ show partitions debug
 select
 (eof)
 debug "wal_read"
-[4, 0, 1, 34]
-[5, 0, 1, 37]
-[6, 0, 1, 34]
-[7, 0, 1, 34]
-[8, 0, 1, 34]
+[4, 0, 1, 35]
+[5, 0, 1, 38]
+[6, 0, 1, 35]
+[7, 0, 1, 35]
+[8, 0, 1, 35]
 [9, 1, 0, 29]
 
 # test: restart

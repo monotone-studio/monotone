@@ -93,10 +93,12 @@ instance_writer(void* arg)
 		for (int i = 0; i < config->size_batch; i++)
 		{
 			auto ev = &batch[i];
-			ev->id        = UINT64_MAX;
-			ev->data      = data;
-			ev->data_size = sizeof(data);
-			ev->flags     = 0;
+			ev->flags      = 0;
+			ev->id         = UINT64_MAX;
+			ev->key        = NULL;
+			ev->key_size   = 0;
+			ev->value      = data;
+			ev->value_size = sizeof(data);
 		}
 
 		int rc;
@@ -276,10 +278,12 @@ bench_select(Bench* self, uint64_t from, uint64_t count)
 	uint64_t total_size = 0;
 
 	monotone_event_t key;
-	key.id        = from;
-	key.data      = NULL;
-	key.data_size = 0;
-	key.flags     = 0;
+	key.flags      = 0;
+	key.id         = from;
+	key.key        = NULL;
+	key.key_size   = 0;
+	key.value      = NULL;
+	key.value_size = 0;
 
 	auto cursor = monotone_cursor(current->env, NULL, &key);
 	if (cursor == NULL)
@@ -301,7 +305,7 @@ bench_select(Bench* self, uint64_t from, uint64_t count)
 			break;
 
 		total++;
-		total_size += sizeof(Event) + event.data_size;
+		total_size += sizeof(Event) + event.key_size + event.value_size;
 
 		rc = monotone_next(cursor);
 		if (rc == -1)
