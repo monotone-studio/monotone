@@ -9,11 +9,12 @@ The whole database can be seen as a 64-bit range sparse array of ordered events.
 Data is stored in sorted partition files.
 Each partition has an associated `[min, max]` range. Partitions never overlap.
 
-An event is a combination of id (or time) and key/value raw data `[u64 id, key, value]`.
+An event is a combination of 64-bit id (or time) and key/value raw data `[id, key, value]`.
 The event `id` and the optional `key` represent a serial (or time) compound primary key.
+Events are designed to store any kind of unstructured data.
 
-It is correct to say that monotone is an embeddable cloud-native serial/time-based key-value storage for events with
-advanced data management.
+It is correct to say that monotone is an embeddable cloud-native serial (time-based) key-value
+storage for events that support automatic range partitioning and advanced data management.
 
 #### Partitioning
 
