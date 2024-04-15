@@ -120,21 +120,6 @@ monotone_error(monotone_t* self)
 }
 
 MONOTONE_API int
-monotone_set_compare(monotone_t* self, monotone_compare_t compare, void* arg)
-{
-	int rc = 0;
-	monotone_enter(self);
-	Exception e;
-	if (enter(&e)) {
-		main_set_compare(&self->main, (Compare)compare, arg);
-	}
-	if (leave(&e)) {
-		rc = -1;
-	}
-	return rc;
-}
-
-MONOTONE_API int
 monotone_open(monotone_t* self, const char* directory)
 {
 	int rc = 0;
@@ -235,21 +220,18 @@ monotone_read(monotone_cursor_t* self, monotone_event_t* event)
 		auto at = engine_cursor_at(&self->cursor);
 		if (likely(at))
 		{
-			event->id        = at->id;
-			event->data_size = at->data_size;
-			event->data      = at->data;
-			event->flags     = at->flags;
+			event->flags      = at->flags;
+			event->id         = at->id;
+			event->key_size   = at->key_size;
+			event->key        = event_key(at);
+			event->value_size = at->data_size - at->key_size;
+			event->value      = event_value(at);
 			rc = 1;
 
 			// this situation is possible on concurrent delete
 			// from the same thread
 			if (unlikely(event_is_delete(at)))
-			{
-				event->id        = 0;
-				event->data_size = 0;
-				event->data      = NULL;
 				rc = 0;
-			}
 
 		} else {
 			rc = 0;

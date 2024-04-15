@@ -114,17 +114,6 @@ main_prepare(Main* self)
 	config_prepare(&self->config);
 }
 
-void
-main_set_compare(Main* self, Compare compare, void* compare_arg)
-{
-	if (config_online())
-		log("environment is already open");
-
-	auto comparator = &self->comparator;
-	comparator->compare     = compare;
-	comparator->compare_arg = compare_arg;
-}
-
 static void
 main_deploy(Main* self, Str* directory)
 {

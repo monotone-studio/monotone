@@ -84,6 +84,10 @@ engine_write(Engine* self, EventArg* events, int count)
 		{
 			auto arg = &events[i];
 
+			// validate key size
+			if (unlikely(arg->key_size > UINT8_MAX))
+				error("event key size limit is 255 bytes");
+
 			// set serial
 			if (arg->id == UINT64_MAX && config_serial())
 				arg->id = config_ssn_next();

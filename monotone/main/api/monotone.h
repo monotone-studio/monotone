@@ -29,10 +29,6 @@ typedef struct monotone        monotone_t;
 typedef struct monotone_event  monotone_event_t;
 typedef struct monotone_cursor monotone_cursor_t;
 
-typedef int64_t (*monotone_compare_t)(monotone_event_t*,
-                                      monotone_event_t*,
-                                      void*);
-
 enum
 {
 	MONOTONE_DELETE = 1
@@ -40,10 +36,12 @@ enum
 
 struct monotone_event
 {
-	uint64_t id;
-	void*    data;
-	size_t   data_size;
 	int      flags;
+	uint64_t id;
+	void*    key;
+	size_t   key_size;
+	void*    value;
+	size_t   value_size;
 };
 
 // environment
@@ -55,9 +53,6 @@ monotone_free(void*);
 
 MONOTONE_API const char*
 monotone_error(monotone_t*);
-
-MONOTONE_API int
-monotone_set_compare(monotone_t*, monotone_compare_t, void* arg);
 
 MONOTONE_API int
 monotone_open(monotone_t*, const char* path);

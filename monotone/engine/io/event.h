@@ -23,26 +23,22 @@ enum
 
 struct EventArg
 {
-	uint64_t id;
-	void*    data;
-	size_t   data_size;
 	int      flags;
+	uint64_t id;
+	void*    key;
+	size_t   key_size;
+	void*    value;
+	size_t   value_size;
 };
 
 struct Event
 {
 	uint64_t id;
 	uint8_t  flags;
+	uint8_t  key_size;
 	uint32_t data_size;
 	uint8_t  data[];
 } packed;
-
-always_inline hot static inline int
-event_size(Event* self)
-{
-	return sizeof(Event) + self->data_size;
-}
-
 
 always_inline hot static inline int
 event_is_delete(Event* self)
@@ -50,20 +46,42 @@ event_is_delete(Event* self)
 	return self->flags & MN_DELETE;
 }
 
+always_inline hot static inline int
+event_size(Event* self)
+{
+	return sizeof(Event) + self->key_size + self->data_size;
+}
+
+always_inline hot static inline uint8_t*
+event_key(Event* self)
+{
+	return self->data;
+}
+
+always_inline hot static inline uint8_t*
+event_value(Event* self)
+{
+	return self->data + self->key_size;
+}
+
 hot static inline void
 event_init(Event* self, EventArg* arg)
 {
 	self->id        = arg->id;
 	self->flags     = arg->flags;
-	self->data_size = arg->data_size;
-	if (arg->data)
-		memcpy(self->data, arg->data, arg->data_size);
+	self->key_size  = arg->key_size;
+	self->data_size = arg->key_size + arg->value_size;
+	if (arg->key_size > 0)
+		memcpy(self->data, arg->key, arg->key_size);
+	if (arg->value_size > 0)
+		memcpy(self->data + arg->key_size, arg->value, arg->value_size);
 }
 
 static inline Event*
 event_allocate(Heap* heap, EventArg* arg)
 {
-	auto event = (Event*)heap_allocate(heap, sizeof(Event) + arg->data_size);
+	auto arg_size = arg->key_size + arg->value_size;
+	auto event = (Event*)heap_allocate(heap, sizeof(Event) + arg_size);
 	event_init(event, arg);
 	return event;
 }
@@ -79,7 +97,8 @@ event_copy(Heap* heap, Event* src)
 static inline Event*
 event_malloc(EventArg* arg)
 {
-	auto event = (Event*)mn_malloc(sizeof(Event) + arg->data_size);
+	auto arg_size = arg->key_size + arg->value_size;
+	auto event = (Event*)mn_malloc(sizeof(Event) + arg_size);
 	event_init(event, arg);
 	return event;
 }
