@@ -13,7 +13,7 @@ An event is a combination of 64-bit id (or time) and key/value raw data `[id, ke
 The event `id` and the optional `key` represent a serial (or time) compound primary key.
 Events are designed to store any kind of unstructured data.
 
-It is correct to say that monotone is an embeddable cloud-native serial (time-based) key-value
+It is correct to say that monotone is an embeddable cloud-native serial (or time-based) key-value
 storage for events that support automatic range partitioning and advanced data management.
 
 #### Partitioning
