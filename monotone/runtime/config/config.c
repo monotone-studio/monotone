@@ -81,7 +81,7 @@ config_prepare(Config* self)
 	ConfigDef defaults[] =
 	{
 		// main
-		{ "version",                 VAR_STRING, VAR_E,                &self->version,                 "0.0",       0                },
+		{ "version",                 VAR_STRING, VAR_E,                &self->version,                 "1.0.0",     0                },
 		{ "uuid",                    VAR_STRING, VAR_C,                &self->uuid,                    NULL,        0                },
 		{ "directory",               VAR_STRING, VAR_E,                &self->directory,               NULL,        0                },
 		{ "sync",                    VAR_BOOL,   VAR_E|VAR_C|VAR_H,    &self->sync,                    NULL,        true             },

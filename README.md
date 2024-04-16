@@ -25,9 +25,9 @@ Made to match the following requirements:
 - Make sense of Hot and Cold data patterns using Data Tiering
 
 The storage architecture is inspired by a Log-Structured approach and implements a custom-made `memory-disk-cloud`
-hybrid engine.
+hybrid engine. Learn more about its [Architecture](ARCHITECTURE.md).
 
-Learn more about its [Architecture](ARCHITECTURE.md).
+Official [Documentation](https://monotone/studio/docs/).
 
 ----
 

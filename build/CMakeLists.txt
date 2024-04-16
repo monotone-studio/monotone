@@ -10,11 +10,15 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "")
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
+file(READ "${CMAKE_SOURCE_DIR}/VERSION" MONOTONE_VERSION)
+string(STRIP "${MONOTONE_VERSION}" MONOTONE_VERSION)
+
 message(STATUS "")
 message(STATUS "monotone.")
 message(STATUS "")
 message(STATUS "embeddable cloud-native storage for events and time-series data.")
 message(STATUS "")
+message(STATUS "VERSION:          ${MONOTONE_VERSION}")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "")
 

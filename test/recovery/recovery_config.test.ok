@@ -23,7 +23,7 @@ set sync to false
 open
 show all
 {
-  "version": "0.0",
+  "version": "1.0.0",
   "uuid": "c14fb1d4-d1f7-5bf1-f256-4ad89bc47379",
   "directory": "_output",
   "log": true,
