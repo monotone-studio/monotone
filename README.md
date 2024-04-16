@@ -27,7 +27,7 @@ Made to match the following requirements:
 The storage architecture is inspired by a Log-Structured approach and implements a custom-made `memory-disk-cloud`
 hybrid engine. Learn more about its [Architecture](ARCHITECTURE.md).
 
-Official [Documentation](https://monotone/studio/docs/).
+Official [Documentation](https://monotone.studio/docs/).
 
 ----
 
