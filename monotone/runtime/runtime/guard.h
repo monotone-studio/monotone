@@ -13,24 +13,29 @@
 // Monotone Commercial License.
 //
 
-static inline void
-guard_runner(Guard* self)
+always_inline static inline Guard*
+guard_pop(void)
 {
-	if (self->function)
-	{
-		self->function(self->function_arg);
-		self->function = NULL;
-	}
-
-	// always last unless explicit call
 	auto exception = mn_runtime.exception_mgr.last;
-	assert(exception->guard_stack == self);
+	auto self = exception->guard_stack;
 	exception->guard_stack = self->prev;
+	return self;
 }
 
-static inline void*
-unguard(Guard* self)
+always_inline static inline void
+guard_runner(Guard* self)
 {
+	if (! self->function)
+		return;
+	guard_pop();
+	self->function(self->function_arg);
+	self->function = NULL;
+}
+
+always_inline static inline void*
+unguard(void)
+{
+	auto self = guard_pop();
 	self->function = NULL;
 	return self->function_arg;
 }

@@ -561,7 +561,7 @@ main_execute(Main* self, const char* command, char** result)
 
 	Buf output;
 	buf_init(&output);
-	guard_as(guard, buf_free, &output);
+	guard(buf_free, &output);
 
 	Executable arg =
 	{
@@ -584,7 +584,7 @@ main_execute(Main* self, const char* command, char** result)
 	if (result && buf_size(&output) > 0)
 	{
 		buf_write(&output, "\0", 1);
-		unguard(&guard);
+		unguard();
 		*result = buf_cstr(&output);
 	}
 }

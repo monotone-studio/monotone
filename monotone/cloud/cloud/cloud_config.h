@@ -104,21 +104,21 @@ static inline CloudConfig*
 cloud_config_copy(CloudConfig* self)
 {
 	auto copy = cloud_config_allocate();
-	guard_as(copy_guard, cloud_config_free, copy);
+	guard(cloud_config_free, copy);
 	cloud_config_set_name(copy, &self->name);
 	cloud_config_set_type(copy, &self->type);
 	cloud_config_set_login(copy, &self->login);
 	cloud_config_set_password(copy, &self->password);
 	cloud_config_set_url(copy, &self->url);
 	cloud_config_set_debug(copy, self->debug);
-	return unguard(&copy_guard);
+	return unguard();
 }
 
 static inline CloudConfig*
 cloud_config_read(uint8_t** pos)
 {
 	auto self = cloud_config_allocate();
-	guard_as(self_guard, cloud_config_free, self);
+	guard(cloud_config_free, self);
 	Decode map[] =
 	{
 		{ DECODE_STRING, "name",     &self->name     },
@@ -130,7 +130,7 @@ cloud_config_read(uint8_t** pos)
 		{ 0,              NULL,       NULL           },
 	};
 	decode_map(map, pos);
-	return unguard(&self_guard);
+	return unguard();
 }
 
 static inline void

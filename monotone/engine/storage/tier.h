@@ -39,9 +39,9 @@ tier_allocate(TierConfig* config)
 	self->storage = NULL;
 	self->config  = NULL;
 	list_init(&self->link);
-	guard_as(self_guard, tier_free, self);
+	guard(tier_free, self);
 	self->config = tier_config_copy(config);
-	return unguard(&self_guard);
+	return unguard();
 }
 
 static inline void

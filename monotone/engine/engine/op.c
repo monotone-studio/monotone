@@ -27,7 +27,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 {
 	// create new reference
 	auto ref = ref_allocate(min, max);
-	guard_as(guard, ref_free, ref);
+	guard(ref_free, ref);
 
 	// create new partition
 	Id id =
@@ -56,7 +56,7 @@ engine_create(Engine* self, uint64_t min, uint64_t max)
 	}
 	storage_add(storage, part);
 	part->source = storage->source;
-	unguard(&guard);
+	unguard();
 
 	// schedule rebalance
 	if (! pipeline_empty(&self->pipeline))

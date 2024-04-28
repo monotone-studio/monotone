@@ -40,9 +40,9 @@ mock_create(CloudIf* iface, CloudConfig* config)
 	self->iface  = iface;
 	self->config = NULL;
 	list_init(&self->link);
-	guard_as(self_guard, mock_free, self);
+	guard(mock_free, self);
 	self->config = cloud_config_copy(config);
-	return unguard(&self_guard);
+	return unguard();
 }
 
 static void

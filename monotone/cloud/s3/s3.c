@@ -62,10 +62,10 @@ s3_create(CloudIf* iface, CloudConfig* config)
 	cloud->config = NULL;
 	list_init(&cloud->link);
 
-	guard_as(self_guard, s3_free, self);
+	guard(s3_free, self);
 	cloud->config = cloud_config_copy(config);
 
-	unguard(&self_guard);
+	unguard();
 	return cloud;
 }
 
@@ -85,13 +85,13 @@ s3_attach(Cloud* self, Source* source)
 
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard_as(guard_io, s3_io_free, io);
+	guard(s3_io_free, io);
 
 	// create bucket, if not exists
 	s3_op_create_bucket(io, source);
 
 	// put io back to cache
-	unguard(&guard_io);
+	unguard();
 	cache_push(&s3->cache, &io->link);
 }
 
@@ -102,13 +102,13 @@ s3_detach(Cloud* self, Source* source)
 
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard_as(guard_io, s3_io_free, io);
+	guard(s3_io_free, io);
 
 	// drop bucket
 	s3_op_drop_bucket(io, source);
 
 	// put io back to cache
-	unguard(&guard_io);
+	unguard();
 	cache_push(&s3->cache, &io->link);
 }
 
@@ -131,7 +131,7 @@ s3_download(Cloud* self, Source* source, Id* id)
 
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard_as(guard_io, s3_io_free, io);
+	guard(s3_io_free, io);
 
 	// execute GET and write content to the file
 	s3_op_download(io, source, id, &file);
@@ -146,7 +146,7 @@ s3_download(Cloud* self, Source* source, Id* id)
 	fs_rename(path, "%s", path_to);
 
 	// put io back to cache
-	unguard(&guard_io);
+	unguard();
 	cache_push(&s3->cache, &io->link);
 }
 
@@ -165,13 +165,13 @@ s3_upload(Cloud* self, Source* source, Id* id)
 	
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard_as(guard_io, s3_io_free, io);
+	guard(s3_io_free, io);
 
 	// execute PUT and transfer file content
 	s3_op_upload(io, source, id, &file);
 
 	// put io back to cache
-	unguard(&guard_io);
+	unguard();
 	cache_push(&s3->cache, &io->link);
 }
 
@@ -182,13 +182,13 @@ s3_remove(Cloud* self, Source* source, Id* id)
 	
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard_as(guard_io, s3_io_free, io);
+	guard(s3_io_free, io);
 
 	// execute DELETE
 	s3_op_delete(io, source, id);
 
 	// put io back to cache
-	unguard(&guard_io);
+	unguard();
 	cache_push(&s3->cache, &io->link);
 }
 
@@ -200,13 +200,13 @@ s3_read(Cloud* self, Source* source, Id* id, Buf* buf, uint32_t size,
 	
 	// get io handle
 	auto io = s3_get_io(s3);
-	guard_as(guard_io, s3_io_free, io);
+	guard(s3_io_free, io);
 
 	// execute GET and read partial file range to the buffer
 	s3_op_read(io, source, id, buf, size, offset);
 
 	// put io back to cache
-	unguard(&guard_io);
+	unguard();
 	cache_push(&s3->cache, &io->link);
 }
 

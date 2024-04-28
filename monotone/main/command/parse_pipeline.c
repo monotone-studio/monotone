@@ -37,13 +37,13 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 
 		// create tier config
 		auto config = tier_config_allocate();
-		guard_as(guard, tier_config_free, config);
+		guard(tier_config_free, config);
 		tier_config_set_name(config, &name.string);
 
 		// ,
 		if (lex_if(self, ',', NULL))
 		{
-			unguard(&guard);
+			unguard();
 			cmd_pipeline_alter_add(cmd, config);
 			continue;
 		}
@@ -51,7 +51,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 		// eof
 		if (lex_if(self, KEOF, NULL))
 		{
-			unguard(&guard);
+			unguard();
 			cmd_pipeline_alter_add(cmd, config);
 			break;
 		}
@@ -63,7 +63,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 		// [)]
 		if (lex_if(self, ')', NULL))
 		{
-			unguard(&guard);
+			unguard();
 			cmd_pipeline_alter_add(cmd, config);
 			continue;
 		}
@@ -120,7 +120,7 @@ parse_pipeline_set(Lex* self, Cmd* arg)
 
 			break;
 		}
-		unguard(&guard);
+		unguard();
 		cmd_pipeline_alter_add(cmd, config);
 
 		// ,
@@ -141,7 +141,7 @@ parse_pipeline_alter(Lex* self)
 	// ALTER PIPELINE RESET
 	// ALTER PIPELINE SET storage_name (tier_options) [, ...]
 	auto cmd = cmd_pipeline_alter_allocate();
-	guard_as(guard, cmd_free, &cmd->cmd);
+	guard(cmd_free, &cmd->cmd);
 
 	// RESET | SET
 	if (lex_if(self, KRESET, NULL)) {
@@ -155,6 +155,6 @@ parse_pipeline_alter(Lex* self)
 		parse_pipeline_set(self, &cmd->cmd);
 	}
 
-	unguard(&guard);
+	unguard();
 	return &cmd->cmd;
 }

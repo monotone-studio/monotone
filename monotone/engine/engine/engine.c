@@ -112,7 +112,7 @@ engine_lock(Engine* self, uint64_t id, LockType lock,
 {
 	// take shared control lock to avoid exclusive operations
 	control_lock_shared();
-	guard_as(cglguard, control_unlock_guard, NULL);
+	guard(control_unlock_guard, NULL);
 
 	mutex_lock(&self->lock);
 	guard(mutex_unlock, &self->lock);
@@ -160,7 +160,10 @@ engine_lock(Engine* self, uint64_t id, LockType lock,
 
 	// shared engine lock is kept until the reference
 	// is unlocked
-	unguard(&cglguard);
+	unguard();
+	unguard();
+
+	mutex_unlock(&self->lock);
 	return ref;
 }
 

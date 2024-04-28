@@ -169,7 +169,7 @@ static inline Source*
 source_copy(Source* self)
 {
 	auto copy = source_allocate();
-	guard_as(copy_guard, source_free, copy);
+	guard(source_free, copy);
 	source_set_uuid(copy, &self->uuid);
 	source_set_name(copy, &self->name);
 	source_set_path(copy, &self->path);
@@ -183,14 +183,14 @@ source_copy(Source* self)
 	source_set_compression_level(copy, self->compression_level);
 	source_set_encryption(copy, &self->encryption);
 	source_set_encryption_key(copy, &self->encryption_key);
-	return unguard(&copy_guard);
+	return unguard();
 }
 
 static inline Source*
 source_read(uint8_t** pos)
 {
 	auto self = source_allocate();
-	guard_as(self_guard, source_free, self);
+	guard(source_free, self);
 	Decode map[] =
 	{
 		{ DECODE_UUID,   "uuid",              &self->uuid              },
@@ -209,7 +209,7 @@ source_read(uint8_t** pos)
 		{ 0,              NULL,               NULL                     },
 	};
 	decode_map(map, pos);
-	return unguard(&self_guard);
+	return unguard();
 }
 
 static inline void

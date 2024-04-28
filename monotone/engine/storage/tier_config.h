@@ -80,20 +80,20 @@ static inline TierConfig*
 tier_config_copy(TierConfig* self)
 {
 	auto copy = tier_config_allocate();
-	guard_as(copy_guard, tier_config_free, copy);
+	guard(tier_config_free, copy);
 	tier_config_set_name(copy, &self->name);
 	tier_config_set_partitions(copy, self->partitions);
 	tier_config_set_size(copy, self->size);
 	tier_config_set_events(copy, self->events);
 	tier_config_set_duration(copy, self->duration);
-	return unguard(&copy_guard);
+	return unguard();
 }
 
 static inline TierConfig*
 tier_config_read(uint8_t** pos)
 {
 	auto self = tier_config_allocate();
-	guard_as(self_guard, tier_config_free, self);
+	guard(tier_config_free, self);
 	Decode map[] =
 	{
 		{ DECODE_STRING, "name",       &self->name       },
@@ -104,7 +104,7 @@ tier_config_read(uint8_t** pos)
 		{ 0,              NULL,        NULL              },
 	};
 	decode_map(map, pos);
-	return unguard(&self_guard);
+	return unguard();
 }
 
 static inline void
